@@ -1,0 +1,27 @@
+ts: linux
+dist: xenial
+language: python
+
+stages:
+- lint
+- test
+
+jobs:
+  include:
+  - stage: lint
+    env: TOXENV=lint
+
+python:
+- 3.8
+- 3.7
+- 3.6
+- 3.5
+
+install:
+- pip install "setuptools>=36.3" tox codecov
+
+script:
+- tox
+
+after_success:
+- codecov

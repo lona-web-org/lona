@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="/static/lona/widget.css">
+  </head>
+  <body>
+    <h1>lona test frontend</h1>
+
+    <div id="menu">
+      <a href="/">Home</a>
+    </div>
+
+    <div id="lona"></div>
+
+    <script src="/static/lona/lona.js"></script>
+    <script>
+      var lona = new Lona({
+        target: '#lona',
+        DEBUG: true,
+      });
+
+      lona.patch_links('#menu');
+      lona.setup();
+    </script>
+  </body>
+</html>

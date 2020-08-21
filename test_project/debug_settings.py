@@ -1,0 +1,1 @@
+VIEW_CACHING = False

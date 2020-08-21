@@ -1,0 +1,1 @@
+flamingo[live-server,pygments]==1.3

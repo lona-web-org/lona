@@ -10,13 +10,15 @@ setup(
     name='lona',
     version=VERSION_STRING,
     author='Florian Scherf',
-    url='',
+    url='https://github.com/fscherf/lona',
     author_email='f.scherf@pengutronix.de',
-    license='',
+    license='MIT',
     packages=find_packages(),
     install_requires=[
         'aiohttp==3.6.2',
         'jinja2',
     ],
-    scripts=[],
+    scripts=[
+        'bin/lona',
+    ],
 )
