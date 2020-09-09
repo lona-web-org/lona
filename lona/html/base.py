@@ -469,7 +469,7 @@ class Node(AbstractNode):
         # remove underscores from attributes
         # this makes kwargs like '_class' possible to prevent clashes
         # with python grammar
-        for key, value in self.attributes.items():
+        for key, value in list(self.attributes.items()):
             if '_' in key:
                 new_key = key.replace('_', '-')
 
