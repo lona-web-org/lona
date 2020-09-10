@@ -10,6 +10,7 @@ from aiohttp import WSMsgType
 from lona.view_controller import ViewController
 from lona.settings.settings import Settings
 from lona.connection import Connection
+from lona.scheduling import Scheduler
 from lona.routing import Router
 from lona.utils import acquire
 
@@ -50,6 +51,14 @@ class LonaServer:
             server_logger.debug("loading settings from '%s'", import_string)
 
             self.settings.add(import_string)
+
+        # setup scheduler
+        self.scheduler = Scheduler(
+            task_zones=self.settings.TASK_ZONES,
+            thread_zones=self.settings.THREAD_ZONES,
+        )
+
+        self.scheduler.start()
 
         # setup routing
         server_logger.debug('setup routing')
@@ -123,6 +132,8 @@ class LonaServer:
         await self.run_function_async(
             self.view_controller.shutdown)
 
+        self.scheduler.stop()
+
     # asyncio helper ##########################################################
     async def run_function_async(self, function, *args, **kwargs):
         if not isinstance(function, partial):
@@ -146,6 +157,9 @@ class LonaServer:
             return await function(*args, **kwargs)
 
         return await self.run_function_async(function, *args, **kwargs)
+
+    def schedule(self, *args, **kwargs):
+        return self.scheduler.schedule(*args, **kwargs)
 
     # view helper #############################################################
     def render_response(self, response_dict):

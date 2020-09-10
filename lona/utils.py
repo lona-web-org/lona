@@ -9,6 +9,8 @@ import inspect
 import logging
 import runpy
 
+from lona.scheduling import get_current_thread_name
+
 
 def pretty_print(*args, **kwargs):
     return escape(pformat(*args, **kwargs))
@@ -90,13 +92,16 @@ class LogFormatter(logging.Formatter):
         if self.included and record.name not in self.included:
             return ''
 
+        # FIXME: only in debug mode
+        thread_name = get_current_thread_name()
+
         # format record string
         time_stamp = datetime.datetime.fromtimestamp(record.created)
         time_stamp_str = time_stamp.strftime('%H:%M:%S.%f')
 
         record_string = '{}{} {}{} {} {} {}'.format(
-            record.threadName,
-            (24 - len(record.threadName)) * ' ',
+            thread_name,
+            (30 - len(thread_name)) * ' ',
 
             record.levelname,
             (8 - len(record.levelname)) * ' ',

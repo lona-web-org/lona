@@ -37,6 +37,38 @@ CORE_WEBSOCKET_MIDDLEWARES = [
 
 WEBSOCKET_MIDDLEWARES = []
 
+# scheduling
+TASK_ZONES = [
+    ('system-high',    10),
+    ('system-medium',   5),
+    ('system-low',      2),
+
+    ('high',           10),
+    ('medium',          5),
+    ('low',             2),
+]
+
+THREAD_ZONES = [
+    ('system-high',    10),
+    ('system-medium',   5),
+    ('system-low',      2),
+
+    ('high',           10),
+    ('medium',          5),
+    ('low',             2),
+]
+
+DEFAULT_TASK_ZONE = 'medium'
+DEFAULT_THREAD_ZONE = 'medium'
+
+ROUTING_PRIORITY = 'system-high'
+HTTP_REQUEST_PRIORITY = 'system-medium'
+STATIC_REQUEST_PRIORITY = 'system-low'
+WEBSOCKET_MIDDLEWARE_PRIORITY = 'system-medium'
+FRONTEND_VIEW_PRIORITY = 'system-high'
+
+DEFAULT_VIEW_PRIORITY = 'medium'
+
 # debugger
 # TODO: make configurable
 DEBUG = True

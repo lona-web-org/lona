@@ -1,41 +1,23 @@
 from concurrent.futures import ThreadPoolExecutor, thread
+import threading
+import traceback
 import asyncio
 import logging
-
 
 logger = logging.getLogger('lona.scheduling.Scheduler')
 
 
-DEFAULT_SCHEDULER_TASK_POOL_CONFIG = [
-    ('system-high',    10),
-    ('system-medium',   5),
-    ('system-low',      1),
+def get_current_thread_name():
+    thread_name = threading.currentThread().getName()
 
-    ('service-high',   10),
-    ('service-medium',  5),
-    ('service-low',     1),
+    if thread_name == 'MainThread':
+        for frame in traceback.extract_stack()[::-1]:
+            if frame.filename.startswith('<lona-zone'):
+                thread_name = frame.filename.split('"')[1]
 
-    ('high',           10),
-    ('medium',          5),
-    ('low',             1),
-]
+                break
 
-DEFAULT_SCHEDULER_THREAD_POOL_CONFIG = [
-    ('system-high',    10),
-    ('system-medium',   5),
-    ('system-low',      1),
-
-    ('service-high',   10),
-    ('service-medium',  5),
-    ('service-low',     1),
-
-    ('high',           10),
-    ('medium',          5),
-    ('low',             1),
-]
-
-DEFAULT_SCHEDULER_TASK_PRIORITY = 'medium'
-DEFAULT_SCHEDULER_THREAD_PRIORITY = 'medium'
+    return thread_name
 
 
 class TaskWorker:
@@ -59,53 +41,68 @@ class TaskWorker:
                 return_when=asyncio.FIRST_COMPLETED,
             )
 
-            result = done.pop().result()
+            done = done.pop()
 
-            if result == self.stopped:
+            if done == self.stopped:
+                for future in pending:
+                    future.cancel()
+
                 break
 
-            coroutine, future = result
+            coroutine, future = done.result()
 
             logger.debug('%s: running %s', self.name, coroutine)
 
             try:
                 result = await coroutine
 
-                future.set_result(result)
+                if not future.done() and not future.cancelled():
+                    future.set_result(result)
 
             except Exception as error:
-                future.set_exception(error)
+                if not future.done() and not future.cancelled():
+                    future.set_exception(error)
 
         logger.debug('%s: stopped', self.name)
 
     def start(self):
         self.stopped = asyncio.Future()
 
-        self.scheduler.loop.create_task(self._run())
+        task = self._run()
+
+        # mark the currently running zone
+        file_name = '<lona-zone-"{}">'.format(self.name)
+
+        code_text = """
+            async def run(coroutine):
+                return await coroutine
+        """.strip()
+
+        code = compile(code_text, file_name, 'exec')
+        exec(code)
+        coroutine = locals()['run']
+
+        task = coroutine(task)
+
+        # create task
+        self.scheduler.loop.create_task(task)
 
     def stop(self):
         self.stopped.set_result(True)
 
 
 class Scheduler:
-    def __init__(self, loop=None,
-                 task_pool_config=DEFAULT_SCHEDULER_TASK_POOL_CONFIG,
-                 thread_pool_config=DEFAULT_SCHEDULER_THREAD_POOL_CONFIG,
-                 default_task_priority=DEFAULT_SCHEDULER_TASK_PRIORITY,
-                 default_thread_priority=DEFAULT_SCHEDULER_THREAD_PRIORITY):
-
+    def __init__(self, loop=None, task_zones=[], thread_zones=[]):
         self.loop = loop or asyncio.get_event_loop()
-        self.task_pool_config = task_pool_config
-        self.thread_pool_config = thread_pool_config
-        self.default_task_priority = default_task_priority
-        self.default_thread_priority = default_thread_priority
+        self.task_zones = task_zones
+        self.thread_zones = thread_zones
 
         # setup task pools
         self.task_priority_map = {}
         self.task_queues = {}
         self.task_workers = {}
 
-        for priority_name, max_workers in self.task_pool_config:
+        for priority_name, max_workers in self.task_zones:
             queue = asyncio.Queue()
 
             self.task_priority_map[priority_name] = max_workers
@@ -129,7 +126,7 @@ class Scheduler:
         self.thread_priority_map = {}
         self.thread_pools = {}
 
-        for priority_name, max_workers in self.thread_pool_config:
+        for priority_name, max_workers in self.thread_zones:
             executor = ThreadPoolExecutor(
                 max_workers=max_workers,
                 thread_name_prefix='{} PriorityThread'.format(priority_name),
@@ -165,23 +162,30 @@ class Scheduler:
     def schedule_coroutine(self, coroutine, *args, priority=None, sync=False,
                            wait=True, **kwargs):
 
-        priority = priority or self.default_task_priority
+        async def await_future(future):
+            return await future
+
+        if not priority:
+            raise ValueError('no priority set')
 
         if asyncio.iscoroutinefunction(coroutine):
             coroutine = coroutine(*args, **kwargs)
 
-        future = asyncio.Future()
+        future = asyncio.Future(loop=self.loop)
         self.task_queues[priority].put_nowait((coroutine, future,))
 
         if not sync:
             return future
 
-        concurrent_future = asyncio.wrap_future(future)
+        concurrent_future = asyncio.run_coroutine_threadsafe(
+            await_future(future),
+            loop=self.loop,
+        )
 
-        if wait:
-            return future.result()
+        if not wait:
+            return concurrent_future
 
-        return concurrent_future
+        return concurrent_future.result()
 
     def schedule_function(self, function, *args, priority=None, sync=False,
                           wait=True, **kwargs):
@@ -189,25 +193,49 @@ class Scheduler:
         def run_function():
             logger.debug('running %s', function)
 
-            function(*args, **kwargs)
+            return function(*args, **kwargs)
 
-        priority = priority or self.default_thread_priority
+        async def await_future(future):
+            return await future
+
+        if not priority:
+            raise ValueError('no priority set')
+
         executor = self.thread_pools[priority]
         future = self.loop.run_in_executor(executor, run_function)
 
         if not sync:
             return future
 
-        concurrent_future = asyncio.wrap_future(future)
+        concurrent_future = asyncio.run_coroutine_threadsafe(
+            await_future(future),
+            loop=self.loop,
+        )
 
-        if wait:
-            return future.result()
+        if not wait:
+            return concurrent_future
 
-        return concurrent_future
+        return concurrent_future.result()
 
     def schedule(self, function_or_coroutine, *args, priority=None, sync=False,
                  wait=True, **kwargs):
 
-        # TODO: implement
+        if(asyncio.iscoroutine(function_or_coroutine) or
+           asyncio.iscoroutinefunction(function_or_coroutine)):
 
-        raise NotImplementedError
+            return self.schedule_coroutine(
+                function_or_coroutine,
+                *args,
+                priority=priority,
+                sync=sync,
+                **kwargs,
+            )
+
+        else:
+            return self.schedule_function(
+                function_or_coroutine,
+                *args,
+                priority=priority,
+                sync=sync,
+                **kwargs,
+            )
