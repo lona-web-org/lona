@@ -66,6 +66,7 @@ HTTP_REQUEST_PRIORITY = 'system-medium'
 STATIC_REQUEST_PRIORITY = 'system-low'
 WEBSOCKET_MIDDLEWARE_PRIORITY = 'system-medium'
 FRONTEND_VIEW_PRIORITY = 'system-high'
+SHUTDOWN_PRIORITY = 'system-high'
 
 DEFAULT_VIEW_PRIORITY = 'medium'
 

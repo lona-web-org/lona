@@ -117,11 +117,27 @@ class LonaServer:
 
         server_logger.debug('static url set to %s', repr(static_url))
 
-        self.app.router.add_route(
-            '*', static_url, self.handle_static_file_request)
+        async def _handle_static_file_request(*args, **kwargs):
+            return await self.schedule(
+                self.handle_static_file_request,
+                *args,
+                priority=self.settings.STATIC_REQUEST_PRIORITY,
+                **kwargs,
+            )
+
+        async def _handle_http_request(*args, **kwargs):
+            return await self.schedule(
+                self.handle_http_request,
+                *args,
+                priority=self.settings.HTTP_REQUEST_PRIORITY,
+                **kwargs,
+            )
 
         self.app.router.add_route(
-            '*', '/{path_info:.*}', self.handle_http_request)
+            '*', static_url, _handle_static_file_request)
+
+        self.app.router.add_route(
+            '*', '/{path_info:.*}', _handle_http_request)
 
         # finish
         server_logger.debug('setup finish')
@@ -129,8 +145,10 @@ class LonaServer:
     async def shutdown(self, *args, **kwargs):
         server_logger.debug('shutting down')
 
-        await self.run_function_async(
-            self.view_controller.shutdown)
+        await self.schedule(
+            self.view_controller.shutdown,
+            priority=self.settings.SHUTDOWN_PRIORITY,
+        )
 
         self.scheduler.stop()
 
@@ -202,7 +220,10 @@ class LonaServer:
 
             return False, ''
 
-        file_found, abs_path = await self.run_function_async(find_static_file)
+        file_found, abs_path = await self.schedule(
+            find_static_file,
+            priority=self.settings.STATIC_REQUEST_PRIORITY,
+        )
 
         if file_found:
             return FileResponse(abs_path)
@@ -221,11 +242,12 @@ class LonaServer:
                 '%s running websocket middleware %s', connection, middleware)
 
             try:
-                message = await self.run_threadsafe(
+                message = await self.schedule(
                     middleware,
                     self,
                     connection,
                     message,
+                    priority=self.settings.WEBSOCKET_MIDDLEWARE_PRIORITY,
                 )
 
             except CancelledError:
@@ -269,13 +291,12 @@ class LonaServer:
         try:
             async for raw_message in websocket:
                 if raw_message.type == WSMsgType.TEXT:
-
-                    # TODO: scheduling
-                    self.loop.create_task(
+                    self.schedule(
                         self.handle_websocket_message(
                             connection,
                             raw_message.data,
-                        )
+                        ),
+                        priority=self.settings.WEBSOCKET_MIDDLEWARE_PRIORITY,
                     )
 
                 elif raw_message.type == WSMsgType.PING:
@@ -297,6 +318,8 @@ class LonaServer:
         return websocket
 
     async def handle_http_request(self, http_request):
+        # TODO: handle priority overrides by decorators
+
         http_logger.debug('http request incoming')
 
         # websocket requests
@@ -308,8 +331,11 @@ class LonaServer:
         # resolve path
         http_logger.debug('resolving path')
 
-        match, route, match_info = await self.run_function_async(
-            self.router.resolve, http_request.path)
+        match, route, match_info = await self.schedule(
+            self.router.resolve,
+            http_request.path,
+            priority=self.settings.ROUTING_PRIORITY,
+        )
 
         if match:
             http_logger.debug('route %s matched', route)
@@ -322,8 +348,11 @@ class LonaServer:
                     response = await route.handler(http_request)
 
                 else:
-                    response = await self.run_function_async(
-                        route.handler, http_request)
+                    response = await self.schedule(
+                        route.handler,
+                        http_request,
+                        priority=self.settings.DEFAULT_VIEW_PRIORITY,
+                    )
 
                 # FIXME: wsgi container
                 if asyncio.iscoroutine(response):
@@ -333,8 +362,11 @@ class LonaServer:
                 if isinstance(response, Response):
                     return response
 
-                return await self.run_function_async(
-                    self.render_response, response)
+                return await self.schedule(
+                    self.render_response,
+                    response,
+                    priority=self.settings.DEFAULT_VIEW_PRIORITY,
+                )
 
             # non interactive views
             if not route.interactive:
@@ -352,7 +384,12 @@ class LonaServer:
                     return self.render_response(response_dict)
 
                 post_data = await http_request.post()
-                response = await self.run_function_async(run_view, post_data)
+
+                response = await self.schedule(
+                    run_view,
+                    post_data,
+                    priority=self.settings.DEFAULT_VIEW_PRIORITY,
+                )
 
                 return response
 
@@ -372,6 +409,11 @@ class LonaServer:
             return self.render_response(response_dict)
 
         post_data = await http_request.post()
-        response = await self.run_function_async(frontend, post_data)
+
+        response = await self.schedule(
+            frontend,
+            post_data,
+            priority=self.settings.DEFAULT_VIEW_PRIORITY,
+        )
 
         return response
