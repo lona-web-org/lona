@@ -7,7 +7,7 @@ import os
 from jinja2 import Environment, FileSystemLoader
 from yarl import URL
 
-from lona.protocol import InputEventType, Method, encode_html
+from lona.protocol import Method, encode_html
 from lona.input_event import InputEvent
 from lona.html.base import AbstractNode
 from lona.request import Request
@@ -207,14 +207,17 @@ class View:
         self.html = html
         self.input_events = input_events
 
-        # encode message
-        # TODO: window_id
-        message = json.dumps(
-            encode_html(str(self.url), payload, input_events=input_events)
-        )
-
         # send message
         for connection, window_id in connections.items():
+            message = json.dumps(
+                encode_html(
+                    window_id,
+                    str(self.url),
+                    payload,
+                    input_events=input_events
+                )
+            )
+
             connection.send_str(message)
 
     # input events ############################################################
@@ -252,7 +255,7 @@ class View:
                 return
 
         # pending input events
-        if(input_event.input_event_type != InputEventType.CUSTOM and
+        if(not isinstance(input_event.input_event_type, str) and
            self.pending_user_inputs[input_event.name] is not None):
 
             future, nodes = self.pending_user_inputs[input_event.name]
@@ -492,7 +495,7 @@ class ViewController:
 
         # TODO: multi_user_views
 
-    def handle_lona_message(self, connection, method, url, payload):
+    def handle_lona_message(self, connection, window_id, method, url, payload):
         """
         this method gets called by the lona_message_middleware
 
@@ -500,8 +503,6 @@ class ViewController:
 
         # TODO: if a connection starts a new view on a previously used
         # window id, the previous view should be killed
-
-        window_id = 1  # TODO: add support for multiple windows per connection
 
         # views
         if method == Method.VIEW:

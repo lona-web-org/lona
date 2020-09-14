@@ -28,25 +28,26 @@ function Lona(settings) {
     this.settings.target = this.settings.target || '#lona';
     this.settings.push_state = this.settings.push_state || true;
 
-    this.settings.follow_hard_redirects = (
-        this.settings.follow_hard_redirects || true);
+    this.settings.follow_http_redirects = (
+        this.settings.follow_http_redirects || true);
 
     // state ------------------------------------------------------------------
     this.widget_handler = {};
 
     // handle websocket messages ----------------------------------------------
     this.METHOD = {
-        VIEW:                 11,
-        INPUT_EVENT:          12,
-        REDIRECT:             13,
-        HTML:                 14,
-        DESKTOP_NOTIFICATION: 15,
+        VIEW:                101,
+        INPUT_EVENT:         102,
+        REDIRECT:            201,
+        HTTP_REDIRECT:       202,
+        HTML:                203,
     };
 
     this.INPUT_EVENT_TYPE = {
-        CLICK:                21,
-        CHANGE:               22,
-        SUBMIT:               23,
+        CLICK:               301,
+        CHANGE:              302,
+        SUBMIT:              303,
+        CUSTOM:              304,
     };
 
     this._run_custom_message_handlers = function(raw_message, json_data) {
@@ -75,10 +76,16 @@ function Lona(settings) {
                 raw_message, json_data);
         };
 
+        // all lona messages have to start with a window id
+        if(!Number.isInteger(json_data[0])) {
+            return this.lona._run_custom_message_handlers(
+                raw_message, json_data);
+        };
+
         // redirect
-        if(json_data[0] == this.lona.METHOD.REDIRECT) {
-            var url = json_data[1];
-            var interactive = json_data[2];
+        if(json_data[1] == this.lona.METHOD.REDIRECT) {
+            var url = json_data[2];
+            var interactive = json_data[3];
 
             if(interactive) {
                 this.lona.run_view(url);
@@ -89,8 +96,8 @@ function Lona(settings) {
             };
 
         // html
-        } else if(json_data[0] == this.lona.METHOD.HTML) {
-            var url = json_data[1];
+        } else if(json_data[1] == this.lona.METHOD.HTML) {
+            var url = json_data[2];
 
             if(url != this.lona.url) {
                 // this HTML message seems to be related to a previous view
@@ -101,14 +108,10 @@ function Lona(settings) {
             // TODO: title
             history.pushState({}, '', url);
 
-            var html = json_data[2];
-            var patch_input_events = json_data[3];
+            var html = json_data[3];
+            var patch_input_events = json_data[4];
 
             this.lona._show_html(html, patch_input_events);
-
-        // desktop notification
-        } else if(json_data[0] == this.lona.METHOD.DESKTOP_NOTIFICATION) {
-            // TODO: desktop notifications (maybe an other name?)
 
         }
 
@@ -375,8 +378,10 @@ function Lona(settings) {
         };
 
         // send event message
+        var window_id = 1;
+
         var message = [
-            this.METHOD.INPUT_EVENT, this.url, input_event_type,
+            window_id, this.METHOD.INPUT_EVENT, this.url, input_event_type,
         ].concat(
             data,
         ).concat(
@@ -406,7 +411,8 @@ function Lona(settings) {
         // This prevents glitches when switching urls fast.
         this.url = url;
 
-        var message = [this.METHOD.VIEW, url];
+        var window_id = 1;
+        var message = [window_id, this.METHOD.VIEW, url];
 
         if(post_data) {
             message[2] = post_data;

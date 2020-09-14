@@ -5,73 +5,64 @@ class ExitCode:
 
 
 class Method:
-    VIEW = 11
-    INPUT_EVENT = 12
-    REDIRECT = 13
-    HTML = 14
-    DESKTOP_NOTIFICATION = 15
+    VIEW = 101
+    INPUT_EVENT = 102
+    REDIRECT = 201
+    HTTP_REDIRECT = 202
+    HTML = 203
 
 
 class InputEventType:
-    CLICK = 21
-    CHANGE = 22
-    SUBMIT = 23
-    RESET = 24  # TODO: remove (frontend) forms do reset themself)
-    CUSTOM = 25
+    CLICK = 301
+    CHANGE = 302
+    SUBMIT = 303
 
 
 def decode_message(message):
     """
-    returns: (exit_code, method, url, payload)
+    returns: (exit_code, window_id, method, url, payload)
 
     """
 
     if not isinstance(message, list):
-        return ExitCode.INVALID_MESSAGE, None, None, None
+        return ExitCode.INVALID_MESSAGE, None, None, None, None
+
+    if not isinstance(message[0], int):
+        return ExitCode.INVALID_MESSAGE, None, None, None, None
 
     # view
-    if message[0] == Method.VIEW:
-        if not isinstance(message[1], str):
-            return ExitCode.INVALID_MESSAGE, None, None, None
+    if message[1] == Method.VIEW:
+        if not isinstance(message[2], str):
+            return ExitCode.INVALID_MESSAGE, None, None, None, None
 
         payload = None
 
-        if len(message) > 2:
-            payload = message[2]
+        if len(message) > 3:
+            payload = message[3]
 
-        return ExitCode.SUCCESS, Method.VIEW, message[1], payload
+        return ExitCode.SUCCESS, message[0], Method.VIEW, message[2], payload
 
     # input event
-    if message[0] == Method.INPUT_EVENT:
-        if not isinstance(message[1], str):
-            return ExitCode.INVALID_MESSAGE, None, None, None
+    if message[1] == Method.INPUT_EVENT:
+        if not isinstance(message[2], str):
+            return ExitCode.INVALID_MESSAGE, None, None, None, None
 
-        if not (isinstance(message[2], str) or 25 > message[2] > 20):
-            return ExitCode.INVALID_MESSAGE, None, None, None
+        if not (isinstance(message[3], str) or 304 > message[3] > 300):
+            return ExitCode.INVALID_MESSAGE, None, None, None, None
 
-        return ExitCode.SUCCESS, Method.INPUT_EVENT, message[1], message[2:]
+        return (ExitCode.SUCCESS, message[0], Method.INPUT_EVENT,
+                message[2], message[3:])
 
-    return ExitCode.INVALID_MESSAGE, None, None
-
-
-def encode_html(url, html, input_events=True):
-    if not isinstance(url, str):
-        raise TypeError('url has to be string')
-
-    if not isinstance(html, (str, dict)):
-        raise TypeError('html has to be string or dict')
-
-    if not isinstance(input_events, bool):
-        raise TypeError('input_events has to be bool')
-
-    return [Method.HTML, url, html, input_events]
+    return ExitCode.INVALID_MESSAGE, None, None, None, None
 
 
-def encode_redirect(url, interactive=True):
-    if not isinstance(url, str):
-        raise TypeError('url has to be string')
+def encode_redirect(window_id, url, target_url):
+    return [window_id, Method.REDIRECT, url, target_url]
 
-    if not isinstance(interactive, bool):
-        raise TypeError('interactive has to be bool')
 
-    return [Method.REDIRECT, url, interactive]
+def encode_http_redirect(window_id, url, target_url):
+    return [window_id, Method.HTTP_REDIRECT, url, target_url]
+
+
+def encode_html(window_id, url, html, input_events=True):
+    return [window_id, Method.HTML, url, html, input_events]

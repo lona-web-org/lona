@@ -31,11 +31,12 @@ def lona_message_middleware(server, connection, message):
     if not message.json_data:
         return message
 
-    exit_code, method, url, payload = decode_message(message.json_data)
+    exit_code, window_id, method, url, payload = decode_message(
+        message.json_data)
 
     # message cannot be parsed and gets passed down
     if exit_code != ExitCode.SUCCESS:
         return message
 
     server.view_controller.handle_lona_message(
-        connection, method, url, payload)
+        connection, window_id, method, url, payload)

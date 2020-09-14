@@ -3,57 +3,97 @@
 Protocol
 ========
 
+
+Methods
+-------
+
++---------------+------+----------+-------------------------------------------+
+| Name          | Code | Issuer   | Description                               |
++===============+======+==========+===========================================+
+| VIEW          | 101  | Frontend |                                           |
++---------------+------+----------+-------------------------------------------+
+| INPUT_EVENT   | 102  | Frontend |                                           |
++---------------+------+----------+-------------------------------------------+
+| WINDOW_EVENT  | 103  | Frontend | Not implemented yet                       |
++---------------+------+----------+-------------------------------------------+
+| REDIRECT      | 201  | Backend  |                                           |
++---------------+------+----------+-------------------------------------------+
+| HTTP_REDIRECT | 202  | Backend  |                                           |
++---------------+------+----------+-------------------------------------------+
+| HTML          | 203  | Backend  |                                           |
++---------------+------+----------+-------------------------------------------+
+| VIEW_START    | 204  | Backend  | Not implemented yet                       |
++---------------+------+----------+-------------------------------------------+
+| VIEW_STOP     | 205  | Backend  | Not implemented yet                       |
++---------------+------+----------+-------------------------------------------+
+| WINDOW_ACTION | 206  | Backend  | Not implemented yet                       |
++---------------+------+----------+-------------------------------------------+
+
+
+Examples
+''''''''
+
 ::
 
-    Methods
-    -------
+    >> [1, VIEW, 'example.org/foo/bar']
+    >> [1, VIEW, 'example.org/foo/bar?foo=bar', {'foo': 'bar'}]
 
-    VIEW =                 11  # frontend: start a view on the backend
-    INPUT_EVENT =          12  # frontend: notify the backend on a input event
-    REDIRECT =             13  # backend:  redirect the client to another URL
-    HTML =                 14  # backend:  view HTML on the web client
-    DESKTOP_NOTIFICATION = 15  # backend:  issue a desktop notification
+    << [1, REDIRECT, 'example.org/foo/bar']
 
+    << [1, HTML, 'example.org/foo/bar', '<div id="foo"></div>', $INPUT_EVENTS]
+    << [1, HTML, 'example.org/foo/bar', {'foo': {}},            $INPUT_EVENTS]
 
-    Input events types
-    ------------------
-
-    CLICK =                21  # onClick()
-    CHANGE =               22  # onChange()
-    SUBMIT =               23  # form.submit()
-    RESET =                24  # form.reset()
-    CUSTOM =               25
+    >> [1, INPUT_EVENT, 'example.org/foo/bar', $EVENT_PAYLOAD]
 
 
-    Event payloads
-    --------------
+Input Events
+------------
 
-    Click
-        [CLICK, $DATA, $NODE_ID]
-        [CLICK, $DATA, None, $TAG_NAME, $DIV_ID, $DIV_CLASS]
-
-    Change
-        [CHANGE, $DATA, $NODE_ID]
-        [CHANGE, $DATA, None, $TAG_NAME, $DIV_ID, $DIV_CLASS]
-
-    Submit
-        [SUBMIT, $DATA, $NODE_ID]
-        [SUBMIT, $DATA, None, $TAG_NAME, $DIV_ID, $DIV_CLASS]
-
-    Custom
-        [$NAME, $DATA, $NODE_ID]
-        [$NAME, $DATA, None, $TAG_NAME, $DIV_ID, $DIV_CLASS]
++---------------+------+------------------------------------------------------+
+| Name          | Code | Description                                          |
++===============+======+======================================================+
+| CLICK         | 301  | onClick()                                            |
++---------------+------+------------------------------------------------------+
+| CHANGE        | 302  | onChange()                                           |
++---------------+------+------------------------------------------------------+
+| SUBMIT        | 303  | form.submit()                                        |
++---------------+------+------------------------------------------------------+
 
 
-    Examples
-    --------
+Examples
+''''''''
 
-    >> [VIEW, 'example.org/foo/bar']
-    >> [VIEW, 'example.org/foo/bar?foo=bar', {'foo': 'bar'}]
+::
 
-    << [REDIRECT, 'example.org/foo/bar', $INTERACTIVE]
+    >> [1, INPUT_EVENT, 'example.org/foo/bar', CLICK, $DATA, 1600156474948232]
 
-    << [HTML, 'example.org/foo/bar', '<div id="foo"></div>', $INPUT_EVENTS]
-    << [HTML, 'example.org/foo/bar', {'foo': {}},            $INPUT_EVENTS]
+    >> [1, INPUT_EVENT, 'example.org/foo/bar', 'custom-event-name', $DATA,
+        1600156474948232]
 
-    >> [INPUT_EVENT, 'example.org/foo/bar', $EVENT_PAYLOAD]
+    >> [1, INPUT_EVENT, 'example.org/foo/bar', CLICK, $DATA,
+        None, $TAG_NAME, $DIV_ID, $DIV_CLASS]
+
+
+Window Events
+-------------
+
++---------------+------+------------------------------------------------------+
+| Name          | Code | Description                                          |
++===============+======+======================================================+
+| CLOSE         | 401  | Not implemented yet                                  |
++---------------+------+------------------------------------------------------+
+| BLUR          | 402  | Not implemented yet                                  |
++---------------+------+------------------------------------------------------+
+| FOCUS         | 403  | Not implemented yet                                  |
++---------------+------+------------------------------------------------------+
+| RESIZE        | 404  | Not implemented yet                                  |
++---------------+------+------------------------------------------------------+
+
+
+Examples
+''''''''
+
+::
+
+    >> [1, WINDOW_EVENT, 'example.org/foo/bar', CLOSE]
+    >> [1, WINDOW_EVENT, 'example.org/foo/bar', RESIZE, $DATA]
