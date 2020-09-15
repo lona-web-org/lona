@@ -187,6 +187,9 @@ class LonaServer:
         if response_dict['redirect']:
             return HTTPFound(response_dict['redirect'])
 
+        if response_dict['http_redirect']:
+            return HTTPFound(response_dict['http_redirect'])
+
         return Response(
             status=response_dict['status'],
             content_type=response_dict['content_type'],

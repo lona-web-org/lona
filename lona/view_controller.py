@@ -7,11 +7,17 @@ import os
 from jinja2 import Environment, FileSystemLoader
 from yarl import URL
 
-from lona.protocol import Method, encode_html
 from lona.input_event import InputEvent
 from lona.html.base import AbstractNode
 from lona.request import Request
 from lona.utils import acquire
+
+from lona.protocol import (
+    encode_http_redirect,
+    encode_redirect,
+    encode_html,
+    Method,
+)
 
 views_logger = logging.getLogger('lona.server.views')
 templating_logger = logging.getLogger('lona.server.templating')
@@ -103,7 +109,13 @@ class View:
                     view_name=self.name,
                 )
 
-                if response_dict['text']:
+                if response_dict['redirect']:
+                    self.redirect(response_dict['redirect'])
+
+                elif response_dict['http_redirect']:
+                    self.http_redirect(response_dict['http_redirect'])
+
+                elif response_dict['text']:
                     # FIXME: input_events: this makes Widget.on_submit
                     # after a view is finished impossible
 
@@ -168,6 +180,21 @@ class View:
            not self.multiuser):
 
             self.shutdown()
+
+    # lona messages ###########################################################
+    def redirect(self, target_url):
+        for connection, window_id in self.connections.items():
+            message = json.dumps(
+                encode_redirect(window_id, str(self.url), target_url))
+
+            connection.send_str(message)
+
+    def http_redirect(self, target_url):
+        for connection, window_id in self.connections.items():
+            message = json.dumps(
+                encode_http_redirect(window_id, str(self.url), target_url))
+
+            connection.send_str(message)
 
     def show_html(self, html=None, input_events=True, connections={},
                   flush=False):
@@ -362,12 +389,15 @@ class ViewController:
 
     # response dicts ##########################################################
     def render_response_dict(self, raw_response_dict, view_name):
+        # TODO: warn if keys are ambiguous
+
         response_dict = {
             'status': 200,
             'content_type': 'text/html',
             'text': '',
             'file': '',
             'redirect': '',
+            'http_redirect': '',
         }
 
         # string response
@@ -384,10 +414,22 @@ class ViewController:
                     response_dict[key] = value
 
                     views_logger.debug(
-                        "'%s' sets '%s' to ", view_name, key, repr(value))
+                        "'%s' sets '%s' to %s", view_name, key, repr(value))
+
+        # redirects
+        if 'redirect' in raw_response_dict:
+            # TODO: add support for reverse url lookups
+
+            response_dict['redirect'] = raw_response_dict['redirect']
+
+        # http redirect
+        elif 'http_redirect' in raw_response_dict:
+            # TODO: add support for reverse url lookups
+
+            response_dict['http_redirect'] = raw_response_dict['http_redirect']
 
         # template response
-        if 'template' in raw_response_dict:
+        elif 'template' in raw_response_dict:
             views_logger.debug("'%s' is a template view", view_name)
 
             template_context = raw_response_dict

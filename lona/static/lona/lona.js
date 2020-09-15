@@ -26,10 +26,18 @@ function Lona(settings) {
     // settings ---------------------------------------------------------------
     this.settings = settings || {};
     this.settings.target = this.settings.target || '#lona';
-    this.settings.push_state = this.settings.push_state || true;
 
-    this.settings.follow_http_redirects = (
-        this.settings.follow_http_redirects || true);
+    if(typeof(this.settings.push_state) == 'undefined') {
+        this.settings.push_state = true;
+    };
+
+    if(typeof(this.settings.follow_redirects) == 'undefined') {
+        this.settings.follow_redirects = true;
+    };
+
+    if(typeof(this.settings.follow_http_redirects) == 'undefined') {
+        this.settings.follow_http_redirects = true;
+    };
 
     // state ------------------------------------------------------------------
     this.widget_handler = {};
@@ -84,14 +92,25 @@ function Lona(settings) {
 
         // redirect
         if(json_data[1] == this.lona.METHOD.REDIRECT) {
-            var url = json_data[2];
-            var interactive = json_data[3];
+            // TODO: implement loop detection
 
-            if(interactive) {
-                this.lona.run_view(url);
+            if(this.lona.settings.follow_redirects) {
+                this.lona.run_view(json_data[3]);
 
-            } else if(this.lona.settings.follow_hard_redirects) {
-                // TODO: hard redirect
+            } else {
+                console.debug(
+                    "lona: redirect to '" + json_data[3] + "' skipped");
+
+            };
+
+        // http redirect
+        } else if(json_data[1] == this.lona.METHOD.HTTP_REDIRECT) {
+            if(this.lona.settings.follow_http_redirects) {
+                window.location = json_data[3];
+
+            } else {
+                console.debug(
+                    "lona: http redirect to '" + json_data[3] + "' skipped");
 
             };
 
