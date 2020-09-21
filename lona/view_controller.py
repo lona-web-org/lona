@@ -274,6 +274,8 @@ class View:
 
     # input events ############################################################
     def await_user_input(self, html=None, event_type='event', nodes=[]):
+        # TODO: find right priority
+
         async def _await_user_input():
             future = asyncio.Future()
             self.pending_user_inputs[event_type] = [future, nodes]
@@ -283,7 +285,12 @@ class View:
         if html:
             self.show_html(html)
 
-        return self.server.run_coroutine_sync(_await_user_input(), wait=True)
+        return self.server.schedule(
+            _await_user_input(),
+            sync=True,
+            wait=True,
+            priority=self.server.settings.DEFAULT_VIEW_PRIORITY,
+        )
 
     def handle_input_event(self, event_payload):
         input_event = InputEvent(event_payload, self.html)
