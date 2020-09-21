@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from concurrent.futures import ThreadPoolExecutor
 from argparse import ArgumentParser
 import asyncio
 import logging
@@ -66,14 +65,12 @@ if cli_args.shell:
 
 loop = asyncio.get_event_loop()
 app = Application()
-executor = ThreadPoolExecutor(max_workers=cli_args.max_workers)
 
 server = LonaServer(
     app=app,
     loop=loop,
     project_root=cli_args.project_root,
     settings_paths=list(cli_args.settings or []),
-    executor=executor,
 )
 
 app.on_shutdown.append(server.shutdown)
@@ -87,7 +84,7 @@ if cli_args.shell:
 
             os.kill(os.getpid(), signal.SIGTERM)
 
-        loop.run_in_executor(executor, _start_shell)
+        loop.run_in_executor(None, _start_shell)
 
     loop.create_task(start_shell(server))
 

@@ -1,5 +1,4 @@
 from concurrent.futures import CancelledError
-from functools import partial
 import asyncio
 import logging
 import os
@@ -24,14 +23,12 @@ class LonaServer:
     # TODO: add helper code to load middlewares
     # TODO: add helper code to run middlewares
 
-    def __init__(self, app, project_root, settings_paths=[], loop=None,
-                 executor=None):
+    def __init__(self, app, project_root, settings_paths=[], loop=None):
 
         server_logger.debug("starting server in '%s'", project_root)
 
         self.app = app
         self.project_root = project_root
-        self.executor = executor
         self.loop = loop or self.app.loop
 
         # setup settings
@@ -177,29 +174,6 @@ class LonaServer:
         self.scheduler.stop()
 
     # asyncio helper ##########################################################
-    async def run_function_async(self, function, *args, **kwargs):
-        if not isinstance(function, partial):
-            function = partial(function, *args, **kwargs)
-
-        return await self.loop.run_in_executor(self.executor, function)
-
-    def run_coroutine_sync(self, coroutine, wait=True):
-        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self.loop)
-
-        if wait:
-            return future.result()
-
-        return future
-
-    async def run_threadsafe(self, function, *args, **kwargs):
-        if asyncio.iscoroutine(function):
-            return await function
-
-        if asyncio.iscoroutinefunction(function):
-            return await function(*args, **kwargs)
-
-        return await self.run_function_async(function, *args, **kwargs)
-
     def schedule(self, *args, **kwargs):
         return self.scheduler.schedule(*args, **kwargs)
 
