@@ -13,9 +13,14 @@ class Connection:
         return self.websocket is not None
 
     def send_str(self, string):
+        # TODO: error handling (disconnects, reconnects, etc.)
+        # TODO: find right priority
+
         if not self.is_interactive:
             raise NotInteractiveError
 
-        # TODO error handling (disconnects, reconnects, etc.)
-
-        self.server.run_coroutine_sync(self.websocket.send_str(string))
+        self.server.schedule(
+            self.websocket.send_str(string),
+            sync=True,
+            priority=self.server.settings.DEFAULT_VIEW_PRIORITY,
+        )
