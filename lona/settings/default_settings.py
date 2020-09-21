@@ -29,13 +29,18 @@ INTERNAL_ERROR_500_TEMPLATE = 'lona.views.internal_error_500'
 VIEW_CACHING = True
 VIEW_CACHE_PRELOAD = False
 
-# middlewares
+# websocket middlewares
 CORE_WEBSOCKET_MIDDLEWARES = [
     'lona.middlewares.websocket_middlewares.json_middleware',
     'lona.middlewares.websocket_middlewares.lona_message_middleware',
 ]
 
 WEBSOCKET_MIDDLEWARES = []
+
+# view middlewares
+VIEW_MIDDLEWARES = [
+    'lona.middlewares.view_middlewares.lona_session_middleware',
+]
 
 # scheduling
 TASK_ZONES = [
@@ -64,7 +69,9 @@ DEFAULT_THREAD_ZONE = 'medium'
 ROUTING_PRIORITY = 'system-high'
 HTTP_REQUEST_PRIORITY = 'system-medium'
 STATIC_REQUEST_PRIORITY = 'system-low'
+CONNECTION_MIDDLEWARE_PRIORITY = 'system-medium'
 WEBSOCKET_MIDDLEWARE_PRIORITY = 'system-medium'
+VIEW_MIDDLEWARE_PRIORITY = 'system-medium'
 FRONTEND_VIEW_PRIORITY = 'system-high'
 SHUTDOWN_PRIORITY = 'system-high'
 

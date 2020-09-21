@@ -28,8 +28,9 @@ class Client:
 
 
 class Request:
-    def __init__(self, view, post_data):
+    def __init__(self, view, connection, post_data):
         self._view = view
+        self.connection = connection
 
         self.url = self._view.url
         self.GET = dict(self._view.url.query)
@@ -40,3 +41,7 @@ class Request:
         self.client = Client(self._view)
         self.route = self._view.route
         self.match_info = self._view.match_info
+
+    @property
+    def user(self):
+        return getattr(self.connection, 'user', None)

@@ -8,8 +8,6 @@ class Connection:
         self.http_request = http_request
         self.websocket = websocket
 
-        self.user = None
-
     @property
     def is_interactive(self):
         return self.websocket is not None

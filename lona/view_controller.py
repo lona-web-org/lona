@@ -9,8 +9,8 @@ from yarl import URL
 
 from lona.input_event import InputEvent
 from lona.html.base import AbstractNode
+from lona.utils import acquire, Mapping
 from lona.request import Request
-from lona.utils import acquire
 
 from lona.protocol import (
     encode_http_redirect,
@@ -85,14 +85,23 @@ class View:
         # which are not waiting for user input
         self.shutdown_error_class = None
 
-    def run(self, post_data=None):
-        self.post_data = post_data
-        request = Request(view=self, post_data=post_data)
+    def gen_request(self, connection, post_data=None):
+        return Request(
+            view=self,
+            connection=connection,
+            post_data=post_data,
+        )
+
+    def run(self, request, initial_connection):
+        self.post_data = request.POST
+        self.initial_connection = initial_connection
 
         handler_args = (request,)
         handler_kwargs = dict(self.match_info or {})
 
         # run view
+        request.connection = self.initial_connection
+
         try:
             # TODO sync vs async
             if self.is_class_based:
@@ -104,27 +113,7 @@ class View:
                     *handler_args, **handler_kwargs)
 
             if raw_response_dict:
-                response_dict = self.view_controller.render_response_dict(
-                    raw_response_dict,
-                    view_name=self.name,
-                )
-
-                if response_dict['redirect']:
-                    self.redirect(response_dict['redirect'])
-
-                elif response_dict['http_redirect']:
-                    self.http_redirect(response_dict['http_redirect'])
-
-                elif response_dict['text']:
-                    # FIXME: input_events: this makes Widget.on_submit
-                    # after a view is finished impossible
-
-                    self.show_html(
-                        response_dict['text'],
-                        input_events=False,
-                    )
-
-                return response_dict
+                return self.handle_raw_response_dict(raw_response_dict)
 
         except UserAbort:
             pass
@@ -182,15 +171,19 @@ class View:
             self.shutdown()
 
     # lona messages ###########################################################
-    def redirect(self, target_url):
-        for connection, window_id in self.connections.items():
+    def redirect(self, target_url, connections={}):
+        connections = connections or self.connections
+
+        for connection, window_id in connections.items():
             message = json.dumps(
                 encode_redirect(window_id, str(self.url), target_url))
 
             connection.send_str(message)
 
-    def http_redirect(self, target_url):
-        for connection, window_id in self.connections.items():
+    def http_redirect(self, target_url, connections={}):
+        connections = connections or self.connections
+
+        for connection, window_id in connections.items():
             message = json.dumps(
                 encode_http_redirect(window_id, str(self.url), target_url))
 
@@ -246,6 +239,38 @@ class View:
             )
 
             connection.send_str(message)
+
+    def handle_raw_response_dict(self, raw_response_dict, connections={}):
+        connections = connections or self.connections
+
+        response_dict = self.view_controller.render_response_dict(
+            raw_response_dict,
+            view_name=self.name,
+        )
+
+        if response_dict['redirect']:
+            self.redirect(
+                response_dict['redirect'],
+                connections=connections,
+            )
+
+        elif response_dict['http_redirect']:
+            self.http_redirect(
+                response_dict['http_redirect'],
+                connections=connections,
+            )
+
+        elif response_dict['text']:
+            # FIXME: input_events: this makes Widget.on_submit
+            # after a view is finished impossible
+
+            self.show_html(
+                response_dict['text'],
+                input_events=self.input_events,
+                connections=connections,
+            )
+
+        return response_dict
 
     # input events ############################################################
     def await_user_input(self, html=None, event_type='event', nodes=[]):
@@ -304,7 +329,12 @@ class View:
 
         # root input handler (class based views)
         if self.has_input_event_handler:
-            request = Request(self, self.post_data)
+            request = Request(
+                view=self,
+                initial_connection=self.initial_connection,
+                post_data=self.post_data,
+            )
+
             input_event = self.handler.handle_input_event(request, input_event)
 
             if not input_event:
@@ -340,15 +370,17 @@ class ViewController:
             views_logger.debug('cache is empty')
 
         # views
-        self.running_views = {
-            # user object: {
-            #   route object: view object,
-            # }
-        }
+        self.running_views = Mapping()
+        # prototype: {
+        #    user object: {
+        #      route object: view object,
+        #    }
+        # }
 
-        self.running_multi_user_views = {
-            # route object: view object,
-        }
+        self.running_multi_user_views = Mapping()
+        # prototype: {
+        #    route object: view object,
+        # }
 
     def start(self):
         # start multiuser views
@@ -537,6 +569,53 @@ class ViewController:
 
         # TODO: multi_user_views
 
+    def run_middlewares(self, request, view):
+        for middleware in self.server.view_middlewares:
+            views_logger.debug('running %s on %s', middleware, request)
+
+            raw_response_dict = self.server.schedule(
+                middleware,
+                self.server,
+                request,
+                view.handler,
+                priority=self.server.settings.VIEW_MIDDLEWARE_PRIORITY,
+                sync=True,
+                wait=True,
+            )
+
+            if raw_response_dict:
+                views_logger.debug('request got handled by %s', middleware)
+
+                return raw_response_dict
+
+    def run_view_non_interactive(self, url, connection, route=None,
+                                 match_info=None, frontend=False,
+                                 post_data=None):
+
+        view = self.get_view(
+            url=url,
+            route=route,
+            match_info=match_info,
+            frontend=frontend,
+        )
+
+        request = view.gen_request(
+            connection=connection,
+            post_data=post_data,
+        )
+
+        raw_response_dict = self.run_middlewares(request, view)
+
+        if raw_response_dict:
+            # request got handled by a middleware
+
+            return view.handle_raw_response_dict(raw_response_dict)
+
+        return view.run(
+            request=request,
+            initial_connection=connection,
+        )
+
     def handle_lona_message(self, connection, window_id, method, url, payload):
         """
         this method gets called by the lona_message_middleware
@@ -558,12 +637,36 @@ class ViewController:
             if not match:
                 # TODO: 404
 
-                pass
+                return
+
+            view = self.get_view(
+                url=url,
+                route=route,
+                match_info=match_info,
+            )
+
+            request = view.gen_request(
+                connection=connection,
+                post_data=payload,
+            )
+
+            # run view middlewares
+            raw_response_dict = self.run_middlewares(request, view)
+
+            if raw_response_dict:
+                # message got handled by a middleware
+
+                view.handle_raw_response_dict(
+                    raw_response_dict,
+                    connections={connection: window_id},
+                )
+
+                return
 
             # reconnect or close previous started single user views
             # for this route
-            elif(connection.user in self.running_views and
-                 route in self.running_views[connection.user]):
+            if(connection.user in self.running_views and
+               route in self.running_views[connection.user]):
 
                 view = self.running_views[connection.user][route]
 
@@ -585,13 +688,6 @@ class ViewController:
                 pass
 
             # start view
-            # TODO: scheduling
-            view = self.get_view(
-                url=url,
-                route=route,
-                match_info=match_info,
-            )
-
             if connection.user not in self.running_views:
                 self.running_views[connection.user] = {}
 
@@ -599,7 +695,7 @@ class ViewController:
 
             view.add_connection(connection, window_id)
 
-            view.run(post_data=payload)
+            view.run(request=request, initial_connection=connection)
 
         # input events
         elif method == Method.INPUT_EVENT:

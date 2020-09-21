@@ -21,6 +21,9 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 
 class LonaServer:
+    # TODO: add helper code to load middlewares
+    # TODO: add helper code to run middlewares
+
     def __init__(self, app, project_root, settings_paths=[], loop=None,
                  executor=None):
 
@@ -109,6 +112,27 @@ class LonaServer:
             server_logger.debug("loading '%s'", middleware)
 
             self.websocket_middlewares[index] = acquire(middleware)[1]
+
+        if not self.websocket_middlewares:
+            server_logger.debug('no websocket middlewares loaded')
+
+        # setup view middlewares
+        server_logger.debug('setup view middlewares')
+
+        self.view_middlewares = [
+            *self.settings.VIEW_MIDDLEWARES,
+        ]
+
+        for index, middleware in enumerate(self.view_middlewares):
+            if callable(middleware):
+                continue
+
+            server_logger.debug("loading '%s'", middleware)
+
+            self.view_middlewares[index] = acquire(middleware)[1]
+
+        if not self.view_middlewares:
+            server_logger.debug('no view middlewares loaded')
 
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')
@@ -371,52 +395,41 @@ class LonaServer:
                     priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
 
+            connection = Connection(self, http_request)
+
             # non interactive views
             if not route.interactive:
                 http_logger.debug('non-interactive mode')
 
-                def run_view(post_data):
-                    view = self.view_controller.get_view(
-                        url=http_request.path,
-                        route=route,
-                        match_info=match_info,
-                    )
-
-                    response_dict = view.run(post_data=post_data)
-
-                    return self.render_response(response_dict)
-
                 post_data = await http_request.post()
 
-                response = await self.schedule(
-                    run_view,
-                    post_data,
+                response_dict = await self.schedule(
+                    self.view_controller.run_view_non_interactive,
+                    url=http_request.path,
+                    connection=connection,
+                    route=route,
+                    match_info=match_info,
+                    frontend=False,
+                    post_data=post_data,
                     priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
 
-                return response
+                return self.render_response(response_dict)
 
         # frontend views
         http_logger.debug('frontend mode')
 
-        def frontend(post_data):
-            view = self.view_controller.get_view(
-                url=http_request.path,
-                route=route,
-                match_info=match_info,
-                frontend=True,
-            )
-
-            response_dict = view.run(post_data=post_data)
-
-            return self.render_response(response_dict)
-
         post_data = await http_request.post()
 
-        response = await self.schedule(
-            frontend,
-            post_data,
+        response_dict = await self.schedule(
+            self.view_controller.run_view_non_interactive,
+            url=http_request.path,
+            connection=connection,
+            route=route,
+            match_info=match_info,
+            frontend=True,
+            post_data=post_data,
             priority=self.settings.DEFAULT_VIEW_PRIORITY,
         )
 
-        return response
+        return self.render_response(response_dict)
