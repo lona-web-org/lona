@@ -63,6 +63,9 @@ class TaskWorker:
                 if not future.done() and not future.cancelled():
                     future.set_exception(error)
 
+            finally:
+                self.queue.task_done()
+
         logger.debug('%s: stopped', self.name)
 
     def start(self):
