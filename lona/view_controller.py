@@ -699,10 +699,11 @@ class ViewController:
                 self.running_views[connection.user] = {}
 
             self.running_views[connection.user][route] = view
-
             view.add_connection(connection, window_id)
-
             view.run(request=request, initial_connection=connection)
+
+            # remove view from running views
+            self.running_views[connection.user].pop(route)
 
         # input events
         elif method == Method.INPUT_EVENT:
