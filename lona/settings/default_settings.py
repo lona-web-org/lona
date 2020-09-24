@@ -37,9 +37,9 @@ CORE_WEBSOCKET_MIDDLEWARES = [
 
 WEBSOCKET_MIDDLEWARES = []
 
-# view middlewares
-VIEW_MIDDLEWARES = [
-    'lona.middlewares.view_middlewares.lona_session_middleware',
+# request middlewares
+REQUEST_MIDDLEWARES = [
+    'lona.middlewares.request_middlewares.lona_session_middleware',
 ]
 
 # scheduling
@@ -71,7 +71,7 @@ HTTP_REQUEST_PRIORITY = 'system-medium'
 STATIC_REQUEST_PRIORITY = 'system-low'
 CONNECTION_MIDDLEWARE_PRIORITY = 'system-medium'
 WEBSOCKET_MIDDLEWARE_PRIORITY = 'system-medium'
-VIEW_MIDDLEWARE_PRIORITY = 'system-medium'
+REQUEST_MIDDLEWARE_PRIORITY = 'system-medium'
 FRONTEND_VIEW_PRIORITY = 'system-high'
 SHUTDOWN_PRIORITY = 'system-high'
 

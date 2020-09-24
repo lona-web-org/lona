@@ -113,23 +113,23 @@ class LonaServer:
         if not self.websocket_middlewares:
             server_logger.debug('no websocket middlewares loaded')
 
-        # setup view middlewares
-        server_logger.debug('setup view middlewares')
+        # setup request middlewares
+        server_logger.debug('setup request middlewares')
 
-        self.view_middlewares = [
-            *self.settings.VIEW_MIDDLEWARES,
+        self.request_middlewares = [
+            *self.settings.REQUEST_MIDDLEWARES,
         ]
 
-        for index, middleware in enumerate(self.view_middlewares):
+        for index, middleware in enumerate(self.request_middlewares):
             if callable(middleware):
                 continue
 
             server_logger.debug("loading '%s'", middleware)
 
-            self.view_middlewares[index] = acquire(middleware)[1]
+            self.request_middlewares[index] = acquire(middleware)[1]
 
-        if not self.view_middlewares:
-            server_logger.debug('no view middlewares loaded')
+        if not self.request_middlewares:
+            server_logger.debug('no request middlewares loaded')
 
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')

@@ -577,7 +577,7 @@ class ViewController:
         # TODO: multi_user_views
 
     def run_middlewares(self, request, view):
-        for middleware in self.server.view_middlewares:
+        for middleware in self.server.request_middlewares:
             views_logger.debug('running %s on %s', middleware, request)
 
             raw_response_dict = self.server.schedule(
@@ -585,7 +585,7 @@ class ViewController:
                 self.server,
                 request,
                 view.handler,
-                priority=self.server.settings.VIEW_MIDDLEWARE_PRIORITY,
+                priority=self.server.settings.REQUEST_MIDDLEWARE_PRIORITY,
                 sync=True,
                 wait=True,
             )
@@ -625,12 +625,10 @@ class ViewController:
 
     def handle_lona_message(self, connection, window_id, method, url, payload):
         """
-        this method gets called by the lona_message_middleware
+        this method gets called by the
+        lona.middlewares.websocket_middlewares.lona_message_middleware
 
         """
-
-        # TODO: if a connection starts a new view on a previously used
-        # window id, the previous view should be killed
 
         # views
         if method == Method.VIEW:
@@ -657,7 +655,7 @@ class ViewController:
                 post_data=payload,
             )
 
-            # run view middlewares
+            # run request middlewares
             raw_response_dict = self.run_middlewares(request, view)
 
             if raw_response_dict:
