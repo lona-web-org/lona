@@ -228,7 +228,7 @@ class View:
         self.input_events = input_events
 
         # send message
-        for connection, window_id in connections.items():
+        for connection, window_id in list(connections.items()):
             message = json.dumps(
                 encode_html(
                     window_id,
