@@ -44,12 +44,10 @@ class View:
         self.match_info = match_info
 
         # analyze handler
+        self.is_daemon = False
         self.is_class_based = False
         self.has_input_event_handler = False
         self.has_root_input_event_handler = False
-
-        self.continue_in_background = getattr(
-            self.handler, 'continue_in_background', False)
 
         self.multiuser = getattr(self.handler, 'multiuser', False)
 
@@ -166,7 +164,7 @@ class View:
         # if the last connection gets closed and the user should
         # not continue running in background, it gets shutdown
         if(not self.connections and
-           not self.continue_in_background and
+           not self.is_daemon and
            not self.multiuser):
 
             self.shutdown()
@@ -672,11 +670,12 @@ class ViewController:
             # reconnect or close previous started single user views
             # for this route
             if(connection.user in self.running_views and
-               route in self.running_views[connection.user]):
+               route in self.running_views[connection.user] and
+               self.running_views[connection.user][route].is_daemon):
 
                 view = self.running_views[connection.user][route]
 
-                if not view.is_finished and view.continue_in_background:
+                if not view.is_finished and view.is_daemon:
                     view.add_connection(
                         connection=connection, window_id=window_id)
 

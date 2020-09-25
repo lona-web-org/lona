@@ -27,6 +27,14 @@ class Client:
         )
 
 
+class View:
+    def __init__(self, view):
+        self._view = view
+
+    def daemonize(self):
+        self._view.is_daemon = True
+
+
 class Request:
     def __init__(self, view, connection, post_data):
         self._view = view
@@ -39,6 +47,7 @@ class Request:
 
         self.server = self._view.server
         self.client = Client(self._view)
+        self.view = View(self._view)
         self.route = self._view.route
         self.match_info = self._view.match_info
 
