@@ -89,11 +89,6 @@ class LonaServer:
         server_logger.debug('loading static dirs %s',
                             repr(self.static_dirs)[1:-1])
 
-        # setup views
-        server_logger.debug('setup views')
-
-        self.view_controller = ViewController(self)
-
         # setup websocket middlewares
         server_logger.debug('setup websocket middlewares')
 
@@ -159,6 +154,12 @@ class LonaServer:
 
         self.app.router.add_route(
             '*', '/{path_info:.*}', _handle_http_request)
+
+        # setup views
+        server_logger.debug('setup views')
+
+        self.view_controller = ViewController(self)
+        self.view_controller.start()
 
         # finish
         server_logger.debug('setup finish')

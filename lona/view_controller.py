@@ -49,7 +49,7 @@ class View:
         self.has_input_event_handler = False
         self.has_root_input_event_handler = False
 
-        self.multiuser = getattr(self.handler, 'multiuser', False)
+        self.multi_user = getattr(self.handler, 'multi_user', False)
 
         if inspect.isclass(self.handler):
             self.handler = handler()
@@ -89,6 +89,15 @@ class View:
             view=self,
             connection=connection,
             post_data=post_data,
+            multi_user=False,
+        )
+
+    def gen_multi_user_request(self):
+        return Request(
+            view=self,
+            connection=None,
+            post_data=None,
+            multi_user=True,
         )
 
     def run(self, request, initial_connection):
@@ -114,7 +123,7 @@ class View:
             if raw_response_dict:
                 return self.handle_raw_response_dict(raw_response_dict)
 
-        except UserAbort:
+        except (UserAbort, SystemShutdown):
             pass
 
         except Exception:
@@ -142,13 +151,13 @@ class View:
                 future.set_exception(error_class())
 
     # connection managment ####################################################
-    def add_connection(self, connection, window_id):
-        self.connections[connection] = window_id
+    def add_connection(self, connection, window_id, url):
+        self.connections[connection] = (window_id, url, )
 
         self.show_html(
             html=self.html,
             input_events=self.input_events,
-            connections={connection: window_id},
+            connections={connection: (window_id, url, )},
             flush=True,
         )
 
@@ -165,7 +174,7 @@ class View:
         # not continue running in background, it gets shutdown
         if(not self.connections and
            not self.is_daemon and
-           not self.multiuser):
+           not self.multi_user):
 
             self.shutdown()
 
@@ -227,11 +236,11 @@ class View:
         self.input_events = input_events
 
         # send message
-        for connection, window_id in list(connections.items()):
+        for connection, (window_id, url) in list(connections.items()):
             message = json.dumps(
                 encode_html(
                     window_id,
-                    str(self.url),
+                    url,
                     payload,
                     input_events=input_events
                 )
@@ -389,9 +398,28 @@ class ViewController:
         # }
 
     def start(self):
-        # start multiuser views
-        # TODO
-        pass
+        # TODO: add support for custom view priorities
+
+        views_logger.debug('starting multi user views')
+
+        for route in self.server.router.routes:
+            view = self.get_view(route=route)
+
+            if view.multi_user:
+                views_logger.debug('starting %s as multi user view', view)
+
+                request = view.gen_multi_user_request()
+                self.running_multi_user_views[route] = view
+
+                priority = \
+                    self.server.settings.DEFAULT_MULTI_USER_VIEW_PRIORITY
+
+                self.server.schedule(
+                    view.run,
+                    request=request,
+                    initial_connection=None,
+                    priority=priority,
+                )
 
     def shutdown(self):
         # shutdown running views per user
@@ -399,7 +427,9 @@ class ViewController:
             for route, view in views.items():
                 view.shutdown(error_class=SystemShutdown)
 
-        # TODO multi_user_views
+        # shutdown multi user views
+        for route, view in self.running_multi_user_views.items():
+            view.shutdown(error_class=SystemShutdown)
 
     # templating ##############################################################
     def get_template(self, template_name):
@@ -534,15 +564,20 @@ class ViewController:
 
         return self.cache[import_string]['view']
 
-    def get_view(self, url, route=None, match_info=None, frontend=False):
+    def get_view(self, url=None, route=None, match_info=None, frontend=False):
         handler = None
-        url = URL(url)
+
+        if not url and not route:
+            raise ValueError
+
+        if url:
+            url = URL(url)
 
         if frontend:
             handler = (route.frontend_view or
                        self.server.settings.FRONTEND_VIEW)
 
-        elif not route:
+        elif url:
             match, route, match_info = self.server.router.resolve(url.path)
 
             if match:
@@ -573,7 +608,8 @@ class ViewController:
             for route, view in views.items():
                 view.remove_connection(connection, window_id=None)
 
-        # TODO: multi_user_views
+        for route, view in self.running_multi_user_views.items():
+            view.remove_connection(connection, window_id=None)
 
     def run_middlewares(self, request, view):
         for middleware in self.server.request_middlewares:
@@ -629,20 +665,25 @@ class ViewController:
 
         """
 
+        url_object = URL(url)
+
         # views
         if method == Method.VIEW:
             # disconnect client window from previous view
             self.remove_connection(connection, window_id)
 
             # resolve url
-            url = URL(url)
-            match, route, match_info = self.server.router.resolve(url.path)
+            match, route, match_info = self.server.router.resolve(
+                url_object.path)
 
             if not match:
                 # TODO: 404
 
                 return
 
+            # A View object has to be retrieved always to run
+            # REQUEST_MIDDLEWARES on the current request.
+            # Otherwise authentication would not be possible.
             view = self.get_view(
                 url=url,
                 route=route,
@@ -677,31 +718,39 @@ class ViewController:
 
                 if not view.is_finished and view.is_daemon:
                     view.add_connection(
-                        connection=connection, window_id=window_id)
+                        connection=connection,
+                        window_id=window_id,
+                        url=url,
+                    )
 
                     return
 
                 else:
                     view.shutdown()
 
-            # connect to a mult user view
-            elif(connection.user in self.running_multi_user_views and
-                 route in self.running_multi_user_views[connection.user]):
+            # connect to a multi user view
+            elif(route in self.running_multi_user_views):
+                self.running_multi_user_views[route].add_connection(
+                    connection=connection,
+                    window_id=window_id,
+                    url=url,
+                )
 
-                # TODO: implement
-
-                pass
+                return
 
             # start view
             if connection.user not in self.running_views:
                 self.running_views[connection.user] = {}
 
             self.running_views[connection.user][route] = view
-            view.add_connection(connection, window_id)
-            view.run(request=request, initial_connection=connection)
 
-            # remove view from running views
-            self.running_views[connection.user].pop(route)
+            view.add_connection(
+                connection=connection,
+                window_id=window_id,
+                url=url,
+            )
+
+            view.run(request=request, initial_connection=connection)
 
         # input events
         elif method == Method.INPUT_EVENT:
@@ -709,7 +758,7 @@ class ViewController:
                 return
 
             for route, view in self.running_views[connection.user].items():
-                if str(view.url) == url:
+                if view.url == url_object:
                     view.handle_input_event(payload)
 
                     break

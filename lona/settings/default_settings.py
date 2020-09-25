@@ -44,6 +44,8 @@ REQUEST_MIDDLEWARES = [
 
 # scheduling
 TASK_ZONES = [
+    ('service',         5),
+
     ('system-high',    10),
     ('system-medium',   5),
     ('system-low',      2),
@@ -54,6 +56,8 @@ TASK_ZONES = [
 ]
 
 THREAD_ZONES = [
+    ('service',         5),
+
     ('system-high',    10),
     ('system-medium',   5),
     ('system-low',      2),
@@ -75,6 +79,7 @@ REQUEST_MIDDLEWARE_PRIORITY = 'system-medium'
 FRONTEND_VIEW_PRIORITY = 'system-high'
 SHUTDOWN_PRIORITY = 'system-high'
 
+DEFAULT_MULTI_USER_VIEW_PRIORITY = 'service'
 DEFAULT_VIEW_PRIORITY = 'medium'
 
 # debugger

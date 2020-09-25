@@ -1,6 +1,6 @@
-def multiuser(function=None):
+def multi_user(function=None):
     def decorator(function):
-        function.multiuser = True
+        function.multi_user = True
 
         return function
 
