@@ -339,7 +339,7 @@ class View:
         if self.has_input_event_handler:
             request = Request(
                 view=self,
-                initial_connection=self.initial_connection,
+                connection=self.initial_connection,
                 post_data=self.post_data,
             )
 
