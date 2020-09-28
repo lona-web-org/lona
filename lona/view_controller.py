@@ -15,6 +15,7 @@ from lona.request import Request
 from lona.protocol import (
     encode_http_redirect,
     encode_redirect,
+    InputEventType,
     encode_html,
     Method,
 )
@@ -314,7 +315,7 @@ class View:
                 return
 
         # pending input events
-        if(not isinstance(input_event.input_event_type, str) and
+        if(input_event.input_event_type != InputEventType.CUSTOM and
            self.pending_user_inputs[input_event.name] is not None):
 
             future, nodes = self.pending_user_inputs[input_event.name]

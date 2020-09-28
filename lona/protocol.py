@@ -16,6 +16,7 @@ class InputEventType:
     CLICK = 301
     CHANGE = 302
     SUBMIT = 303
+    CUSTOM = 304
 
 
 def decode_message(message):
