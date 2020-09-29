@@ -330,6 +330,8 @@ class LonaServer:
 
             return await self.handle_websocket_request(http_request)
 
+        connection = Connection(self, http_request)
+
         # resolve path
         http_logger.debug('resolving path')
 
@@ -369,8 +371,6 @@ class LonaServer:
                     response,
                     priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
-
-            connection = Connection(self, http_request)
 
             # non interactive views
             if not route.interactive:

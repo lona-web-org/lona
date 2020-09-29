@@ -126,10 +126,15 @@ class View:
         except (UserAbort, SystemShutdown):
             pass
 
-        except Exception:
-            # TODO: 500 handler
+        except Exception as e:
+            views_logger.error(
+                'Exception raised while running %s',
+                self.handler,
+                exc_info=True,
+            )
 
-            raise
+            return self.handle_raw_response_dict(
+                self.view_controller.handle_500(request, e))
 
         finally:
             self.is_finished = True
@@ -400,6 +405,42 @@ class ViewController:
     def start(self):
         # TODO: add support for custom view priorities
 
+        # error handler
+        views_logger.debug('loading error handler')
+
+        views_logger.debug(
+            "loading 404 handler from '%s'",
+            self.server.settings.ERROR_404_HANDLER,
+        )
+
+        self.error_404_handler = acquire(
+            self.server.settings.ERROR_404_HANDLER)[1]
+
+        views_logger.debug(
+            "loading 404 fallback handler from '%s'",
+            self.server.settings.ERROR_404_FALLBACK_HANDLER,
+        )
+
+        self.error_404_fallback_handler = acquire(
+            self.server.settings.ERROR_404_FALLBACK_HANDLER)[1]
+
+        views_logger.debug(
+            "loading 500 handler from '%s'",
+            self.server.settings.ERROR_500_HANDLER,
+        )
+
+        self.error_500_handler = acquire(
+            self.server.settings.ERROR_500_HANDLER)[1]
+
+        views_logger.debug(
+            "loading 500 fallback handler from '%s'",
+            self.server.settings.ERROR_500_FALLBACK_HANDLER,
+        )
+
+        self.error_500_fallback_handler = acquire(
+            self.server.settings.ERROR_500_FALLBACK_HANDLER)[1]
+
+        # multi user views
         views_logger.debug('starting multi user views')
 
         for route in self.server.router.routes:
@@ -518,6 +559,35 @@ class ViewController:
 
         return response_dict
 
+    # error handler ###########################################################
+    def handle_404(self, request):
+        try:
+            return self.error_404_handler(request)
+
+        except Exception:
+            views_logger.error(
+                'Exception occurred while running %s. Falling back to %s',
+                self.error_404_handler,
+                self.error_404_fallback_handler,
+                exc_info=True,
+            )
+
+        return self.error_404_fallback_handler(request)
+
+    def handle_500(self, request, exception):
+        try:
+            return self.error_500_handler(request, exception)
+
+        except Exception:
+            views_logger.error(
+                'Exception occurred while running %s. Falling back to %s',
+                self.error_500_handler,
+                self.error_500_fallback_handler,
+                exc_info=True,
+            )
+
+        return self.error_500_fallback_handler(request, exception)
+
     # view objects ############################################################
     def get_handler(self, import_string):
         # TODO: ambiguous log messages
@@ -574,8 +644,10 @@ class ViewController:
             url = URL(url)
 
         if frontend:
-            handler = (route.frontend_view or
-                       self.server.settings.FRONTEND_VIEW)
+            handler = self.server.settings.FRONTEND_VIEW
+
+            if route and route.frontend_view:
+                handler = route.frontend_view
 
         elif url:
             match, route, match_info = self.server.router.resolve(url.path)
@@ -583,8 +655,8 @@ class ViewController:
             if match:
                 handler = route.handler
 
-            else:  # 404: not found
-                handler = self.server.settings.NOT_FOUND_404_VIEW
+            else:
+                handler = self.handle_404
 
         else:
             handler = route.handler
@@ -675,11 +747,6 @@ class ViewController:
             # resolve url
             match, route, match_info = self.server.router.resolve(
                 url_object.path)
-
-            if not match:
-                # TODO: 404
-
-                return
 
             # A View object has to be retrieved always to run
             # REQUEST_MIDDLEWARES on the current request.

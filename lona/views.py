@@ -5,15 +5,16 @@ def frontend(request):
     }
 
 
-def not_found_404(request):
+def handle_404(request):
     return {
-        'template': request.server.settings.NOT_FOUND_404_TEMPLATE,
+        'template': request.server.settings.ERROR_404_TEMPLATE,
         'request': request,
     }
 
 
-def internal_error_500(request):
+def handle_500(request, exception):
     return {
-        'template': request.server.settings.INTERNAL_ERROR_500_TEMPLATE,
+        'template': request.server.settings.ERROR_500_TEMPLATE,
         'request': request,
+        'exception': exception,
     }

@@ -11,8 +11,8 @@ CORE_TEMPLATE_DIRS = [
 TEMPLATE_DIRS = []
 
 FRONTEND_TEMPLATE = 'lona/frontend.html'
-NOT_FOUND_404_TEMPLATE = 'lona/404.html'
-INTERNAL_ERROR_500_TEMPLATE = 'lona/500.html'
+ERROR_404_TEMPLATE = 'lona/404.html'
+ERROR_500_TEMPLATE = 'lona/500.html'
 
 # static files
 CORE_STATIC_DIRS = [
@@ -24,10 +24,14 @@ STATIC_URL_PREFIX = '/static/'
 
 # views
 FRONTEND_VIEW = 'lona.views.frontend'
-NOT_FOUND_404_VIEW = 'lona.views.not_found_404'
-INTERNAL_ERROR_500_TEMPLATE = 'lona.views.internal_error_500'
 VIEW_CACHING = True
 VIEW_CACHE_PRELOAD = False
+
+# error handler
+ERROR_404_HANDLER = 'lona.views.handle_404'
+ERROR_500_HANDLER = 'lona.views.handle_500'
+ERROR_404_FALLBACK_HANDLER = 'lona.views.handle_404'
+ERROR_500_FALLBACK_HANDLER = 'lona.views.handle_500'
 
 # websocket middlewares
 CORE_WEBSOCKET_MIDDLEWARES = [
