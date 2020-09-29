@@ -748,6 +748,13 @@ class ViewController:
             match, route, match_info = self.server.router.resolve(
                 url_object.path)
 
+            # route is not interactive; issue a http redirect
+            if match and route.http_pass_through or not route.interactive:
+                message = json.dumps(encode_http_redirect(window_id, url, url))
+                connection.send_str(message)
+
+                return
+
             # A View object has to be retrieved always to run
             # REQUEST_MIDDLEWARES on the current request.
             # Otherwise authentication would not be possible.
