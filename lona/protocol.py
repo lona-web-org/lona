@@ -9,7 +9,9 @@ class Method:
     INPUT_EVENT = 102
     REDIRECT = 201
     HTTP_REDIRECT = 202
-    HTML = 203
+    DATA = 203
+    VIEW_START = 204
+    VIEW_STOP = 205
 
 
 class InputEventType:
@@ -65,5 +67,16 @@ def encode_http_redirect(window_id, url, target_url):
     return [window_id, Method.HTTP_REDIRECT, url, target_url]
 
 
-def encode_html(window_id, url, html, input_events=True):
-    return [window_id, Method.HTML, url, html, input_events]
+def encode_data(window_id, url, title, html, widget_data,
+                patch_input_events=True):
+
+    return [window_id, Method.DATA, url, title, html, widget_data,
+            patch_input_events]
+
+
+def encode_view_start(window_id, url):
+    return [window_id, Method.VIEW_START, url]
+
+
+def encode_view_stop(window_id, url):
+    return [window_id, Method.VIEW_STOP, url]

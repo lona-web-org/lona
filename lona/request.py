@@ -9,22 +9,35 @@ class Client:
             raise RuntimeError(
                 'operation is not supported in multi user requests')
 
-    def show(self, html=None, input_events=True, flush=False):
+    def _assert_view_is_running(self):
         if self.request._view.shutdown_error_class:
             raise self.request._view.shutdown_error_class()
 
-        if self.request._multi_user:
-            input_events = False
+    def show(self, html=None, patch_input_events=True, flush=False):
+        self._assert_view_is_running()
 
-        self.request._view.show_html(html, input_events=input_events)
+        if self.request._multi_user:
+            patch_input_events = False
+
+        self.request._view.send_data(
+            html=html,
+            patch_input_events=patch_input_events,
+        )
+
+    def set_title(self, title):
+        self._assert_view_is_running()
+
+        self.request._view.send_data(title=title)
 
     def await_user_input(self, html=None):
         self._assert_single_user_request()
+        self._assert_view_is_running()
 
         return self.request._view.await_user_input(html=html)
 
     def await_click(self, *clickable_nodes, html=None):
         self._assert_single_user_request()
+        self._assert_view_is_running()
 
         nodes = clickable_nodes
 

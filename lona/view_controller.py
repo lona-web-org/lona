@@ -14,9 +14,11 @@ from lona.request import Request
 
 from lona.protocol import (
     encode_http_redirect,
+    encode_view_start,
+    encode_view_stop,
     encode_redirect,
     InputEventType,
-    encode_html,
+    encode_data,
     Method,
 )
 
@@ -68,7 +70,7 @@ class View:
         self.connections = {}
         self.is_finished = False
         self.html = ''
-        self.input_events = True
+        self.patch_input_events = True
         self.post_data = None
 
         self.pending_user_inputs = {
@@ -111,6 +113,8 @@ class View:
         request.connection = self.initial_connection
 
         try:
+            self.send_view_start()
+
             # TODO sync vs async
             if self.is_class_based:
                 raw_response_dict = self.handler.handle_request(
@@ -138,6 +142,7 @@ class View:
 
         finally:
             self.is_finished = True
+            self.send_view_stop()
 
     def shutdown(self, error_class=UserAbort):
         self.shutdown_error_class = error_class
@@ -159,9 +164,9 @@ class View:
     def add_connection(self, connection, window_id, url):
         self.connections[connection] = (window_id, url, )
 
-        self.show_html(
+        self.send_data(
             html=self.html,
-            input_events=self.input_events,
+            patch_input_events=self.patch_input_events,
             connections={connection: (window_id, url, )},
             flush=True,
         )
@@ -184,7 +189,7 @@ class View:
             self.shutdown()
 
     # lona messages ###########################################################
-    def redirect(self, target_url, connections={}):
+    def send_redirect(self, target_url, connections={}):
         connections = connections or self.connections
 
         for connection, window_id in connections.items():
@@ -193,7 +198,7 @@ class View:
 
             connection.send_str(message)
 
-    def http_redirect(self, target_url, connections={}):
+    def send_http_redirect(self, target_url, connections={}):
         connections = connections or self.connections
 
         for connection, window_id in connections.items():
@@ -202,59 +207,84 @@ class View:
 
             connection.send_str(message)
 
-    def show_html(self, html=None, input_events=True, connections={},
-                  flush=False):
+    def send_data(self, title=None, html=None, widget_data=None,
+                  connections={}, flush=False, patch_input_events=True):
 
-        # TODO: maybe a better name for "input_events"
-        # TODO: maybe a better name for "flush"
-        # TODO: dont send empty updates
-
-        # if no html is set the last html gets resend
-        html = html or self.html
-
-        # collect connections to write to
         connections = connections or self.connections
 
-        # if no connection is made, no message has to be send
-        if not connections:
+        # this mode gets used by request.client.set_title()
+        if title and not html and not widget_data:
+            payload = None
+
+        else:
+            # if no html is set the last html gets resend
+            html = html or self.html
+
+            # if no connection is made, no message has to be send
+            if not connections:
+                # update internal state
+                self.html = html
+                self.patch_input_events = patch_input_events
+
+                return
+
+            # node trees
+            if isinstance(html, AbstractNode):
+                if not flush and html is self.html:
+                    payload = html.get_dirty_nodes()
+                    html.clean()
+
+                else:
+                    payload = html.serialize()
+
+            # html strings
+            else:
+                payload = str(html)
+
             # update internal state
             self.html = html
-            self.input_events = input_events
-
-            return
-
-        # node trees
-        if isinstance(html, AbstractNode):
-            if not flush and html is self.html:
-                payload = html.get_dirty_nodes()
-                html.clean()
-
-            else:
-                payload = html.serialize()
-
-        # html strings
-        else:
-            payload = str(html)
-
-        # update internal state
-        self.html = html
-        self.input_events = input_events
+            self.patch_input_events = patch_input_events
 
         # send message
         for connection, (window_id, url) in list(connections.items()):
             message = json.dumps(
-                encode_html(
-                    window_id,
-                    url,
-                    payload,
-                    input_events=input_events
+                encode_data(
+                    window_id=window_id,
+                    url=url,
+                    title=title,
+                    html=payload,
+                    widget_data=None,
+                    patch_input_events=patch_input_events,
                 )
             )
 
             connection.send_str(message)
 
-    def handle_raw_response_dict(self, raw_response_dict, connections={}):
+    def send_view_start(self, connections={}):
         connections = connections or self.connections
+
+        for connection, (window_id, url) in list(connections.items()):
+            message = json.dumps(
+                encode_view_start(window_id=window_id, url=url))
+
+            connection.send_str(message)
+
+    def send_view_stop(self, connections={}):
+        connections = connections or self.connections
+
+        for connection, (window_id, url) in list(connections.items()):
+            message = json.dumps(
+                encode_view_stop(window_id=window_id, url=url))
+
+            connection.send_str(message)
+
+    def handle_raw_response_dict(self, raw_response_dict,
+                                 patch_input_events=None, connections={}):
+
+        connections = connections or self.connections
+
+        if patch_input_events is None:
+            patch_input_events = self.patch_input_events
 
         response_dict = self.view_controller.render_response_dict(
             raw_response_dict,
@@ -262,24 +292,21 @@ class View:
         )
 
         if response_dict['redirect']:
-            self.redirect(
+            self.send_redirect(
                 response_dict['redirect'],
                 connections=connections,
             )
 
         elif response_dict['http_redirect']:
-            self.http_redirect(
+            self.send_http_redirect(
                 response_dict['http_redirect'],
                 connections=connections,
             )
 
         elif response_dict['text']:
-            # FIXME: input_events: this makes Widget.on_submit
-            # after a view is finished impossible
-
-            self.show_html(
-                response_dict['text'],
-                input_events=self.input_events,
+            self.send_data(
+                html=response_dict['text'],
+                patch_input_events=self.patch_input_events,
                 connections=connections,
             )
 
@@ -296,7 +323,7 @@ class View:
             return await future
 
         if html:
-            self.show_html(html)
+            self.send_data(html=html)
 
         return self.server.schedule(
             _await_user_input(),
@@ -313,7 +340,7 @@ class View:
             input_event = self.handler.handle_root_input_event(input_event)
 
             if not input_event:
-                self.show_html()
+                self.send_data()
 
                 return
 
@@ -322,7 +349,7 @@ class View:
             input_event = widget.handle_input_event(input_event)
 
             if not input_event:
-                self.show_html()
+                self.send_data()
 
                 return
 
@@ -358,7 +385,7 @@ class View:
             input_event = self.handler.handle_input_event(request, input_event)
 
             if not input_event:
-                self.show_html()
+                self.send_data()
 
 
 class ViewController:
@@ -778,6 +805,7 @@ class ViewController:
                 view.handle_raw_response_dict(
                     raw_response_dict,
                     connections={connection: (window_id, url, )},
+                    patch_input_events=False,
                 )
 
                 return

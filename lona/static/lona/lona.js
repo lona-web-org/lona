@@ -48,7 +48,7 @@ function Lona(settings) {
         INPUT_EVENT:         102,
         REDIRECT:            201,
         HTTP_REDIRECT:       202,
-        HTML:                203,
+        DATA:                203,
     };
 
     this.INPUT_EVENT_TYPE = {
@@ -114,8 +114,8 @@ function Lona(settings) {
 
             };
 
-        // html
-        } else if(json_data[1] == this.lona.METHOD.HTML) {
+        // data
+        } else if(json_data[1] == this.lona.METHOD.DATA) {
             var url = json_data[2];
 
             if(url != this.lona.url) {
@@ -124,11 +124,16 @@ function Lona(settings) {
                 return;
             };
 
-            // TODO: title
-            history.pushState({}, '', url);
+            var title = json_data[3];
+            var html = json_data[4];
+            var widget_data = json_data[5];
+            var patch_input_events = json_data[6];
 
-            var html = json_data[3];
-            var patch_input_events = json_data[4];
+            history.pushState({}, title, url);
+
+            if(title) {
+                document.title = title;
+            };
 
             this.lona._show_html(html, patch_input_events);
 
