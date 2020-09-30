@@ -777,7 +777,7 @@ class ViewController:
 
                 view.handle_raw_response_dict(
                     raw_response_dict,
-                    connections={connection: window_id},
+                    connections={connection: (window_id, url, )},
                 )
 
                 return
