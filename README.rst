@@ -1,6 +1,6 @@
-Lona
-====
-
+.. image:: doc/content/logo.svg
+    :height: 200px
+    :width: 200px
 .. image:: https://img.shields.io/pypi/l/lona.svg
     :alt: pypi.org
     :target: https://pypi.org/project/lona
