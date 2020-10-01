@@ -8,6 +8,7 @@ import os
 from jinja2 import Environment, FileSystemLoader
 from yarl import URL
 
+from lona.errors import UserAbort, SystemShutdown
 from lona.input_event import InputEvent
 from lona.html.base import AbstractNode
 from lona.utils import acquire, Mapping
@@ -24,14 +25,6 @@ from lona.protocol import (
 
 views_logger = logging.getLogger('lona.server.views')
 templating_logger = logging.getLogger('lona.server.templating')
-
-
-class UserAbort(Exception):
-    pass
-
-
-class SystemShutdown(Exception):
-    pass
 
 
 class View:
