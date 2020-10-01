@@ -17,7 +17,6 @@ from lona.protocol import (
     encode_view_start,
     encode_view_stop,
     encode_redirect,
-    InputEventType,
     encode_data,
     Method,
 )
@@ -354,7 +353,7 @@ class View:
                 return
 
         # pending input events
-        if(input_event.input_event_type != InputEventType.CUSTOM and
+        if(input_event.name in self.pending_user_inputs and
            self.pending_user_inputs[input_event.name] is not None):
 
             future, nodes = self.pending_user_inputs[input_event.name]

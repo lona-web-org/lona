@@ -1,6 +1,4 @@
 class Client:
-    # TODO: user input: add check if view is interactive
-
     def __init__(self, request):
         self.request = request
 
@@ -9,9 +7,36 @@ class Client:
             raise RuntimeError(
                 'operation is not supported in multi user requests')
 
+    def _assert_view_is_interactive(self):
+        if not self.request._view.route.interactive:
+            raise RuntimeError(
+                'operation is not supported in non-interactive requests')
+
     def _assert_view_is_running(self):
         if self.request._view.shutdown_error_class:
             raise self.request._view.shutdown_error_class()
+
+    def _await_specific_user_input(self, *nodes, html=None, event_type=''):
+        self._assert_single_user_request()
+        self._assert_view_is_interactive()
+        self._assert_view_is_running()
+
+        if nodes:
+            nodes = list(nodes)
+
+        if len(nodes) == 1 and isinstance(nodes[0], list):
+            nodes = nodes[0]
+
+        return self.request._view.await_user_input(
+            html=html,
+            event_type=event_type,
+            nodes=nodes,
+        )
+
+    def ping(self):
+        self._assert_view_is_running()
+
+        return 'pong'
 
     def show(self, html=None, patch_input_events=True, flush=False):
         self._assert_view_is_running()
@@ -31,26 +56,30 @@ class Client:
 
     def await_user_input(self, html=None):
         self._assert_single_user_request()
+        self._assert_view_is_interactive()
         self._assert_view_is_running()
 
         return self.request._view.await_user_input(html=html)
 
     def await_click(self, *clickable_nodes, html=None):
-        self._assert_single_user_request()
-        self._assert_view_is_running()
-
-        nodes = clickable_nodes
-
-        if nodes:
-            nodes = list(nodes)
-
-        if len(nodes) == 1 and isinstance(nodes[0], list):
-            nodes = nodes[0]
-
-        return self.request._view.await_user_input(
+        return self. _await_specific_user_input(
+            *clickable_nodes,
             html=html,
             event_type='click',
-            nodes=nodes,
+        )
+
+    def await_change(self, *changeable_nodes, html=None):
+        return self. _await_specific_user_input(
+            *changeable_nodes,
+            html=html,
+            event_type='change',
+        )
+
+    def await_submit(self, *form_nodes, html=None):
+        return self. _await_specific_user_input(
+            *form_nodes,
+            html=html,
+            event_type='submit',
         )
 
 
@@ -96,6 +125,12 @@ class Request:
 
     @property
     def user(self):
-        # TODO: return user list if multi_user flag is set
+        if self._multi_user:
+            user = []
+
+            for connection in self._view.connections.keys():
+                user.append(connection.user)
+
+            return user
 
         return getattr(self.connection, 'user', None)

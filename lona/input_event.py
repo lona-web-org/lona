@@ -3,9 +3,6 @@ from lona.html.nodes import Node
 
 
 class InputEvent:
-    # TODO: add smart comparisons ('click' vs. 'Click')
-    # TODO: rename InputEvent.input_event_type
-
     def __init__(self, event_payload, html):
         self.data = {}
         self.node = None
