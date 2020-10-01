@@ -1,3 +1,4 @@
+from concurrent.futures import CancelledError
 import asyncio
 import inspect
 import logging
@@ -126,7 +127,7 @@ class View:
             if raw_response_dict:
                 return self.handle_raw_response_dict(raw_response_dict)
 
-        except (UserAbort, SystemShutdown):
+        except (CancelledError, UserAbort, SystemShutdown):
             pass
 
         except Exception as e:
