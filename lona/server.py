@@ -7,6 +7,7 @@ from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
 from aiohttp import WSMsgType
 
 from lona.view_controller import ViewController
+from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
 from lona.connection import Connection
@@ -15,7 +16,6 @@ from lona.routing import Router
 from lona.utils import acquire
 
 server_logger = logging.getLogger('lona.server')
-static_files_logger = logging.getLogger('lona.server.static_files')
 http_logger = logging.getLogger('lona.server.http')
 websockets_logger = logging.getLogger('lona.server.websockets')
 
@@ -81,15 +81,6 @@ class LonaServer:
         else:
             server_logger.warning('routing table is empty')
 
-        # setup static files
-        server_logger.debug('setup static dirs')
-
-        self.static_dirs = (self.settings.STATIC_DIRS +
-                            self.settings.CORE_STATIC_DIRS)
-
-        server_logger.debug('loading static dirs %s',
-                            repr(self.static_dirs)[1:-1])
-
         # setup templating
         server_logger.debug('setup templating')
 
@@ -132,20 +123,17 @@ class LonaServer:
         if not self.request_middlewares:
             server_logger.debug('no request middlewares loaded')
 
+        # setup static files
+        server_logger.debug('setup static file')
+
+        self.static_file_loader = StaticFileLoader(self)
+
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')
 
         static_url = self.settings.STATIC_URL_PREFIX + '{path:.*}'
 
         server_logger.debug('static url set to %s', repr(static_url))
-
-        async def _handle_static_file_request(*args, **kwargs):
-            return await self.schedule(
-                self.handle_static_file_request,
-                *args,
-                priority=self.settings.STATIC_REQUEST_PRIORITY,
-                **kwargs,
-            )
 
         async def _handle_http_request(*args, **kwargs):
             return await self.schedule(
@@ -156,7 +144,7 @@ class LonaServer:
             )
 
         self.app.router.add_route(
-            '*', static_url, _handle_static_file_request)
+            '*', static_url, self.handle_static_file_request)
 
         self.app.router.add_route(
             '*', '/{path_info:.*}', _handle_http_request)
@@ -203,44 +191,21 @@ class LonaServer:
 
     # handle http requests ####################################################
     async def handle_static_file_request(self, request):
-        def find_static_file():
-            rel_path = request.match_info['path']
+        rel_path = request.match_info['path']
 
-            static_files_logger.debug("start search for '%s'", rel_path)
-
-            for static_dir in self.static_dirs[::-1]:
-                abs_path = os.path.join(static_dir, rel_path)
-
-                static_files_logger.debug("trying '%s'", abs_path)
-
-                if os.path.exists(abs_path):
-                    if os.path.isdir(abs_path):
-                        static_files_logger.debug(
-                            "'%s' is directory. search stopped", abs_path)
-
-                        return False, ''
-
-                    static_files_logger.debug("returning '%s'", abs_path)
-
-                    return True, abs_path
-
-            static_files_logger.debug("'%s' was not found", rel_path)
-
-            return False, ''
-
-        file_found, abs_path = await self.schedule(
-            find_static_file,
+        abs_path = await self.schedule(
+            self.static_file_loader.resolve_path,
+            rel_path,
             priority=self.settings.STATIC_REQUEST_PRIORITY,
         )
 
-        if file_found:
-            return FileResponse(abs_path)
+        if not abs_path:
+            return Response(
+                status=404,
+                text='404: Not found',
+            )
 
-        # TODO: 404 handler
-        return Response(
-            status=404,
-            text='404: Not found',
-        )
+        return FileResponse(abs_path)
 
     async def handle_websocket_message(self, connection, message):
         websockets_logger.debug('%s message received %s', connection, message)
