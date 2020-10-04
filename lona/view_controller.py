@@ -5,7 +5,6 @@ import logging
 import json
 import os
 
-from jinja2 import Environment, FileSystemLoader
 from yarl import URL
 
 from lona.errors import UserAbort, SystemShutdown
@@ -24,7 +23,6 @@ from lona.protocol import (
 )
 
 views_logger = logging.getLogger('lona.server.views')
-templating_logger = logging.getLogger('lona.server.templating')
 
 
 class View:
@@ -385,18 +383,6 @@ class ViewController:
     def __init__(self, server):
         self.server = server
 
-        # templating
-        # TODO: warn if settings.FRONTEND_TEMPLATE is not available
-        self.template_dirs = (self.server.settings.TEMPLATE_DIRS +
-                              self.server.settings.CORE_TEMPLATE_DIRS)
-
-        views_logger.debug('loading template_dirs %s',
-                           repr(self.template_dirs)[1:-1])
-
-        self.jinja2_env = Environment(
-            loader=FileSystemLoader(self.template_dirs),
-        )
-
         # cache
         views_logger.debug('setup cache')
 
@@ -492,30 +478,6 @@ class ViewController:
         for route, view in self.running_multi_user_views.items():
             view.shutdown(error_class=SystemShutdown)
 
-    # templating ##############################################################
-    def get_template(self, template_name):
-        templating_logger.debug("searching for '%s'", template_name)
-
-        template = self.jinja2_env.get_template(template_name)
-
-        templating_logger.debug(
-            "'%s' is '%s' ", template_name, template.filename)
-
-        return template
-
-    def generate_template_context(self):
-        return {}  # TODO: get standard template context from settings
-
-    def render_template(self, template_name, template_context={}):
-        template = self.get_template(template_name)
-
-        template_context = {
-            **self.generate_template_context(),
-            **template_context,
-        }
-
-        return template.render(template_context)
-
     # response dicts ##########################################################
     def render_response_dict(self, raw_response_dict, view_name):
         # TODO: warn if keys are ambiguous
@@ -566,10 +528,11 @@ class ViewController:
             if 'context' in template_context:
                 template_context = template_context['context']
 
-            response_dict['text'] = self.render_template(
-                raw_response_dict['template'],
-                template_context,
-            )
+            response_dict['text'] = \
+                self.server.templating_engine.render_template(
+                    raw_response_dict['template'],
+                    template_context,
+                )
 
         # json response
         elif 'json' in raw_response_dict:

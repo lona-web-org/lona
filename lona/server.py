@@ -7,6 +7,7 @@ from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
 from aiohttp import WSMsgType
 
 from lona.view_controller import ViewController
+from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
 from lona.connection import Connection
 from lona.scheduling import Scheduler
@@ -88,6 +89,11 @@ class LonaServer:
 
         server_logger.debug('loading static dirs %s',
                             repr(self.static_dirs)[1:-1])
+
+        # setup templating
+        server_logger.debug('setup templating')
+
+        self.templating_engine = TemplatingEngine(self)
 
         # setup websocket middlewares
         server_logger.debug('setup websocket middlewares')
