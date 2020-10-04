@@ -1,4 +1,9 @@
-from lona.sessions import AnonymousUser
+class AnonymousUser:
+    def __repr__(self):
+        return '<AnonymousUser()>'
+
+    def __eq__(self, other):
+        return isinstance(other, AnonymousUser)
 
 
 def lona_session_middleware(server, request, view):
