@@ -2,6 +2,7 @@ import logging
 
 from jinja2 import Environment, FileSystemLoader
 
+from lona.utils import acquire
 
 logger = logging.getLogger('lona.templating')
 
@@ -22,6 +23,17 @@ class TemplatingEngine:
             loader=FileSystemLoader(self.template_dirs),
         )
 
+    # context functions #######################################################
+    def _load_stylesheets(self):
+        return self.server.static_file_loader.style_tags_html
+
+    def _load_scripts(self):
+        return self.server.static_file_loader.script_tags_html
+
+    def _import(self, *args, **kwargs):
+        return acquire(*args, **kwargs)[1]
+
+    # public api ##############################################################
     def get_template(self, template_name):
         logger.debug("searching for '%s'", template_name)
 
@@ -34,6 +46,9 @@ class TemplatingEngine:
     def generate_template_context(self):
         return {
             'server': self.server,
+            'load_stylesheets': self._load_stylesheets,
+            'load_scripts': self._load_scripts,
+            'import': self._import,
             **self.server.settings.TEMPLATE_EXTRA_CONTEXT,
         }
 
