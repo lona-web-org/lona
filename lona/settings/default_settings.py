@@ -14,6 +14,8 @@ FRONTEND_TEMPLATE = 'lona/frontend.html'
 ERROR_404_TEMPLATE = 'lona/404.html'
 ERROR_500_TEMPLATE = 'lona/500.html'
 
+TEMPLATE_EXTRA_CONTEXT = {}
+
 # static files
 CORE_STATIC_DIRS = [
     os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static'),

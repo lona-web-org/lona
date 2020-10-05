@@ -32,9 +32,10 @@ class TemplatingEngine:
         return template
 
     def generate_template_context(self):
-        # TODO: get standard template context from settings
-
-        return {}
+        return {
+            'server': self.server,
+            **self.server.settings.TEMPLATE_EXTRA_CONTEXT,
+        }
 
     def render_template(self, template_name, template_context={}):
         template = self.get_template(template_name)
