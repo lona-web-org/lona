@@ -4,7 +4,7 @@ import asyncio
 import inspect
 import json
 
-from lona.errors import UserAbort, SystemShutdown
+from lona.exceptions import StopReason, UserAbort
 from lona.input_event import InputEvent
 from lona.html.base import AbstractNode
 from lona.request import Request
@@ -67,10 +67,9 @@ class ViewRuntime:
             'reset': None,
         }
 
-        # FIXME: better name
-        # this is necessary to shutdown long running views
+        # this is necessary to stop long running views
         # which are not waiting for user input
-        self.shutdown_error_class = None
+        self.stop_reason = None
 
     def gen_request(self, connection, post_data=None):
         return Request(
@@ -88,7 +87,7 @@ class ViewRuntime:
             multi_user=True,
         )
 
-    def run(self, request, initial_connection):
+    def start(self, request, initial_connection):
         self.post_data = request.POST
         self.initial_connection = initial_connection
 
@@ -113,7 +112,7 @@ class ViewRuntime:
             if raw_response_dict:
                 return self.handle_raw_response_dict(raw_response_dict)
 
-        except (CancelledError, UserAbort, SystemShutdown):
+        except(StopReason, CancelledError):
             pass
 
         except Exception as e:
@@ -130,8 +129,8 @@ class ViewRuntime:
             self.is_finished = True
             self.send_view_stop()
 
-    def shutdown(self, error_class=UserAbort):
-        self.shutdown_error_class = error_class
+    def stop(self, reason=UserAbort):
+        self.stop_reason = reason
 
         # drop all connections
         self.connections = {}
@@ -144,7 +143,7 @@ class ViewRuntime:
             future, nodes = pending
 
             if not future.done() and not future.cancelled():
-                future.set_exception(error_class())
+                future.set_exception(self.stop_reason())
 
     # connection managment ####################################################
     def add_connection(self, connection, window_id, url):
@@ -167,12 +166,12 @@ class ViewRuntime:
                 self.connections.pop(connection)
 
         # if the last connection gets closed and the user should
-        # not continue running in background, it gets shutdown
+        # not continue running in background, it gets stopped
         if(not self.connections and
            not self.is_daemon and
            not self.multi_user):
 
-            self.shutdown()
+            self.stop()
 
     # lona messages ###########################################################
     def send_redirect(self, target_url, connections={}):

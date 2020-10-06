@@ -168,7 +168,7 @@ class LonaServer:
         server_logger.debug('shutting down')
 
         await self.schedule(
-            self.view_runtime_controller.shutdown,
+            self.view_runtime_controller.stop,
             priority=self.settings.SHUTDOWN_PRIORITY,
         )
 

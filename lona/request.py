@@ -13,8 +13,8 @@ class Client:
                 'operation is not supported in non-interactive requests')
 
     def _assert_view_is_running(self):
-        if self.request._view_runtime.shutdown_error_class:
-            raise self.request._view_runtime.shutdown_error_class()
+        if self.request._view_runtime.stop_reason:
+            raise self.request._view.stop_reason()
 
     def _await_specific_user_input(self, *nodes, html=None, event_type=''):
         self._assert_single_user_request()

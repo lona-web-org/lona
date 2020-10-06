@@ -6,7 +6,7 @@ from yarl import URL
 from lona.protocol import encode_http_redirect, Method
 from lona.view_runtime import ViewRuntime
 from lona.utils import acquire, Mapping
-from lona.errors import SystemShutdown
+from lona.exceptions import ServerStop
 
 logger = logging.getLogger('lona.view_runtime_controller')
 
@@ -81,21 +81,21 @@ class ViewRuntimeController:
                     self.server.settings.DEFAULT_MULTI_USER_VIEW_PRIORITY
 
                 self.server.schedule(
-                    view.run,
+                    view.start,
                     request=request,
                     initial_connection=None,
                     priority=priority,
                 )
 
-    def shutdown(self):
-        # shutdown running views per user
+    def stop(self):
+        # running views per user
         for user, views in self.running_single_user_views.items():
             for route, view in views.items():
-                view.shutdown(error_class=SystemShutdown)
+                view.stop(reason=ServerStop)
 
-        # shutdown multi user views
+        # multi user views
         for route, view in self.running_multi_user_views.items():
-            view.shutdown(error_class=SystemShutdown)
+            view.stop(reason=ServerStop)
 
     # response dicts ##########################################################
     def render_response_dict(self, raw_response_dict, view_name):
@@ -282,7 +282,7 @@ class ViewRuntimeController:
 
             return view.handle_raw_response_dict(raw_response_dict)
 
-        return view.run(
+        return view.start(
             request=request,
             initial_connection=connection,
         )
@@ -360,7 +360,7 @@ class ViewRuntimeController:
                     return
 
                 else:
-                    view.shutdown()
+                    view.stop()
 
             # connect to a multi user view
             elif(route in self.running_multi_user_views):
@@ -384,7 +384,7 @@ class ViewRuntimeController:
                 url=url,
             )
 
-            view.run(request=request, initial_connection=connection)
+            view.start(request=request, initial_connection=connection)
 
         # input events
         elif method == Method.INPUT_EVENT:
