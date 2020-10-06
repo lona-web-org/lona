@@ -15,29 +15,16 @@ class ViewRuntimeController:
     def __init__(self, server):
         self.server = server
 
-        # cache
-        logger.debug('setup cache')
-
-        self.cache = {}
-
-        if self.server.settings.VIEW_CACHE_PRELOAD:
-            # TODO: implement preloading
-            logger.debug('preloading views')
-
-        else:
-            logger.debug('cache is empty')
-
-        # views
         self.running_single_user_views = Mapping()
-        # prototype: {
-        #    user object: {
-        #      route object: view object,
-        #    }
+        # contains: {
+        #     connection.user: {
+        #         route: view_runtime,
+        #     }
         # }
 
         self.running_multi_user_views = Mapping()
-        # prototype: {
-        #    route object: view object,
+        # contains: {
+        #    route: view_runtime,
         # }
 
     def start(self):
