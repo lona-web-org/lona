@@ -8,24 +8,24 @@ from lona.view_runtime import ViewRuntime
 from lona.utils import acquire, Mapping
 from lona.errors import SystemShutdown
 
-views_logger = logging.getLogger('lona.server.views')
+logger = logging.getLogger('lona.view_runtime_controller')
 
 
-class ViewController:
+class ViewRuntimeController:
     def __init__(self, server):
         self.server = server
 
         # cache
-        views_logger.debug('setup cache')
+        logger.debug('setup cache')
 
         self.cache = {}
 
         if self.server.settings.VIEW_CACHE_PRELOAD:
             # TODO: implement preloading
-            views_logger.debug('preloading views')
+            logger.debug('preloading views')
 
         else:
-            views_logger.debug('cache is empty')
+            logger.debug('cache is empty')
 
         # views
         self.running_views = Mapping()
@@ -44,9 +44,9 @@ class ViewController:
         # TODO: add support for custom view priorities
 
         # error handler
-        views_logger.debug('loading error handler')
+        logger.debug('loading error handler')
 
-        views_logger.debug(
+        logger.debug(
             "loading 404 handler from '%s'",
             self.server.settings.ERROR_404_HANDLER,
         )
@@ -54,7 +54,7 @@ class ViewController:
         self.error_404_handler = acquire(
             self.server.settings.ERROR_404_HANDLER)[1]
 
-        views_logger.debug(
+        logger.debug(
             "loading 404 fallback handler from '%s'",
             self.server.settings.ERROR_404_FALLBACK_HANDLER,
         )
@@ -62,7 +62,7 @@ class ViewController:
         self.error_404_fallback_handler = acquire(
             self.server.settings.ERROR_404_FALLBACK_HANDLER)[1]
 
-        views_logger.debug(
+        logger.debug(
             "loading 500 handler from '%s'",
             self.server.settings.ERROR_500_HANDLER,
         )
@@ -70,7 +70,7 @@ class ViewController:
         self.error_500_handler = acquire(
             self.server.settings.ERROR_500_HANDLER)[1]
 
-        views_logger.debug(
+        logger.debug(
             "loading 500 fallback handler from '%s'",
             self.server.settings.ERROR_500_FALLBACK_HANDLER,
         )
@@ -79,13 +79,13 @@ class ViewController:
             self.server.settings.ERROR_500_FALLBACK_HANDLER)[1]
 
         # multi user views
-        views_logger.debug('starting multi user views')
+        logger.debug('starting multi user views')
 
         for route in self.server.router.routes:
             view = self.get_view(route=route)
 
             if view.multi_user:
-                views_logger.debug('starting %s as multi user view', view)
+                logger.debug('starting %s as multi user view', view)
 
                 request = view.gen_multi_user_request()
                 self.running_multi_user_views[route] = view
@@ -125,7 +125,7 @@ class ViewController:
 
         # string response
         if isinstance(raw_response_dict, str):
-            views_logger.debug("'%s' is a string based view", view_name)
+            logger.debug("'%s' is a string based view", view_name)
 
             response_dict['text'] = raw_response_dict
 
@@ -136,7 +136,7 @@ class ViewController:
                     value = raw_response_dict[key]
                     response_dict[key] = value
 
-                    views_logger.debug(
+                    logger.debug(
                         "'%s' sets '%s' to %s", view_name, key, repr(value))
 
         # redirects
@@ -153,7 +153,7 @@ class ViewController:
 
         # template response
         elif 'template' in raw_response_dict:
-            views_logger.debug("'%s' is a template view", view_name)
+            logger.debug("'%s' is a template view", view_name)
 
             template_context = raw_response_dict
 
@@ -168,7 +168,7 @@ class ViewController:
 
         # json response
         elif 'json' in raw_response_dict:
-            views_logger.debug("'%s' is a json view", view_name)
+            logger.debug("'%s' is a json view", view_name)
 
             response_dict['text'] = json.dumps(raw_response_dict['json'])
 
@@ -180,7 +180,7 @@ class ViewController:
             return self.error_404_handler(request)
 
         except Exception:
-            views_logger.error(
+            logger.error(
                 'Exception occurred while running %s. Falling back to %s',
                 self.error_404_handler,
                 self.error_404_fallback_handler,
@@ -194,7 +194,7 @@ class ViewController:
             return self.error_500_handler(request, exception)
 
         except Exception:
-            views_logger.error(
+            logger.error(
                 'Exception occurred while running %s. Falling back to %s',
                 self.error_500_handler,
                 self.error_500_fallback_handler,
@@ -255,7 +255,7 @@ class ViewController:
 
     def run_middlewares(self, request, view):
         for middleware in self.server.request_middlewares:
-            views_logger.debug('running %s on %s', middleware, request)
+            logger.debug('running %s on %s', middleware, request)
 
             raw_response_dict = self.server.schedule(
                 middleware,
@@ -268,7 +268,7 @@ class ViewController:
             )
 
             if raw_response_dict:
-                views_logger.debug('request got handled by %s', middleware)
+                logger.debug('request got handled by %s', middleware)
 
                 return raw_response_dict
 

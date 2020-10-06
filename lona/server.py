@@ -6,7 +6,7 @@ import os
 from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
 from aiohttp import WSMsgType
 
-from lona.view_controller import ViewController
+from lona.view_runtime_controller import ViewRuntimeController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
@@ -156,10 +156,10 @@ class LonaServer:
         self.view_loader = ViewLoader(self)
 
         # setup views
-        server_logger.debug('setup views')
+        server_logger.debug('setup view runtime controller')
 
-        self.view_controller = ViewController(self)
-        self.view_controller.start()
+        self.view_runtime_controller = ViewRuntimeController(self)
+        self.view_runtime_controller.start()
 
         # finish
         server_logger.debug('setup finish')
@@ -168,7 +168,7 @@ class LonaServer:
         server_logger.debug('shutting down')
 
         await self.schedule(
-            self.view_controller.shutdown,
+            self.view_runtime_controller.shutdown,
             priority=self.settings.SHUTDOWN_PRIORITY,
         )
 
@@ -288,7 +288,7 @@ class LonaServer:
             websockets_logger.debug('CancelledError')
 
         finally:
-            self.view_controller.remove_connection(connection)
+            self.view_runtime_controller.remove_connection(connection)
 
             await websocket.close()
 
@@ -356,7 +356,7 @@ class LonaServer:
                 post_data = await http_request.post()
 
                 response_dict = await self.schedule(
-                    self.view_controller.run_view_non_interactive,
+                    self.view_runtime_controller.run_view_non_interactive,
                     url=http_request.path,
                     connection=connection,
                     route=route,
@@ -374,7 +374,7 @@ class LonaServer:
         post_data = await http_request.post()
 
         response_dict = await self.schedule(
-            self.view_controller.run_view_non_interactive,
+            self.view_runtime_controller.run_view_non_interactive,
             url=http_request.path,
             connection=connection,
             route=route,

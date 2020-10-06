@@ -38,5 +38,5 @@ def lona_message_middleware(server, connection, message):
     if exit_code != ExitCode.SUCCESS:
         return message
 
-    server.view_controller.handle_lona_message(
+    server.view_runtime_controller.handle_lona_message(
         connection, window_id, method, url, payload)
