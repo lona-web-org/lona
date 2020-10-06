@@ -10,6 +10,7 @@ from lona.view_controller import ViewController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
+from lona.view_loader import ViewLoader
 from lona.connection import Connection
 from lona.scheduling import Scheduler
 from lona.routing import Router
@@ -148,6 +149,11 @@ class LonaServer:
 
         self.app.router.add_route(
             '*', '/{path_info:.*}', _handle_http_request)
+
+        # setup view loader
+        server_logger.debug('setup view loader')
+
+        self.view_loader = ViewLoader(self)
 
         # setup views
         server_logger.debug('setup views')

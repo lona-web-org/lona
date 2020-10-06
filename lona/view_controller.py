@@ -3,7 +3,6 @@ import asyncio
 import inspect
 import logging
 import json
-import os
 
 from yarl import URL
 
@@ -572,51 +571,6 @@ class ViewController:
         return self.error_500_fallback_handler(request, exception)
 
     # view objects ############################################################
-    def get_handler(self, import_string):
-        # TODO: ambiguous log messages
-
-        views_logger.debug("searching for '%s'", import_string)
-
-        caching_enabled = self.server.settings.VIEW_CACHING
-        ignore_import_cache = not caching_enabled
-        first_load = False
-
-        def _import_view():
-            views_logger.debug("importing '%s' ignore_import_cache=%s",
-                               import_string, repr(ignore_import_cache))
-
-            path, view = acquire(
-                import_string, ignore_import_cache=ignore_import_cache)
-
-            views_logger.debug("'%s' imported from '%s'", import_string, path)
-
-            self.cache[import_string] = {
-                'path': path,
-                'view': view,
-                'modified': os.path.getmtime(path),
-            }
-
-        if import_string not in self.cache:
-            views_logger.debug("'%s' is not cached yet", import_string)
-
-            _import_view()
-            first_load = True
-
-        if not caching_enabled:
-            path = self.cache[import_string]['path']
-            modified = self.cache[import_string]['modified']
-
-            if os.path.getmtime(path) > modified:
-                views_logger.debug("'%s' is modified in file system",
-                                   import_string)
-
-                _import_view()
-
-            elif not first_load:
-                views_logger.debug("loading '%s' from cache", import_string)
-
-        return self.cache[import_string]['view']
-
     def get_view(self, url=None, route=None, match_info=None, frontend=False):
         handler = None
 
@@ -646,7 +600,7 @@ class ViewController:
 
         # handler is an import string
         if isinstance(handler, str):
-            handler = self.get_handler(handler)
+            handler = self.server.view_loader.load(handler)
 
         return View(
             server=self.server,
