@@ -28,7 +28,7 @@ class ViewRuntimeController:
             logger.debug('cache is empty')
 
         # views
-        self.running_views = Mapping()
+        self.running_single_user_views = Mapping()
         # prototype: {
         #    user object: {
         #      route object: view object,
@@ -102,7 +102,7 @@ class ViewRuntimeController:
 
     def shutdown(self):
         # shutdown running views per user
-        for user, views in self.running_views.items():
+        for user, views in self.running_single_user_views.items():
             for route, view in views.items():
                 view.shutdown(error_class=SystemShutdown)
 
@@ -246,7 +246,7 @@ class ViewRuntimeController:
 
     # view managment ##########################################################
     def remove_connection(self, connection, window_id=None):
-        for user, views in self.running_views.items():
+        for user, views in self.running_single_user_views.items():
             for route, view in views.items():
                 view.remove_connection(connection, window_id=None)
 
@@ -355,11 +355,13 @@ class ViewRuntimeController:
 
             # reconnect or close previous started single user views
             # for this route
-            if(connection.user in self.running_views and
-               route in self.running_views[connection.user] and
-               self.running_views[connection.user][route].is_daemon):
+            user = connection.user
 
-                view = self.running_views[connection.user][route]
+            if(user in self.running_single_user_views and
+               route in self.running_single_user_views[user] and
+               self.running_single_user_views[user][route].is_daemon):
+
+                view = self.running_single_user_views[user][route]
 
                 if not view.is_finished and view.is_daemon:
                     view.add_connection(
@@ -384,10 +386,10 @@ class ViewRuntimeController:
                 return
 
             # start view
-            if connection.user not in self.running_views:
-                self.running_views[connection.user] = {}
+            if user not in self.running_single_user_views:
+                self.running_single_user_views[user] = {}
 
-            self.running_views[connection.user][route] = view
+            self.running_single_user_views[user][route] = view
 
             view.add_connection(
                 connection=connection,
@@ -399,10 +401,12 @@ class ViewRuntimeController:
 
         # input events
         elif method == Method.INPUT_EVENT:
-            if connection.user not in self.running_views:
+            user = connection.user
+
+            if user not in self.running_single_user_views:
                 return
 
-            for route, view in self.running_views[connection.user].items():
+            for route, view in self.running_single_user_views[user].items():
                 if view.url == url_object:
                     view.handle_input_event(payload)
 
