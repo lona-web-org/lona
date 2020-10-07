@@ -42,6 +42,7 @@ function Lona(settings) {
     // state ------------------------------------------------------------------
     this.widget_handler = {};
     this.window_id = 1;
+    this.view_stopped = false;
 
     // handle websocket messages ----------------------------------------------
     this.METHOD = {
@@ -50,6 +51,8 @@ function Lona(settings) {
         REDIRECT:            201,
         HTTP_REDIRECT:       202,
         DATA:                203,
+        VIEW_START:          204,
+        VIEW_STOP:           205,
     };
 
     this.INPUT_EVENT_TYPE = {
@@ -144,7 +147,10 @@ function Lona(settings) {
 
             this.lona._show_html(html, patch_input_events);
 
-        }
+        } else if(json_data[1] == this.lona.METHOD.VIEW_STOP) {
+            this.lona.view_stopped = true;
+
+        };
 
         // message is no lona message
         return this.lona._run_custom_message_handlers(
@@ -210,7 +216,7 @@ function Lona(settings) {
                 // generate form data
                 var form_data = new FormData(this);
 
-                if(patch_input_events) {
+                if(patch_input_events && !lona.view_stopped) {
                     var data = {};
 
                     for(let [key, value] of form_data.entries()) {
@@ -442,12 +448,9 @@ function Lona(settings) {
         // to this request.
         // This prevents glitches when switching urls fast.
         this.url = url;
+        this.view_stopped = false;
 
-        var message = [this.window_id, this.METHOD.VIEW, url];
-
-        if(post_data) {
-            message[2] = post_data;
-        };
+        var message = [this.window_id, this.METHOD.VIEW, url, post_data];
 
         this.send(JSON.stringify(message));
     };
