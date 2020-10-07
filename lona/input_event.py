@@ -50,9 +50,9 @@ class InputEvent:
 
         # node info contains only client DOM informations
         elif len(self.node_info) == 4:
-            self.tag_name = self.node_info[2]
-            self.id_list = (self.node_info[3] or '').split(' ')
-            self.class_list = (self.node_info[4] or '').split(' ')
+            self.tag_name = self.node_info[1]
+            self.id_list = (self.node_info[2] or '').split(' ')
+            self.class_list = (self.node_info[3] or '').split(' ')
 
         else:
             raise ValueError('invalid node info')
