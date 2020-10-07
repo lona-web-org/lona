@@ -71,7 +71,7 @@ class ViewRuntimeController:
         for route in self.server.router.routes:
             view = self.get_view(route=route)
 
-            if view.multi_user:
+            if view.view_spec.multi_user:
                 logger.debug('starting %s as multi user view', view)
 
                 request = view.gen_multi_user_request()

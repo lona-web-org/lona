@@ -1,7 +1,6 @@
 from concurrent.futures import CancelledError
 import logging
 import asyncio
-import inspect
 import json
 
 from lona.exceptions import StopReason, UserAbort
@@ -31,28 +30,14 @@ class ViewRuntime:
         self.route = route
         self.match_info = match_info
 
-        # analyze handler
-        self.is_daemon = False
-        self.is_class_based = False
-        self.has_input_event_handler = False
-        self.has_root_input_event_handler = False
-
-        self.multi_user = getattr(self.handler, 'multi_user', False)
-
-        if inspect.isclass(self.handler):
-            self.handler = handler()
-
-            self.is_class_based = True
-
-            self.has_input_event_handler = hasattr(
-                self.handler, 'handle_input_event')
-
-            self.has_root_input_event_handler = hasattr(
-                self.handler, 'handle_root_input_event')
-
+        self.view_spec = self.server.view_loader.get_view_spec(handler)
         self.name = repr(self.handler)
 
+        if self.view_spec.is_class_based:
+            self.handler = handler()
+
         # setup state
+        self.is_daemon = False
         self.connections = {}
         self.is_finished = False
         self.html = ''
@@ -101,7 +86,7 @@ class ViewRuntime:
             self.send_view_start()
 
             # TODO sync vs async
-            if self.is_class_based:
+            if self.view_spec.is_class_based:
                 raw_response_dict = self.handler.handle_request(
                     *handler_args, **handler_kwargs)
 
@@ -169,7 +154,7 @@ class ViewRuntime:
         # not continue running in background, it gets stopped
         if(not self.connections and
            not self.is_daemon and
-           not self.multi_user):
+           not self.view_spec.multi_user):
 
             self.stop()
 
@@ -321,7 +306,7 @@ class ViewRuntime:
         input_event = InputEvent(event_payload, self.html)
 
         # root input handler (class based views)
-        if self.has_root_input_event_handler:
+        if self.view_spec.has_root_input_event_handler:
             input_event = self.handler.handle_root_input_event(input_event)
 
             if not input_event:
@@ -360,7 +345,7 @@ class ViewRuntime:
                 return
 
         # root input handler (class based views)
-        if self.has_input_event_handler:
+        if self.view_spec.has_input_event_handler:
             request = Request(
                 view_runtime=self,
                 connection=self.initial_connection,
