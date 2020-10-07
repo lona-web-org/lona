@@ -10,6 +10,7 @@ from lona.view_runtime_controller import ViewRuntimeController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
+from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
 from lona.scheduling import Scheduler
@@ -353,16 +354,18 @@ class LonaServer:
             if not route.interactive:
                 http_logger.debug('non-interactive mode')
 
-                post_data = await http_request.post()
-
-                response_dict = await self.schedule(
-                    self.view_runtime_controller.run_view_non_interactive,
+                view_runtime = ViewRuntime(
+                    server=self,
                     url=http_request.path,
-                    connection=connection,
                     route=route,
                     match_info=match_info,
-                    frontend=False,
-                    post_data=post_data,
+                    post_data=await http_request.post(),
+                    frontend=True,
+                    start_connection=connection,
+                )
+
+                response_dict = await self.schedule(
+                    view_runtime.start,
                     priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
 
@@ -371,16 +374,18 @@ class LonaServer:
         # frontend views
         http_logger.debug('frontend mode')
 
-        post_data = await http_request.post()
-
-        response_dict = await self.schedule(
-            self.view_runtime_controller.run_view_non_interactive,
+        view_runtime = ViewRuntime(
+            server=self,
             url=http_request.path,
-            connection=connection,
             route=route,
             match_info=match_info,
+            post_data=await http_request.post(),
             frontend=True,
-            post_data=post_data,
+            start_connection=connection,
+        )
+
+        response_dict = await self.schedule(
+            view_runtime.start,
             priority=self.settings.DEFAULT_VIEW_PRIORITY,
         )
 

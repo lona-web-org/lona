@@ -3,6 +3,8 @@ import logging
 import asyncio
 import json
 
+from yarl import URL
+
 from lona.exceptions import StopReason, UserAbort
 from lona.input_event import InputEvent
 from lona.html.base import AbstractNode
@@ -20,29 +22,45 @@ logger = logging.getLogger('lona.view_runtime')
 
 
 class ViewRuntime:
-    def __init__(self, server, view_controller, url, handler, route,
-                 match_info):
+    def __init__(self, server, url, route, match_info, post_data={},
+                 frontend=False, start_connection=None):
 
         self.server = server
-        self.view_controller = view_controller
-        self.url = url
-        self.handler = handler
+        self.url = URL(url or '')
         self.route = route
         self.match_info = match_info
+        self.post_data = post_data
+        self.frontend = frontend
+        self.start_connection = start_connection
 
-        self.view_spec = self.server.view_loader.get_view_spec(handler)
-        self.name = repr(self.handler)
+        # find view
+        self.view = route.view
+
+        if frontend:
+            self.view = self.server.settings.FRONTEND_VIEW
+
+            if route and route.frontend_view:
+                self.view = route.frontend_view
+
+        self.view = self.server.view_loader.load(self.view)
+        self.view_spec = self.server.view_loader.get_view_spec(self.view)
+        self.name = repr(self.view)
 
         if self.view_spec.is_class_based:
-            self.handler = handler()
+            self.view = self.view()
 
         # setup state
-        self.is_daemon = False
         self.connections = {}
+        # contains: {
+        #     connection: (window_id, url),
+        # }
+
         self.is_finished = False
+        self.stop_reason = None
+        self.is_daemon = False
+
         self.html = ''
         self.patch_input_events = True
-        self.post_data = None
 
         self.pending_input_events = {
             'event': None,
@@ -52,47 +70,25 @@ class ViewRuntime:
             'reset': None,
         }
 
-        # this is necessary to stop long running views
-        # which are not waiting for user input
-        self.stop_reason = None
-
-    def gen_request(self, connection, post_data=None):
-        return Request(
+    def start(self):
+        request = Request(
             view_runtime=self,
-            connection=connection,
-            post_data=post_data,
-            multi_user=False,
+            connection=self.start_connection,
         )
 
-    def gen_multi_user_request(self):
-        return Request(
-            view_runtime=self,
-            connection=None,
-            post_data=None,
-            multi_user=True,
-        )
+        view_args = (request,)
+        view_kwargs = dict(self.match_info or {})
 
-    def start(self, request, initial_connection):
-        self.post_data = request.POST
-        self.initial_connection = initial_connection
-
-        handler_args = (request,)
-        handler_kwargs = dict(self.match_info or {})
-
-        # run view
-        request.connection = self.initial_connection
-
+        # start view
         try:
             self.send_view_start()
 
-            # TODO sync vs async
             if self.view_spec.is_class_based:
-                raw_response_dict = self.handler.handle_request(
-                    *handler_args, **handler_kwargs)
+                raw_response_dict = self.view.handle_request(
+                    *view_args, **view_kwargs)
 
             else:
-                raw_response_dict = self.handler(
-                    *handler_args, **handler_kwargs)
+                raw_response_dict = self.view(*view_args, **view_kwargs)
 
             if raw_response_dict:
                 return self.handle_raw_response_dict(raw_response_dict)
@@ -103,12 +99,12 @@ class ViewRuntime:
         except Exception as e:
             logger.error(
                 'Exception raised while running %s',
-                self.handler,
+                self.view,
                 exc_info=True,
             )
 
             return self.handle_raw_response_dict(
-                self.view_controller.handle_500(request, e))
+                self.server.view_runtime_controller.handle_500(request, e))
 
         finally:
             self.is_finished = True
@@ -256,10 +252,11 @@ class ViewRuntime:
         if patch_input_events is None:
             patch_input_events = self.patch_input_events
 
-        response_dict = self.view_controller.render_response_dict(
-            raw_response_dict,
-            view_name=self.name,
-        )
+        response_dict = \
+            self.server.view_runtime_controller.render_response_dict(
+                raw_response_dict,
+                view_name=self.name,
+            )
 
         if response_dict['redirect']:
             self.send_redirect(
@@ -302,12 +299,12 @@ class ViewRuntime:
             priority=self.server.settings.DEFAULT_VIEW_PRIORITY,
         )
 
-    def handle_input_event(self, event_payload):
+    def handle_input_event(self, connection, event_payload):
         input_event = InputEvent(event_payload, self.html)
 
         # root input handler (class based views)
         if self.view_spec.has_root_input_event_handler:
-            input_event = self.handler.handle_root_input_event(input_event)
+            input_event = self.view.handle_root_input_event(input_event)
 
             if not input_event:
                 self.send_data()
@@ -348,11 +345,10 @@ class ViewRuntime:
         if self.view_spec.has_input_event_handler:
             request = Request(
                 view_runtime=self,
-                connection=self.initial_connection,
-                post_data=self.post_data,
+                connection=connection,
             )
 
-            input_event = self.handler.handle_input_event(request, input_event)
+            input_event = self.view.handle_input_event(request, input_event)
 
             if not input_event:
                 self.send_data()

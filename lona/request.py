@@ -3,7 +3,7 @@ class Client:
         self.request = request
 
     def _assert_single_user_request(self):
-        if self.request._multi_user:
+        if self.request._view_runtime.view_spec.multi_user:
             raise RuntimeError(
                 'operation is not supported in multi user requests')
 
@@ -41,7 +41,7 @@ class Client:
     def show(self, html=None, patch_input_events=True, flush=False):
         self._assert_view_is_running()
 
-        if self.request._multi_user:
+        if self.request._view_runtime.view_spec.multi_user:
             patch_input_events = False
 
         self.request._view_runtime.send_data(
@@ -88,7 +88,7 @@ class View:
         self.request = request
 
     def _assert_single_user_request(self):
-        if self.request._multi_user:
+        if self.request._view_runtime.view_spec.multi_user:
             raise RuntimeError(
                 'operation is not supported in multi user requests')
 
@@ -99,16 +99,15 @@ class View:
 
 
 class Request:
-    def __init__(self, view_runtime, connection, post_data, multi_user=False):
+    def __init__(self, view_runtime, connection):
         self._view_runtime = view_runtime
-        self._multi_user = multi_user
         self.connection = connection
 
         self.url = self._view_runtime.url
 
         if self.url:
             self.GET = dict(self._view_runtime.url.query)
-            self.POST = post_data or {}
+            self.POST = self._view_runtime.post_data or {}
 
         else:
             self.GET = {}
@@ -125,7 +124,7 @@ class Request:
 
     @property
     def user(self):
-        if self._multi_user:
+        if self._view_runtime.view_spec.multi_user:
             user = []
 
             for connection in self._view_runtime.connections.keys():

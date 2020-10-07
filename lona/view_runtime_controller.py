@@ -7,6 +7,7 @@ from lona.protocol import encode_http_redirect, Method
 from lona.view_runtime import ViewRuntime
 from lona.utils import acquire, Mapping
 from lona.exceptions import ServerStop
+from lona.request import Request
 
 logger = logging.getLogger('lona.view_runtime_controller')
 
@@ -69,21 +70,27 @@ class ViewRuntimeController:
         logger.debug('starting multi user views')
 
         for route in self.server.router.routes:
-            view = self.get_view(route=route)
+            view_runtime = ViewRuntime(
+                server=self.server,
+                url=None,
+                route=route,
+                match_info={},
+                post_data={},
+                frontend=False,
+                start_connection=None,
+            )
 
-            if view.view_spec.multi_user:
-                logger.debug('starting %s as multi user view', view)
+            if view_runtime.view_spec.multi_user:
+                logger.debug('starting %s as multi user view',
+                             view_runtime.view)
 
-                request = view.gen_multi_user_request()
-                self.running_multi_user_views[route] = view
+                self.running_multi_user_views[route] = view_runtime
 
                 priority = \
                     self.server.settings.DEFAULT_MULTI_USER_VIEW_PRIORITY
 
                 self.server.schedule(
-                    view.start,
-                    request=request,
-                    initial_connection=None,
+                    view_runtime.start,
                     priority=priority,
                 )
 
@@ -222,9 +229,7 @@ class ViewRuntimeController:
 
         return ViewRuntime(
             server=self.server,
-            view_controller=self,
             url=url,
-            handler=handler,
             route=route,
             match_info=match_info,
         )
@@ -238,7 +243,7 @@ class ViewRuntimeController:
         for route, view in self.running_multi_user_views.items():
             view.remove_connection(connection, window_id=None)
 
-    def run_middlewares(self, request, view):
+    def run_middlewares(self, request, view_runtime):
         for middleware in self.server.request_middlewares:
             logger.debug('running %s on %s', middleware, request)
 
@@ -246,7 +251,7 @@ class ViewRuntimeController:
                 middleware,
                 self.server,
                 request,
-                view.handler,
+                view_runtime.view,
                 priority=self.server.settings.REQUEST_MIDDLEWARE_PRIORITY,
                 sync=True,
                 wait=True,
@@ -256,34 +261,6 @@ class ViewRuntimeController:
                 logger.debug('request got handled by %s', middleware)
 
                 return raw_response_dict
-
-    def run_view_non_interactive(self, url, connection, route=None,
-                                 match_info=None, frontend=False,
-                                 post_data=None):
-
-        view = self.get_view(
-            url=url,
-            route=route,
-            match_info=match_info,
-            frontend=frontend,
-        )
-
-        request = view.gen_request(
-            connection=connection,
-            post_data=post_data,
-        )
-
-        raw_response_dict = self.run_middlewares(request, view)
-
-        if raw_response_dict:
-            # request got handled by a middleware
-
-            return view.handle_raw_response_dict(raw_response_dict)
-
-        return view.start(
-            request=request,
-            initial_connection=connection,
-        )
 
     def handle_lona_message(self, connection, window_id, method, url, payload):
         """
@@ -313,24 +290,27 @@ class ViewRuntimeController:
             # A View object has to be retrieved always to run
             # REQUEST_MIDDLEWARES on the current request.
             # Otherwise authentication would not be possible.
-            view = self.get_view(
+            view_runtime = ViewRuntime(
+                server=self.server,
                 url=url,
                 route=route,
                 match_info=match_info,
+                post_data=payload or {},
+                start_connection=connection,
             )
 
-            request = view.gen_request(
+            request = Request(
+                view_runtime=view_runtime,
                 connection=connection,
-                post_data=payload,
             )
 
             # run request middlewares
-            raw_response_dict = self.run_middlewares(request, view)
+            raw_response_dict = self.run_middlewares(request, view_runtime)
 
             if raw_response_dict:
                 # message got handled by a middleware
 
-                view.handle_raw_response_dict(
+                view_runtime.handle_raw_response_dict(
                     raw_response_dict,
                     connections={connection: (window_id, url, )},
                     patch_input_events=False,
@@ -346,10 +326,10 @@ class ViewRuntimeController:
                route in self.running_single_user_views[user] and
                self.running_single_user_views[user][route].is_daemon):
 
-                view = self.running_single_user_views[user][route]
+                view_runtime = self.running_single_user_views[user][route]
 
-                if not view.is_finished and view.is_daemon:
-                    view.add_connection(
+                if not view_runtime.is_finished and view_runtime.is_daemon:
+                    view_runtime.add_connection(
                         connection=connection,
                         window_id=window_id,
                         url=url,
@@ -358,7 +338,7 @@ class ViewRuntimeController:
                     return
 
                 else:
-                    view.stop()
+                    view_runtime.stop()
 
             # connect to a multi user view
             elif(route in self.running_multi_user_views):
@@ -374,15 +354,15 @@ class ViewRuntimeController:
             if user not in self.running_single_user_views:
                 self.running_single_user_views[user] = {}
 
-            self.running_single_user_views[user][route] = view
+            self.running_single_user_views[user][route] = view_runtime
 
-            view.add_connection(
+            view_runtime.add_connection(
                 connection=connection,
                 window_id=window_id,
                 url=url,
             )
 
-            view.start(request=request, initial_connection=connection)
+            view_runtime.start()
 
         # input events
         elif method == Method.INPUT_EVENT:
@@ -393,6 +373,6 @@ class ViewRuntimeController:
 
             for route, view in self.running_single_user_views[user].items():
                 if view.url == url_object:
-                    view.handle_input_event(payload)
+                    view.handle_input_event(connection, payload)
 
                     break
