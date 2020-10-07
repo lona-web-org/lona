@@ -16,7 +16,7 @@ class Client:
         if self.request._view_runtime.stop_reason:
             raise self.request._view.stop_reason()
 
-    def _await_specific_user_input(self, *nodes, html=None, event_type=''):
+    def _await_specific_input_event(self, *nodes, html=None, event_type=''):
         self._assert_single_user_request()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
@@ -27,7 +27,7 @@ class Client:
         if len(nodes) == 1 and isinstance(nodes[0], list):
             nodes = nodes[0]
 
-        return self.request._view_runtime.await_user_input(
+        return self.request._view_runtime.await_input_event(
             html=html,
             event_type=event_type,
             nodes=nodes,
@@ -54,29 +54,29 @@ class Client:
 
         self.request._view_runtime.send_data(title=title)
 
-    def await_user_input(self, html=None):
+    def await_input_event(self, html=None):
         self._assert_single_user_request()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
 
-        return self.request._view_runtime.await_user_input(html=html)
+        return self.request._view_runtime.await_input_event(html=html)
 
     def await_click(self, *clickable_nodes, html=None):
-        return self. _await_specific_user_input(
+        return self. _await_specific_input_event(
             *clickable_nodes,
             html=html,
             event_type='click',
         )
 
     def await_change(self, *changeable_nodes, html=None):
-        return self. _await_specific_user_input(
+        return self. _await_specific_input_event(
             *changeable_nodes,
             html=html,
             event_type='change',
         )
 
     def await_submit(self, *form_nodes, html=None):
-        return self. _await_specific_user_input(
+        return self. _await_specific_input_event(
             *form_nodes,
             html=html,
             event_type='submit',

@@ -59,7 +59,7 @@ class ViewRuntime:
         self.patch_input_events = True
         self.post_data = None
 
-        self.pending_user_inputs = {
+        self.pending_input_events = {
             'event': None,
             'click': None,
             'change': None,
@@ -136,7 +136,7 @@ class ViewRuntime:
         self.connections = {}
 
         # cancel all pending user input events
-        for event_name, pending in self.pending_user_inputs.items():
+        for event_name, pending in self.pending_input_events.items():
             if not pending:
                 continue
 
@@ -298,12 +298,12 @@ class ViewRuntime:
         return response_dict
 
     # input events ############################################################
-    def await_user_input(self, html=None, event_type='event', nodes=[]):
+    def await_input_event(self, html=None, event_type='event', nodes=[]):
         # TODO: find right priority
 
-        async def _await_user_input():
+        async def _await_input_event():
             future = asyncio.Future()
-            self.pending_user_inputs[event_type] = [future, nodes]
+            self.pending_input_events[event_type] = [future, nodes]
 
             return await future
 
@@ -311,7 +311,7 @@ class ViewRuntime:
             self.send_data(html=html)
 
         return self.server.schedule(
-            _await_user_input(),
+            _await_input_event(),
             sync=True,
             wait=True,
             priority=self.server.settings.DEFAULT_VIEW_PRIORITY,
@@ -339,23 +339,23 @@ class ViewRuntime:
                 return
 
         # pending input events
-        if(input_event.name in self.pending_user_inputs and
-           self.pending_user_inputs[input_event.name] is not None):
+        if(input_event.name in self.pending_input_events and
+           self.pending_input_events[input_event.name] is not None):
 
-            future, nodes = self.pending_user_inputs[input_event.name]
+            future, nodes = self.pending_input_events[input_event.name]
 
             if not nodes or input_event.node in nodes:
                 future.set_result(input_event)
-                self.pending_user_inputs[input_event.name] = None
+                self.pending_input_events[input_event.name] = None
 
                 return
 
-        if self.pending_user_inputs['event'] is not None:
-            future, nodes = self.pending_user_inputs['event']
+        if self.pending_input_events['event'] is not None:
+            future, nodes = self.pending_input_events['event']
 
             if not nodes or input_event.node in nodes:
                 future.set_result(input_event)
-                self.pending_user_inputs['event'] = None
+                self.pending_input_events['event'] = None
 
                 return
 
