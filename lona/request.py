@@ -14,7 +14,7 @@ class Client:
 
     def _assert_view_is_running(self):
         if self.request._view_runtime.stop_reason:
-            raise self.request._view.stop_reason()
+            raise self.request._view_runtime.stop_reason()
 
     def _await_specific_input_event(self, *nodes, html=None, event_type=''):
         self._assert_single_user_request()
