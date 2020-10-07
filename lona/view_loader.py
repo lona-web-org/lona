@@ -71,30 +71,35 @@ class ViewLoader:
     def load(self, import_string):
         logger.debug("loading '%s'", import_string)
 
-        caching_enabled = self.server.settings.VIEW_CACHING
-        ignore_import_cache = not caching_enabled
+        if isinstance(import_string, str):
+            caching_enabled = self.server.settings.VIEW_CACHING
+            ignore_import_cache = not caching_enabled
 
-        if import_string not in self._view_cache:
-            logger.debug("'%s' is not cached yet", import_string)
-
-            self._load_into_cache(import_string, ignore_import_cache)
-
-        elif not caching_enabled:
-            path = self._view_cache[import_string]['path']
-            modified = self._view_cache[import_string]['modified']
-
-            if os.path.getmtime(path) > modified:
-                logger.debug("'%s' is modified in file system", import_string)
+            if import_string not in self._view_cache:
+                logger.debug("'%s' is not cached yet", import_string)
 
                 self._load_into_cache(import_string, ignore_import_cache)
 
+            elif not caching_enabled:
+                path = self._view_cache[import_string]['path']
+                modified = self._view_cache[import_string]['modified']
+
+                if os.path.getmtime(path) > modified:
+                    logger.debug("'%s' is modified in file system",
+                                 import_string)
+
+                    self._load_into_cache(import_string, ignore_import_cache)
+
+            else:
+                logger.debug("loading '%s' from cache", import_string)
+
         else:
-            logger.debug("loading '%s' from cache", import_string)
+            if import_string not in self._view_spec_cache:
+                self._view_spec_cache[import_string] = ViewSpec(import_string)
+
+            return import_string
 
         return self._view_cache[import_string]['view']
 
     def get_view_spec(self, view):
-        if view not in self._view_spec_cache:
-            self._view_spec_cache[view] = ViewSpec(view)
-
         return self._view_spec_cache[view]

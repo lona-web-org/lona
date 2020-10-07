@@ -325,12 +325,12 @@ class LonaServer:
             if route.http_pass_through:
                 http_logger.debug('http_pass_through mode')
 
-                if asyncio.iscoroutinefunction(route.handler):
-                    response = await route.handler(http_request)
+                if asyncio.iscoroutinefunction(route.view):
+                    response = await route.view(http_request)
 
                 else:
                     response = await self.schedule(
-                        route.handler,
+                        route.view,
                         http_request,
                         priority=self.settings.DEFAULT_VIEW_PRIORITY,
                     )

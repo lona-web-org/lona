@@ -11,9 +11,9 @@ class Route:
                  http_pass_through=False, frontend_view=''):
 
         self.method = '*'
-        self.raw_path = ''
+        self.raw_pattern = ''
         self.format_string = ''
-        self.handler = None
+        self.view = None
         self.name = name
         self.optional_trailing_slash = False
         self.interactive = interactive
@@ -21,10 +21,10 @@ class Route:
         self.frontend_view = frontend_view
 
         if len(args) == 3:
-            self.method, self.raw_path, self.handler = args
+            self.method, self.raw_pattern, self.view = args
 
         elif len(args) == 2:
-            self.raw_path, self.handler = args
+            self.raw_pattern, self.view = args
 
         else:
             raise ValueError('to few arguments')
@@ -35,14 +35,14 @@ class Route:
         # parse raw path
         self.path = None
 
-        if self.raw_path.endswith('(/)'):
+        if self.raw_pattern.endswith('(/)'):
             self.optional_trailing_slash = True
 
-        groups = ABSTRACT_ROUTE_RE.findall(self.raw_path)
+        groups = ABSTRACT_ROUTE_RE.findall(self.raw_pattern)
 
         # path is no pattern but simple string
         if not groups:
-            self.path = self.raw_path
+            self.path = self.raw_pattern
 
             if self.optional_trailing_slash:
                 self.path = self.path[:-3]
@@ -51,7 +51,7 @@ class Route:
 
         pattern_names = [i[0] for i in groups]
         patterns = [(i[0], i[2] or DEFAULT_PATTERN, ) for i in groups]
-        cleaned_pattern = ABSTRACT_ROUTE_RE.sub('{}', self.raw_path)
+        cleaned_pattern = ABSTRACT_ROUTE_RE.sub('{}', self.raw_pattern)
 
         # setup format string
         self.format_string = cleaned_pattern.format(
@@ -87,8 +87,8 @@ class Route:
     def __repr__(self):
         return '<Route({}, {}, {})>'.format(
             self.method,
-            self.raw_path,
-            self.handler,
+            self.raw_pattern,
+            self.view,
         )
 
 

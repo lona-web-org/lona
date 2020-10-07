@@ -210,17 +210,15 @@ class ViewRuntimeController:
             match, route, match_info = self.server.router.resolve(url.path)
 
             if match:
-                handler = route.handler
+                handler = route.view
 
             else:
                 handler = self.handle_404
 
         else:
-            handler = route.handler
+            handler = route.view
 
-        # handler is an import string
-        if isinstance(handler, str):
-            handler = self.server.view_loader.load(handler)
+        handler = self.server.view_loader.load(handler)
 
         return ViewRuntime(
             server=self.server,
