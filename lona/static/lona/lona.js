@@ -41,6 +41,7 @@ function Lona(settings) {
 
     // state ------------------------------------------------------------------
     this.widget_handler = {};
+    this.window_id = 1;
 
     // handle websocket messages ----------------------------------------------
     this.METHOD = {
@@ -86,6 +87,12 @@ function Lona(settings) {
 
         // all lona messages have to start with a window id
         if(!Number.isInteger(json_data[0])) {
+            return this.lona._run_custom_message_handlers(
+                raw_message, json_data);
+        };
+
+        // this message seems to be for another window
+        if(json_data[0] != this.lona.window_id) {
             return this.lona._run_custom_message_handlers(
                 raw_message, json_data);
         };
@@ -402,10 +409,11 @@ function Lona(settings) {
         };
 
         // send event message
-        var window_id = 1;
-
         var message = [
-            window_id, this.METHOD.INPUT_EVENT, this.url, input_event_type,
+            this.window_id,
+            this.METHOD.INPUT_EVENT,
+            this.url,
+            input_event_type,
         ].concat(
             data,
         ).concat(
@@ -435,8 +443,7 @@ function Lona(settings) {
         // This prevents glitches when switching urls fast.
         this.url = url;
 
-        var window_id = 1;
-        var message = [window_id, this.METHOD.VIEW, url];
+        var message = [this.window_id, this.METHOD.VIEW, url];
 
         if(post_data) {
             message[2] = post_data;
