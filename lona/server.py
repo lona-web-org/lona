@@ -125,11 +125,6 @@ class LonaServer:
         if not self.request_middlewares:
             server_logger.debug('no request middlewares loaded')
 
-        # setup static files
-        server_logger.debug('setup static file')
-
-        self.static_file_loader = StaticFileLoader(self)
-
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')
 
@@ -161,6 +156,13 @@ class LonaServer:
 
         self.view_runtime_controller = ViewRuntimeController(self)
         self.view_runtime_controller.start()
+
+        # setup static files
+        # the static file loader has to be started last because it does
+        # node class discovery which has to happen after all views are imported
+        server_logger.debug('setup static file')
+
+        self.static_file_loader = StaticFileLoader(self)
 
         # finish
         server_logger.debug('setup finish')
