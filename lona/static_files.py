@@ -15,21 +15,26 @@ class SortOrder:
 
 
 class StaticFile:
-    def __init__(self, name, path, url=None, sort_order=None, link=True):
+    def __init__(self, name, path, url=None, sort_order=None, link=True,
+                 enabled_by_default=True):
+
         self.name = name
         self.path = path
         self.url = url
         self.sort_order = sort_order or SortOrder.APPLICATION
         self.link = link
+        self.enabled_by_default = enabled_by_default
+        self.enabled = True
 
         # this value is only for the object representation
         # and is meant for debugging
         self.static_url_prefix = ''
 
     def __repr__(self):
-        return '<{}({}, {}{} -> {})>'.format(
+        return '<{}({}, enabled={}, {}{} -> {})>'.format(
             self.__class__.__name__,
             self.name,
+            repr(self.enabled),
             self.static_url_prefix,
             self.url,
             self.path,
@@ -56,26 +61,24 @@ class StaticFileLoader:
         self.discover()
 
     def discover_node_classes(self):
-        # TODO: implement whitelisting and blacklisting
-
-        node_classes = [AbstractNode]
+        self.node_classes = [AbstractNode]
 
         while True:
-            count = len(node_classes)
+            count = len(self.node_classes)
 
-            for node_class in list(node_classes):
+            for node_class in list(self.node_classes):
                 for sub_class in node_class.__subclasses__():
-                    if sub_class not in node_classes:
-                        node_classes.append(sub_class)
+                    if sub_class not in self.node_classes:
+                        self.node_classes.append(sub_class)
 
-            if len(node_classes) == count:
-                return node_classes
+            if len(self.node_classes) == count:
+                return self.node_classes
 
     def discover_node_static_files(self):
-        # TODO: implement whitelisting and blacklisting
-
-        node_stylesheets = []
-        node_scripts = []
+        self.node_stylesheets = []
+        self.node_scripts = []
+        self.node_static_files = []
+        self.static_files = []
 
         # discover
         discovered_names = []
@@ -85,67 +88,103 @@ class StaticFileLoader:
                 continue
 
             for static_file in node_class.STATIC_FILES:
-                if static_file.name not in discovered_names:
-                    # create a local copy
-                    static_file = copy(static_file)
+                if static_file.name in discovered_names:
+                    continue
 
-                    static_file.static_url_prefix = \
-                        self.server.settings.STATIC_URL_PREFIX
+                node_class_path = inspect.getfile(node_class)
+                node_class_dirname = os.path.dirname(node_class_path)
 
-                    # patch path
-                    static_file_rel_path = static_file.path
-                    node_class_path = inspect.getfile(node_class)
-                    node_class_dirname = os.path.dirname(node_class_path)
+                # check static file
+                if not isinstance(static_file, StaticFile):
+                    logger.error(
+                        '%s::%s: unknown type found: %s',
+                        node_class_path,
+                        node_class.__name__,
+                        repr(static_file),
+                    )
 
-                    static_file_abs_path = os.path.join(
-                        node_class_dirname, static_file_rel_path)
+                    continue
 
-                    if not os.path.exists(static_file_abs_path):
-                        # TODO: error message
+                # create a local copy
+                static_file = copy(static_file)
 
-                        continue
+                static_file.static_url_prefix = \
+                    self.server.settings.STATIC_URL_PREFIX
 
-                    static_file.path = static_file_abs_path
+                # patch path
+                static_file_rel_path = static_file.path
 
-                    # patch url
-                    if not static_file.url:
-                        url = static_file_rel_path
+                static_file_abs_path = os.path.join(
+                    node_class_dirname, static_file_rel_path)
 
-                    else:
-                        url = static_file.url
+                if not os.path.exists(static_file_abs_path):
+                    logger.error(
+                        "%s::%s: path '%s' does not exist",
+                        node_class_path,
+                        node_class.__name__,
+                        static_file_abs_path,
+                    )
 
-                    if url.startswith('/'):
-                        url = url[1:]
+                    continue
 
-                    static_file.url = url
+                static_file.path = static_file_abs_path
 
-                    # sort static file into the right cache
-                    if isinstance(static_file, StyleSheet):
-                        node_stylesheets.append(static_file)
+                # patch url
+                if not static_file.url:
+                    url = static_file_rel_path
 
-                    elif isinstance(static_file, Script):
-                        node_scripts.append(static_file)
+                else:
+                    url = static_file.url
 
-                    else:
-                        # TODO: error message
+                if url.startswith('/'):
+                    url = url[1:]
 
-                        continue
+                static_file.url = url
 
-                    discovered_names.append(static_file.name)
+                # sort static file into the right cache
+                if isinstance(static_file, StyleSheet):
+                    self.node_stylesheets.append(static_file)
+
+                elif isinstance(static_file, Script):
+                    self.node_scripts.append(static_file)
+
+                else:
+                    self.node_static_files.append(static_file)
+
+                discovered_names.append(static_file.name)
 
         # sort
-        node_stylesheets = sorted(node_stylesheets, key=lambda x: x.sort_order)
-        node_scripts = sorted(node_scripts, key=lambda x: x.sort_order)
+        self.node_stylesheets = sorted(
+            self.node_stylesheets, key=lambda x: x.sort_order)
 
-        return node_stylesheets, node_scripts
+        self.node_scripts = sorted(
+            self.node_scripts, key=lambda x: x.sort_order)
+
+        # enable or disable static files
+        self.static_files = [
+            *self.node_stylesheets,
+            *self.node_scripts,
+            *self.node_static_files,
+        ]
+
+        for static_file in self.static_files:
+            # disable static files that are not enabled by default and
+            # are not configured to be enabled
+            if(not static_file.enabled_by_default and
+               static_file.name not in
+               self.server.settings.STATIC_FILES_ENABLED):
+
+                static_file.enabled = False
+
+            # disable static files that are disabled explicitly
+            if static_file.name in self.server.settings.STATIC_FILES_DISABLED:
+                static_file.enabled = False
 
     def discover(self):
         logger.debug('discover node classes')
 
-        self.node_classes = self.discover_node_classes()
-
-        self.node_stylesheets, self.node_scripts = \
-            self.discover_node_static_files()
+        self.discover_node_classes()
+        self.discover_node_static_files()
 
         logger.debug('%s node classes discovered', len(self.node_classes))
 
@@ -157,20 +196,19 @@ class StaticFileLoader:
         # render html files
         logger.debug('rendering html files')
 
-        # TODO: make templates configurable
         # stylesheets
         self.style_tags_html = self.server.templating_engine.render_template(
-            'lona/style_tags.html',
+            self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
             {
-                'stylesheets': self.node_stylesheets,
+                'stylesheets': [i for i in self.node_stylesheets if i.enabled],
             }
         )
 
         # scripts
         self.script_tags_html = self.server.templating_engine.render_template(
-            'lona/script_tags.html',
+            self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
-                'scripts': self.node_scripts,
+                'scripts': [i for i in self.node_scripts if i.enabled],
             }
         )
 
@@ -200,7 +238,10 @@ class StaticFileLoader:
                 return abs_path
 
         # searching in node static files
-        for static_file in self.node_stylesheets + self.node_scripts:
+        for static_file in self.static_files:
+            if not static_file.enabled:
+                continue
+
             if static_file.url == path:
                 return static_file.path
 

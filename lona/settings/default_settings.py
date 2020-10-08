@@ -23,6 +23,10 @@ CORE_STATIC_DIRS = [
 
 STATIC_DIRS = []
 STATIC_URL_PREFIX = '/static/'
+STATIC_FILES_STYLE_TAGS_TEMPLATE = 'lona/style_tags.html'
+STATIC_FILES_SCRIPT_TAGS_TEMPLATE = 'lona/script_tags.html'
+STATIC_FILES_ENABLED = []
+STATIC_FILES_DISABLED = []
 
 # views
 FRONTEND_VIEW = 'lona.views.frontend'
