@@ -13,62 +13,143 @@ from lona.html.nodes import (
     P
 )
 
+from lona.static_files import StaticFile, StyleSheet, SortOrder
+
+
+STATIC_FILES = [
+    # css files
+    StyleSheet(
+        name='bootstrap3.css',
+        path='static/css/bootstrap.min.css',
+        url='bootstrap3.min.css',
+        sort_order=SortOrder.FRAMEWORK,
+    ),
+    StyleSheet(
+        name='bootstrap3-theme.css',
+        path='static/css/bootstrap-theme.min.css',
+        url='bootstrap3-theme.min.css',
+        sort_order=SortOrder.FRAMEWORK,
+        enabled_by_default=False,
+    ),
+
+    # map files
+    StaticFile(
+        name='bootstrap3.css.map',
+        path='static/css/bootstrap.min.css.map',
+        url='bootstrap3.min.css.map',
+        link=False,
+    ),
+    StaticFile(
+        name='bootstrap3-theme.css.map',
+        path='static/css/bootstrap-theme.min.css.map',
+        url='bootstrap3-theme.min.css.map',
+        link=False,
+    ),
+
+    # fonts
+    StaticFile(
+        name='bootstrap3-glyphicons-halflings-regular.eot',
+        path='static/fonts/glyphicons-halflings-regular.eot',
+        url='fonts/glyphicons-halflings-regular.eot',
+        link=False,
+    ),
+    StaticFile(
+        name='bootstrap3-glyphicons-halflings-regular.svg',
+        path='static/fonts/glyphicons-halflings-regular.svg',
+        url='fonts/glyphicons-halflings-regular.svg',
+        link=False,
+    ),
+    StaticFile(
+        name='bootstrap3-glyphicons-halflings-regular.ttf',
+        path='static/fonts/glyphicons-halflings-regular.ttf',
+        url='fonts/glyphicons-halflings-regular.ttf',
+        link=False,
+    ),
+    StaticFile(
+        name='bootstrap3-glyphicons-halflings-regular.woff',
+        path='static/fonts/glyphicons-halflings-regular.woff',
+        url='fonts/glyphicons-halflings-regular.woff',
+        link=False,
+    ),
+    StaticFile(
+        name='bootstrap3-glyphicons-halflings-regular.woff2',
+        path='static/fonts/glyphicons-halflings-regular.woff2',
+        url='fonts/glyphicons-halflings-regular.woff2',
+        link=False,
+    ),
+]
+
 
 # grid system #################################################################
 class Row(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['row']
 
 
 class ColMd1(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-1']
 
 
 class ColMd2(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-2']
 
 
 class ColMd3(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-3']
 
 
 class ColMd4(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-4']
 
 
 class ColMd5(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-5']
 
 
 class ColMd6(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-6']
 
 
 class ColMd7(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-7']
 
 
 class ColMd8(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-8']
 
 
 class ColMd9(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-9']
 
 
 class ColMd10(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-10']
 
 
 class ColMd11(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-11']
 
 
 class ColMd12(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['col-md-12']
 
 
 # forms #######################################################################
 class Form(BaseForm):
+    STATIC_FILES = STATIC_FILES
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -94,41 +175,50 @@ class Form(BaseForm):
 
 # buttons #####################################################################
 class _Button(ButtonNode):
+    STATIC_FILES = STATIC_FILES
+
     ATTRIBUTES = {
         'type': 'button',
     }
 
 
 class Button(_Button):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['btn', 'btn-primary']
 
 
 class PrimaryButton(Button):
-    pass
+    STATIC_FILES = STATIC_FILES
 
 
 class SecondaryButton(_Button):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['btn', 'btn-secondary']
 
 
 class SuccessButton(_Button):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['btn', 'btn-success']
 
 
 class DangerButton(_Button):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['btn', 'btn-danger']
 
 
 class WarningButton(_Button):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['btn', 'btn-warning']
 
 
 class InfoButton(_Button):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['btn', 'btn-info']
 
 
 # popups ######################################################################
 class ModalNode(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['modal']
 
     ATTRIBUTES = {
@@ -139,6 +229,7 @@ class ModalNode(Div):
 
 
 class ModalDialogNode(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['modal-dialog']
 
     ATTRIBUTES = {
@@ -147,22 +238,28 @@ class ModalDialogNode(Div):
 
 
 class ModalContentNode(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['modal-content']
 
 
 class ModalHeaderNode(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['modal-header']
 
 
 class ModalBodyNode(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['modal-body']
 
 
 class ModalFooterNode(Div):
+    STATIC_FILES = STATIC_FILES
     CLASS_LIST = ['modal-footer']
 
 
 class Modal(Widget):
+    STATIC_FILES = STATIC_FILES
+
     class Mode:
         CONFIRM = 1
         CANCEL = 2
@@ -229,6 +326,8 @@ class Modal(Widget):
 
 # progress bars ###############################################################
 class ProgressBar(Widget):
+    STATIC_FILES = STATIC_FILES
+
     def __init__(self, initial_value=None):
         self.progress_bar = Div(
             _class='progress-bar',
