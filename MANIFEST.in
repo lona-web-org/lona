@@ -2,6 +2,7 @@ recursive-include lona/templates/ *
 recursive-include lona/static/ *
 recursive-include lona/debugger/templates/ *
 recursive-include lona/debugger/static/ *
+recursive-include lona/contrib/*/static/ *
 
 global-exclude .*
 global-exclude *~

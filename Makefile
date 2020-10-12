@@ -43,3 +43,8 @@ doc:
 doc-rollout:
 	cd doc && \
 	make rollout
+
+# packaging ###################################################################
+sdist:
+	rm -rf dist *.egg-info && \
+	./setup.py sdist
