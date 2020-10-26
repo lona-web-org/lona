@@ -1,8 +1,6 @@
 from traceback import format_exception
 from types import ModuleType
 from textwrap import indent
-from pprint import pformat
-from html import escape
 import importlib
 import datetime
 import inspect
@@ -10,10 +8,6 @@ import logging
 import runpy
 
 from lona.scheduling import get_current_thread_name
-
-
-def pretty_print(*args, **kwargs):
-    return escape(pformat(*args, **kwargs))
 
 
 def acquire(import_string, ignore_import_cache=False):

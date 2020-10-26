@@ -1,13 +1,12 @@
 from concurrent.futures import CancelledError
 import logging
 import asyncio
-import json
 
 from yarl import URL
 
 from lona.exceptions import StopReason, UserAbort
+from lona.html.document import Document
 from lona.input_event import InputEvent
-from lona.html.base import AbstractNode
 from lona.request import Request
 
 from lona.protocol import (
@@ -16,7 +15,9 @@ from lona.protocol import (
     encode_view_stop,
     encode_redirect,
     encode_data,
+    dumps,
 )
+
 
 logger = logging.getLogger('lona.view_runtime')
 
@@ -59,12 +60,11 @@ class ViewRuntime:
         #     connection: (window_id, url),
         # }
 
+        self.document = Document(loop=self.server.loop)
+
         self.is_finished = False
         self.stop_reason = None
         self.is_daemon = False
-
-        self.html = ''
-        self.patch_input_events = True
 
         self.pending_input_events = {
             'event': None,
@@ -134,12 +134,11 @@ class ViewRuntime:
     def add_connection(self, connection, window_id, url):
         self.connections[connection] = (window_id, url, )
 
-        self.send_data(
-            html=self.html,
-            patch_input_events=self.patch_input_events,
-            connections={connection: (window_id, url, )},
-            flush=True,
-        )
+        with self.document.lock():
+            self.send_data(
+                html_data=self.document.serialize(),
+                connections={connection: (window_id, url, )},
+            )
 
     def remove_connection(self, connection, window_id=None):
         if connection in self.connections:
@@ -163,7 +162,7 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, window_id in connections.items():
-            message = json.dumps(
+            message = dumps(
                 encode_redirect(window_id, str(self.url), target_url))
 
             connection.send_str(message)
@@ -172,59 +171,25 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, window_id in connections.items():
-            message = json.dumps(
+            message = dumps(
                 encode_http_redirect(window_id, str(self.url), target_url))
 
             connection.send_str(message)
 
-    def send_data(self, title=None, html=None, widget_data=None,
-                  connections={}, flush=False, patch_input_events=True):
+    def send_data(self, title=None, html_data=None, widget_data=None,
+                  connections={}):
 
         connections = connections or self.connections
 
-        # this mode gets used by request.client.set_title()
-        if title and not html and not widget_data:
-            payload = None
-
-        else:
-            # if no html is set the last html gets resend
-            html = html or self.html
-
-            # if no connection is made, no message has to be send
-            if not connections:
-                # update internal state
-                self.html = html
-                self.patch_input_events = patch_input_events
-
-                return
-
-            # node trees
-            if isinstance(html, AbstractNode):
-                if not flush and html is self.html:
-                    payload = html.get_dirty_nodes()
-                    html.clean()
-
-                else:
-                    payload = html.serialize()
-
-            # html strings
-            else:
-                payload = str(html)
-
-            # update internal state
-            self.html = html
-            self.patch_input_events = patch_input_events
-
         # send message
         for connection, (window_id, url) in list(connections.items()):
-            message = json.dumps(
+            message = dumps(
                 encode_data(
                     window_id=window_id,
                     url=url,
                     title=title,
-                    html=payload,
-                    widget_data=None,
-                    patch_input_events=patch_input_events,
+                    html_data=html_data,
+                    widget_data={},
                 )
             )
 
@@ -234,8 +199,7 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in list(connections.items()):
-            message = json.dumps(
-                encode_view_start(window_id=window_id, url=url))
+            message = dumps(encode_view_start(window_id=window_id, url=url))
 
             connection.send_str(message)
 
@@ -243,18 +207,12 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in list(connections.items()):
-            message = json.dumps(
-                encode_view_stop(window_id=window_id, url=url))
+            message = dumps(encode_view_stop(window_id=window_id, url=url))
 
             connection.send_str(message)
 
-    def handle_raw_response_dict(self, raw_response_dict,
-                                 patch_input_events=None, connections={}):
-
+    def handle_raw_response_dict(self, raw_response_dict, connections={}):
         connections = connections or self.connections
-
-        if patch_input_events is None:
-            patch_input_events = self.patch_input_events
 
         response_dict = \
             self.server.view_runtime_controller.render_response_dict(
@@ -275,11 +233,13 @@ class ViewRuntime:
             )
 
         elif response_dict['text']:
-            self.send_data(
-                html=response_dict['text'],
-                patch_input_events=self.patch_input_events,
-                connections=connections,
-            )
+            with self.document.lock():
+                html_data = self.document.apply(response_dict['text'])
+
+                self.send_data(
+                    html_data=html_data,
+                    connections=connections,
+                )
 
         return response_dict
 
@@ -294,7 +254,13 @@ class ViewRuntime:
             return await future
 
         if html:
-            self.send_data(html=html)
+            with self.document.lock():
+                html_data = self.document.apply(html)
+
+                if html_data:
+                    self.send_data(
+                        html_data=html_data,
+                    )
 
         return self.server.schedule(
             _await_input_event(),
@@ -304,7 +270,7 @@ class ViewRuntime:
         )
 
     def handle_input_event(self, connection, event_payload):
-        input_event = InputEvent(event_payload, self.html)
+        input_event = InputEvent(event_payload, self.document)
 
         # root input handler (class based views)
         if self.view_spec.has_root_input_event_handler:

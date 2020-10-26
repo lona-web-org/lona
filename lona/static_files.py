@@ -1,9 +1,12 @@
+from tempfile import TemporaryDirectory
 from copy import copy
 import logging
 import inspect
+import json
 import os
 
-from lona.html.base import AbstractNode
+from lona.html.abstract_node import AbstractNode
+from lona.protocol import Constant
 
 logger = logging.getLogger('lona.static_files')
 
@@ -53,12 +56,33 @@ class StaticFileLoader:
     def __init__(self, server):
         self.server = server
 
+        self.tmp_dir = TemporaryDirectory()
+
         self.static_dirs = (self.server.settings.STATIC_DIRS +
+                            [self.tmp_dir.name] +
                             self.server.settings.CORE_STATIC_DIRS)
 
         logger.debug('static dirs %s loaded', repr(self.static_dirs)[1:-1])
 
+        self.generate_code_book()
         self.discover()
+
+    def generate_code_book(self):
+        logger.debug('generating code book')
+
+        javascript = self.server.templating_engine.render_template(
+            self.server.settings.STATIC_FILES_CODE_BOOK_TEMPLATE,
+            {
+                'code_book': json.dumps(Constant.generate_code_book()),
+            },
+        )
+
+        os.makedirs(os.path.join(self.tmp_dir.name, 'lona'))
+
+        path = os.path.join(self.tmp_dir.name, 'lona/lona-code-book.js')
+
+        with open(path, 'w+') as f:
+            f.write(javascript)
 
     def discover_node_classes(self):
         self.node_classes = [AbstractNode]

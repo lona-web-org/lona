@@ -1,4 +1,5 @@
-from lona.html.base import Node, Widget  # NOQA
+from lona.html.widget import Widget  # NOQA
+from lona.html.node import Node
 
 
 # simple html nodes ###########################################################
@@ -133,10 +134,7 @@ class Label(Node):
 
 class Button(Node):
     TAG_NAME = 'button'
-
-    LONA_ATTRIBUTES = {
-        'clickable': True,
-    }
+    CLASS_LIST = ['lona-clickable']
 
 
 class Input(Node):

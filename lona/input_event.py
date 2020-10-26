@@ -1,9 +1,8 @@
 from lona.protocol import InputEventType
-from lona.html.nodes import Node
 
 
 class InputEvent:
-    def __init__(self, event_payload, html):
+    def __init__(self, event_payload, document):
         self.data = {}
         self.node = None
         self.widgets = []
@@ -38,10 +37,10 @@ class InputEvent:
 
         # find node
         # node info contains a lona node id
-        if len(self.node_info) == 1 and isinstance(html, Node):
-            self.node, self.widgets = html.get_node(self.node_info[0])
+        if len(self.node_info) == 1:
+            self.node, self.widgets = document.get_node(self.node_info[0])
 
-            if not self.node:
+            if self.node is None:
                 raise ValueError('invalid lona node id')
 
             self.tag_name = self.node.TAG_NAME

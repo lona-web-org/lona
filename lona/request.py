@@ -38,21 +38,24 @@ class Client:
 
         return 'pong'
 
-    def show(self, html=None, patch_input_events=True, flush=False):
+    def show(self, html=None, title=None):
         self._assert_view_is_running()
 
-        if self.request._view_runtime.view_spec.multi_user:
-            patch_input_events = False
+        with self.request._view_runtime.document.lock():
+            html = html or self.request._view_runtime.document.html
+            html_data = self.request._view_runtime.document.apply(html)
 
-        self.request._view_runtime.send_data(
-            html=html,
-            patch_input_events=patch_input_events,
-        )
+            if html_data:
+                self.request._view_runtime.send_data(
+                    html_data=html_data,
+                    title=title,
+                )
 
     def set_title(self, title):
         self._assert_view_is_running()
 
-        self.request._view_runtime.send_data(title=title)
+        with self.request._view_runtime.document.lock():
+            self.request._view_runtime.send_data(title=title)
 
     def await_input_event(self, html=None):
         self._assert_single_user_request()
