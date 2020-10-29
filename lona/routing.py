@@ -113,4 +113,18 @@ class Router:
         return False, None, {}
 
     def reverse(self, name, *args, **kwargs):
-        raise NotImplementedError
+        route = None
+
+        for i in self.routes:
+            if i.name == name:
+                route = i
+
+                break
+
+        if not route:
+            raise ValueError("no route named '{}' found".format(name))
+
+        if route.path:
+            return route.path
+
+        return route.format_string.format(*args, **kwargs)
