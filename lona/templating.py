@@ -33,6 +33,9 @@ class TemplatingEngine:
     def _import(self, *args, **kwargs):
         return acquire(*args, **kwargs)[1]
 
+    def _url(self, *args, **kwargs):
+        return self.server.router.reverse(*args, **kwargs)
+
     # public api ##############################################################
     def get_template(self, template_name):
         logger.debug("searching for '%s'", template_name)
@@ -49,6 +52,7 @@ class TemplatingEngine:
             'load_stylesheets': self._load_stylesheets,
             'load_scripts': self._load_scripts,
             'import': self._import,
+            'url': self._url,
             **self.server.settings.TEMPLATE_EXTRA_CONTEXT,
         }
 
