@@ -1,9 +1,12 @@
+import logging
 import re
 
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
 ROUTE_PART_FORMAT_STRING = r'(?P<{}>{})'
 DEFAULT_PATTERN = r'[^/]+'
 OPTIONAL_TRAILING_SLASH_PATTERN = r'(/)?'
+
+logger = logging.getLogger('lona.routing')
 
 
 class Route:
@@ -104,11 +107,17 @@ class Router:
             self.add_route(route)
 
     def resolve(self, path):
+        logger.debug("resolving '%s'", path)
+
         for route in self.routes:
             match, match_info = route.match(path)
 
             if match:
+                logger.debug('%s matched', route)
+
                 return True, route, match_info
+
+        logger.debug("no match for '%s'", path)
 
         return False, None, {}
 
