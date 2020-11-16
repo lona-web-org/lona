@@ -34,7 +34,11 @@ class ViewRuntime:
         self.start_connection = start_connection
 
         # find view
-        self.view = route.view
+        if route:
+            self.view = route.view
+
+        else:
+            self.view = self.server.settings.ERROR_404_HANDLER
 
         if frontend:
             self.view = self.server.settings.FRONTEND_VIEW
