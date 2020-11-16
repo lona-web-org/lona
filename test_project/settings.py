@@ -7,3 +7,7 @@ STATIC_DIRS = [
 TEMPLATE_DIRS = [
     'templates',
 ]
+
+TEMPLATE_EXTRA_CONTEXT = {
+    'extra_context_variable': 'bar',
+}

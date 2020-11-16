@@ -1,0 +1,22 @@
+{% set escape=import('html.escape') %}
+<h1>Template Response</h1>
+<h2>Variables</h2>
+
+<table>
+  <tr>
+    <th style="text-align: left;">extra_context_variable</th>
+    <td>{{ extra_context_variable }}</td>
+  </tr>
+  <tr>
+    <th style="text-align: left;">test_variable</th>
+    <td>{{ test_variable }}</td>
+  </tr>
+  {% for key, value in _variables.items() %}
+    {% if key != '_variables' %}
+      <tr>
+        <th style="text-align: left;">{{ key }}</th>
+        <td>{{ escape(repr(value)) }}</td>
+      </tr>
+    {% endif %}
+  {% endfor %}
+</table>

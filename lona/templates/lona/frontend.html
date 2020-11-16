@@ -1,25 +1,22 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="/static/lona/widget.css">
+    {{ load_stylesheets() }}
   </head>
   <body>
-    <h1>lona test frontend</h1>
-
-    <div id="menu">
-      <a href="/">Home</a>
-    </div>
-
     <div id="lona"></div>
 
-    <script src="/static/lona/lona.js"></script>
+    {{ load_scripts() }}
     <script>
       var lona = new Lona({
         target: '#lona',
-        DEBUG: true,
+        title: 'Lona Test Project',
+        update_address_bar: true,
+        update_title: true,
+        follow_redirects: true,
+        follow_http_redirects: true,
       });
 
-      lona.patch_links('#menu');
       lona.setup();
     </script>
   </body>
