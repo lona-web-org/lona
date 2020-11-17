@@ -123,6 +123,8 @@ class ViewRuntimeController:
 
             response_dict['text'] = raw_response_dict
 
+            return response_dict
+
         # find keys
         elif isinstance(raw_response_dict, dict):
             for key in response_dict.keys():
