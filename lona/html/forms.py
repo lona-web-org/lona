@@ -112,7 +112,7 @@ class Form(Widget, metaclass=OrderedClassMembers):
     ADD_RESET_BUTTON = True
     ADD_SUBMIT_BUTTON = True
 
-    def __init__(self, initial={}):
+    def __init__(self, initial={}, method=None, action=None, interactive=None):
         self.initial = initial
         self.clean_values = {}
 
@@ -154,14 +154,26 @@ class Form(Widget, metaclass=OrderedClassMembers):
             self.extra_nodes.append(submit_button)
 
         # setup nodes
-        self.nodes = [
-            FormNode(
-                Table(
-                    *self.fields.values(),
-                ),
-                *self.extra_nodes,
+        self.form_node = FormNode(
+            Table(
+                *self.fields.values(),
             ),
+            *self.extra_nodes,
+        )
+
+        self.nodes = [
+            self.form_node,
         ]
+
+        # form attributes
+        if method is not None:
+            self.method = method
+
+        if action is not None:
+            self.action = action
+
+        if interactive is not None:
+            self.interactive = interactive
 
         # populate initial data
         if self.initial:
@@ -184,6 +196,36 @@ class Form(Widget, metaclass=OrderedClassMembers):
             )
 
         return OrderedDict(fields)
+
+    @property
+    def method(self):
+        return self.form_node.attributes.get('method', None)
+
+    @method.setter
+    def method(self, value):
+        self.form_node.attributes['method'] = value
+
+    @property
+    def action(self):
+        return self.form_node.attributes.get('action', None)
+
+    @action.setter
+    def action(self, value):
+        self.form_node.attributes['action'] = value
+
+    @property
+    def interactive(self):
+        return 'lona-ignore' not in self.form_node.class_list
+
+    @interactive.setter
+    def interactive(self, value):
+        value = bool(value)
+
+        if not value:
+            self.form_node.class_list.add('lona-ignore')
+
+        else:
+            self.form_node.class_list.remove('lona-ignore')
 
     # messages ################################################################
     def has_warnings(self):
