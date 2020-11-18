@@ -94,7 +94,18 @@ class ViewRuntime:
             else:
                 raw_response_dict = self.view(*view_args, **view_kwargs)
 
+            # response dicts
             if raw_response_dict:
+
+                # check if non-interactive features got used in
+                # interactive mode
+                if(self.route and self.route.interactive and
+                    isinstance(raw_response_dict, dict) and (
+                     'json' in raw_response_dict or
+                     'file' in raw_response_dict)):
+
+                    raise RuntimeError('JSON and file responses are only available in non-interactive mode')  # NOQA
+
                 return self.handle_raw_response_dict(raw_response_dict)
 
         except(StopReason, CancelledError):
