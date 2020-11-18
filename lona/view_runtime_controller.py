@@ -3,6 +3,7 @@ import logging
 from yarl import URL
 
 from lona.protocol import encode_http_redirect, Method, dumps
+from lona.html.abstract_node import AbstractNode
 from lona.view_runtime import ViewRuntime
 from lona.utils import acquire, Mapping
 from lona.exceptions import ServerStop
@@ -115,6 +116,12 @@ class ViewRuntimeController:
             'redirect': '',
             'http_redirect': '',
         }
+
+        # Node response
+        if isinstance(raw_response_dict, AbstractNode):
+            response_dict['text'] = str(raw_response_dict)
+
+            return response_dict
 
         # string response
         if isinstance(raw_response_dict, str):
