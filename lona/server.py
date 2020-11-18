@@ -362,7 +362,7 @@ class LonaServer:
                     route=route,
                     match_info=match_info,
                     post_data=await http_request.post(),
-                    frontend=True,
+                    frontend=False,
                     start_connection=connection,
                 )
 
