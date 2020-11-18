@@ -149,7 +149,7 @@ class ViewRuntime:
             else:
                 self.connections.pop(connection)
 
-        # if the last connection gets closed and the user should
+        # if the last connection gets closed and the view should
         # not continue running in background, it gets stopped
         if(not self.connections and
            not self.is_daemon and
