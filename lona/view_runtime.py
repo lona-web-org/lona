@@ -161,18 +161,18 @@ class ViewRuntime:
     def send_redirect(self, target_url, connections={}):
         connections = connections or self.connections
 
-        for connection, window_id in connections.items():
+        for connection, (window_id, url) in connections.items():
             message = dumps(
-                encode_redirect(window_id, str(self.url), target_url))
+                encode_redirect(window_id, str(url), target_url))
 
             connection.send_str(message)
 
     def send_http_redirect(self, target_url, connections={}):
         connections = connections or self.connections
 
-        for connection, window_id in connections.items():
+        for connection, (window_id, url) in connections.items():
             message = dumps(
-                encode_http_redirect(window_id, str(self.url), target_url))
+                encode_http_redirect(window_id, str(url), target_url))
 
             connection.send_str(message)
 
