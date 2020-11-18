@@ -1,3 +1,4 @@
+import builtins
 import logging
 
 from jinja2 import Environment, FileSystemLoader
@@ -5,6 +6,14 @@ from jinja2 import Environment, FileSystemLoader
 from lona.utils import acquire
 
 logger = logging.getLogger('lona.templating')
+
+BUILTINS = {}
+
+for name in dir(builtins):
+    if name.startswith('_'):
+        continue
+
+    BUILTINS[name] = getattr(builtins, name)
 
 
 class TemplatingEngine:
@@ -46,22 +55,26 @@ class TemplatingEngine:
 
         return template
 
-    def generate_template_context(self):
-        return {
+    def generate_template_context(self, overrides):
+        context = {
             'server': self.server,
             'load_stylesheets': self._load_stylesheets,
             'load_scripts': self._load_scripts,
             'import': self._import,
             'url': self._url,
+            **BUILTINS,
             **self.server.settings.TEMPLATE_EXTRA_CONTEXT,
+            **overrides,
         }
+
+        context['_variables'] = context
+
+        return context
 
     def render_template(self, template_name, template_context={}):
         template = self.get_template(template_name)
 
-        template_context = {
-            **self.generate_template_context(),
-            **template_context,
-        }
+        template_context = self.generate_template_context(
+            overrides=template_context)
 
         return template.render(template_context)
