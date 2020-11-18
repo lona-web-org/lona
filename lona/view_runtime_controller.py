@@ -166,6 +166,7 @@ class ViewRuntimeController:
             logger.debug("'%s' is a json view", view_name)
 
             response_dict['text'] = dumps(raw_response_dict['json'])
+            response_dict['content_type'] = 'application/json'
 
         return response_dict
 
