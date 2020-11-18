@@ -1,9 +1,8 @@
 import logging
-import json
 
 from yarl import URL
 
-from lona.protocol import encode_http_redirect, Method
+from lona.protocol import encode_http_redirect, Method, dumps
 from lona.view_runtime import ViewRuntime
 from lona.utils import acquire, Mapping
 from lona.exceptions import ServerStop
@@ -166,7 +165,7 @@ class ViewRuntimeController:
         elif 'json' in raw_response_dict:
             logger.debug("'%s' is a json view", view_name)
 
-            response_dict['text'] = json.dumps(raw_response_dict['json'])
+            response_dict['text'] = dumps(raw_response_dict['json'])
 
         return response_dict
 
@@ -284,7 +283,7 @@ class ViewRuntimeController:
 
             # route is not interactive; issue a http redirect
             if match and (route.http_pass_through or not route.interactive):
-                message = json.dumps(encode_http_redirect(window_id, url, url))
+                message = dumps(encode_http_redirect(window_id, url, url))
                 connection.send_str(message)
 
                 return
