@@ -283,7 +283,7 @@ class ViewRuntimeController:
                 url_object.path)
 
             # route is not interactive; issue a http redirect
-            if match and route.http_pass_through or not route.interactive:
+            if match and (route.http_pass_through or not route.interactive):
                 message = json.dumps(encode_http_redirect(window_id, url, url))
                 connection.send_str(message)
 
