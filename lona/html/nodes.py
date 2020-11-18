@@ -123,6 +123,16 @@ class Td(Node):
     TAG_NAME = 'td'
 
 
+class Hr(Node):
+    TAG_NAME = 'hr'
+    SINGLE_TAG = True
+
+
+class Br(Node):
+    TAG_NAME = 'br'
+    SINGLE_TAG = True
+
+
 # inputs ######################################################################
 class Form(Node):
     TAG_NAME = 'form'
