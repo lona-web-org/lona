@@ -181,6 +181,26 @@ class Img(Node):
 class A(Node):
     TAG_NAME = 'a'
 
+    def __init__(self, *args, interactive=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if interactive is not None:
+            self.interactive = interactive
+
+    @property
+    def interactive(self):
+        return 'lona-ignore' not in self.class_list
+
+    @interactive.setter
+    def interactive(self, value):
+        value = bool(value)
+
+        if not value:
+            self.class_list.add('lona-ignore')
+
+        else:
+            self.class_list.remove('lona-ignore')
+
     def set_href(self, href):
         self.attributes['href'] = str(href)
 
