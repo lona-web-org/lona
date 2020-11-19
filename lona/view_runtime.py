@@ -71,7 +71,6 @@ class ViewRuntime:
             'click': None,
             'change': None,
             'submit': None,
-            'reset': None,
         }
 
     def start(self):
