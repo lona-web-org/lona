@@ -291,13 +291,22 @@ class ViewRuntime:
             connection=connection,
         )
 
+        def send_html_update():
+            with self.document.lock():
+                html_data = self.document.apply(self.document.html)
+
+                if html_data:
+                    self.send_data(
+                        html_data=html_data,
+                    )
+
         # root input event handler (class based views)
         if self.view_spec.has_root_input_event_handler:
             input_event = self.view.handle_root_input_event(
                 request, input_event)
 
             if not input_event:
-                self.send_data()
+                send_html_update()
 
                 return
 
@@ -306,7 +315,7 @@ class ViewRuntime:
             input_event = widget.handle_input_event(request, input_event)
 
             if not input_event:
-                self.send_data()
+                send_html_update()
 
                 return
 
@@ -336,4 +345,4 @@ class ViewRuntime:
             input_event = self.view.handle_input_event(request, input_event)
 
             if not input_event:
-                self.send_data()
+                send_html_update()
