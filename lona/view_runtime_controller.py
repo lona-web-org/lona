@@ -296,7 +296,7 @@ class ViewRuntimeController:
 
                 return
 
-            # A View object has to be retrieved always to run
+            # FIXME: A view runtime object has to be created always to run
             # REQUEST_MIDDLEWARES on the current request.
             # Otherwise authentication would not be possible.
             view_runtime = ViewRuntime(
@@ -335,10 +335,10 @@ class ViewRuntimeController:
                route in self.running_single_user_views[user] and
                self.running_single_user_views[user][route].is_daemon):
 
-                view_runtime = self.running_single_user_views[user][route]
+                _view_runtime = self.running_single_user_views[user][route]
 
-                if not view_runtime.is_finished and view_runtime.is_daemon:
-                    view_runtime.add_connection(
+                if not _view_runtime.is_stopped:
+                    _view_runtime.add_connection(
                         connection=connection,
                         window_id=window_id,
                         url=url,
@@ -347,7 +347,7 @@ class ViewRuntimeController:
                     return
 
                 else:
-                    view_runtime.stop()
+                    _view_runtime.stop()
 
             # connect to a multi user view
             elif(route in self.running_multi_user_views):

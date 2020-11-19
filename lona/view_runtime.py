@@ -62,7 +62,7 @@ class ViewRuntime:
 
         self.document = Document(loop=self.server.loop)
 
-        self.is_finished = False
+        self.is_stopped = False
         self.stop_reason = None
         self.is_daemon = False
 
@@ -122,7 +122,7 @@ class ViewRuntime:
                 self.server.view_runtime_controller.handle_500(request, e))
 
         finally:
-            self.is_finished = True
+            self.is_stopped = True
             self.send_view_stop()
 
     def stop(self, reason=UserAbort):
