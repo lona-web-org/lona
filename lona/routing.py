@@ -1,6 +1,8 @@
 import logging
 import re
 
+from lona.utils import acquire
+
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
 ROUTE_PART_FORMAT_STRING = r'(?P<{}>{})'
 DEFAULT_PATTERN = r'[^/]+'
@@ -100,7 +102,14 @@ class Router:
         self.routes = []
 
     def add_route(self, route):
-        self.routes.append(route)
+        try:
+            if isinstance(route.view, str):
+                acquire(route.view)
+
+            self.routes.append(route)
+
+        except ImportError:
+            logger.error("'%s' cannot be imported", route.view)
 
     def add_routes(self, *routes):
         for route in routes:
