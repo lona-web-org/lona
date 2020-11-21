@@ -55,23 +55,6 @@ def acquire(import_string, ignore_import_cache=False):
     return path, attribute
 
 
-class Flag:
-    def __init__(self, value):
-        self.value = value
-
-    def __repr__(self):
-        return repr(self.value)
-
-    def __bool__(self):
-        return self.value
-
-    def __eq__(self, other):
-        return other == self.value
-
-    def set(self, value):
-        self.value = value
-
-
 class Mapping:
     def __init__(self):
         self.entries = []
