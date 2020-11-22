@@ -57,7 +57,13 @@ class InputEvent:
             raise ValueError('invalid node info')
 
     def node_has_id(self, name):
-        return name in self.id_list
+        if self.node is None:
+            return name in self.id_list
+
+        return self.node.has_id(name)
 
     def node_has_class(self, name):
-        return name in self.class_list
+        if self.node is None:
+            return name in self.class_list
+
+        return self.node.has_class(name)
