@@ -17,7 +17,6 @@ parser = ArgumentParser()
 
 parser.add_argument('--host', type=str, default='localhost')
 parser.add_argument('--port', type=int, default=8080)
-parser.add_argument('--max-workers', type=int, default=6)
 parser.add_argument('-s', '--settings', nargs='+')
 parser.add_argument('--project-root', type=str, default=os.getcwd())
 parser.add_argument('--shell', action='store_true')
@@ -60,9 +59,6 @@ if cli_args.loggers:
             log.include(logger_name)
 
 # setup lona server
-if cli_args.shell:
-    cli_args.max_workers += 1
-
 loop = asyncio.get_event_loop()
 app = Application()
 
