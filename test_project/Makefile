@@ -21,7 +21,7 @@ shell: env
 
 server: env
 	. $(PYTHON_VENV)/bin/activate && \
-	lona -s settings.py --project-root=./ $(args)
+	lona $(args)
 
 debug-server: env
 	. $(PYTHON_VENV)/bin/activate && \
