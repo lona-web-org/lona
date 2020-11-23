@@ -16,6 +16,32 @@ for name in dir(builtins):
     BUILTINS[name] = getattr(builtins, name)
 
 
+class Namespace:
+    def __init__(self, server):
+        self.server = server
+
+    def load_stylesheets(self):
+        return self.server.static_file_loader.style_tags_html
+
+    def load_scripts(self):
+        return self.server.static_file_loader.script_tags_html
+
+    def _import(self, *args, **kwargs):
+        return acquire(*args, **kwargs)[1]
+
+    def resolve_url(self, *args, **kwargs):
+        return self.server.router.reverse(*args, **kwargs)
+
+    def __getattribute__(self, name):
+        # this is necessary because in python its illegal to name a
+        # function 'import'
+
+        if name == 'import':
+            return super().__getattribute__('_import')
+
+        return super().__getattribute__(name)
+
+
 class TemplatingEngine:
     # TODO: warn if settings.FRONTEND_TEMPLATE is not available
 
@@ -32,19 +58,6 @@ class TemplatingEngine:
             loader=FileSystemLoader(self.template_dirs),
         )
 
-    # context functions #######################################################
-    def _load_stylesheets(self):
-        return self.server.static_file_loader.style_tags_html
-
-    def _load_scripts(self):
-        return self.server.static_file_loader.script_tags_html
-
-    def _import(self, *args, **kwargs):
-        return acquire(*args, **kwargs)[1]
-
-    def _url(self, *args, **kwargs):
-        return self.server.router.reverse(*args, **kwargs)
-
     # public api ##############################################################
     def get_template(self, template_name):
         logger.debug("searching for '%s'", template_name)
@@ -57,11 +70,7 @@ class TemplatingEngine:
 
     def generate_template_context(self, overrides):
         context = {
-            'server': self.server,
-            'load_stylesheets': self._load_stylesheets,
-            'load_scripts': self._load_scripts,
-            'import': self._import,
-            'url': self._url,
+            'lona': Namespace(self.server),
             **BUILTINS,
             **self.server.settings.TEMPLATE_EXTRA_CONTEXT,
             **overrides,
