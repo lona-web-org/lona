@@ -254,7 +254,7 @@ class ViewRuntime:
         return response_dict
 
     # input events ############################################################
-    def await_input_event(self, html=None, event_type='event', nodes=[]):
+    def await_input_event(self, nodes=[], event_type='event'):
         # TODO: find right priority
 
         async def _await_input_event():
@@ -262,15 +262,6 @@ class ViewRuntime:
             self.pending_input_events[event_type] = [future, nodes]
 
             return await future
-
-        if html:
-            with self.document.lock():
-                html_data = self.document.apply(html)
-
-                if html_data:
-                    self.send_data(
-                        html_data=html_data,
-                    )
 
         return self.server.schedule(
             _await_input_event(),

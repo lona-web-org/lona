@@ -1,4 +1,6 @@
 class Client:
+    # TODO: make calls like client.await_click(node_id='button') possible
+
     def __init__(self, request):
         self.request = request
 
@@ -16,7 +18,7 @@ class Client:
         if self.request._view_runtime.stop_reason:
             raise self.request._view_runtime.stop_reason()
 
-    def _await_specific_input_event(self, *nodes, html=None, event_type=''):
+    def _await_specific_input_event(self, *nodes, event_type='', **kwargs):
         self._assert_single_user_request()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
@@ -27,10 +29,12 @@ class Client:
         if len(nodes) == 1 and isinstance(nodes[0], list):
             nodes = nodes[0]
 
+        if kwargs:
+            self.show(**kwargs)
+
         return self.request._view_runtime.await_input_event(
-            html=html,
-            event_type=event_type,
             nodes=nodes,
+            event_type=event_type,
         )
 
     def ping(self):
@@ -38,8 +42,31 @@ class Client:
 
         return 'pong'
 
-    def show(self, html=None, title=None):
+    def show(self, html=None, template=None, template_string=None, title=None,
+             **kwargs):
+
         self._assert_view_is_running()
+
+        # templating
+        if template or template_string:
+            template_context = kwargs
+
+            if 'template_context' in template_context:
+                template_context = template_context['template_context']
+
+            # string based templates
+            if template_string:
+                html = self.request.server.templating_engine.render_string(
+                    template_string=template_string,
+                    template_context=template_context,
+                )
+
+            # file based templates
+            else:
+                html = self.request.server.templating_engine.render_template(
+                    template_name=template,
+                    template_context=template_context,
+                )
 
         with self.request._view_runtime.document.lock():
             html = html or self.request._view_runtime.document.html
@@ -57,32 +84,31 @@ class Client:
         with self.request._view_runtime.document.lock():
             self.request._view_runtime.send_data(title=title)
 
-    def await_input_event(self, html=None):
-        self._assert_single_user_request()
-        self._assert_view_is_interactive()
-        self._assert_view_is_running()
+    def await_input_event(self, **kwargs):
+        return self. _await_specific_input_event(
+            event_type='event',
+            **kwargs,
+        )
 
-        return self.request._view_runtime.await_input_event(html=html)
-
-    def await_click(self, *clickable_nodes, html=None):
+    def await_click(self, *clickable_nodes, **kwargs):
         return self. _await_specific_input_event(
             *clickable_nodes,
-            html=html,
             event_type='click',
+            **kwargs,
         )
 
-    def await_change(self, *changeable_nodes, html=None):
+    def await_change(self, *changeable_nodes, **kwargs):
         return self. _await_specific_input_event(
             *changeable_nodes,
-            html=html,
             event_type='change',
+            **kwargs,
         )
 
-    def await_submit(self, *form_nodes, html=None):
+    def await_submit(self, *form_nodes, **kwargs):
         return self. _await_specific_input_event(
             *form_nodes,
-            html=html,
             event_type='submit',
+            **kwargs,
         )
 
 

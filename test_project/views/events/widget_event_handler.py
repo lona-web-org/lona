@@ -30,7 +30,7 @@ def handle_request(request):
     )
 
     while True:
-        input_event = request.client.await_input_event(html)
+        input_event = request.client.await_input_event(html=html)
 
         if input_event.node.has_id('stop_view'):
             message.set_text('View Stopped')

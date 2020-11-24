@@ -75,4 +75,4 @@ def handle_request(request):
 
     while True:
         pre.set_text(pformat(form.get_values()))
-        request.client.await_input_event(html)
+        request.client.await_input_event(html=html)
