@@ -91,7 +91,11 @@ FRONTEND_VIEW_PRIORITY = 'system-high'
 SHUTDOWN_PRIORITY = 'system-high'
 
 DEFAULT_MULTI_USER_VIEW_PRIORITY = 'service'
+DEFAULT_HOOK_PRIORITY = 'service'
 DEFAULT_VIEW_PRIORITY = 'medium'
+
+# hooks
+HOOKS = {}
 
 # debugger
 # TODO: make configurable

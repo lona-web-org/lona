@@ -10,6 +10,7 @@ from lona.view_runtime_controller import ViewRuntimeController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
+from lona.hook_manager import HookManager
 from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
@@ -164,11 +165,17 @@ class LonaServer:
 
         self.static_file_loader = StaticFileLoader(self)
 
+        # setup hooks
+        self.hooks = HookManager(self)
+
         # finish
         server_logger.debug('setup finish')
 
     async def shutdown(self, *args, **kwargs):
         server_logger.debug('shutting down')
+
+        await self.loop.run_in_executor(
+            None, lambda: self.hooks.run('server_stop'))
 
         await self.schedule(
             self.view_runtime_controller.stop,

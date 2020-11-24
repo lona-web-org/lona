@@ -71,6 +71,8 @@ server = LonaServer(
 
 app.on_shutdown.append(server.shutdown)
 
+loop.run_in_executor(None, lambda: server.hooks.run('server_start'))
+
 # run server
 if cli_args.shell:
     async def start_shell(server):
