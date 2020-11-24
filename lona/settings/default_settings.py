@@ -32,7 +32,6 @@ STATIC_FILES_DISABLED = []
 # views
 FRONTEND_VIEW = 'lona.views.frontend'
 VIEW_CACHING = True
-VIEW_CACHE_PRELOAD = False
 
 # error handler
 ERROR_404_HANDLER = 'lona.views.handle_404'
