@@ -38,6 +38,7 @@ class Client:
         )
 
     def ping(self):
+        self._assert_view_is_interactive()
         self._assert_view_is_running()
 
         return 'pong'
@@ -45,6 +46,7 @@ class Client:
     def show(self, html=None, template=None, template_string=None, title=None,
              **kwargs):
 
+        self._assert_view_is_interactive()
         self._assert_view_is_running()
 
         # templating
@@ -79,6 +81,7 @@ class Client:
                 )
 
     def set_title(self, title):
+        self._assert_view_is_interactive()
         self._assert_view_is_running()
 
         with self.request._view_runtime.document.lock():
@@ -122,6 +125,7 @@ class View:
                 'operation is not supported in multi user requests')
 
     def daemonize(self):
+        self._assert_view_is_interactive()
         self._assert_single_user_request()
 
         self.request._view_runtime.is_daemon = True
