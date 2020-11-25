@@ -15,7 +15,7 @@ setup(
     license='MIT',
     packages=find_packages(),
     install_requires=[
-        'aiohttp==3.6.2',
+        'aiohttp>=3,<4'
         'jinja2',
     ],
     scripts=[
