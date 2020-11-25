@@ -311,16 +311,8 @@ class LonaServer:
 
         http_logger.debug('http request incoming')
 
-        # websocket requests
-        if(http_request.method == 'GET' and
-           http_request.headers.get('upgrade', '').lower() == 'websocket'):
-
-            return await self.handle_websocket_request(http_request)
-
-        connection = Connection(self, http_request)
-
         # resolve path
-        http_logger.debug('resolving path')
+        http_logger.debug("resolving path %s", repr(http_request.path))
 
         match, route, match_info = await self.schedule(
             self.router.resolve,
@@ -331,46 +323,58 @@ class LonaServer:
         if match:
             http_logger.debug('route %s matched', route)
 
-            # http pass through
-            if route.http_pass_through:
-                http_logger.debug('http_pass_through mode')
+        else:
+            http_logger.debug('no route matched')
 
-                # load view
-                if isinstance(route.view, str):
-                    view = await self.schedule(
-                        self.view_loader.load,
-                        route.view,
-                        priority=self.settings.DEFAULT_VIEW_PRIORITY,
-                    )
+        # http pass through
+        if match and route.http_pass_through:
+            http_logger.debug('http_pass_through mode')
 
-                else:
-                    view = route.view
-
-                # run view
-                if asyncio.iscoroutinefunction(view):
-                    response = await view(http_request)
-
-                else:
-                    response = await self.schedule(
-                        view,
-                        http_request,
-                        priority=self.settings.DEFAULT_VIEW_PRIORITY,
-                    )
-
-                # FIXME: wsgi container
-                if asyncio.iscoroutine(response):
-                    response = await response
-
-                # render and return response
-                if isinstance(response, Response):
-                    return response
-
-                return await self.schedule(
-                    self.render_response,
-                    response,
+            # load view
+            if isinstance(route.view, str):
+                view = await self.schedule(
+                    self.view_loader.load,
+                    route.view,
                     priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
 
+            else:
+                view = route.view
+
+            # run view
+            if asyncio.iscoroutinefunction(view):
+                response = await view(http_request)
+
+            else:
+                response = await self.schedule(
+                    view,
+                    http_request,
+                    priority=self.settings.DEFAULT_VIEW_PRIORITY,
+                )
+
+            # FIXME: wsgi container
+            if asyncio.iscoroutine(response):
+                response = await response
+
+            # render and return response
+            if isinstance(response, Response):
+                return response
+
+            return await self.schedule(
+                self.render_response,
+                response,
+                priority=self.settings.DEFAULT_VIEW_PRIORITY,
+            )
+
+        # websocket requests
+        if(http_request.method == 'GET' and
+           http_request.headers.get('upgrade', '').lower() == 'websocket'):
+
+            return await self.handle_websocket_request(http_request)
+
+        connection = Connection(self, http_request)
+
+        if match:
             # non interactive views
             if not route.interactive:
                 http_logger.debug('non-interactive mode')
