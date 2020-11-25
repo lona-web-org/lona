@@ -1137,7 +1137,8 @@ function Lona(settings) {
             protocol = 'wss://';
         }
 
-        this._ws = new WebSocket(protocol + window.location.host);
+        this._ws = new WebSocket(
+            protocol + window.location.host + window.location.pathname);
 
         this._ws.lona = this;
         this._ws.onmessage = this._handle_raw_websocket_message;
