@@ -47,9 +47,18 @@ class ViewLoader:
 
         self._view_spec_cache = {
             # contains {
-            #     import_string: view_spec,
+            #     cache_key: view_spec,
             # }
         }
+
+    def _gen_cache_key(self, view):
+        try:
+            hash(view)
+
+            return view
+
+        except TypeError:
+            return id(view)
 
     def _load_into_cache(self, import_string, ignore_import_cache):
         logger.debug("importing '%s' ignore_import_cache=%s",
@@ -68,38 +77,42 @@ class ViewLoader:
 
         self._view_spec_cache[view] = ViewSpec(view)
 
-    def load(self, import_string):
-        logger.debug("loading '%s'", import_string)
+    def load(self, view):
+        logger.debug("loading '%s'", view)
 
-        if isinstance(import_string, str):
+        if isinstance(view, str):
             caching_enabled = self.server.settings.VIEW_CACHING
             ignore_import_cache = not caching_enabled
 
-            if import_string not in self._view_cache:
-                logger.debug("'%s' is not cached yet", import_string)
+            if view not in self._view_cache:
+                logger.debug("'%s' is not cached yet", view)
 
-                self._load_into_cache(import_string, ignore_import_cache)
+                self._load_into_cache(view, ignore_import_cache)
 
             elif not caching_enabled:
-                path = self._view_cache[import_string]['path']
-                modified = self._view_cache[import_string]['modified']
+                path = self._view_cache[view]['path']
+                modified = self._view_cache[view]['modified']
 
                 if os.path.getmtime(path) > modified:
                     logger.debug("'%s' is modified in file system",
-                                 import_string)
+                                 view)
 
-                    self._load_into_cache(import_string, ignore_import_cache)
+                    self._load_into_cache(view, ignore_import_cache)
 
             else:
-                logger.debug("loading '%s' from cache", import_string)
+                logger.debug("loading '%s' from cache", view)
 
         else:
-            if import_string not in self._view_spec_cache:
-                self._view_spec_cache[import_string] = ViewSpec(import_string)
+            cache_key = self._gen_cache_key(view)
 
-            return import_string
+            if cache_key not in self._view_spec_cache:
+                self._view_spec_cache[cache_key] = ViewSpec(view)
 
-        return self._view_cache[import_string]['view']
+            return view
+
+        return self._view_cache[view]['view']
 
     def get_view_spec(self, view):
-        return self._view_spec_cache[view]
+        cache_key = self._gen_cache_key(view)
+
+        return self._view_spec_cache[cache_key]
