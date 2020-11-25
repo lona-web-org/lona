@@ -2,11 +2,14 @@ import logging
 import re
 
 from lona.utils import acquire
+from lona.types import Symbol
 
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
 ROUTE_PART_FORMAT_STRING = r'(?P<{}>{})'
 DEFAULT_PATTERN = r'[^/]+'
 OPTIONAL_TRAILING_SLASH_PATTERN = r'(/)?'
+
+MATCH_ALL = Symbol('MATCH_ALL', 1)
 
 logger = logging.getLogger('lona.routing')
 
@@ -40,40 +43,51 @@ class Route:
         # parse raw path
         self.path = None
 
-        if self.raw_pattern.endswith('(/)'):
-            self.optional_trailing_slash = True
+        # match all
+        if self.raw_pattern == MATCH_ALL:
+            self.path = MATCH_ALL
 
-        groups = ABSTRACT_ROUTE_RE.findall(self.raw_pattern)
+        # string or regex
+        else:
+            if self.raw_pattern.endswith('(/)'):
+                self.optional_trailing_slash = True
 
-        # path is no pattern but simple string
-        if not groups:
-            self.path = self.raw_pattern
+            groups = ABSTRACT_ROUTE_RE.findall(self.raw_pattern)
 
-            if self.optional_trailing_slash:
-                self.path = self.path[:-3]
+            # path is no pattern but simple string
+            if not groups:
+                self.path = self.raw_pattern
 
-            return
+                if self.optional_trailing_slash:
+                    self.path = self.path[:-3]
 
-        pattern_names = [i[0] for i in groups]
-        patterns = [(i[0], i[2] or DEFAULT_PATTERN, ) for i in groups]
-        cleaned_pattern = ABSTRACT_ROUTE_RE.sub('{}', self.raw_pattern)
+                return
 
-        # setup format string
-        self.format_string = cleaned_pattern.format(
-            *['{' + i + '}' for i in pattern_names])
+            pattern_names = [i[0] for i in groups]
+            patterns = [(i[0], i[2] or DEFAULT_PATTERN, ) for i in groups]
+            cleaned_pattern = ABSTRACT_ROUTE_RE.sub('{}', self.raw_pattern)
 
-        # compile pattern
-        self.pattern = re.compile(
-            r'^{}{}$'.format(
-                cleaned_pattern.format(
-                    *[ROUTE_PART_FORMAT_STRING.format(*i) for i in patterns]
-                ),
-                (OPTIONAL_TRAILING_SLASH_PATTERN
-                    if self.optional_trailing_slash else ''),
+            # setup format string
+            self.format_string = cleaned_pattern.format(
+                *['{' + i + '}' for i in pattern_names])
+
+            # compile pattern
+            self.pattern = re.compile(
+                r'^{}{}$'.format(
+                    cleaned_pattern.format(
+                        *[ROUTE_PART_FORMAT_STRING.format(*i)
+                          for i in patterns]
+                    ),
+                    (OPTIONAL_TRAILING_SLASH_PATTERN
+                        if self.optional_trailing_slash else ''),
+                )
             )
-        )
 
     def match(self, path):
+        # match all
+        if self.path == MATCH_ALL:
+            return True, {}
+
         # simple string
         if self.path:
             if self.optional_trailing_slash and path.endswith('/'):
