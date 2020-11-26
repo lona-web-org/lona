@@ -1,9 +1,11 @@
 import json
 
+from lona.types import Symbol
+
 
 def dumps(data):
     def default(value):
-        if isinstance(value, Value):
+        if isinstance(value, Symbol):
             return value.value
 
         raise TypeError
@@ -26,7 +28,7 @@ class Constant:
 
                 attribute = getattr(constant_class, name)
 
-                if not isinstance(attribute, Value):
+                if not isinstance(attribute, Symbol):
                     continue
 
                 data[class_name][attribute.name] = attribute.value
@@ -34,60 +36,48 @@ class Constant:
         return data
 
 
-class Value:
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-    def __eq__(self, other):
-        return other == self.value
-
-    def __repr__(self):
-        return self.name
-
-
 class ExitCode(Constant):
-    SUCCESS = Value('SUCCESS', 0)
-    INVALID_MESSAGE = Value('INVALID_MESSAGE', 1)
-    INVALID_METHOD = Value('INVALID_METHOD', 2)
+    SUCCESS = Symbol('SUCCESS', 0)
+    INVALID_MESSAGE = Symbol('INVALID_MESSAGE', 1)
+    INVALID_METHOD = Symbol('INVALID_METHOD', 2)
 
 
 class Method(Constant):
-    VIEW = Value('VIEW', 101)
-    INPUT_EVENT = Value('INPUT_EVENT', 102)
-    REDIRECT = Value('REDIRECT', 201)
-    HTTP_REDIRECT = Value('HTTP_REDIRECT', 202)
-    DATA = Value('DATA', 203)
-    VIEW_START = Value('VIEW_START', 204)
-    VIEW_STOP = Value('VIEW_STOP', 205)
+    VIEW = Symbol('VIEW', 101)
+    INPUT_EVENT = Symbol('INPUT_EVENT', 102)
+    REDIRECT = Symbol('REDIRECT', 201)
+    HTTP_REDIRECT = Symbol('HTTP_REDIRECT', 202)
+    DATA = Symbol('DATA', 203)
+    VIEW_START = Symbol('VIEW_START', 204)
+    VIEW_STOP = Symbol('VIEW_STOP', 205)
 
 
 class InputEventType(Constant):
-    CLICK = Value('CLICK', 301)
-    CHANGE = Value('CHANGE', 302)
-    SUBMIT = Value('SUBMIT', 303)
-    CUSTOM = Value('CUSTOM', 304)
+    CLICK = Symbol('CLICK', 301)
+    CHANGE = Symbol('CHANGE', 302)
+    SUBMIT = Symbol('SUBMIT', 303)
+    CUSTOM = Symbol('CUSTOM', 304)
 
 
 class NodeType(Constant):
-    NODE = Value('NODE', 401)
-    TEXT_NODE = Value('TEXT_NODE', 402)
-    WIDGET = Value('WIDGET', 403)
+    NODE = Symbol('NODE', 401)
+    TEXT_NODE = Symbol('TEXT_NODE', 402)
+    WIDGET = Symbol('WIDGET', 403)
 
 
 class DataType(Constant):
-    HTML = Value('HTML', 501)
-    HTML_TREE = Value('HTML_TREE', 502)
-    HTML_UPDATE = Value('HTML_UPDATE', 503)
+    HTML = Symbol('HTML', 501)
+    HTML_TREE = Symbol('HTML_TREE', 502)
+    HTML_UPDATE = Symbol('HTML_UPDATE', 503)
 
 
 class Operation(Constant):
-    SET = Value('SET', 601)
-    RESET = Value('RESET', 602)
-    ADD = Value('ADD', 603)
-    CLEAR = Value('CLEAR', 604)
-    INSERT = Value('INSERT', 605)
-    REMOVE = Value('REMOVE', 606)
+    SET = Symbol('SET', 601)
+    RESET = Symbol('RESET', 602)
+    ADD = Symbol('ADD', 603)
+    CLEAR = Symbol('CLEAR', 604)
+    INSERT = Symbol('INSERT', 605)
+    REMOVE = Symbol('REMOVE', 606)
 
 
 def decode_message(message):
