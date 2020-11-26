@@ -79,6 +79,8 @@ function LonaWindow(lona, root, window_id) {
     // window state -----------------------------------------------------------
     this._view_stopped = undefined;
     this._url = undefined;
+    this._text_nodes = {};
+    this._widget_marker = {};
 
     // html rendering helper --------------------------------------------------
     this._add_id = function(node, id) {
