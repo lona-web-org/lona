@@ -17,6 +17,7 @@ parser = ArgumentParser()
 
 parser.add_argument('--host', type=str, default='localhost')
 parser.add_argument('--port', type=int, default=8080)
+parser.add_argument('--shutdown-timeout', type=float, default=0.0)
 parser.add_argument('-s', '--settings', nargs='+')
 parser.add_argument('--project-root', type=str, default=os.getcwd())
 parser.add_argument('--shell', action='store_true')
@@ -86,4 +87,9 @@ if cli_args.shell:
 
     loop.create_task(start_shell(server))
 
-run_app(app=app, host=cli_args.host, port=cli_args.port)
+run_app(
+    app=app,
+    host=cli_args.host,
+    port=cli_args.port,
+    shutdown_timeout=cli_args.shutdown_timeout,
+)
