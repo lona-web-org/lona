@@ -1,4 +1,3 @@
-from html import escape
 import time
 
 from lona.html.nodes import Div, H2, Table, THead, TBody, Tr, Th, Td, Button
@@ -16,7 +15,7 @@ def index(request):
 
 class ViewControllerDashboard:
     def handle_request(self, request):
-        view_controller = request.server.view_controller
+        view_runtime_controller = request.server.view_runtime_controller
 
         tbody = TBody()
 
@@ -44,18 +43,17 @@ class ViewControllerDashboard:
             request.client.show(html)
             tbody.clear()
 
-            for user, running_views in view_controller.running_views.items():
-                for route, view in running_views.items():
-                    button = Button('Stop')
-                    button.view = view
+            for user, running_views in \
+                    view_runtime_controller.running_single_user_views.items():
 
+                for route, runtime in running_views.items():
                     tbody.append(
                         Tr(
-                            Td(escape(str(user))),
-                            Td(escape(repr(route.raw_path))),
-                            Td(escape(repr(view.match_info))),
-                            Td(escape(repr(view.handler))),
-                            Td(escape(repr(view.is_finished))),
+                            Td(str(user)),
+                            Td(repr(route)),
+                            Td(repr(runtime.match_info)),
+                            Td(repr(runtime.view)),
+                            Td(repr(runtime.is_stopped)),
                         ),
                     )
 
