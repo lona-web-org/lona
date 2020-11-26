@@ -322,7 +322,6 @@ class ViewRuntimeController:
                 view_runtime.handle_raw_response_dict(
                     raw_response_dict,
                     connections={connection: (window_id, url, )},
-                    patch_input_events=False,
                 )
 
                 return
