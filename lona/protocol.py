@@ -14,6 +14,8 @@ def dumps(data):
 
 
 class Constant:
+    # TODO: use lona.types.Symbol instead
+
     @classmethod
     def generate_code_book(cls):
         data = {}
