@@ -224,9 +224,6 @@ class Node(AbstractNode):
     def clear(self):
         self._nodes.clear()
 
-    def set_text(self, text):
-        self.nodes = [str(text)]
-
     def __getitem__(self, index):
         return self._nodes[index]
 
@@ -284,3 +281,15 @@ class Node(AbstractNode):
 
     def __repr__(self):
         return self.__str__()
+
+    # HTML helper #############################################################
+    def set_text(self, text):
+        self.nodes = [str(text)]
+
+    def hide(self):
+        self.style['display'] = 'none'
+
+    def show(self):
+        with self.lock():
+            if 'display' in self.style and self.style['display'] == 'none':
+                del self.style['display']
