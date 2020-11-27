@@ -35,7 +35,7 @@ class FormField(Widget):
         self.kwargs = kwargs
 
     def get_input_node(self, name):
-        return Input(name)
+        return Input(name, changeable=True)
 
     def setup(self, name):
         # setup input
@@ -329,7 +329,7 @@ class TextField(FormField):
         if 'placeholder' in self.kwargs:
             input_args['placeholder'] = self.kwargs['placeholder']
 
-        return Input(**input_args)
+        return Input(changeable=True, **input_args)
 
     def check(self):
         value = self.get_value()
@@ -356,7 +356,7 @@ class ColorField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(**input_args)
+        return Input(changeable=True, **input_args)
 
 
 class DateField(FormField):
@@ -369,7 +369,7 @@ class DateField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(**input_args)
+        return Input(changeable=True, **input_args)
 
 
 class WeekField(FormField):
@@ -382,7 +382,7 @@ class WeekField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(**input_args)
+        return Input(changeable=True, **input_args)
 
 
 class TimeField(FormField):
@@ -395,7 +395,7 @@ class TimeField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(**input_args)
+        return Input(changeable=True, **input_args)
 
 
 class CheckboxField(FormField):
@@ -405,7 +405,7 @@ class CheckboxField(FormField):
             'name': name,
         }
 
-        input_node = Input(**input_args)
+        input_node = Input(changeable=True, **input_args)
 
         if 'default' in self.kwargs and self.kwargs['default']:
             input_node.attributes['checked'] = ''
