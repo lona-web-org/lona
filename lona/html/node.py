@@ -239,6 +239,9 @@ class Node(AbstractNode):
     def __len__(self):
         return self._nodes.__len__()
 
+    def __bool__(self):
+        return True
+
     # string representation ###################################################
     def __str__(self):
         with self.document.lock():
