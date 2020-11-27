@@ -1,3 +1,6 @@
+from lona.types import Symbol
+
+
 class Client:
     # TODO: make calls like client.await_click(node_id='button') possible
 
@@ -146,7 +149,7 @@ class Request:
             self.GET = {}
             self.POST = {}
 
-        self.method = 'POST' if self.POST else 'GET'
+        self.method = Symbol('POST' if self.POST else 'GET')
 
         self.server = self._view_runtime.server
         self.route = self._view_runtime.route
