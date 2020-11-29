@@ -2,7 +2,11 @@ from lona.protocol import InputEventType
 
 
 class InputEvent:
-    def __init__(self, event_payload, document):
+    def __init__(self, request, event_payload, document):
+        self.request = request
+        self.event_payload = event_payload
+        self.document = document
+
         self.data = {}
         self.node = None
         self.widgets = []

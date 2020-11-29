@@ -56,24 +56,24 @@ class Widget(AbstractNode):
         ]
 
     # event handling ##########################################################
-    def on_click(self, request, input_event):
+    def on_click(self, input_event):
         return input_event
 
-    def on_change(self, request, input_event):
+    def on_change(self, input_event):
         return input_event
 
-    def on_submit(self, request, input_event):
+    def on_submit(self, input_event):
         return input_event
 
-    def handle_input_event(self, request, input_event):
+    def handle_input_event(self, input_event):
         if input_event.name == 'click':
-            return self.on_click(request, input_event)
+            return self.on_click(input_event)
 
         elif input_event.name == 'change':
-            return self.on_change(request, input_event)
+            return self.on_change(input_event)
 
         elif input_event.name == 'submit':
-            return self.on_submit(request, input_event)
+            return self.on_submit(input_event)
 
         return input_event
 

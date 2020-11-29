@@ -32,22 +32,22 @@ class ClassBasedView:
             self.message.set_text(
                 'handled by handle_request()')
 
-    def handle_root_input_event(self, request, input_event):
+    def handle_root_input_event(self, input_event):
         if input_event.node_has_id('handle_root_input_event'):
             self.message.set_text(
                 'handled by handle_root_input_event()')
 
-            request.client.show(self.html)
+            input_event.request.client.show(self.html)
 
         else:
             return input_event
 
-    def handle_input_event(self, request, input_event):
+    def handle_input_event(self, input_event):
         if input_event.node_has_id('handle_input_event'):
             self.message.set_text(
                 'handled by handle_input_event()')
 
-            request.client.show(self.html)
+            input_event.request.client.show(self.html)
 
         else:
             return input_event

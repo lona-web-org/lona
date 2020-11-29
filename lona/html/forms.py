@@ -287,7 +287,7 @@ class Form(Widget, metaclass=OrderedClassMembers):
         return self.clean_values
 
     # event handling ##########################################################
-    def on_submit(self, request, input_event):
+    def on_submit(self, input_event):
         self.clear_messages()
         self.set_values(input_event.data, run_checks=True)
 

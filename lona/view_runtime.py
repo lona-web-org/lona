@@ -271,14 +271,15 @@ class ViewRuntime:
         )
 
     def handle_input_event(self, connection, event_payload):
-        # TODO: move request objects into input event objects
-        # this makes multi user input events possible
-
-        input_event = InputEvent(event_payload, self.document)
-
         request = Request(
             view_runtime=self,
             connection=connection,
+        )
+
+        input_event = InputEvent(
+            request=request,
+            event_payload=event_payload,
+            document=self.document,
         )
 
         def send_html_update():
@@ -292,8 +293,7 @@ class ViewRuntime:
 
         # root input event handler (class based views)
         if self.view_spec.has_root_input_event_handler:
-            input_event = self.view.handle_root_input_event(
-                request, input_event)
+            input_event = self.view.handle_root_input_event(input_event)
 
             if not input_event:
                 send_html_update()
@@ -302,7 +302,7 @@ class ViewRuntime:
 
         # widgets
         for widget in input_event.widgets:
-            input_event = widget.handle_input_event(request, input_event)
+            input_event = widget.handle_input_event(input_event)
 
             if not input_event:
                 send_html_update()
@@ -332,7 +332,7 @@ class ViewRuntime:
 
         # input event handler (class based views)
         if self.view_spec.has_input_event_handler:
-            input_event = self.view.handle_input_event(request, input_event)
+            input_event = self.view.handle_input_event(input_event)
 
             if not input_event:
                 send_html_update()

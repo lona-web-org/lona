@@ -11,7 +11,7 @@ class Counter(Widget):
             self.button,
         ]
 
-    def handle_input_event(self, request, input_event):
+    def handle_input_event(self, input_event):
         self.button.set_text(int(str(self.button[0]))+1)
 
 
