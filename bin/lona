@@ -70,7 +70,11 @@ server = LonaServer(
     settings_paths=list(cli_args.settings or []),
 )
 
-app.on_shutdown.append(server.shutdown)
+
+async def shutdown(app):
+    await server.stop()
+
+app.on_shutdown.append(shutdown)
 
 loop.run_in_executor(None, lambda: server.hooks.run('server_start'))
 

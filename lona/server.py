@@ -171,7 +171,7 @@ class LonaServer:
         # finish
         server_logger.debug('setup finish')
 
-    async def shutdown(self, *args, **kwargs):
+    async def stop(self, *args, **kwargs):
         server_logger.debug('shutting down')
 
         await self.loop.run_in_executor(
@@ -179,10 +179,10 @@ class LonaServer:
 
         await self.schedule(
             self.view_runtime_controller.stop,
-            priority=self.settings.SHUTDOWN_PRIORITY,
+            priority=self.settings.STOP_PRIORITY,
         )
 
-        self.scheduler.stop()
+        await self.loop.run_in_executor(None, self.scheduler.stop)
 
     # asyncio helper ##########################################################
     def schedule(self, *args, **kwargs):
