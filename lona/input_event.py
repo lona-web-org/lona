@@ -37,24 +37,12 @@ class InputEvent:
 
         # find node
         # node info contains a lona node id
-        if len(self.node_info) == 1:
+        if self.node_info[0]:
             self.node, self.widgets = document.get_node(self.node_info[0])
 
-            if self.node is None:
-                raise ValueError('invalid lona node id')
-
-            self.tag_name = self.node.TAG_NAME
-            self.id_list = self.node.id_list
-            self.class_list = self.node.class_list
-
-        # node info contains only client DOM informations
-        elif len(self.node_info) == 4:
-            self.tag_name = self.node_info[1]
-            self.id_list = (self.node_info[2] or '').split(' ')
-            self.class_list = (self.node_info[3] or '').split(' ')
-
-        else:
-            raise ValueError('invalid node info')
+        self.tag_name = self.node_info[1]
+        self.id_list = (self.node_info[2] or '').split(' ')
+        self.class_list = (self.node_info[3] or '').split(' ')
 
     def node_has_id(self, name):
         if self.node is None:

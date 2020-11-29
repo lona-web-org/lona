@@ -997,27 +997,22 @@ function LonaWindow(lona, root, window_id) {
 
         // node info
         var lona_node_id = undefined;
-        var id_list = node.id.split(' ');
+        var node_id_list = node.id.split(' ');
 
-        for(var i=0; i<id_list.length; i++) {
-            if(id_list[i].startsWith('lona-')) {
-                lona_node_id = id_list[i].split('-')[1];
+        for(var i=0; i<node_id_list.length; i++) {
+            if(node_id_list[i].startsWith('lona-')) {
+                lona_node_id = node_id_list[i].split('-')[1];
 
                 break;
             };
         };
 
-        if(lona_node_id) {
-            var node_info = [lona_node_id];
-
-        } else {
-            var node_info = [
-                undefined,  // empty lona-node-id
-                node.tagName,
-                node.id || '',
-                node.classList.value || '',
-            ];
-        };
+        var node_info = [
+            lona_node_id,
+            node.tagName,
+            node.id || '',
+            node.classList.value || '',
+        ];
 
         // send event message
         var message = [
