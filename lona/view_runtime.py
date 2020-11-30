@@ -143,6 +143,10 @@ class ViewRuntime:
             if not future.done() and not future.cancelled():
                 future.set_exception(self.stop_reason())
 
+        # clean up
+        if self.start_connection:  # multi user views have no start_connection
+            self.server.view_runtime_controller.remove_view_runtime(self)
+
     # connection managment ####################################################
     def add_connection(self, connection, window_id, url):
         self.connections[connection] = (window_id, url, )

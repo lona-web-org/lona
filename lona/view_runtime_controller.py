@@ -252,6 +252,11 @@ class ViewRuntimeController:
         for route, view in self.running_multi_user_views.items():
             view.remove_connection(connection, window_id=None)
 
+    def remove_view_runtime(self, view_runtime):
+        user = view_runtime.start_connection.user
+
+        self.running_single_user_views[user].remove(view_runtime)
+
     def run_middlewares(self, request, view_runtime):
         for middleware in self.server.request_middlewares:
             logger.debug('running %s on %s', middleware, request)
