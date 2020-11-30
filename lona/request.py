@@ -128,8 +128,8 @@ class View:
                 'operation is not supported in multi user requests')
 
     def daemonize(self):
-        self._assert_view_is_interactive()
-        self._assert_single_user_request()
+        self.request.client._assert_view_is_interactive()
+        self.request.client._assert_single_user_request()
 
         self.request._view_runtime.is_daemon = True
 
