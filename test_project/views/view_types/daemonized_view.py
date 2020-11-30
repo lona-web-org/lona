@@ -17,7 +17,7 @@ def handle_request(request):
         start_daemonized,
     )
 
-    input_event = request.client.await_input_event(html)
+    input_event = request.client.await_input_event(html=html)
 
     if input_event.node == start_daemonized:
         request.view.daemonize()
