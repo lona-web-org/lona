@@ -18,9 +18,9 @@ class ViewRuntimeController:
 
         self.running_single_user_views = Mapping()
         # contains: {
-        #     connection.user: {
-        #         route: view_runtime,
-        #     }
+        #     connection.user: [
+        #         view_runtime,
+        #     ]
         # }
 
         self.running_multi_user_views = Mapping()
@@ -96,9 +96,9 @@ class ViewRuntimeController:
 
     def stop(self):
         # running views per user
-        for user, views in self.running_single_user_views.items():
-            for route, view in views.items():
-                view.stop(reason=ServerStop)
+        for user, view_runtimes in self.running_single_user_views.items():
+            for view_runtime in view_runtimes:
+                view_runtime.stop(reason=ServerStop)
 
         # multi user views
         for route, view in self.running_multi_user_views.items():
@@ -245,9 +245,9 @@ class ViewRuntimeController:
 
     # view management #########################################################
     def remove_connection(self, connection, window_id=None):
-        for user, views in self.running_single_user_views.items():
-            for route, view in views.items():
-                view.remove_connection(connection, window_id=None)
+        for user, view_runtimes in self.running_single_user_views.items():
+            for view_runtime in view_runtimes:
+                view_runtime.remove_connection(connection, window_id=None)
 
         for route, view in self.running_multi_user_views.items():
             view.remove_connection(connection, window_id=None)
@@ -317,8 +317,8 @@ class ViewRuntimeController:
             raw_response_dict = self.run_middlewares(request, view_runtime)
 
             if raw_response_dict:
-                # message got handled by a middleware
 
+                # message got handled by a middleware
                 view_runtime.handle_raw_response_dict(
                     raw_response_dict,
                     connections={connection: (window_id, url, )},
@@ -329,15 +329,21 @@ class ViewRuntimeController:
             # reconnect or close previous started single user views
             # for this route
             user = connection.user
+            running_view_runtime = None
 
-            if(user in self.running_single_user_views and
-               route in self.running_single_user_views[user] and
-               self.running_single_user_views[user][route].is_daemon):
+            if user in self.running_single_user_views:
+                for _view_runtime in self.running_single_user_views[user]:
+                    if(_view_runtime.route == route and
+                       _view_runtime.match_info == match_info and
+                       _view_runtime.is_daemon):
 
-                _view_runtime = self.running_single_user_views[user][route]
+                        running_view_runtime = _view_runtime
 
-                if not _view_runtime.is_stopped:
-                    _view_runtime.add_connection(
+                        break
+
+            if running_view_runtime:
+                if not running_view_runtime.is_stopped:
+                    running_view_runtime.add_connection(
                         connection=connection,
                         window_id=window_id,
                         url=url,
@@ -346,7 +352,7 @@ class ViewRuntimeController:
                     return
 
                 else:
-                    _view_runtime.stop()
+                    running_view_runtime.stop()
 
             # connect to a multi user view
             elif(route in self.running_multi_user_views):
@@ -360,9 +366,9 @@ class ViewRuntimeController:
 
             # start view
             if user not in self.running_single_user_views:
-                self.running_single_user_views[user] = {}
+                self.running_single_user_views[user] = []
 
-            self.running_single_user_views[user][route] = view_runtime
+            self.running_single_user_views[user].append(view_runtime)
 
             view_runtime.add_connection(
                 connection=connection,
@@ -379,8 +385,8 @@ class ViewRuntimeController:
             if user not in self.running_single_user_views:
                 return
 
-            for route, view in self.running_single_user_views[user].items():
-                if view.url == url_object:
-                    view.handle_input_event(connection, payload)
+            for view_runtime in self.running_single_user_views[user]:
+                if view_runtime.url == url_object:
+                    view_runtime.handle_input_event(connection, payload)
 
                     break

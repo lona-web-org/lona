@@ -1,6 +1,6 @@
 import time
 
-from lona.html.nodes import Div, H2, Table, THead, TBody, Tr, Th, Td, Button
+from lona.html.nodes import Div, H2, Table, THead, TBody, Tr, Th, Td
 
 
 def frontend(request):
@@ -43,17 +43,17 @@ class ViewControllerDashboard:
             request.client.show(html)
             tbody.clear()
 
-            for user, running_views in \
+            for user, view_runtimes in \
                     view_runtime_controller.running_single_user_views.items():
 
-                for route, runtime in running_views.items():
+                for view_runtime in view_runtimes:
                     tbody.append(
                         Tr(
                             Td(str(user)),
-                            Td(repr(route)),
-                            Td(repr(runtime.match_info)),
-                            Td(repr(runtime.view)),
-                            Td(repr(runtime.is_stopped)),
+                            Td(repr(view_runtime.route)),
+                            Td(repr(view_runtime.match_info)),
+                            Td(repr(view_runtime.view)),
+                            Td(repr(view_runtime.is_stopped)),
                         ),
                     )
 
