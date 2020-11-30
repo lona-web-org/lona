@@ -243,7 +243,7 @@ class ViewRuntimeController:
             match_info=match_info,
         )
 
-    # view managment ##########################################################
+    # view management #########################################################
     def remove_connection(self, connection, window_id=None):
         for user, views in self.running_single_user_views.items():
             for route, view in views.items():
