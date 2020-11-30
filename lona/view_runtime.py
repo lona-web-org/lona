@@ -80,7 +80,10 @@ class ViewRuntime:
         )
 
         view_args = (request,)
-        view_kwargs = dict(self.match_info or {})
+        view_kwargs = {}
+
+        if not self.frontend:
+            view_kwargs = dict(self.match_info or {})
 
         # start view
         try:
