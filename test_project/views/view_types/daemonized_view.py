@@ -3,14 +3,14 @@ import time
 from lona.html import Div, H1, Button
 
 
-def handle_request(request):
+def handle_request(request, name='blank'):
     message = Div('View not started yet')
     log = Div()
     start = Button('Start')
     start_daemonized = Button('Start daemonized')
 
     html = Div(
-        H1('Daemonized View'),
+        H1('Daemonized View (name={})'.format(name)),
         message,
         log,
         start,

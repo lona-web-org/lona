@@ -32,6 +32,9 @@ routes = [
     Route('/view-types/multi-user-view/',
           'views/view_types/multi_user_view.py::handle_request'),
 
+    Route('/view-types/daemonized-view/<name>/',
+          'views/view_types/daemonized_view.py::handle_request'),
+
     Route('/view-types/daemonized-view/',
           'views/view_types/daemonized_view.py::handle_request'),
 
