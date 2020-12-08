@@ -3,7 +3,7 @@ import logging
 
 from lona.scheduling import get_current_thread_name
 from lona.protocol import DataType
-from lona.utils import acquire
+from lona.imports import acquire
 
 AbstractNode = None
 TextNode = None

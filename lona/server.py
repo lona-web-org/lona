@@ -15,8 +15,8 @@ from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
 from lona.scheduling import Scheduler
+from lona.imports import acquire
 from lona.routing import Router
-from lona.utils import acquire
 
 server_logger = logging.getLogger('lona.server')
 http_logger = logging.getLogger('lona.server.http')

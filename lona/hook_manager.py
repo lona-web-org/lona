@@ -1,6 +1,6 @@
 import logging
 
-from lona.utils import acquire
+from lona.imports import acquire
 
 logger = logging.getLogger('lona.hooks')
 

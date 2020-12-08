@@ -2,7 +2,7 @@ import inspect
 import logging
 import os
 
-from lona.utils import acquire
+from lona.imports import acquire
 
 logger = logging.getLogger('lona.view_loader')
 

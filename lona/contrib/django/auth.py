@@ -3,7 +3,7 @@ import logging
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sessions.models import Session
 
-from lona.utils import acquire
+from lona.imports import acquire
 
 logger = logging.getLogger('lona.contrib.django.auth')
 

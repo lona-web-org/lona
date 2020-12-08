@@ -1,7 +1,7 @@
 import logging
 import re
 
-from lona.utils import acquire
+from lona.imports import acquire
 from lona.types import Symbol
 
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
