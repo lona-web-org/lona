@@ -277,6 +277,9 @@ class Form(Widget, metaclass=OrderedClassMembers):
                     data[field_name] = None
 
         for name, value in data.items():
+            if name not in self.fields:
+                continue
+
             field = self.fields[name]
             field.set_value(value)
 
