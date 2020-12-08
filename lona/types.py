@@ -46,3 +46,48 @@ class Symbol:
                 data[class_name][attribute.name] = attribute.value
 
         return data
+
+
+class Mapping:
+    def __init__(self):
+        self.entries = []
+
+    def get_entry(self, key):
+        for entry in self.entries:
+            if entry[0] == key:
+                return entry
+
+    def keys(self):
+        return [i[0] for i in self.entries]
+
+    def items(self):
+        for entry in self.entries:
+            yield entry
+
+    def __getitem__(self, key):
+        entry = self.get_entry(key)
+
+        if not entry:
+            raise KeyError(key)
+
+        return entry[1]
+
+    def __setitem__(self, key, value):
+        entry = self.get_entry(key)
+
+        if entry:
+            entry[1] = value
+
+        else:
+            self.entries.append([key, value])
+
+    def __contains__(self, key):
+        return bool(self.get_entry(key))
+
+    def __repr__(self):
+        d = {}
+
+        for key, value in self.entries:
+            d[repr(key)] = value
+
+        return repr(d)

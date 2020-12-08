@@ -5,9 +5,10 @@ from yarl import URL
 from lona.protocol import encode_http_redirect, Method, dumps
 from lona.html.abstract_node import AbstractNode
 from lona.view_runtime import ViewRuntime
-from lona.utils import acquire, Mapping
 from lona.exceptions import ServerStop
 from lona.request import Request
+from lona.utils import acquire
+from lona.types import Mapping
 
 logger = logging.getLogger('lona.view_runtime_controller')
 
