@@ -36,13 +36,13 @@ ci-test: env
 	time JENKINS_URL=1 tox -r $(args)
 
 # test project ################################################################
-server: 
+server:
 	cd test_project/ && \
-	make server args=$(args)
+	make server args="$(args)"
 
-debug-server: 
+debug-server:
 	cd test_project/ && \
-	make debug-server args=$(args)
+	make debug-server args="$(args)"
 
 # documentation ###############################################################
 doc:
