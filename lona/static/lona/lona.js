@@ -176,7 +176,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
         // Node
         } else {
-            var selector = '[id~=lona-' + node_id + ']';
+            var selector = '[lona-node-id=_' + node_id + ']';
 
             target_node = lona_window._root.querySelector(selector);
         }
@@ -245,7 +245,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
         // Node
         } else {
-            var selector = '[id~=lona-' + target_node_id + ']';
+            var selector = '[lona-node-id=_' + target_node_id + ']';
             var target_node = lona_window._root.querySelector(selector);
 
             if(!target_node) {
@@ -364,7 +364,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
         // Node
         } else {
-            var selector = '[id~=lona-' + node_id + ']';
+            var selector = '[lona-node-id=_' + node_id + ']';
 
             node = lona_window._root.querySelector(selector);
 
@@ -405,7 +405,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
         // Node
         } else {
-            var selector = '[id~=lona-' + node_id + ']';
+            var selector = '[lona-node-id=_' + node_id + ']';
             var node = lona_window._root.querySelector(selector);
 
             if(!node) {
@@ -419,9 +419,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
     // html rendering ---------------------------------------------------------
     this._render_node = function(node_spec) {
-        // TODO: move lona node ids to a custom node attribute to get rid of
-        // selectors like [id~=lona-123456789]
-
         var lona_window = this;
         var node_list = [];
         var node_type = node_spec[0];
@@ -439,7 +436,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             var node = document.createElement(node_tag_name);
 
             // lona node id
-            lona_window._add_id(node, 'lona-' + node_id);
+            node.setAttribute('lona-node-id', '_' + node_id);
 
             // id list
             if(node_id_list.length > 0) {
@@ -584,7 +581,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
             // Node
             } else {
-                var selector = '[id~=lona-' + node_id + ']';
+                var selector = '[lona-node-id=_' + node_id + ']';
                 var node = lona_window._root.querySelector(selector);
 
                 if(!node) {
@@ -1007,16 +1004,11 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
 
         // node info
-        var lona_node_id = undefined;
-        var node_id_list = node.id.split(' ');
+        var lona_node_id = node.getAttribute('lona-node-id');
 
-        for(var i=0; i<node_id_list.length; i++) {
-            if(node_id_list[i].startsWith('lona-')) {
-                lona_node_id = node_id_list[i].split('-')[1];
-
-                break;
-            };
-        };
+        if(lona_node_id) {
+            lona_node_id = lona_node_id.substr(1);
+        }
 
         var node_info = [
             lona_node_id,

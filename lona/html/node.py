@@ -243,12 +243,13 @@ class Node(AbstractNode):
     def __str__(self):
         with self.document.lock():
             # opening tag
-            string = '<{} id="lona-#{}{}{}"'.format(
+            string = '<{} lona-node-id="_{}"'.format(
                 self.TAG_NAME,
                 self._id,
-                ' ' if self.id_list else '',
-                self.id_list,
             )
+
+            if self.id_list:
+                string += ' id="{}"'.format(str(self.id_list))
 
             if self.class_list:
                 string += ' class="{}"'.format(str(self.class_list))
