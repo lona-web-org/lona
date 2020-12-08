@@ -10,7 +10,7 @@ import os
 from aiohttp.web import Application, run_app
 
 from lona.server import LonaServer
-from lona.utils import LogFormatter
+from lona.logging import LogFormatter
 
 # parse command line
 parser = ArgumentParser()
