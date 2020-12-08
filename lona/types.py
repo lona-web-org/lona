@@ -5,7 +5,7 @@ class Symbol:
 
         self.name = name.strip().upper()
 
-        if value:
+        if value is not None:
             self.value = value
 
         else:
