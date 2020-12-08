@@ -199,11 +199,15 @@ class LonaServer:
         if response_dict['http_redirect']:
             return HTTPFound(response_dict['http_redirect'])
 
-        return Response(
+        response = Response(
             status=response_dict['status'],
             content_type=response_dict['content_type'],
             text=response_dict['text'],
         )
+
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # NOQA
+
+        return response
 
     # handle http requests ####################################################
     async def handle_static_file_request(self, request):
