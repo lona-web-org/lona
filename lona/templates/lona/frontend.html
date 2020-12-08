@@ -1,12 +1,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    {{ lona.load_stylesheets() }}
+    {{ Lona.load_stylesheets() }}
   </head>
   <body>
     <div id="lona"></div>
 
-    {{ lona.load_scripts() }}
+    {{ Lona.load_scripts() }}
     <script>
       var lona = new Lona.LonaContext({
         target: '#lona',

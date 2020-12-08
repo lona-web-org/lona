@@ -70,7 +70,7 @@ class TemplatingEngine:
 
     def generate_template_context(self, overrides):
         context = {
-            'lona': Namespace(self.server),
+            'Lona': Namespace(self.server),
             **BUILTINS,
             **self.server.settings.TEMPLATE_EXTRA_CONTEXT,
             **overrides,
