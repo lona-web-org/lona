@@ -206,43 +206,6 @@ class ViewRuntimeController:
 
         return self.error_500_fallback_handler(request, exception)
 
-    # view objects ############################################################
-    def get_view(self, url=None, route=None, match_info=None, frontend=False):
-        handler = None
-
-        if not url and not route:
-            raise ValueError
-
-        if url:
-            url = URL(url)
-
-        if frontend:
-            handler = self.server.settings.FRONTEND_VIEW
-
-            if route and route.frontend_view:
-                handler = route.frontend_view
-
-        elif url:
-            match, route, match_info = self.server.router.resolve(url.path)
-
-            if match:
-                handler = route.view
-
-            else:
-                handler = self.handle_404
-
-        else:
-            handler = route.view
-
-        handler = self.server.view_loader.load(handler)
-
-        return ViewRuntime(
-            server=self.server,
-            url=url,
-            route=route,
-            match_info=match_info,
-        )
-
     # view management #########################################################
     def remove_connection(self, connection, window_id=None):
         for user, view_runtimes in self.running_single_user_views.items():
