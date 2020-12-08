@@ -13,38 +13,13 @@ def dumps(data):
     return json.dumps(data, default=default)
 
 
-class Constant:
-    # TODO: use lona.types.Symbol instead
-
-    @classmethod
-    def generate_code_book(cls):
-        data = {}
-
-        for constant_class in cls.__subclasses__():
-            class_name = constant_class.__name__
-            data[class_name] = {}
-
-            for name in dir(constant_class):
-                if name.startswith('_'):
-                    continue
-
-                attribute = getattr(constant_class, name)
-
-                if not isinstance(attribute, Symbol):
-                    continue
-
-                data[class_name][attribute.name] = attribute.value
-
-        return data
-
-
-class ExitCode(Constant):
+class ExitCode(Symbol):
     SUCCESS = Symbol('SUCCESS', 0)
     INVALID_MESSAGE = Symbol('INVALID_MESSAGE', 1)
     INVALID_METHOD = Symbol('INVALID_METHOD', 2)
 
 
-class Method(Constant):
+class Method(Symbol):
     VIEW = Symbol('VIEW', 101)
     INPUT_EVENT = Symbol('INPUT_EVENT', 102)
     REDIRECT = Symbol('REDIRECT', 201)
@@ -54,26 +29,26 @@ class Method(Constant):
     VIEW_STOP = Symbol('VIEW_STOP', 205)
 
 
-class InputEventType(Constant):
+class InputEventType(Symbol):
     CLICK = Symbol('CLICK', 301)
     CHANGE = Symbol('CHANGE', 302)
     SUBMIT = Symbol('SUBMIT', 303)
     CUSTOM = Symbol('CUSTOM', 304)
 
 
-class NodeType(Constant):
+class NodeType(Symbol):
     NODE = Symbol('NODE', 401)
     TEXT_NODE = Symbol('TEXT_NODE', 402)
     WIDGET = Symbol('WIDGET', 403)
 
 
-class DataType(Constant):
+class DataType(Symbol):
     HTML = Symbol('HTML', 501)
     HTML_TREE = Symbol('HTML_TREE', 502)
     HTML_UPDATE = Symbol('HTML_UPDATE', 503)
 
 
-class Operation(Constant):
+class Operation(Symbol):
     SET = Symbol('SET', 601)
     RESET = Symbol('RESET', 602)
     ADD = Symbol('ADD', 603)

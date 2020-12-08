@@ -22,4 +22,4 @@ SOFTWARE.
 
 */
 
-Lona.code_book = JSON.parse('{{ code_book }}');
+Lona.symbols = JSON.parse('{{ symbols }}');

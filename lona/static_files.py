@@ -6,7 +6,7 @@ import json
 import os
 
 from lona.html.abstract_node import AbstractNode
-from lona.protocol import Constant
+from lona.types import Symbol
 
 logger = logging.getLogger('lona.static_files')
 
@@ -64,22 +64,22 @@ class StaticFileLoader:
 
         logger.debug('static dirs %s loaded', repr(self.static_dirs)[1:-1])
 
-        self.generate_code_book()
+        self.generate_symbols()
         self.discover()
 
-    def generate_code_book(self):
-        logger.debug('generating code book')
+    def generate_symbols(self):
+        logger.debug('generating symbols')
 
         javascript = self.server.templating_engine.render_template(
-            self.server.settings.STATIC_FILES_CODE_BOOK_TEMPLATE,
+            self.server.settings.STATIC_FILES_SYMBOLS_TEMPLATE,
             {
-                'code_book': json.dumps(Constant.generate_code_book()),
+                'symbols': json.dumps(Symbol.dump_symbol_classes()),
             },
         )
 
         os.makedirs(os.path.join(self.tmp_dir.name, 'lona'))
 
-        path = os.path.join(self.tmp_dir.name, 'lona/lona-code-book.js')
+        path = os.path.join(self.tmp_dir.name, 'lona/lona-symbols.js')
 
         with open(path, 'w+') as f:
             f.write(javascript)

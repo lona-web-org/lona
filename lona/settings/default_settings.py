@@ -25,7 +25,7 @@ STATIC_DIRS = []
 STATIC_URL_PREFIX = '/static/'
 STATIC_FILES_STYLE_TAGS_TEMPLATE = 'lona/style_tags.html'
 STATIC_FILES_SCRIPT_TAGS_TEMPLATE = 'lona/script_tags.html'
-STATIC_FILES_CODE_BOOK_TEMPLATE = 'lona/lona-code-book.js'
+STATIC_FILES_SYMBOLS_TEMPLATE = 'lona/lona-symbols.js'
 STATIC_FILES_ENABLED = []
 STATIC_FILES_DISABLED = []
 

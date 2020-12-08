@@ -416,7 +416,7 @@ function LonaWindow(lona, root, window_id) {
         var node_type = node_spec[0];
 
         // Node
-        if(node_type == Lona.code_book.NodeType.NODE) {
+        if(node_type == Lona.symbols.NodeType.NODE) {
             var node_id = node_spec[1];
             var node_tag_name = node_spec[2];
             var node_id_list = node_spec[3];
@@ -465,7 +465,7 @@ function LonaWindow(lona, root, window_id) {
             node_list.push(node);
 
         // TextNode
-        } else if(node_type == Lona.code_book.NodeType.TEXT_NODE) {
+        } else if(node_type == Lona.symbols.NodeType.TEXT_NODE) {
             var node_id = node_spec[1];
             var node_content = node_spec[2];
 
@@ -475,7 +475,7 @@ function LonaWindow(lona, root, window_id) {
             node_list.push(node);
 
         // Widget
-        } else if(node_type == Lona.code_book.NodeType.WIDGET) {
+        } else if(node_type == Lona.symbols.NodeType.WIDGET) {
             var node_id = node_spec[1];
             var node_child_nodes = node_spec[2];
 
@@ -524,30 +524,30 @@ function LonaWindow(lona, root, window_id) {
             var operation = update[0];
 
             // SET
-            if(operation == Lona.code_book.Operation.SET) {
+            if(operation == Lona.symbols.Operation.SET) {
                 var node_list = this._render_node(update[2]);
 
                 this._set_node(node_list, node_id, update[1]);
 
             // RESET
-            } else if(operation == Lona.code_book.Operation.RESET) {
+            } else if(operation == Lona.symbols.Operation.RESET) {
                 var node_list = this._render_nodes(update[1]);
 
                 this._clear_node(node_id);
                 this._insert_node(node_list, node_id, 0);
 
             // CLEAR
-            } else if(operation == Lona.code_book.Operation.CLEAR) {
+            } else if(operation == Lona.symbols.Operation.CLEAR) {
                 this._clear_node(node_id);
 
             // INSERT
-            } else if(operation == Lona.code_book.Operation.INSERT) {
+            } else if(operation == Lona.symbols.Operation.INSERT) {
                 var node_list = this._render_node(update[2]);
 
                 this._insert_node(node_list, node_id, update[1])
 
             // REMOVE
-            } else if(operation == Lona.code_book.Operation.REMOVE) {
+            } else if(operation == Lona.symbols.Operation.REMOVE) {
                 this._remove_node(update[1]);
 
             };
@@ -556,7 +556,7 @@ function LonaWindow(lona, root, window_id) {
 
     this._apply_update = function(html_data) {
         var lona_window = this;
-        var code_book = Lona.code_book;
+        var symbols = Lona.symbols;
 
         for(var index in html_data) {
             var update = html_data[index];
@@ -592,11 +592,11 @@ function LonaWindow(lona, root, window_id) {
                     var operation = update[0];
 
                     // ADD
-                    if(operation == code_book.Operation.ADD) {
+                    if(operation == symbols.Operation.ADD) {
                         lona_window._add_id(node, update[1]);
 
                     // RESET
-                    } else if(operation == code_book.Operation.RESET) {
+                    } else if(operation == symbols.Operation.RESET) {
                         node.removeAttribute('id');
 
                         lona_window._add_id(node, 'lona-' + node_id)
@@ -607,11 +607,11 @@ function LonaWindow(lona, root, window_id) {
                         };
 
                     // REMOVE
-                    } else if(operation == code_book.Operation.REMOVE) {
+                    } else if(operation == symbols.Operation.REMOVE) {
                         lona_window._remove_id(node, update[1]);
 
                     // CLEAR
-                    } else if(operation == code_book.Operation.CLEAR) {
+                    } else if(operation == symbols.Operation.CLEAR) {
                         node.removeAttribute('id');
 
                         lona_window._add_id(node, 'lona-' + node_id)
@@ -625,19 +625,19 @@ function LonaWindow(lona, root, window_id) {
                     var operation = update[0];
 
                     // ADD
-                    if(operation == code_book.Operation.ADD) {
+                    if(operation == symbols.Operation.ADD) {
                         node.classList.add(update[1]);
 
                     // RESET
-                    } else if(operation == code_book.Operation.RESET) {
+                    } else if(operation == symbols.Operation.RESET) {
                         node.classList = update[1].join(' ');
 
                     // REMOVE
-                    } else if(operation == code_book.Operation.REMOVE) {
+                    } else if(operation == symbols.Operation.REMOVE) {
                         node.classList.remove(update[1]);
 
                     // CLEAR
-                    } else if(operation == code_book.Operation.CLEAR) {
+                    } else if(operation == symbols.Operation.CLEAR) {
                         node.classList = '';
 
                     };
@@ -649,11 +649,11 @@ function LonaWindow(lona, root, window_id) {
                     var operation = update[0];
 
                     // SET
-                    if(operation == code_book.Operation.SET) {
+                    if(operation == symbols.Operation.SET) {
                         node.style[update[1]] = update[2];
 
                     // RESET
-                    } else if(operation == code_book.Operation.RESET) {
+                    } else if(operation == symbols.Operation.RESET) {
                         node.removeAttribute('style');
 
                         for(var key in update[1]) {
@@ -661,11 +661,11 @@ function LonaWindow(lona, root, window_id) {
                         };
 
                     // REMOVE
-                    } else if(operation == code_book.Operation.REMOVE) {
+                    } else if(operation == symbols.Operation.REMOVE) {
                         node.style[update[1]] = '';
 
                     // CLEAR
-                    } else if(operation == code_book.Operation.CLEAR) {
+                    } else if(operation == symbols.Operation.CLEAR) {
                         node.removeAttribute('style');
 
                     };
@@ -677,11 +677,11 @@ function LonaWindow(lona, root, window_id) {
                     var operation = update[0];
 
                     // SET
-                    if(operation == code_book.Operation.SET) {
+                    if(operation == symbols.Operation.SET) {
                         node.setAttribute(update[1], update[2]);
 
                     // RESET
-                    } else if(operation == code_book.Operation.RESET) {
+                    } else if(operation == symbols.Operation.RESET) {
                         node.getAttributeNames().forEach(function(name) {
                             if(['id', 'class', 'style'].indexOf(name) > -1) {
                                 return;
@@ -697,11 +697,11 @@ function LonaWindow(lona, root, window_id) {
                         };
 
                     // REMOVE
-                    } else if(operation == code_book.Operation.REMOVE) {
+                    } else if(operation == symbols.Operation.REMOVE) {
                         node.removeAttribute(update[1]);
 
                     // CLEAR
-                    } else if(operation == code_book.Operation.CLEAR) {
+                    } else if(operation == symbols.Operation.CLEAR) {
                         node.getAttributeNames().forEach(function(name) {
                             if(['id', 'class', 'style'].indexOf(name) > -1) {
                                 return;
@@ -732,12 +732,12 @@ function LonaWindow(lona, root, window_id) {
             var html_data = html[1];
 
             // HTML
-            if(message_type == Lona.code_book.DataType.HTML) {
+            if(message_type == Lona.symbols.DataType.HTML) {
                 lona_window._root.innerHTML = html_data;
                 lona_window._clean_node_cache();
 
             // HTML tree
-            } else if(message_type == Lona.code_book.DataType.HTML_TREE) {
+            } else if(message_type == Lona.symbols.DataType.HTML_TREE) {
                 lona_window._clear_node_cache();
 
                 var node_list = lona_window._render_node(html_data)
@@ -746,7 +746,7 @@ function LonaWindow(lona, root, window_id) {
                 lona_window._apply_node_list(lona_window._root, node_list);
 
             // HTML update
-            } else if(message_type == Lona.code_book.DataType.HTML_UPDATE) {
+            } else if(message_type == Lona.symbols.DataType.HTML_UPDATE) {
                 lona_window._apply_update(html_data);
 
             };
@@ -797,7 +797,7 @@ function LonaWindow(lona, root, window_id) {
                 };
 
                 lona_window.fire_input_event(
-                    node, Lona.code_book.InputEventType.CLICK, event_data);
+                    node, Lona.symbols.InputEventType.CLICK, event_data);
 
                 return false;
             };
@@ -818,7 +818,7 @@ function LonaWindow(lona, root, window_id) {
                 };
 
                 lona_window.fire_input_event(
-                    node, Lona.code_book.InputEventType.CHANGE, event_data);
+                    node, Lona.symbols.InputEventType.CHANGE, event_data);
 
                 return false;
             };
@@ -869,7 +869,7 @@ function LonaWindow(lona, root, window_id) {
                     }
 
                     lona_window.fire_input_event(
-                        node, Lona.code_book.InputEventType.SUBMIT, data);
+                        node, Lona.symbols.InputEventType.SUBMIT, data);
 
                 } else {
                     // "traditional" form submit
@@ -910,7 +910,7 @@ function LonaWindow(lona, root, window_id) {
     // public api -------------------------------------------------------------
     this.handle_websocket_message = function(message) {
         // redirect
-        if(message[1] == Lona.code_book.Method.REDIRECT) {
+        if(message[1] == Lona.symbols.Method.REDIRECT) {
             // TODO: implement loop detection
 
             if(this.lona.settings.follow_redirects) {
@@ -923,7 +923,7 @@ function LonaWindow(lona, root, window_id) {
             };
 
         // http redirect
-        } else if(message[1] == Lona.code_book.Method.HTTP_REDIRECT) {
+        } else if(message[1] == Lona.symbols.Method.HTTP_REDIRECT) {
             if(this.lona.settings.follow_http_redirects) {
                 window.location = message[3];
 
@@ -934,7 +934,7 @@ function LonaWindow(lona, root, window_id) {
             };
 
         // data
-        } else if(message[1] == Lona.code_book.Method.DATA) {
+        } else if(message[1] == Lona.symbols.Method.DATA) {
             var url = message[2];
 
             if(url != this._url) {
@@ -955,7 +955,7 @@ function LonaWindow(lona, root, window_id) {
                 this._show_html(html);
             };
 
-        } else if(message[1] == Lona.code_book.Method.VIEW_STOP) {
+        } else if(message[1] == Lona.symbols.Method.VIEW_STOP) {
             this._view_stopped = true;
 
         };
@@ -970,7 +970,7 @@ function LonaWindow(lona, root, window_id) {
 
         var message = [
             this._window_id,
-            Lona.code_book.Method.VIEW,
+            Lona.symbols.Method.VIEW,
             url,
             post_data,
         ];
@@ -1017,7 +1017,7 @@ function LonaWindow(lona, root, window_id) {
         // send event message
         var message = [
             this._window_id,
-            Lona.code_book.Method.INPUT_EVENT,
+            Lona.symbols.Method.INPUT_EVENT,
             this._url,
             event_type,
         ].concat(
