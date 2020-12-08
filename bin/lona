@@ -10,7 +10,7 @@ import os
 from aiohttp.web import Application, run_app
 
 from lona.server import LonaServer
-from lona.logging import LogFormatter
+from lona.logging import LogFormatter, LogFilter
 
 # parse command line
 parser = ArgumentParser()
@@ -43,21 +43,23 @@ logging.basicConfig(level={
     'critical': logging.CRITICAL,
 }[cli_args.log_level.lower()])
 
-log = LogFormatter()
+log_formatter = LogFormatter()
+log_filter = LogFilter()
 
 for handler in logging.getLogger().root.handlers:
-    handler.setFormatter(log)
+    handler.setFormatter(log_formatter)
+    handler.addFilter(log_filter)
 
 if cli_args.loggers:
     for logger_name in cli_args.loggers:
         if logger_name.startswith('_'):
-            log.exclude(logger_name[1:])
+            log_filter.exclude(logger_name[1:])
 
         else:
             if logger_name.startswith('+'):
                 logger_name = logger_name[1:]
 
-            log.include(logger_name)
+            log_filter.include(logger_name)
 
 # setup lona server
 loop = asyncio.get_event_loop()
