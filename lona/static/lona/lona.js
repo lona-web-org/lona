@@ -22,7 +22,18 @@ SOFTWARE.
 
 */
 
-function JobQueue() {
+// Lona namespace -------------------------------------------------------------
+var Lona = Object();
+
+Lona.symbols = {};  // this gets overridden by lona-symbols.js
+Lona.widget_classes = {};
+
+Lona.add_widget_class = function(widget_name, javascript_class) {
+    this.widget_classes[widget_name] = javascript_class;
+};
+
+// JobQueue -------------------------------------------------------------------
+Lona.JobQueue = function() {
     this._promises = [];
 
     this._lock = function() {
@@ -68,13 +79,13 @@ function JobQueue() {
     };
 };
 
-
-function LonaWindow(lona, root, window_id) {
-    this.lona = lona;
+// Lona Window ----------------------------------------------------------------
+Lona.LonaWindow = function(lona_context, root, window_id) {
+    this.lona_context = lona_context;
     this._root = root;
     this._window_id = window_id;
 
-    this._job_queue = new JobQueue();
+    this._job_queue = new Lona.JobQueue();
 
     // window state -----------------------------------------------------------
     this._view_stopped = undefined;
@@ -725,7 +736,7 @@ function LonaWindow(lona, root, window_id) {
 
     this._show_html = function(html) {
         var lona_window = this;
-        var lona = lona_window.lona;
+        var lona_context = lona_window.lona_context;
 
         lona_window._job_queue.add(function() {
             var message_type = html[0];
@@ -759,7 +770,7 @@ function LonaWindow(lona, root, window_id) {
     // events -----------------------------------------------------------------
     this._patch_input_events = function() {
         var lona_window = this;
-        var lona = lona_window.lona;
+        var lona_context = lona_window.lona_context;
 
         // links
         var selector = 'a:not(.lona-clickable):not(.lona-ignore)';
@@ -913,7 +924,7 @@ function LonaWindow(lona, root, window_id) {
         if(message[1] == Lona.symbols.Method.REDIRECT) {
             // TODO: implement loop detection
 
-            if(this.lona.settings.follow_redirects) {
+            if(this.lona_context.settings.follow_redirects) {
                 this.run_view(message[3]);
 
             } else {
@@ -924,7 +935,7 @@ function LonaWindow(lona, root, window_id) {
 
         // http redirect
         } else if(message[1] == Lona.symbols.Method.HTTP_REDIRECT) {
-            if(this.lona.settings.follow_http_redirects) {
+            if(this.lona_context.settings.follow_http_redirects) {
                 window.location = message[3];
 
             } else {
@@ -947,7 +958,7 @@ function LonaWindow(lona, root, window_id) {
             var html = message[4];
             var widget_data = message[5];
 
-            if(this.lona.settings.update_title && title) {
+            if(this.lona_context.settings.update_title && title) {
                 document.title = title;
             };
 
@@ -975,15 +986,15 @@ function LonaWindow(lona, root, window_id) {
             post_data,
         ];
 
-        if(this.lona.settings.update_address_bar) {
+        if(this.lona_context.settings.update_address_bar) {
             history.pushState({}, '', url);
         };
 
-        if(this.lona.settings.update_title && this.lona.settings.title) {
-            document.title = this.lona.settings.title;
+        if(this.lona_context.settings.update_title && this.lona_context.settings.title) {
+            document.title = this.lona_context.settings.title;
         };
 
-        this.lona.send(message);
+        this.lona_context.send(message);
     };
 
     this.fire_input_event = function(node, event_type, data) {
@@ -1026,7 +1037,7 @@ function LonaWindow(lona, root, window_id) {
             node_info,
         );
 
-        this.lona.send(message);
+        this.lona_context.send(message);
     };
 
     this.setup = function(url) {
@@ -1034,8 +1045,8 @@ function LonaWindow(lona, root, window_id) {
     };
 };
 
-
-function Lona(settings) {
+// Lona Context ---------------------------------------------------------------
+Lona.LonaContext = function(settings) {
     // settings ---------------------------------------------------------------
     this.settings = settings || {};
     this.settings.target = this.settings.target || '#lona';
@@ -1068,7 +1079,9 @@ function Lona(settings) {
 
         var window_id = Object.keys(this._windows).length + 1;
 
-        this._windows[window_id] = new LonaWindow(this, root, window_id, url);
+        this._windows[window_id] = new Lona.LonaWindow(
+            this, root, window_id, url);
+
         this._windows[window_id].setup(url);
 
         return window_id;
@@ -1101,27 +1114,29 @@ function Lona(settings) {
             var json_data = JSON.parse(raw_message);
 
         } catch {
-            return this.lona._run_custom_message_handlers(
+            return this.lona_context._run_custom_message_handlers(
                 raw_message, json_data);
 
         };
 
         // all lona messages are Arrays
         if(!Array.isArray(json_data)) {
-            return this.lona._run_custom_message_handlers(
+            return this.lona_context._run_custom_message_handlers(
                 raw_message, json_data);
         };
 
         // all lona messages have to start with a window id
         if(!Number.isInteger(json_data[0])) {
-            return this.lona._run_custom_message_handlers(
+            return this.lona_context._run_custom_message_handlers(
                 raw_message, json_data);
         };
 
         var window_id = json_data[0];
 
-        if(window_id in this.lona._windows) {
-            this.lona._windows[window_id].handle_websocket_message(json_data);
+        if(window_id in this.lona_context._windows) {
+            let lona_window = this.lona_context._windows[window_id];
+
+            lona_window.handle_websocket_message(json_data);
         };
     };
 
@@ -1137,20 +1152,22 @@ function Lona(settings) {
         this._ws = new WebSocket(
             protocol + window.location.host + window.location.pathname);
 
-        this._ws.lona = this;
+        this._ws.lona_context = this;
         this._ws.onmessage = this._handle_raw_websocket_message;
 
         // load initial page
         this._ws.onopen = function(event) {
-            var window_id = this.lona.create_window(
-                this.lona.settings.target,
+            var lona_context = this.lona_context;
+
+            var window_id = this.lona_context.create_window(
+                lona_context.settings.target,
                 document.location.href,
             );
 
             // setup pushstate
-            if(this.lona.settings.update_address_bar) {
+            if(this.lona_context.settings.update_address_bar) {
                 window.onpopstate = function(event) {
-                    this.lona._windows[window_id].run_view(
+                    lona_context._windows[window_id].run_view(
                         document.location.href);
                 };
             };
