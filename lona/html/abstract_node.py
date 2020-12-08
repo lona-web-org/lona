@@ -1,4 +1,5 @@
 from datetime import datetime
+import inspect
 
 from lona.html.document import Document
 
@@ -6,6 +7,13 @@ _default_document = Document(default_document=True)
 
 
 class AbstractNode:
+    @classmethod
+    def get_path(cls):
+        if cls.__module__.endswith('.py'):
+            return cls.__module__
+
+        return inspect.getfile(cls)
+
     @classmethod
     def gen_id(cls):
         return str(datetime.timestamp(datetime.now())).replace('.', '')

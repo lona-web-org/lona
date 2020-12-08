@@ -1,7 +1,6 @@
 from tempfile import TemporaryDirectory
 from copy import copy
 import logging
-import inspect
 import json
 import os
 
@@ -115,7 +114,7 @@ class StaticFileLoader:
                 if static_file.name in discovered_names:
                     continue
 
-                node_class_path = inspect.getfile(node_class)
+                node_class_path = node_class.get_path()
                 node_class_dirname = os.path.dirname(node_class_path)
 
                 # check static file
