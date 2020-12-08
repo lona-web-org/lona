@@ -61,6 +61,16 @@ if cli_args.loggers:
 
             log_filter.include(logger_name)
 
+logger = logging.getLogger('lona')
+
+# setup settings paths
+settings_paths = list(cli_args.settings or [])
+
+if os.path.exists('settings.py'):
+    settings_paths.append(os.path.abspath('settings.py'))
+
+    logger.debug("project settings 'settings.py' found")
+
 # setup lona server
 loop = asyncio.get_event_loop()
 app = Application()
@@ -69,7 +79,7 @@ server = LonaServer(
     app=app,
     loop=loop,
     project_root=cli_args.project_root,
-    settings_paths=list(cli_args.settings or []),
+    settings_paths=settings_paths,
 )
 
 

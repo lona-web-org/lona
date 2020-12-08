@@ -18,6 +18,16 @@ from lona.scheduling import Scheduler
 from lona.imports import acquire
 from lona.routing import Router
 
+DEFAULT_SETTINGS_PRE = os.path.join(
+    os.path.dirname(__file__),
+    'settings/default_settings_pre.py',
+)
+
+DEFAULT_SETTINGS_POST = os.path.join(
+    os.path.dirname(__file__),
+    'settings/default_settings_post.py',
+)
+
 server_logger = logging.getLogger('lona.server')
 http_logger = logging.getLogger('lona.server.http')
 websockets_logger = logging.getLogger('lona.server.websockets')
@@ -39,17 +49,12 @@ class LonaServer:
         server_logger.debug('setup settings')
 
         self.settings = Settings()
-        self.settings_paths = ['lona.settings.default_settings']
 
-        project_settings_path = os.path.join(self.project_root, 'settings.py')
-
-        if os.path.exists(project_settings_path):
-            self.settings_paths.append('settings.py')
-
-            server_logger.debug("project settings '%s' found",
-                                project_settings_path)
-
-        self.settings_paths = self.settings_paths + settings_paths
+        self.settings_paths = [
+            DEFAULT_SETTINGS_PRE,
+            *settings_paths,
+            DEFAULT_SETTINGS_POST,
+        ]
 
         for import_string in self.settings_paths:
             server_logger.debug("loading settings from '%s'", import_string)

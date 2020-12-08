@@ -1,3 +1,5 @@
+DEBUG = True
+
 ROUTING_TABLE = 'routes.py::routes'
 
 STATIC_DIRS = [

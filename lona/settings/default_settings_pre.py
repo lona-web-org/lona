@@ -1,5 +1,7 @@
 import os
 
+DEBUG = False
+
 # routing
 ROUTING_TABLE = 'lona.settings.default_routes.routes'
 
@@ -95,21 +97,3 @@ DEFAULT_VIEW_PRIORITY = 'medium'
 
 # hooks
 HOOKS = {}
-
-# debugger
-# TODO: make configurable
-DEBUG = True
-DEBUGGER_ROUTING_TABLE = 'lona.debugger.routes.routes'
-DEBUGGER_FRONTEND_VIEW = 'lona.debugger.views.frontend'
-
-CORE_TEMPLATE_DIRS.insert(
-    0,
-    os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), 'debugger/templates')
-)
-
-CORE_STATIC_DIRS.insert(
-    0,
-    os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), 'debugger/static')
-)

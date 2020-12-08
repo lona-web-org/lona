@@ -1,47 +1,53 @@
 from copy import deepcopy
-import importlib
+import logging
 import types
 import runpy
 
+logger = logging.getLogger('lona.settings')
+
 
 class Settings:
-    def add(self, import_string):
-        # scripts
-        if import_string.endswith('.py'):
-            attributes = runpy.run_path(import_string)
+    def __init__(self):
+        self._paths = []
+        self._values = {}
 
-            for name, value in attributes.items():
-                if name.startswith('_') or name in ('add', 'get'):
-                    continue
+    def add(self, path):
+        if not path.endswith('.py'):
+            logger.error(
+                "'%s' does not look like python script (modules are not supported)",  # NOQA
+                path,
+            )
 
-                if isinstance(value, types.ModuleType):
-                    continue
+            return
 
-                setattr(self, name, deepcopy(value))
+        self._paths.append(path)
 
-        # modules
-        else:
-            module = importlib.import_module(import_string)
+        values = runpy.run_path(path, init_globals=self._values)
+        self._values = {}
 
-            for name in dir(module):
-                if name.startswith('_') or name in ('add', 'get'):
-                    continue
-
-                value = getattr(module, name)
-
-                if isinstance(value, types.ModuleType):
-                    continue
-
-                setattr(self, name, deepcopy(value))
-
-    def get(self, *args):
-        return getattr(self, *args)
-
-    def __iter__(self):
-        ignore = ('add', )
-
-        for key in dir(self):
-            if key in ignore or key.startswith('_'):
+        for key, value in values.items():
+            if key.startswith('_'):
                 continue
 
-            yield key, getattr(self, key)
+            if isinstance(value, types.ModuleType):
+                continue
+
+            self._values[key] = deepcopy(value)
+
+    def get(self, *args):
+        return getattr(self._values, *args)
+
+    def __iter__(self):
+        return self._values.__iter__()
+
+    def __getattribute__(self, name):
+        if name in ('get', 'add') or name.startswith('_'):
+            return super().__getattribute__(name)
+
+        return self._values[name]
+
+    def __setattr__(self, name, value):
+        if name.startswith('_'):
+            return super().__setattr__(name, value)
+
+        self._values[name] = value
