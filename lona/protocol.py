@@ -14,12 +14,16 @@ def dumps(data):
 
 
 class ExitCode(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
     SUCCESS = Symbol('SUCCESS', 0)
     INVALID_MESSAGE = Symbol('INVALID_MESSAGE', 1)
     INVALID_METHOD = Symbol('INVALID_METHOD', 2)
 
 
 class Method(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
     VIEW = Symbol('VIEW', 101)
     INPUT_EVENT = Symbol('INPUT_EVENT', 102)
     REDIRECT = Symbol('REDIRECT', 201)
@@ -30,6 +34,8 @@ class Method(Symbol):
 
 
 class InputEventType(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
     CLICK = Symbol('CLICK', 301)
     CHANGE = Symbol('CHANGE', 302)
     SUBMIT = Symbol('SUBMIT', 303)
@@ -37,18 +43,24 @@ class InputEventType(Symbol):
 
 
 class NodeType(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
     NODE = Symbol('NODE', 401)
     TEXT_NODE = Symbol('TEXT_NODE', 402)
     WIDGET = Symbol('WIDGET', 403)
 
 
 class DataType(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
     HTML = Symbol('HTML', 501)
     HTML_TREE = Symbol('HTML_TREE', 502)
     HTML_UPDATE = Symbol('HTML_UPDATE', 503)
 
 
 class Operation(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
     SET = Symbol('SET', 601)
     RESET = Symbol('RESET', 602)
     ADD = Symbol('ADD', 603)

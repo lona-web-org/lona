@@ -1,4 +1,6 @@
 class Symbol:
+    _INCLUDE_IN_FRONTEND_LIBRARY = False
+
     def __init__(self, name, value=None):
         if not isinstance(name, str):
             raise ValueError('name has to be a string')
@@ -31,6 +33,9 @@ class Symbol:
         data = {}
 
         for symbol_class in cls.__subclasses__():
+            if not symbol_class._INCLUDE_IN_FRONTEND_LIBRARY:
+                continue
+
             class_name = symbol_class.__name__
             data[class_name] = {}
 
