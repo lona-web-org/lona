@@ -13,7 +13,7 @@ def dumps(data):
     return json.dumps(data, default=default)
 
 
-class ExitCode(Symbol):
+class EXIT_CODE(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
 
     SUCCESS = Symbol('SUCCESS', 0)
@@ -21,7 +21,7 @@ class ExitCode(Symbol):
     INVALID_METHOD = Symbol('INVALID_METHOD', 2)
 
 
-class Method(Symbol):
+class METHOD(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
 
     VIEW = Symbol('VIEW', 101)
@@ -33,7 +33,7 @@ class Method(Symbol):
     VIEW_STOP = Symbol('VIEW_STOP', 205)
 
 
-class InputEventType(Symbol):
+class INPUT_EVENT_TYPE(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
 
     CLICK = Symbol('CLICK', 301)
@@ -42,7 +42,7 @@ class InputEventType(Symbol):
     CUSTOM = Symbol('CUSTOM', 304)
 
 
-class NodeType(Symbol):
+class NODE_TYPE(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
 
     NODE = Symbol('NODE', 401)
@@ -50,7 +50,7 @@ class NodeType(Symbol):
     WIDGET = Symbol('WIDGET', 403)
 
 
-class DataType(Symbol):
+class DATA_TYPE(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
 
     HTML = Symbol('HTML', 501)
@@ -58,7 +58,7 @@ class DataType(Symbol):
     HTML_UPDATE = Symbol('HTML_UPDATE', 503)
 
 
-class Operation(Symbol):
+class OPERATION(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
 
     SET = Symbol('SET', 601)
@@ -76,52 +76,52 @@ def decode_message(message):
     """
 
     if not isinstance(message, list):
-        return ExitCode.INVALID_MESSAGE, None, None, None, None
+        return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
     if not isinstance(message[0], int):
-        return ExitCode.INVALID_MESSAGE, None, None, None, None
+        return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
     # view
-    if message[1] == Method.VIEW:
+    if message[1] == METHOD.VIEW:
         if not isinstance(message[2], str):
-            return ExitCode.INVALID_MESSAGE, None, None, None, None
+            return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
         payload = None
 
         if len(message) > 3:
             payload = message[3]
 
-        return ExitCode.SUCCESS, message[0], Method.VIEW, message[2], payload
+        return EXIT_CODE.SUCCESS, message[0], METHOD.VIEW, message[2], payload
 
     # input event
-    if message[1] == Method.INPUT_EVENT:
+    if message[1] == METHOD.INPUT_EVENT:
         if not isinstance(message[2], str):
-            return ExitCode.INVALID_MESSAGE, None, None, None, None
+            return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
         if not (isinstance(message[3], str) or 304 > message[3] > 300):
-            return ExitCode.INVALID_MESSAGE, None, None, None, None
+            return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
-        return (ExitCode.SUCCESS, message[0], Method.INPUT_EVENT,
+        return (EXIT_CODE.SUCCESS, message[0], METHOD.INPUT_EVENT,
                 message[2], message[3:])
 
-    return ExitCode.INVALID_MESSAGE, None, None, None, None
+    return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
 
 def encode_redirect(window_id, url, target_url):
-    return [window_id, Method.REDIRECT, url, target_url]
+    return [window_id, METHOD.REDIRECT, url, target_url]
 
 
 def encode_http_redirect(window_id, url, target_url):
-    return [window_id, Method.HTTP_REDIRECT, url, target_url]
+    return [window_id, METHOD.HTTP_REDIRECT, url, target_url]
 
 
 def encode_data(window_id, url, title, html_data, widget_data):
-    return [window_id, Method.DATA, url, title, html_data, widget_data]
+    return [window_id, METHOD.DATA, url, title, html_data, widget_data]
 
 
 def encode_view_start(window_id, url):
-    return [window_id, Method.VIEW_START, url]
+    return [window_id, METHOD.VIEW_START, url]
 
 
 def encode_view_stop(window_id, url):
-    return [window_id, Method.VIEW_STOP, url]
+    return [window_id, METHOD.VIEW_STOP, url]

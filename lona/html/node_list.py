@@ -1,6 +1,6 @@
 from lona.html.abstract_node import AbstractNode
 from lona.html.text_node import TextNode
-from lona.protocol import Operation
+from lona.protocol import OPERATION
 
 
 class NodeList:
@@ -40,7 +40,7 @@ class NodeList:
 
             index = self._nodes.index(node)
 
-            self._changes.append([Operation.INSERT, index, node._serialize()])
+            self._changes.append([OPERATION.INSERT, index, node._serialize()])
 
     def append(self, node):
         node = self._check_node(node)
@@ -51,14 +51,14 @@ class NodeList:
 
             index = self._nodes.index(node)
 
-            self._changes.append([Operation.INSERT, index, node._serialize()])
+            self._changes.append([OPERATION.INSERT, index, node._serialize()])
 
     def remove(self, node):
         with self._node.document.lock():
             node.parent = None
 
             self._nodes.remove(node)
-            self._changes.append([Operation.REMOVE, node._id])
+            self._changes.append([OPERATION.REMOVE, node._id])
 
     def clear(self):
         with self._node.document.lock():
@@ -66,7 +66,7 @@ class NodeList:
                 node.parent = None
                 self._nodes.remove(node)
 
-            self._changes.append([Operation.CLEAR])
+            self._changes.append([OPERATION.CLEAR])
 
     def __getitem__(self, index):
         with self._node.document.lock():
@@ -79,7 +79,7 @@ class NodeList:
             self._prepare_node(node)
             self._nodes[index] = node
 
-            self._changes.append([Operation.SET, index, node._serialize()])
+            self._changes.append([OPERATION.SET, index, node._serialize()])
 
     def __bool__(self):
         with self._node.document.lock():
@@ -107,7 +107,7 @@ class NodeList:
                 self._nodes.append(node)
 
                 self._changes.append([
-                    Operation.RESET, [i._serialize() for i in self._nodes]
+                    OPERATION.RESET, [i._serialize() for i in self._nodes]
                 ])
 
     def _has_changes(self):

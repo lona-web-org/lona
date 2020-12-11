@@ -2,7 +2,7 @@ import logging
 
 from yarl import URL
 
-from lona.protocol import encode_http_redirect, Method, dumps
+from lona.protocol import encode_http_redirect, METHOD, dumps
 from lona.html.abstract_node import AbstractNode
 from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
@@ -250,7 +250,7 @@ class ViewRuntimeController:
         url_object = URL(url)
 
         # views
-        if method == Method.VIEW:
+        if method == METHOD.VIEW:
             # disconnect client window from previous view
             self.remove_connection(connection, window_id)
 
@@ -348,7 +348,7 @@ class ViewRuntimeController:
             view_runtime.start()
 
         # input events
-        elif method == Method.INPUT_EVENT:
+        elif method == METHOD.INPUT_EVENT:
             user = connection.user
 
             if user not in self.running_single_user_views:

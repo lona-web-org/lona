@@ -1,7 +1,7 @@
 import logging
 import json
 
-from lona.protocol import ExitCode, decode_message
+from lona.protocol import EXIT_CODE, decode_message
 
 logger = logging.getLogger('lona.middlewares.websocket_middlewares')
 
@@ -35,7 +35,7 @@ def lona_message_middleware(server, connection, message):
         message.json_data)
 
     # message cannot be parsed and gets passed down
-    if exit_code != ExitCode.SUCCESS:
+    if exit_code != EXIT_CODE.SUCCESS:
         return message
 
     server.view_runtime_controller.handle_lona_message(

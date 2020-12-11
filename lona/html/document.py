@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from lona.scheduling import get_current_thread_name
-from lona.protocol import DataType
+from lona.protocol import DATA_TYPE
 from lona.imports import acquire
 
 AbstractNode = None
@@ -188,7 +188,7 @@ class Document:
         if not self.html:
             return self.apply('')
 
-        return DataType.HTML_TREE, self.html._serialize()
+        return DATA_TYPE.HTML_TREE, self.html._serialize()
 
     def apply(self, html):
         # HTML update
@@ -199,7 +199,7 @@ class Document:
             changes = self._collect_changes()
             self.html._clear_changes()
 
-            return DataType.HTML_UPDATE, changes
+            return DATA_TYPE.HTML_UPDATE, changes
 
         # HTML
         else:
@@ -214,7 +214,7 @@ class Document:
                 else:
                     self.html = html
 
-                    return DataType.HTML, html
+                    return DATA_TYPE.HTML, html
 
             self.html = html
 

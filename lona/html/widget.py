@@ -1,6 +1,6 @@
 from lona.html.abstract_node import AbstractNode
 from lona.html.node_list import NodeList
-from lona.protocol import NodeType
+from lona.protocol import NODE_TYPE
 
 
 class Widget(AbstractNode):
@@ -50,7 +50,7 @@ class Widget(AbstractNode):
 
     def _serialize(self):
         return [
-            NodeType.WIDGET,
+            NODE_TYPE.WIDGET,
             self._id,
             self.nodes._serialize(),
         ]

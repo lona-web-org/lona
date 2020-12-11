@@ -1,4 +1,4 @@
-from lona.protocol import Operation
+from lona.protocol import OPERATION
 
 
 class AttributeDict:
@@ -18,14 +18,14 @@ class AttributeDict:
 
     def pop(self, name):
         with self._node.document.lock():
-            self._changes.append([Operation.REMOVE, name])
+            self._changes.append([OPERATION.REMOVE, name])
 
             return self._attributes.pop(name)
 
     def clear(self):
         with self._node.document.lock():
             self._attributes.clear()
-            self._changes.append([Operation.CLEAR])
+            self._changes.append([OPERATION.CLEAR])
 
     def get(self, *args, **kwargs):
         with self._node.document.lock():
@@ -48,12 +48,12 @@ class AttributeDict:
 
         with self._node.document.lock():
             self._attributes[name] = value
-            self._changes.append([Operation.SET, name, value])
+            self._changes.append([OPERATION.SET, name, value])
 
     def __delitem__(self, name):
         with self._node.document.lock():
             del self._attributes[name]
-            self._changes.append([Operation.REMOVE, name])
+            self._changes.append([OPERATION.REMOVE, name])
 
     def __iter__(self):
         with self._node.document.lock():
@@ -81,7 +81,7 @@ class AttributeDict:
 
         with self._node.document.lock():
             self._attributes = value
-            self._changes.append([Operation.RESET, dict(value)])
+            self._changes.append([OPERATION.RESET, dict(value)])
 
     def _has_changes(self):
         return bool(self._changes)

@@ -5,7 +5,7 @@ from lona.html.attribute_list import AttributeList
 from lona.html.abstract_node import AbstractNode
 from lona.html.text_node import TextNode
 from lona.html.node_list import NodeList
-from lona.protocol import NodeType
+from lona.protocol import NODE_TYPE
 
 
 class Node(AbstractNode):
@@ -193,7 +193,7 @@ class Node(AbstractNode):
 
     def _serialize(self):
         return [
-            NodeType.NODE,
+            NODE_TYPE.NODE,
             self._id,
             self.TAG_NAME,
             self._id_list._serialize(),

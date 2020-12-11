@@ -1,5 +1,5 @@
 from lona.html.abstract_node import AbstractNode
-from lona.protocol import NodeType
+from lona.protocol import NODE_TYPE
 
 
 class TextNode(AbstractNode):
@@ -66,7 +66,7 @@ class TextNode(AbstractNode):
         pass
 
     def _serialize(self):
-        return [NodeType.TEXT_NODE, self._id, self._string]
+        return [NODE_TYPE.TEXT_NODE, self._id, self._string]
 
     # node helper #############################################################
     def remove(self):

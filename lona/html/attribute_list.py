@@ -1,4 +1,4 @@
-from lona.protocol import Operation
+from lona.protocol import OPERATION
 
 
 class AttributeList:
@@ -15,18 +15,18 @@ class AttributeList:
         with self._node.document.lock():
             if attribute not in self._attributes:
                 self._attributes.append(attribute)
-                self._changes.append([Operation.ADD, attribute])
+                self._changes.append([OPERATION.ADD, attribute])
 
     def remove(self, attribute):
         with self._node.document.lock():
             if attribute in self._attributes:
                 self._attributes.remove(attribute)
-                self._changes.append([Operation.REMOVE, attribute])
+                self._changes.append([OPERATION.REMOVE, attribute])
 
     def clear(self):
         with self._node.document.lock():
             self._attributes.clear()
-            self._changes.append([Operation.CLEAR])
+            self._changes.append([OPERATION.CLEAR])
 
     def toggle(self, attribute):
         with self._node.document.lock():
@@ -62,7 +62,7 @@ class AttributeList:
 
         with self._node.document.lock():
             self._attributes = value
-            self._changes.append([Operation.RESET, list(value)])
+            self._changes.append([OPERATION.RESET, list(value)])
 
     def _has_changes(self):
         return bool(self._changes)
