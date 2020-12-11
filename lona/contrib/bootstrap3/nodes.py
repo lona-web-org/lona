@@ -13,7 +13,7 @@ from lona.html.nodes import (
     P
 )
 
-from lona.static_files import StaticFile, StyleSheet, SortOrder
+from lona.static_files import StaticFile, StyleSheet, SORT_ORDER
 
 
 STATIC_FILES = [
@@ -22,13 +22,13 @@ STATIC_FILES = [
         name='bootstrap3.css',
         path='static/css/bootstrap.min.css',
         url='bootstrap3.min.css',
-        sort_order=SortOrder.FRAMEWORK,
+        sort_order=SORT_ORDER.FRAMEWORK,
     ),
     StyleSheet(
         name='bootstrap3-theme.css',
         path='static/css/bootstrap-theme.min.css',
         url='bootstrap3-theme.min.css',
-        sort_order=SortOrder.FRAMEWORK,
+        sort_order=SORT_ORDER.FRAMEWORK,
         enabled_by_default=False,
     ),
 

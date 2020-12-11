@@ -10,10 +10,10 @@ from lona.types import Symbol
 logger = logging.getLogger('lona.static_files')
 
 
-class SortOrder:
-    FRAMEWORK = 100
-    LIBRARY = 200
-    APPLICATION = 300
+class SORT_ORDER(Symbol):
+    FRAMEWORK = Symbol('FRAMEWORK', 100)
+    LIBRARY = Symbol('LIBRARY', 200)
+    APPLICATION = Symbol('APPLICATION', 300)
 
 
 class StaticFile:
@@ -23,7 +23,7 @@ class StaticFile:
         self.name = name
         self.path = path
         self.url = url
-        self.sort_order = sort_order or SortOrder.APPLICATION
+        self.sort_order = sort_order or SORT_ORDER.APPLICATION
         self.link = link
         self.enabled_by_default = enabled_by_default
         self.enabled = True
@@ -33,9 +33,10 @@ class StaticFile:
         self.static_url_prefix = ''
 
     def __repr__(self):
-        return '<{}({}, enabled={}, {}{} -> {})>'.format(
+        return '<{}({}, sort_order={}, enabled={}, {}{} -> {})>'.format(
             self.__class__.__name__,
             self.name,
+            repr(self.sort_order),
             repr(self.enabled),
             self.static_url_prefix,
             self.url,
