@@ -4,14 +4,15 @@ from lona.html.widget_data import WidgetData
 from lona.types import Symbol
 
 
-def dumps(data):
-    def default(value):
-        if isinstance(value, Symbol):
-            return value.value
+def default(value):
+    if isinstance(value, Symbol):
+        return value.value
 
-        if isinstance(value, WidgetData):
-            return value._data
+    if isinstance(value, WidgetData):
+        return value._data
 
-        raise TypeError
+    raise TypeError
 
-    return json.dumps(data, default=default)
+
+def dumps(*args, default=default, **kwargs):
+    return json.dumps(*args, default=default, **kwargs)
