@@ -3,6 +3,8 @@ import json
 from lona.html.widget_data import WidgetData
 from lona.types import Symbol
 
+SEPARATORS = (',', ':')
+
 
 def default(value):
     if isinstance(value, Symbol):
@@ -14,5 +16,5 @@ def default(value):
     raise TypeError
 
 
-def dumps(*args, default=default, **kwargs):
-    return json.dumps(*args, default=default, **kwargs)
+def dumps(*args, default=default, separators=SEPARATORS, **kwargs):
+    return json.dumps(*args, default=default, separators=separators, **kwargs)
