@@ -1,9 +1,19 @@
 from lona.html.abstract_node import AbstractNode
+from lona.html.widget_data import WidgetData
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
 
 
 class Widget(AbstractNode):
+    FRONTEND_WIDGET_CLASS = ''
+
+    @property
+    def _id(self):
+        if not hasattr(self, '_id_'):
+            self._id_ = self.gen_id()
+
+        return self._id_
+
     @property
     def nodes(self):
         if not hasattr(self, '_nodes'):
@@ -19,11 +29,18 @@ class Widget(AbstractNode):
         self._nodes._reset(value)
 
     @property
-    def _id(self):
-        if not hasattr(self, '_id_'):
-            self._id_ = self.gen_id()
+    def data(self):
+        if not hasattr(self, '_data'):
+            self._data = WidgetData(self)
 
-        return self._id_
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        if not hasattr(self, '_data'):
+            self._data = WidgetData(self)
+
+        self._data._reset(value)
 
     def __len__(self):
         return self._nodes.__len__()
@@ -37,22 +54,26 @@ class Widget(AbstractNode):
 
     # serialisation ###########################################################
     def _has_changes(self):
-        return self._nodes._has_changes()
+        return self.nodes._has_changes() or self.data._has_changes()
 
     def _get_changes(self):
         return [
             self._id,
-            self._nodes._get_changes(),
+            self.nodes._get_changes(),
+            self.data._get_changes(),
         ]
 
     def _clear_changes(self):
-        self._nodes._clear_changes()
+        self.nodes._clear_changes()
+        self.data._clear_changes()
 
     def _serialize(self):
         return [
             NODE_TYPE.WIDGET,
             self._id,
+            self.FRONTEND_WIDGET_CLASS,
             self.nodes._serialize(),
+            self.data._serialize(),
         ]
 
     # event handling ##########################################################
@@ -81,7 +102,7 @@ class Widget(AbstractNode):
     def __str__(self):
         return '<!--lona-widget:{}-->\n{}\n<!--end-lona-widget:{}-->'.format(
             self._id,
-            str(self._nodes),
+            str(self.nodes),
             self._id,
         )
 

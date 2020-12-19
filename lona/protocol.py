@@ -115,8 +115,8 @@ def encode_http_redirect(window_id, url, target_url):
     return [window_id, METHOD.HTTP_REDIRECT, url, target_url]
 
 
-def encode_data(window_id, url, title, html_data, widget_data):
-    return [window_id, METHOD.DATA, url, title, html_data, widget_data]
+def encode_data(window_id, url, title, data):
+    return [window_id, METHOD.DATA, url, title, data]
 
 
 def encode_view_start(window_id, url):

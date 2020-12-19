@@ -169,8 +169,25 @@ class Document:
 
     def _collect_changes(self):
         changes = []
+        changed_widgets = []
+        widget_path = []
 
+        # find changes and changed widgets
         def add_changes(node):
+            node_is_widget = isinstance(node, Widget)
+
+            if node_is_widget:
+                widget_path.append(node._id)
+
+            # changed widgets
+            if node_is_widget:
+                if node.nodes._has_changes():
+                    changed_widgets.extend(widget_path)
+
+            elif node._has_changes():
+                changed_widgets.extend(widget_path)
+
+            # changes
             if node._has_changes():
                 changes.append(node._get_changes())
 
@@ -178,9 +195,19 @@ class Document:
                 for sub_node in node.nodes:
                     add_changes(sub_node)
 
+            if node_is_widget:
+                widget_path.remove(node._id)
+
         add_changes(self.html)
 
-        return changes
+        # clean list of changed widgets
+        cleaned_changed_widgets = []
+
+        for widget_id in changed_widgets[::-1]:
+            if widget_id not in cleaned_changed_widgets:
+                cleaned_changed_widgets.append(widget_id)
+
+        return [changes, cleaned_changed_widgets]
 
     def serialize(self):
         if not self.html:

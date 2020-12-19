@@ -75,13 +75,10 @@ class Client:
 
         with self.request._view_runtime.document.lock():
             html = html or self.request._view_runtime.document.html
-            html_data = self.request._view_runtime.document.apply(html)
+            data = self.request._view_runtime.document.apply(html)
 
-            if html_data:
-                self.request._view_runtime.send_data(
-                    html_data=html_data,
-                    title=title,
-                )
+            if data:
+                self.request._view_runtime.send_data(data=data, title=title)
 
     def set_title(self, title):
         self._assert_view_is_interactive()

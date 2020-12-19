@@ -153,7 +153,7 @@ class ViewRuntime:
 
         with self.document.lock():
             self.send_data(
-                html_data=self.document.serialize(),
+                data=self.document.serialize(),
                 connections={connection: (window_id, url, )},
             )
 
@@ -193,9 +193,7 @@ class ViewRuntime:
 
             connection.send_str(message)
 
-    def send_data(self, title=None, html_data=None, widget_data=None,
-                  connections={}):
-
+    def send_data(self, title=None, data=None, connections={}):
         connections = connections or self.connections
 
         # send message
@@ -205,8 +203,7 @@ class ViewRuntime:
                     window_id=window_id,
                     url=url,
                     title=title,
-                    html_data=html_data,
-                    widget_data={},
+                    data=data,
                 )
             )
 
@@ -251,12 +248,8 @@ class ViewRuntime:
 
         elif response_dict['text']:
             with self.document.lock():
-                html_data = self.document.apply(response_dict['text'])
-
-                self.send_data(
-                    html_data=html_data,
-                    connections=connections,
-                )
+                data = self.document.apply(response_dict['text'])
+                self.send_data(data=data, connections=connections)
 
         return response_dict
 
@@ -291,12 +284,10 @@ class ViewRuntime:
 
         def send_html_update():
             with self.document.lock():
-                html_data = self.document.apply(self.document.html)
+                data = self.document.apply(self.document.html)
 
-                if html_data:
-                    self.send_data(
-                        html_data=html_data,
-                    )
+                if data:
+                    self.send_data(data=data)
 
         # root input event handler (class based views)
         if self.view_spec.has_root_input_event_handler:
