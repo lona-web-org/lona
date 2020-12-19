@@ -112,6 +112,10 @@ routes = [
     Route('/window-actions/set-title/',
           'views/window_actions/set_title.py::handle_request'),
 
+    # frontend widgets
+    Route('/frontend-widgets/widget-data/',
+          'views/frontend_widgets/widget_data.py::handle_request'),
+
     # home
     Route('/', 'views/home.py::home'),
 ]

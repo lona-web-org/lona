@@ -1,0 +1,98 @@
+import time
+
+from lona.html import HTML, Div, H1, Br, Widget
+from lona.static_files import Script
+from lona.json import dumps
+
+
+class TestWidget(Widget):
+    STATIC_FILES = [
+        Script(name='TestWidget', path='test_widget.js'),
+    ]
+
+    FRONTEND_WIDGET_CLASS = 'test_widget'
+
+    def __init__(self):
+        self.server_state = Div()
+
+        self.nodes = [
+            self.server_state,
+            Div(_id='client-state'),
+        ]
+
+    def update_state(self):
+        self.server_state.set_text(dumps(self.data))
+
+
+def handle_request(request):
+    widget = TestWidget()
+
+    html = HTML(
+        H1('Widget Data'),
+        'This view tests the encoding and decoding of abstract widget data.',
+        Br(),
+        Br(),
+        'The first value is the state the server has, the second is the '
+        'second is the client state.',
+        Br(),
+        'Both values should be equal at all times.',
+        Br(),
+        Br(),
+        widget,
+    )
+
+    request.client.show(html)
+
+    while True:
+        # list
+        widget.data = {'list': []}
+
+        for i in range(6):
+            widget.data['list'].append(i)
+            widget.update_state()
+            request.client.show(html)
+            time.sleep(1)
+
+        widget.data['list'].remove(2)
+        widget.update_state()
+        request.client.show(html)
+        time.sleep(1)
+
+        widget.data['list'].insert(2, 2)
+        widget.update_state()
+        request.client.show(html)
+        time.sleep(1)
+
+        widget.data['list'].clear()
+        widget.update_state()
+        request.client.show(html)
+        time.sleep(1)
+
+        widget.data['list'] = [5, 4, 3, 2, 1]
+        widget.update_state()
+        request.client.show(html)
+        time.sleep(1)
+
+        # dict
+        widget.data = [{}]
+
+        for i in range(6):
+            widget.data[0][i] = i
+            widget.update_state()
+            request.client.show(html)
+            time.sleep(1)
+
+        widget.data[0].pop(2)
+        widget.update_state()
+        request.client.show(html)
+        time.sleep(1)
+
+        widget.data[0].clear()
+        widget.update_state()
+        request.client.show(html)
+        time.sleep(1)
+
+        widget.data[0] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
+        widget.update_state()
+        request.client.show(html)
+        time.sleep(1)

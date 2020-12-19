@@ -57,4 +57,9 @@ def home(request):
         <ul>
             <li><a href="/window-actions/set-title/">Set Title</a></li>
         </ul>
+
+        <h2>Frontend Widgets</h2>
+        <ul>
+            <li><a href="/frontend-widgets/widget-data/">Widget Data</a></li>
+        </ul>
     """  # NOQA
