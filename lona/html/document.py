@@ -6,7 +6,6 @@ from lona.protocol import DATA_TYPE
 from lona.imports import acquire
 
 AbstractNode = None
-TextNode = None
 Widget = None
 Node = None
 
@@ -25,7 +24,6 @@ def _setup_node_classes():
         return
 
     AbstractNode = acquire('lona.html.abstract_node.AbstractNode')[1]
-    TextNode = acquire('lona.html.text_node.TextNode')[1]
     Widget = acquire('lona.html.widget.Widget')[1]
     Node = acquire('lona.html.node.Node')[1]
 
@@ -191,8 +189,11 @@ class Document:
         return DATA_TYPE.HTML_TREE, self.html._serialize()
 
     def apply(self, html):
+        if isinstance(html, str) and html is self.html:
+            return
+
         # HTML update
-        if html is self.html:
+        elif html is self.html:
             if not self._has_changes():
                 return
 
@@ -206,19 +207,16 @@ class Document:
             if hasattr(self.html, 'document'):
                 self.html.document = None
 
-            # prepare html
-            if isinstance(html, str):
-                if '<' not in html:
-                    html = TextNode(html)
+            # node tree
+            if isinstance(html, AbstractNode):
+                self.html = html
 
-                else:
-                    self.html = html
+                self.html.document = self
+                self.html._clear_changes()
 
-                    return DATA_TYPE.HTML, html
+                return self.serialize()
 
-            self.html = html
+            # HTML string
+            self.html = str(html)
 
-            self.html.document = self
-            self.html._clear_changes()
-
-            return self.serialize()
+            return DATA_TYPE.HTML, html
