@@ -8,6 +8,7 @@ from lona.exceptions import StopReason, UserAbort
 from lona.html.document import Document
 from lona.input_event import InputEvent
 from lona.request import Request
+from lona.json import dumps
 
 from lona.protocol import (
     encode_http_redirect,
@@ -15,7 +16,6 @@ from lona.protocol import (
     encode_view_stop,
     encode_redirect,
     encode_data,
-    dumps,
 )
 
 

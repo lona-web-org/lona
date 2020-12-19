@@ -2,13 +2,14 @@ import logging
 
 from yarl import URL
 
-from lona.protocol import encode_http_redirect, METHOD, dumps
+from lona.protocol import encode_http_redirect, METHOD
 from lona.html.abstract_node import AbstractNode
 from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
 from lona.imports import acquire
 from lona.request import Request
 from lona.types import Mapping
+from lona.json import dumps
 
 logger = logging.getLogger('lona.view_runtime_controller')
 

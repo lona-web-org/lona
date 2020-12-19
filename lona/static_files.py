@@ -1,11 +1,11 @@
 from tempfile import TemporaryDirectory
 from copy import copy
 import logging
-import json
 import os
 
 from lona.html.abstract_node import AbstractNode
 from lona.types import Symbol
+from lona.json import dumps
 
 logger = logging.getLogger('lona.static_files')
 
@@ -73,7 +73,7 @@ class StaticFileLoader:
         javascript = self.server.templating_engine.render_template(
             self.server.settings.STATIC_FILES_SYMBOLS_TEMPLATE,
             {
-                'symbols': json.dumps(Symbol.dump_symbol_classes()),
+                'symbols': dumps(Symbol.dump_symbol_classes()),
             },
         )
 
