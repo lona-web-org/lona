@@ -58,8 +58,9 @@ def home(request):
             <li><a href="/window-actions/set-title/">Set Title</a></li>
         </ul>
 
-        <h2>Frontend Widgets</h2>
+        <h2>Frontend</h2>
         <ul>
-            <li><a href="/frontend-widgets/widget-data/">Widget Data</a></li>
+            <li><a href="/frontend/widget-data/">Widget Data</a></li>
+            <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
         </ul>
     """  # NOQA

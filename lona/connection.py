@@ -12,8 +12,8 @@ class Connection:
     def is_interactive(self):
         return self.websocket is not None
 
-    def send_str(self, string):
-        # TODO: find right priority
+    def send_str(self, string, priority=None, sync=True):
+        priority = priority or self.server.settings.DEFAULT_VIEW_PRIORITY
 
         if not self.is_interactive:
             raise NotInteractiveError
@@ -21,8 +21,8 @@ class Connection:
         try:
             self.server.schedule(
                 self.websocket.send_str(string),
-                sync=True,
-                priority=self.server.settings.DEFAULT_VIEW_PRIORITY,
+                sync=sync,
+                priority=priority,
             )
 
         except ConnectionResetError:

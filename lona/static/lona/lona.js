@@ -1267,6 +1267,9 @@ Lona.LonaContext = function(settings) {
 
     // state ------------------------------------------------------------------
     this._windows = {};
+    this._connect_hooks = [];
+    this._disconnect_hooks = [];
+    this._message_handler = [];
 
     // window -----------------------------------------------------------------
     this.create_window = function(root, url) {
@@ -1284,6 +1287,61 @@ Lona.LonaContext = function(settings) {
         return window_id;
     };
 
+    // hooks ------------------------------------------------------------------
+    this.add_connect_hook = function(hook) {
+        this._connect_hooks.push(hook);
+    };
+
+    this.add_disconnect_hook = function(hook) {
+        this._disconnect_hooks.push(hook);
+    };
+
+    this.add_message_handler = function(handler) {
+        this._message_handler.push(handler);
+    };
+
+    this._run_connect_hooks = function(event) {
+        for(var i in this._connect_hooks) {
+            var hook = this._connect_hooks[i];
+
+            try {
+                hook(this, event);
+
+            } finally {};
+        };
+    };
+
+    this._run_disconnect_hooks = function(event) {
+        for(var i in this._disconnect_hooks) {
+            var hook = this._disconnect_hooks[i];
+
+            try {
+                hook(this, event);
+
+            } finally {};
+        };
+    };
+
+    this._run_message_handler = function(raw_message, json_data) {
+        message = {
+            raw_message: raw_message,
+            json_data: json_data,
+        };
+
+        for(var i in this._message_handler) {
+            var message_handler = this._message_handler[i];
+
+            try {
+                var return_value = message_handler(this, message);
+
+                if(!return_value) {
+                    return;
+                };
+
+            } finally {};
+        };
+    };
+
     // websocket messages -----------------------------------------------------
     this.send = function(message) {
         if(typeof(message) != 'string') {
@@ -1293,11 +1351,6 @@ Lona.LonaContext = function(settings) {
         console.debug('lona tx >>', message);
 
         this._ws.send(message);
-    };
-
-    this._run_custom_message_handlers = function(raw_message, json_data) {
-        // TODO
-
     };
 
     this._handle_raw_websocket_message = function(event) {
@@ -1311,20 +1364,20 @@ Lona.LonaContext = function(settings) {
             var json_data = JSON.parse(raw_message);
 
         } catch {
-            return this.lona_context._run_custom_message_handlers(
+            return this.lona_context._run_message_handler(
                 raw_message, json_data);
 
         };
 
         // all lona messages are Arrays
         if(!Array.isArray(json_data)) {
-            return this.lona_context._run_custom_message_handlers(
+            return this.lona_context._run_message_handler(
                 raw_message, json_data);
         };
 
         // all lona messages have to start with a window id
         if(!Number.isInteger(json_data[0])) {
-            return this.lona_context._run_custom_message_handlers(
+            return this.lona_context._run_message_handler(
                 raw_message, json_data);
         };
 
@@ -1338,7 +1391,10 @@ Lona.LonaContext = function(settings) {
     };
 
     // setup ------------------------------------------------------------------
-    this.setup = function() {
+    this.reconnect = function() {
+        // state
+        this._windows = {};
+
         // setup websocket
         var protocol = 'ws://';
 
@@ -1352,10 +1408,11 @@ Lona.LonaContext = function(settings) {
         this._ws.lona_context = this;
         this._ws.onmessage = this._handle_raw_websocket_message;
 
-        // load initial page
+        // onopen
         this._ws.onopen = function(event) {
             var lona_context = this.lona_context;
 
+            // load initial page
             var window_id = this.lona_context.create_window(
                 lona_context.settings.target,
                 document.location.href,
@@ -1368,6 +1425,19 @@ Lona.LonaContext = function(settings) {
                         document.location.href);
                 };
             };
+
+            lona_context._run_connect_hooks(event);
         };
+
+        // onclose
+        this._ws.onclose = function(event) {
+            var lona_context = this.lona_context;
+
+            lona_context._run_disconnect_hooks(event);
+        };
+    };
+
+    this.setup = function() {
+        this.reconnect();
     };
 };

@@ -2,22 +2,97 @@
   <head>
     <meta charset="utf-8" />
     {{ Lona.load_stylesheets() }}
+
+    <style>
+      #lona-messages {
+        position: absolute;
+        top: 3em;
+      }
+
+      .lona-message {
+        background: rgba(0, 0, 0, 0.75);
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
+    <div id="lona-messages"></div>
     <div id="lona"></div>
 
     {{ Lona.load_scripts() }}
     <script>
-      var lona = new Lona.LonaContext({
+      var disconnected = false;
+
+      var lona_context = new Lona.LonaContext({
         target: '#lona',
-        title: 'Lona Test Project',
+        title: 'Lona',
         update_address_bar: true,
         update_title: true,
         follow_redirects: true,
         follow_http_redirects: true,
       });
 
-      lona.setup();
+      function show_message(message, color, timeout) {
+        if(timeout === undefined) {
+          timeout = 3000;
+
+        };
+
+        if(color === undefined) {
+          color = 'white';
+
+        };
+
+        var node = document.createElement('div');
+        var text_node = document.createElement('span');
+
+        node.appendChild(text_node);
+
+        text_node.classList.add('lona-message');
+        text_node.innerHTML = message;
+        text_node.style.color = color;
+
+        document.querySelector('#lona-messages').appendChild(node);
+
+        setTimeout(function() {
+          node.remove();
+        }, timeout);
+
+      };
+
+      lona_context.add_message_handler(function(lona_context, message) {
+        if(!message.json_data || !message.json_data.notification) {
+          return message;
+        };
+
+        show_message(
+          message.json_data.notification.message,
+          message.json_data.notification.color,
+          message.json_data.notification.timeout,
+        );
+
+      });
+
+      lona_context.add_connect_hook(function(lona_context, event) {
+        if(disconnected) {
+          show_message('Connected', 'lime');
+          disconnected = false;
+        };
+
+      });
+
+      lona_context.add_disconnect_hook(function(lona_context, event) {
+        show_message('Connection Lost', 'red');
+        disconnected = true;
+
+        setTimeout(function() {
+          show_message('Trying to reconnect... ', 'red');
+          lona_context.reconnect();
+
+        }, 1000);
+      });
+
+      lona_context.setup();
     </script>
   </body>
 </html>

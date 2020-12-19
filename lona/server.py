@@ -45,6 +45,8 @@ class LonaServer:
         self.project_root = project_root
         self.loop = loop or self.app.loop
 
+        self.websocket_connections = []
+
         # setup settings
         server_logger.debug('setup settings')
 
@@ -189,6 +191,19 @@ class LonaServer:
 
         await self.loop.run_in_executor(None, self.scheduler.stop)
 
+    # connection management ###################################################
+    def setup_connection(self, http_request, websocket=None):
+        connection = Connection(self, http_request, websocket)
+
+        if websocket is not None:
+            self.websocket_connections.append(connection)
+
+        return connection
+
+    def remove_connection(self, connection):
+        if connection in self.websocket_connections:
+            self.websocket_connections.remove(connection)
+
     # asyncio helper ##########################################################
     def schedule(self, *args, **kwargs):
         return self.scheduler.schedule(*args, **kwargs)
@@ -281,7 +296,7 @@ class LonaServer:
         await websocket.prepare(http_request)
 
         # setup connection
-        connection = Connection(self, http_request, websocket)
+        connection = self.setup_connection(http_request, websocket)
 
         websockets_logger.debug('%s opened', connection)
 
@@ -308,6 +323,7 @@ class LonaServer:
 
         finally:
             self.view_runtime_controller.remove_connection(connection)
+            self.remove_connection(connection)
 
             await websocket.close()
 
@@ -381,7 +397,7 @@ class LonaServer:
 
             return await self.handle_websocket_request(http_request)
 
-        connection = Connection(self, http_request)
+        connection = self.setup_connection(http_request)
 
         if match:
             # non interactive views
