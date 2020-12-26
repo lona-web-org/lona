@@ -116,6 +116,9 @@ routes = [
     Route('/frontend/widget-data/',
           'views/frontend/widget_data.py::handle_request'),
 
+    Route('/frontend/custom-event/',
+          'views/frontend/custom_event.py::handle_request'),
+
     Route('/frontend/custom-messages/',
           'views/frontend/custom_messages.py::handle_request'),
 

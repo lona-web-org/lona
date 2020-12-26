@@ -122,22 +122,26 @@ class Document:
         return context_manager
 
     # html ####################################################################
-    def get_node(self, node_id):
+    def get_node(self, node_id, widget_id=None):
         if isinstance(node_id, Node):
             node_id = node_id.id
 
         node_id = str(node_id)
         value = [None, [], ]
-        widgets = []
+        widget = [None]
+        widget_path = []
 
         def iter_nodes(node):
             if isinstance(node, Widget):
-                widgets.append(node)
+                widget_path.append(node)
+
+                if widget_id and node._id == widget_id:
+                    widget[0] = node
 
             if isinstance(node, (Node, Widget)):
                 if node._id == node_id:
                     value[0] = node
-                    value[1].extend(widgets)
+                    value[1].extend(widget_path)
 
                     return
 
@@ -146,10 +150,13 @@ class Document:
                         iter_nodes(i)
 
             if isinstance(node, Widget):
-                widgets.pop()
+                widget_path.pop()
 
         with self.lock():
             iter_nodes(self.html)
+
+        if widget[0]:
+            value[1].append(widget[0])
 
         return tuple(value)
 

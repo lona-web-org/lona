@@ -1,16 +1,16 @@
 import time
 
-from lona.html import HTML, Div, H1, Br, Widget
+from lona.html import HTML, Div, H1, Br, Widget, A
 from lona.static_files import Script
 from lona.json import dumps
 
 
 class TestWidget(Widget):
     STATIC_FILES = [
-        Script(name='TestWidget', path='test_widget.js'),
+        Script(name='TestWidget', path='widget_data.js'),
     ]
 
-    FRONTEND_WIDGET_CLASS = 'test_widget'
+    FRONTEND_WIDGET_CLASS = 'widget_data'
 
     def __init__(self):
         self.server_state = Div()
@@ -29,6 +29,9 @@ def handle_request(request):
 
     html = HTML(
         H1('Widget Data'),
+        A('Home', href='/'),
+        Br(),
+        Br(),
         'This view tests the encoding and decoding of abstract widget data.',
         Br(),
         Br(),

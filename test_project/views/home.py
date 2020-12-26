@@ -61,6 +61,7 @@ def home(request):
         <h2>Frontend</h2>
         <ul>
             <li><a href="/frontend/widget-data/">Widget Data</a></li>
+            <li><a href="/frontend/custom-event/">Custom Event</a></li>
             <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
         </ul>
     """  # NOQA

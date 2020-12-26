@@ -1,8 +1,12 @@
-function TestWidget(lona_window) {
+function WidgetDataWidget(lona_window) {
     this.lona_window = lona_window;
 
     this.setup = function() {
         console.log('>> setup', this.nodes);
+    };
+
+    this.deconstruct = function() {
+        console.log('>> deconstruct', this.nodes);
     };
 
     this.nodes_updated = function() {
@@ -14,4 +18,4 @@ function TestWidget(lona_window) {
     };
 };
 
-Lona.register_widget_class('test_widget', TestWidget);
+Lona.register_widget_class('widget_data', WidgetDataWidget);
