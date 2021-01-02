@@ -1,7 +1,6 @@
-import asyncio
 import logging
 
-from lona.scheduling import get_current_thread_name
+from lona.locking import LockManager
 from lona.protocol import DATA_TYPE
 from lona.imports import acquire
 
@@ -30,96 +29,29 @@ def _setup_node_classes():
     _node_classes_setup = True
 
 
-class LockContextManager:
-    def __init__(self, document, context_name):
-        self.document = document
-        self.context_name = context_name
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args, **kwargs):
-        self.document._release(self.context_name)
-
-
 class Document:
     def __init__(self, loop=None, default_document=False):
         self.loop = loop
         self.is_default_document = default_document
 
-        self.html = None
+        self.lock_manager = LockManager(
+            loop=self.loop,
+            pass_through_mode=self.is_default_document,
+        )
 
-        self._locks = [
-            # [context_name, started, lock_context_counter],
-        ]
+        self.html = None
 
         if not self.is_default_document:
             _setup_node_classes()
+
+    def lock(self):
+        return self.lock_manager.lock()
 
     def __repr__(self):
         if self.is_default_document:
             return '<DefaultDocument>'
 
         return '<Document>'
-
-    # locking #################################################################
-    async def _await(self, future):
-        return await future
-
-    def _release(self, context_name):
-        if self.is_default_document or not self.loop:
-            return
-
-        for lock in self._locks:
-            if lock[0] != context_name:
-                continue
-
-            lock[2] -= 1
-
-            if lock[2] == 0:
-                self._locks.remove(lock)
-
-            if(self._locks and
-               not self._locks[0][1].done() and
-               not self._locks[0][1].cancelled()):
-
-                self._locks[0][1].set_result(True)
-
-    def lock(self):
-        if self.is_default_document or not self.loop:
-            return LockContextManager(self, '')
-
-        context_name = get_current_thread_name()
-        context_manager = LockContextManager(self, context_name)
-        lock = []
-
-        for _lock in self._locks:
-            if _lock[0] == context_name:
-                lock = _lock
-
-                break
-
-        if not lock:
-            lock = [context_name, asyncio.Future(loop=self.loop), 0]
-            self._locks.append(lock)
-
-        started = lock[1]
-
-        if(self._locks.index(lock) == 0 and
-           not started.done() and
-           not started.cancelled()):
-
-            started.set_result(True)
-
-        lock[2] += 1
-
-        if not started.done() and not started.cancelled():
-            asyncio.run_coroutine_threadsafe(
-                self._await(started),
-                loop=self.loop,
-            ).result()
-
-        return context_manager
 
     # html ####################################################################
     def get_node(self, node_id, widget_id=None):
