@@ -98,8 +98,12 @@ routes = [
     Route('/events/class-based-view/',
           'views/events/class_based_view.py::ClassBasedView'),
 
-    Route('/events/locking/',
-          'views/events/locking.py::LockingView'),
+    # locking
+    Route('/locking/html-tree/',
+          'views/locking/html_tree_locking.py::LockingView'),
+
+    Route('/locking/server-state/',
+          'views/locking/server_state_locking.py::LockingView'),
 
     # forms
     Route('/forms/interactive-form/',

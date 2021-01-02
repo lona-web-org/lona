@@ -31,6 +31,9 @@ STATIC_FILES_SYMBOLS_TEMPLATE = 'lona/lona-symbols.js'
 STATIC_FILES_ENABLED = []
 STATIC_FILES_DISABLED = []
 
+# state
+SERVER_STATE_ATOMIC = True
+
 # views
 FRONTEND_VIEW = 'lona.views.frontend'
 VIEW_CACHING = True

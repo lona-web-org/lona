@@ -11,7 +11,7 @@ class LockingView:
         self.button = Button('Button')
 
         self.html = Div(
-            H1('Locking View'),
+            H1('HTML Tree Locking View'),
             Div(Strong('Now: '), now),
             Br(),
             self.message,

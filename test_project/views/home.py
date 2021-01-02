@@ -44,7 +44,12 @@ def home(request):
             <li><a href="/events/non-node-events/">Non-Node Events</a></li>
             <li><a href="/events/widget-event-handler/">Widget Event Handler</a></li>
             <li><a href="/events/class-based-view/">Class Based View</a></li>
-            <li><a href="/events/locking/">Locking</a></li>
+        </ul>
+
+        <h2>Locking</h2>
+        <ul>
+            <li><a href="/locking/html-tree/">HTML Tree</a></li>
+            <li><a href="/locking/server-state/">Server State</a></li>
         </ul>
 
         <h2>Forms</h2>

@@ -11,6 +11,7 @@ from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
 from lona.hook_manager import HookManager
+from lona.server_state import ServerState
 from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
@@ -62,6 +63,15 @@ class LonaServer:
             server_logger.debug("loading settings from '%s'", import_string)
 
             self.settings.add(import_string)
+
+        # setup server state
+        server_logger.debug('setup server state')
+
+        if self.settings.SERVER_STATE_ATOMIC:
+            self._state = ServerState(self.loop, initial_data={})
+
+        else:
+            self._state = {}
 
         # setup scheduler
         self.scheduler = Scheduler(
@@ -190,6 +200,19 @@ class LonaServer:
         )
 
         await self.loop.run_in_executor(None, self.scheduler.stop)
+
+    # state ###################################################################
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, data):
+        if self.settings.SERVER_STATE_ATOMIC:
+            self._state._reset(data)
+
+        else:
+            self._state = data
 
     # connection management ###################################################
     def setup_connection(self, http_request, websocket=None):
