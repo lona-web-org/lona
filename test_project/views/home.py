@@ -1,7 +1,20 @@
-def home(request):
-    return """
-        <h1>Lona Test Project</h1>
+import os
 
+
+def home(request):
+    body = """
+        <h1>Lona Test Project</h1>"""
+
+    if os.environ.get('DJANGO', '0') == '1':
+        body += """
+            <h2>Django Views</h2>
+            <ul>
+                <li><a href="/admin/">Django Admin</a></li>
+                <li><a href="/django/login-required/">Login Required</a></li>
+            </ul>
+        """  # NOQA
+
+    body += """
         <h2>View Types</h2>
         <ul>
             <li><a href="/view-types/interactive-view/">Interactive View</a></li>
@@ -70,3 +83,5 @@ def home(request):
             <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
         </ul>
     """  # NOQA
+
+    return body

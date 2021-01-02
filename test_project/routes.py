@@ -1,6 +1,16 @@
-from aiohttp.web import Response
+import os
 
-from lona.routing import Route
+from aiohttp.web import Response
+from lona.routing import Route, MATCH_ALL
+
+DJANGO = False
+
+if os.environ.get('DJANGO', '0') == '1':
+    from django_project.wsgi import application
+    from aiohttp_wsgi import WSGIHandler
+
+    DJANGO = True
+    wsgi_handler = WSGIHandler(application)
 
 
 def routing__callback_view(request):
@@ -129,3 +139,12 @@ routes = [
     # home
     Route('/', 'views/home.py::home'),
 ]
+
+
+if DJANGO:
+    routes += [
+        Route('/django/login-required/',
+              'views/django/permission_views.py::django_login_required'),
+
+        Route(MATCH_ALL, wsgi_handler, http_pass_through=True),
+    ]
