@@ -1,4 +1,3 @@
-from concurrent.futures import CancelledError
 import asyncio
 import logging
 import os
@@ -7,6 +6,7 @@ from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
 from aiohttp import WSMsgType
 
 from lona.view_runtime_controller import ViewRuntimeController
+from lona.middleware_controller import MiddlewareController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
@@ -18,6 +18,7 @@ from lona.connection import Connection
 from lona.scheduling import Scheduler
 from lona.imports import acquire
 from lona.routing import Router
+from lona.types import Mapping
 
 DEFAULT_SETTINGS_PRE = os.path.join(
     os.path.dirname(__file__),
@@ -35,11 +36,7 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 
 class LonaServer:
-    # TODO: add helper code to load middlewares
-    # TODO: add helper code to run middlewares
-
     def __init__(self, app, project_root, settings_paths=[], loop=None):
-
         server_logger.debug("starting server in '%s'", project_root)
 
         self.app = app
@@ -47,6 +44,7 @@ class LonaServer:
         self.loop = loop or self.app.loop
 
         self.websocket_connections = []
+        self.user = Mapping()
 
         # setup settings
         server_logger.debug('setup settings')
@@ -106,42 +104,10 @@ class LonaServer:
 
         self.templating_engine = TemplatingEngine(self)
 
-        # setup websocket middlewares
-        server_logger.debug('setup websocket middlewares')
+        # setup websocket middleware controller
+        server_logger.debug('setup middleware controller')
 
-        self.websocket_middlewares = (
-            self.settings.CORE_WEBSOCKET_MIDDLEWARES +
-            self.settings.WEBSOCKET_MIDDLEWARES
-        )
-
-        for index, middleware in enumerate(self.websocket_middlewares):
-            if callable(middleware):
-                continue
-
-            server_logger.debug("loading '%s'", middleware)
-
-            self.websocket_middlewares[index] = acquire(middleware)[1]
-
-        if not self.websocket_middlewares:
-            server_logger.debug('no websocket middlewares loaded')
-
-        # setup request middlewares
-        server_logger.debug('setup request middlewares')
-
-        self.request_middlewares = [
-            *self.settings.REQUEST_MIDDLEWARES,
-        ]
-
-        for index, middleware in enumerate(self.request_middlewares):
-            if callable(middleware):
-                continue
-
-            server_logger.debug("loading '%s'", middleware)
-
-            self.request_middlewares[index] = acquire(middleware)[1]
-
-        if not self.request_middlewares:
-            server_logger.debug('no request middlewares loaded')
+        self.middleware_controller = MiddlewareController(self)
 
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')
@@ -214,22 +180,59 @@ class LonaServer:
         else:
             self._state = data
 
+    # helper ##################################################################
+    def get_running_views_count(self, *args, **kwargs):
+        return self.view_runtime_controller.get_running_views_count(
+            *args,
+            **kwargs,
+        )
+
+    def get_connection_count(self, user):
+        if user not in self.user:
+            return 0
+
+        return len(self.user[user])
+
     # connection management ###################################################
-    def setup_connection(self, http_request, websocket=None):
+    async def setup_connection(self, http_request, websocket=None):
         connection = Connection(self, http_request, websocket)
+
+        handled, data, middleware = \
+            await self.middleware_controller.process_connection(
+                connection,
+            )
 
         if websocket is not None:
             self.websocket_connections.append(connection)
 
-        return connection
+            if connection.user not in self.user:
+                self.user[connection.user] = []
+
+            self.user[connection.user].append(connection)
+
+        return connection, (handled, data, middleware)
 
     def remove_connection(self, connection):
         if connection in self.websocket_connections:
             self.websocket_connections.remove(connection)
 
+        if connection.user in self.user:
+            self.user[connection.user].remove(connection)
+
+            if len(self.user[connection.user]) == 0:
+                self.user.pop(connection.user)
+
     # asyncio helper ##########################################################
     def schedule(self, *args, **kwargs):
         return self.scheduler.schedule(*args, **kwargs)
+
+    def run_coroutine_sync(self, coroutine, wait=True):
+        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self.loop)
+
+        if wait:
+            return future.result()
+
+        return future
 
     # view helper #############################################################
     def render_response(self, response_dict):
@@ -271,86 +274,76 @@ class LonaServer:
         return FileResponse(abs_path)
 
     async def handle_websocket_message(self, connection, message):
-        websockets_logger.debug('%s message received %s', connection, message)
+        websockets_logger.debug(
+            '%s message received %s', connection, message.data)
 
-        for middleware in self.websocket_middlewares:
+        handled, data, middleware = \
+            await self.middleware_controller.process_websocket_message(
+                connection,
+                message.data,
+            )
+
+        if not handled:
             websockets_logger.debug(
-                '%s running websocket middleware %s', connection, middleware)
-
-            try:
-                message = await self.schedule(
-                    middleware,
-                    self,
-                    connection,
-                    message,
-                    priority=self.settings.WEBSOCKET_MIDDLEWARE_PRIORITY,
-                )
-
-            except CancelledError:
-                # TODO: this happens on shutdown
-                # the scheduler should take care of this
-
-                break
-
-            except Exception:
-                websockets_logger.error(
-                    '%s exception raised while running %s',
-                    connection,
-                    middleware,
-                    exc_info=True,
-                )
-
-                break
-
-            if not message:
-                # if the middleware does not return the message it is
-                # considered as handled
-
-                websockets_logger.debug(
-                    '%s message got handled by %s', connection, middleware)
-
-                return
-
-        websockets_logger.debug('%s message got not handled', connection)
+                '%s message got not handled', connection)
 
     async def handle_websocket_request(self, http_request):
+        websocket = None
+        connection = None
+
+        async def close_websocket():
+            self.view_runtime_controller.remove_connection(connection)
+            self.remove_connection(connection)
+
+            await websocket.close()
+
+            websockets_logger.debug('%s closed', connection)
+
         # setup websocket
         websocket = WebSocketResponse()
         await websocket.prepare(http_request)
 
         # setup connection
-        connection = self.setup_connection(http_request, websocket)
+        connection, middleware_data = await self.setup_connection(
+            http_request,
+            websocket,
+        )
+
+        handled, data, middleware = middleware_data
+
+        # connection got closed by middleware
+        if handled:
+            if data:
+                if not isinstance(data, str):
+                    raise RuntimeError('%s.process_connection returned non string data'.format(middleware))  # NOQA
+
+                await connection.send_str(data, sync=False)
+
+            await close_websocket()
+
+            return websocket
 
         websockets_logger.debug('%s opened', connection)
 
         # main loop
         try:
-            async for raw_message in websocket:
-                if raw_message.type == WSMsgType.TEXT:
-                    self.schedule(
-                        self.handle_websocket_message(
-                            connection,
-                            raw_message.data,
-                        ),
-                        priority=self.settings.WEBSOCKET_MIDDLEWARE_PRIORITY,
+            async for message in websocket:
+                if message.type == WSMsgType.TEXT:
+                    self.loop.create_task(
+                        self.handle_websocket_message(connection, message),
                     )
 
-                elif raw_message.type == WSMsgType.PING:
+                elif message.type == WSMsgType.PING:
                     await websocket.pong()
 
-                elif raw_message.type in (WSMsgType.CLOSED, WSMsgType.ERROR):
+                elif message.type in (WSMsgType.CLOSED, WSMsgType.ERROR):
                     break
 
         except asyncio.CancelledError:
             websockets_logger.debug('CancelledError')
 
         finally:
-            self.view_runtime_controller.remove_connection(connection)
-            self.remove_connection(connection)
-
-            await websocket.close()
-
-        websockets_logger.debug('%s closed', connection)
+            await close_websocket()
 
         return websocket
 
@@ -420,7 +413,16 @@ class LonaServer:
 
             return await self.handle_websocket_request(http_request)
 
-        connection = self.setup_connection(http_request)
+        # setup connection
+        connection, middleware_data = await self.setup_connection(http_request)
+        handled, data, middleware = middleware_data
+
+        # connection got closed by middleware
+        if handled:
+            if data:
+                return self.render_response(data)
+
+            return Response(status=503, body='Service Unavailable')
 
         if match:
             # non interactive views

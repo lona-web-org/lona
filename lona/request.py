@@ -181,3 +181,7 @@ class Request:
             return user
 
         return getattr(self.connection, 'user', None)
+
+    @property
+    def frontend(self):
+        return self._view_runtime.frontend

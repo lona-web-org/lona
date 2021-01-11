@@ -12,6 +12,14 @@ class Connection:
     def is_interactive(self):
         return self.websocket is not None
 
+    @property
+    def user(self):
+        return getattr(self, '_user', None)
+
+    @user.setter
+    def user(self, value):
+        self._user = value
+
     def send_str(self, string, priority=None, sync=True):
         priority = priority or self.server.settings.DEFAULT_VIEW_PRIORITY
 
@@ -19,7 +27,7 @@ class Connection:
             raise NotInteractiveError
 
         try:
-            self.server.schedule(
+            return self.server.schedule(
                 self.websocket.send_str(string),
                 sync=sync,
                 priority=priority,

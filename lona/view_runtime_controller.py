@@ -222,29 +222,22 @@ class ViewRuntimeController:
 
         self.running_single_user_views[user].remove(view_runtime)
 
-    def run_middlewares(self, request, view_runtime):
-        for middleware in self.server.request_middlewares:
-            logger.debug('running %s on %s', middleware, request)
+    def get_running_views_count(self, user):
+        if user not in self.running_single_user_views:
+            return 0
 
-            raw_response_dict = self.server.schedule(
-                middleware,
-                self.server,
-                request,
-                view_runtime.view,
-                priority=self.server.settings.REQUEST_MIDDLEWARE_PRIORITY,
-                sync=True,
-                wait=True,
-            )
+        count = 0
 
-            if raw_response_dict:
-                logger.debug('request got handled by %s', middleware)
+        for view_runtime in self.running_single_user_views[user]:
+            if not view_runtime.frontend and not view_runtime.is_stopped:
+                count += 1
 
-                return raw_response_dict
+        return count
 
     def handle_lona_message(self, connection, window_id, method, url, payload):
         """
         this method gets called by the
-        lona.middlewares.websocket_middlewares.lona_message_middleware
+        lona.middlewares.LonaMessageMiddleware.process_websocket_message
 
         """
 
@@ -267,7 +260,7 @@ class ViewRuntimeController:
                 return
 
             # FIXME: A view runtime object has to be created always to run
-            # REQUEST_MIDDLEWARES on the current request.
+            # request middlewares on the current request.
             # Otherwise authentication would not be possible.
             view_runtime = ViewRuntime(
                 server=self.server,
@@ -284,15 +277,21 @@ class ViewRuntimeController:
             )
 
             # run request middlewares
-            raw_response_dict = self.run_middlewares(request, view_runtime)
-
-            if raw_response_dict:
-
-                # message got handled by a middleware
-                view_runtime.handle_raw_response_dict(
-                    raw_response_dict,
-                    connections={connection: (window_id, url, )},
+            handled, raw_response_dict, middleware = \
+                self.server.run_coroutine_sync(
+                    self.server.middleware_controller.process_request(
+                        request=request,
+                        view=view_runtime.view,
+                    ),
                 )
+
+            if handled:
+                # message got handled by a middleware
+                if raw_response_dict:
+                    view_runtime.handle_raw_response_dict(
+                        raw_response_dict,
+                        connections={connection: (window_id, url, )},
+                    )
 
                 return
 

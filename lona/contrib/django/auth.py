@@ -58,15 +58,15 @@ def deny_access(server, request, view):
     }
 
 
-def django_session_middleware(server, request, view):
-    # TODO: django user gets set on every request (better caching)
+class DjangoSessionMiddleware:
+    def process_connection(self, data):
+        # find user
+        logger.debug('searching for django user')
 
-    # find user
-    if not isinstance(getattr(request.connection, 'user', None), User):
-        logger.debug('searching for user')
+        if isinstance(data.connection, User):
+            return data
 
-        http_request = request.connection.http_request
-        session_key = http_request.cookies.get('sessionid', '')
+        session_key = data.connection.http_request.cookies.get('sessionid', '')
         user = AnonymousUser()
 
         if session_key:
@@ -85,50 +85,58 @@ def django_session_middleware(server, request, view):
 
         logger.debug('user set to %s', user)
 
-        request.connection.user = user
+        data.connection.user = user
 
-    # setup deny access callback
-    if not hasattr(server.settings, 'DJANGO_AUTH_DENY_ACCESS_CALLBACK'):
-        logger.debug('DJANGO_AUTH_DENY_ACCESS_CALLBACK is not set. falling back to default')  # NOQA
+        return data
 
-        server.settings.DJANGO_AUTH_DENY_ACCESS_CALLBACK = deny_access
+    def process_request(self, data):
+        request = data.request
+        user = request.user
+        server = data.server
+        settings = server.settings
+        view = data.view
 
-    deny_access_callback = server.settings.DJANGO_AUTH_DENY_ACCESS_CALLBACK
+        # setup deny access callback
+        deny_access_callback = settings.get(
+            'DJANGO_AUTH_DENY_ACCESS_CALLBACK',
+            deny_access,
+        )
 
-    if isinstance(deny_access_callback, str):
-        logger.debug("loading DJANGO_AUTH_DENY_ACCESS_CALLBACK from '%s'",
-                     deny_access_callback)
+        if isinstance(deny_access_callback, str):
+            logger.debug("loading DJANGO_AUTH_DENY_ACCESS_CALLBACK from '%s'",
+                         deny_access_callback)
 
-        deny_access_callback = acquire(deny_access_callback)[1]
-        server.settings.DJANGO_AUTH_DENY_ACCESS_CALLBACK = deny_access_callback
+            deny_access_callback = acquire(deny_access_callback)[1]
 
-    # check permissions
-    user = request.connection.user
+            settings.DJANGO_AUTH_DENY_ACCESS_CALLBACK = deny_access_callback
 
-    logger.debug('%s tries to access %s', user, view)
+        # check permissions
+        logger.debug('%s tries to access %s', user, view)
 
-    if hasattr(view, 'django_login_required') and (
-       not user.is_active or
-       not user.is_authenticated):
+        if hasattr(view, 'django_login_required') and (
+           not user.is_active or
+           not user.is_authenticated):
 
-        logger.debug('%s is not authenticated. access denied', user)
+            logger.debug('%s is not authenticated. access denied', user)
 
-        return deny_access_callback(server, request, view)
+            return deny_access_callback(server, request, view)
 
-    if(hasattr(view, 'django_permissions_required') and
-       not user.is_superuser and
-       not user.has_perms(view.django_permissions_required)):
+        if(hasattr(view, 'django_permissions_required') and
+           not user.is_superuser and
+           not user.has_perms(view.django_permissions_required)):
 
-        logger.debug('%s has not the right permissions %s. access denied',
-                     user, view.django_permissions_required)
+            logger.debug('%s has not the right permissions %s. access denied',
+                         user, view.django_permissions_required)
 
-        return deny_access_callback(server, request, view)
+            return deny_access_callback(server, request, view)
 
-    if hasattr(view, 'django_auth_tests') and not user.is_superuser:
-        for test in view.django_auth_tests:
-            if not test(user):
-                logger.debug('%s failed %s. access denied', user, test)
+        if hasattr(view, 'django_auth_tests') and not user.is_superuser:
+            for test in view.django_auth_tests:
+                if not test(user):
+                    logger.debug('%s failed %s. access denied', user, test)
 
-                return deny_access_callback(server, request, view)
+                    return deny_access_callback(server, request, view)
 
-    logger.debug('%s: access granted to %s', user, view)
+        logger.debug('%s: access granted to %s', user, view)
+
+        return data

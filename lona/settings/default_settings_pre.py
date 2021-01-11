@@ -44,18 +44,12 @@ ERROR_500_HANDLER = 'lona.views.handle_500'
 ERROR_404_FALLBACK_HANDLER = 'lona.views.handle_404'
 ERROR_500_FALLBACK_HANDLER = 'lona.views.handle_500'
 
-# websocket middlewares
-CORE_WEBSOCKET_MIDDLEWARES = [
-    'lona.middlewares.websocket_middlewares.json_middleware',
-    'lona.middlewares.websocket_middlewares.lona_message_middleware',
+# middlewares
+CORE_MIDDLEWARES = [
+    'lona.middlewares.LonaMessageMiddleware',
 ]
 
-WEBSOCKET_MIDDLEWARES = []
-
-# request middlewares
-REQUEST_MIDDLEWARES = [
-    'lona.middlewares.request_middlewares.lona_session_middleware',
-]
+MIDDLEWARES = []
 
 # scheduling
 TASK_ZONES = [
@@ -98,6 +92,7 @@ DEFAULT_MULTI_USER_VIEW_PRIORITY = 'service'
 DEFAULT_HOOK_PRIORITY = 'service'
 DEFAULT_VIEW_PRIORITY = 'medium'
 DEFAULT_CUSTOM_MESSAGE_PRIORITY = 'low'
+DEFAULT_MIDDLEWARE_PRIORITY = 'medium'
 
 # hooks
 HOOKS = {}
