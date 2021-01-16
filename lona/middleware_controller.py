@@ -1,6 +1,5 @@
 import logging
 
-from lona.scheduling import get_priority
 from lona.imports import acquire
 
 logger = logging.getLogger('lona.middlewares')
@@ -84,13 +83,8 @@ class MiddlewareController:
                 if not callable(hook):
                     continue
 
-                priority = get_priority(
-                    hook,
-                    self.server.settings.DEFAULT_MIDDLEWARE_PRIORITY,
-                )
-
                 self.hooks[hook_name].append(
-                    (middleware, hook, priority),
+                    (middleware, hook, ),
                 )
 
                 logger.debug('%s.%s discovered', middleware, hook_name)
@@ -105,7 +99,7 @@ class MiddlewareController:
             repr(data),
         )
 
-        for middleware, hook, priority in self.hooks[hook_name]:
+        for middleware, hook in self.hooks[hook_name]:
             logger.debug(
                 'running %s.%s(%s)',
                 middleware,
@@ -115,11 +109,7 @@ class MiddlewareController:
 
             # run middleware hook
             try:
-                return_value = await self.server.schedule(
-                    hook,
-                    data,
-                    priority=priority,
-                )
+                return_value = await self.server.run(hook, data)
 
             except Exception:
                 logger.error(
