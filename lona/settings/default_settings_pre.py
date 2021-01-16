@@ -2,6 +2,8 @@ import os
 
 DEBUG = False
 
+MAX_WORKERS = 10
+
 # routing
 ROUTING_TABLE = 'lona.settings.default_routes.routes'
 

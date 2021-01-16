@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import logging
 import os
@@ -61,6 +62,11 @@ class LonaServer:
             server_logger.debug("loading settings from '%s'", import_string)
 
             self.settings.add(import_string)
+
+        # setup threads
+        self.executor = ThreadPoolExecutor(
+            max_workers=self.settings.MAX_WORKERS,
+        )
 
         # setup server state
         server_logger.debug('setup server state')
@@ -165,6 +171,7 @@ class LonaServer:
             priority=self.settings.STOP_PRIORITY,
         )
 
+        await self.loop.run_in_executor(None, self.executor.shutdown)
         await self.loop.run_in_executor(None, self.scheduler.stop)
 
     # state ###################################################################
@@ -233,6 +240,53 @@ class LonaServer:
             return future.result()
 
         return future
+
+    def run_function_async(self, function, *args, **kwargs):
+        def _function():
+            return function(*args, **kwargs)
+
+        return self.loop.run_in_executor(self, _function)
+
+    def run(self, function_or_coroutine,
+            *args, sync=False, wait=True, **kwargs):
+
+        is_coroutine = asyncio.iscoroutine(function_or_coroutine)
+
+        is_coroutine_function = asyncio.iscoroutinefunction(
+            function_or_coroutine)
+
+        # coroutine
+        if is_coroutine or is_coroutine_function:
+            coroutine = function_or_coroutine
+
+            if is_coroutine_function:
+                coroutine = function_or_coroutine(*args, **kwargs)
+
+            # sync
+            if sync:
+                return self.run_coroutine_sync(coroutine, wait=wait)
+
+            # async
+            else:
+                return coroutine
+
+        # function
+        else:
+            function = function_or_coroutine
+
+            def _function():
+                return function(*args, **kwargs)
+
+            # sync
+            if sync:
+                if wait:
+                    return function(*args, **kwargs)
+
+                return self.loop.run_in_executor(self.executor, _function)
+
+            # async
+            else:
+                return self.run_function_async(function, *args, **kwargs)
 
     # view helper #############################################################
     def render_response(self, response_dict):
