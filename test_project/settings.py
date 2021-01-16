@@ -15,6 +15,20 @@ TEMPLATE_EXTRA_CONTEXT = {
 }
 
 if os.environ.get('DJANGO', '0') == '1':
+    class RateLimitMiddleware:
+        VIEW_MAX = 2
+
+        def process_request(self, data):
+            request = data.request
+            user = request.user
+
+            if request.server.get_running_views_count(user) < self.VIEW_MAX:
+
+                return data
+
+            return 'To many running views'
+
     MIDDLEWARES = [
         'lona.contrib.django.auth.DjangoSessionMiddleware',
+        RateLimitMiddleware,
     ]
