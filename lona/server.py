@@ -122,19 +122,11 @@ class LonaServer:
 
         server_logger.debug('static url set to %s', repr(static_url))
 
-        async def _handle_http_request(*args, **kwargs):
-            return await self.schedule(
-                self.handle_http_request,
-                *args,
-                priority=self.settings.HTTP_REQUEST_PRIORITY,
-                **kwargs,
-            )
-
         self.app.router.add_route(
             '*', static_url, self.handle_static_file_request)
 
         self.app.router.add_route(
-            '*', '/{path_info:.*}', _handle_http_request)
+            '*', '/{path_info:.*}', self.handle_http_request)
 
         # setup view loader
         server_logger.debug('setup view loader')
@@ -166,11 +158,7 @@ class LonaServer:
         await self.loop.run_in_executor(
             None, lambda: self.hooks.run('server_stop'))
 
-        await self.schedule(
-            self.view_runtime_controller.stop,
-            priority=self.settings.STOP_PRIORITY,
-        )
-
+        await self.run_function_async(self.view_runtime_controller.stop)
         await self.loop.run_in_executor(None, self.executor.shutdown)
         await self.loop.run_in_executor(None, self.scheduler.stop)
 
@@ -245,7 +233,7 @@ class LonaServer:
         def _function():
             return function(*args, **kwargs)
 
-        return self.loop.run_in_executor(self, _function)
+        return self.loop.run_in_executor(self.executor, _function)
 
     def run(self, function_or_coroutine,
             *args, sync=False, wait=True, **kwargs):
@@ -313,10 +301,9 @@ class LonaServer:
     async def handle_static_file_request(self, request):
         rel_path = request.match_info['path']
 
-        abs_path = await self.schedule(
+        abs_path = await self.run_function_async(
             self.static_file_loader.resolve_path,
             rel_path,
-            priority=self.settings.STATIC_REQUEST_PRIORITY,
         )
 
         if not abs_path:
@@ -402,17 +389,14 @@ class LonaServer:
         return websocket
 
     async def handle_http_request(self, http_request):
-        # TODO: handle priority overrides by decorators
-
         http_logger.debug('http request incoming')
 
         # resolve path
         http_logger.debug("resolving path %s", repr(http_request.path))
 
-        match, route, match_info = await self.schedule(
+        match, route, match_info = await self.run_function_async(
             self.router.resolve,
             http_request.path,
-            priority=self.settings.ROUTING_PRIORITY,
         )
 
         if match:
@@ -427,10 +411,9 @@ class LonaServer:
 
             # load view
             if isinstance(route.view, str):
-                view = await self.schedule(
+                view = await self.run_function_async(
                     self.view_loader.load,
                     route.view,
-                    priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
 
             else:
@@ -441,10 +424,9 @@ class LonaServer:
                 response = await view(http_request)
 
             else:
-                response = await self.schedule(
+                response = await self.run_function_async(
                     view,
                     http_request,
-                    priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
 
             # FIXME: wsgi container
@@ -455,10 +437,9 @@ class LonaServer:
             if isinstance(response, Response):
                 return response
 
-            return await self.schedule(
+            return await self.run_function_async(
                 self.render_response,
                 response,
-                priority=self.settings.DEFAULT_VIEW_PRIORITY,
             )
 
         # websocket requests
@@ -493,9 +474,8 @@ class LonaServer:
                     start_connection=connection,
                 )
 
-                response_dict = await self.schedule(
+                response_dict = await self.run_function_async(
                     view_runtime.start,
-                    priority=self.settings.DEFAULT_VIEW_PRIORITY,
                 )
 
                 return self.render_response(response_dict)
@@ -513,9 +493,8 @@ class LonaServer:
             start_connection=connection,
         )
 
-        response_dict = await self.schedule(
+        response_dict = await self.run_function_async(
             view_runtime.start,
-            priority=self.settings.DEFAULT_VIEW_PRIORITY,
         )
 
         return self.render_response(response_dict)
