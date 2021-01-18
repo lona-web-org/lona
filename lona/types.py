@@ -88,6 +88,15 @@ class Mapping:
         for entry in self.entries:
             yield entry
 
+    def pop(self, key):
+        for entry in self.entries:
+            if entry[0] == key:
+                self.entries.remove(entry)
+
+                return entry[1]
+
+        raise KeyError(key)
+
     def __getitem__(self, key):
         entry = self.get_entry(key)
 
