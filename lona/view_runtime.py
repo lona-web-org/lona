@@ -255,20 +255,13 @@ class ViewRuntime:
 
     # input events ############################################################
     def await_input_event(self, nodes=[], event_type='event'):
-        # TODO: find right priority
-
         async def _await_input_event():
             future = asyncio.Future()
             self.pending_input_events[event_type] = [future, nodes]
 
             return await future
 
-        return self.server.schedule(
-            _await_input_event(),
-            sync=True,
-            wait=True,
-            priority=self.server.settings.DEFAULT_VIEW_PRIORITY,
-        )
+        return self.server.run_coroutine_sync(_await_input_event())
 
     def handle_input_event(self, connection, event_payload):
         request = Request(
