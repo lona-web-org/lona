@@ -3,7 +3,7 @@ from textwrap import indent
 import datetime
 import logging
 
-from lona.scheduling import get_current_thread_name
+from lona.context import get_current_context_name
 
 
 class LogFilter(logging.Filter):
@@ -32,15 +32,15 @@ class LogFilter(logging.Filter):
 class LogFormatter(logging.Formatter):
     def format(self, record):
         # FIXME: only in debug mode
-        thread_name = get_current_thread_name()
+        context_name = get_current_context_name()
 
         # format record string
         time_stamp = datetime.datetime.fromtimestamp(record.created)
         time_stamp_str = time_stamp.strftime('%H:%M:%S.%f')
 
         record_string = '{}{} {}{} {} {} {}'.format(
-            thread_name,
-            (30 - len(thread_name)) * ' ',
+            context_name,
+            (30 - len(context_name)) * ' ',
 
             record.levelname,
             (8 - len(record.levelname)) * ' ',
