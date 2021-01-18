@@ -85,6 +85,8 @@ server = LonaServer(
 
 
 async def shutdown(app):
+    print('stopping server')
+
     await server.stop()
 
 app.on_shutdown.append(shutdown)
