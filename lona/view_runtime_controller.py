@@ -88,12 +88,10 @@ class ViewRuntimeController:
 
                 self.running_multi_user_views[route] = view_runtime
 
-                priority = \
-                    self.server.settings.DEFAULT_MULTI_USER_VIEW_PRIORITY
-
-                self.server.schedule(
+                self.server.run(
                     view_runtime.start,
-                    priority=priority,
+                    sync=True,
+                    wait=False,
                 )
 
     def stop(self):
