@@ -99,7 +99,7 @@ class ViewRuntimeController:
     def stop(self):
         # running views per user
         for user, view_runtimes in self.running_single_user_views.items():
-            for view_runtime in view_runtimes:
+            for view_runtime in view_runtimes.copy():
                 view_runtime.stop(reason=ServerStop)
 
         # multi user views
