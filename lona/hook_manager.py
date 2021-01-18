@@ -6,8 +6,6 @@ logger = logging.getLogger('lona.hooks')
 
 
 class HookManager:
-    # TODO: custom priorities
-
     def __init__(self, server):
         self.server = server
 
@@ -66,11 +64,10 @@ class HookManager:
             logger.debug('running hook %s: %s scheduled', name, hook)
 
             try:
-                self.server.scheduler.schedule(
+                self.server.run(
                     hook,
                     *args,
                     **kwargs,
-                    priority=self.server.settings.DEFAULT_HOOK_PRIORITY,
                     sync=True,
                     wait=True,
                 )
