@@ -1,6 +1,6 @@
 import asyncio
 
-from lona.scheduling import get_current_thread_name
+from lona.context import get_current_context_name
 
 
 class LockContextManager:
@@ -50,7 +50,7 @@ class LockManager:
         if self.pass_through_mode or not self.loop:
             return LockContextManager(self, '')
 
-        context_name = get_current_thread_name()
+        context_name = get_current_context_name()
         context_manager = LockContextManager(self, context_name)
         lock = []
 
