@@ -16,7 +16,6 @@ from lona.server_state import ServerState
 from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
-from lona.scheduling import Scheduler
 from lona.imports import acquire
 from lona.routing import Router
 from lona.types import Mapping
@@ -76,14 +75,6 @@ class LonaServer:
 
         else:
             self._state = {}
-
-        # setup scheduler
-        self.scheduler = Scheduler(
-            task_zones=self.settings.TASK_ZONES,
-            thread_zones=self.settings.THREAD_ZONES,
-        )
-
-        self.scheduler.start()
 
         # setup routing
         server_logger.debug('setup routing')
@@ -160,7 +151,6 @@ class LonaServer:
 
         await self.run_function_async(self.view_runtime_controller.stop)
         await self.loop.run_in_executor(None, self.executor.shutdown)
-        await self.loop.run_in_executor(None, self.scheduler.stop)
 
     # state ###################################################################
     @property
@@ -218,9 +208,6 @@ class LonaServer:
                 self.user.pop(connection.user)
 
     # asyncio helper ##########################################################
-    def schedule(self, *args, **kwargs):
-        return self.scheduler.schedule(*args, **kwargs)
-
     def run_coroutine_sync(self, coroutine, wait=True):
         future = asyncio.run_coroutine_threadsafe(coroutine, loop=self.loop)
 

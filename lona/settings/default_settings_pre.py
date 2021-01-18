@@ -53,48 +53,5 @@ CORE_MIDDLEWARES = [
 
 MIDDLEWARES = []
 
-# scheduling
-TASK_ZONES = [
-    ('service',         5),
-
-    ('system-high',    10),
-    ('system-medium',   5),
-    ('system-low',      2),
-
-    ('high',           10),
-    ('medium',          5),
-    ('low',             2),
-]
-
-THREAD_ZONES = [
-    ('service',         5),
-
-    ('system-high',    10),
-    ('system-medium',   5),
-    ('system-low',      2),
-
-    ('high',           10),
-    ('medium',          5),
-    ('low',             2),
-]
-
-DEFAULT_TASK_ZONE = 'medium'
-DEFAULT_THREAD_ZONE = 'medium'
-
-ROUTING_PRIORITY = 'system-high'
-HTTP_REQUEST_PRIORITY = 'system-medium'
-STATIC_REQUEST_PRIORITY = 'system-low'
-CONNECTION_MIDDLEWARE_PRIORITY = 'system-medium'
-WEBSOCKET_MIDDLEWARE_PRIORITY = 'system-medium'
-REQUEST_MIDDLEWARE_PRIORITY = 'system-medium'
-FRONTEND_VIEW_PRIORITY = 'system-high'
-STOP_PRIORITY = 'system-high'
-
-DEFAULT_MULTI_USER_VIEW_PRIORITY = 'service'
-DEFAULT_HOOK_PRIORITY = 'service'
-DEFAULT_VIEW_PRIORITY = 'medium'
-DEFAULT_CUSTOM_MESSAGE_PRIORITY = 'low'
-DEFAULT_MIDDLEWARE_PRIORITY = 'medium'
-
 # hooks
 HOOKS = {}
