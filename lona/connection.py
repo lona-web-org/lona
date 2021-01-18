@@ -21,16 +21,13 @@ class Connection:
         self._user = value
 
     def send_str(self, string, priority=None, sync=True):
-        priority = priority or self.server.settings.DEFAULT_VIEW_PRIORITY
-
         if not self.is_interactive:
             raise NotInteractiveError
 
         try:
-            return self.server.schedule(
+            return self.server.run(
                 self.websocket.send_str(string),
                 sync=sync,
-                priority=priority,
             )
 
         except ConnectionResetError:
