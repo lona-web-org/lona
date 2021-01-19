@@ -56,3 +56,9 @@ class Settings:
             return super().__setattr__(name, value)
 
         self._values[name] = value
+
+    def __dir__(self):
+        return [
+            *super().__dir__(),
+            *self._values.keys(),
+        ]
