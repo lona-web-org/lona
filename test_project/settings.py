@@ -32,3 +32,12 @@ if os.environ.get('DJANGO', '0') == '1':
         'lona.contrib.django.auth.DjangoSessionMiddleware',
         RateLimitMiddleware,
     ]
+
+HOOKS = {
+    'server_stop': [
+        'hooks.py::server_stop',
+    ],
+    'server_start': [
+        'hooks.py::server_start'
+    ],
+}
