@@ -123,7 +123,7 @@ class Router:
             self.routes.append(route)
 
         except ImportError:
-            logger.error("'%s' cannot be imported", route.view)
+            logger.error("'%s' cannot be imported", route.view, exc_info=True)
 
     def add_routes(self, *routes):
         for route in routes:
