@@ -22,7 +22,12 @@ class Settings:
 
         self._paths.append(path)
 
-        values = runpy.run_path(path, init_globals=self._values)
+        values = runpy.run_path(
+            path,
+            init_globals=self._values,
+            run_name=path,
+        )
+
         self._values = {}
 
         for key, value in values.items():
