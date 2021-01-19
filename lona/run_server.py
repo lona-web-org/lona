@@ -99,7 +99,10 @@ def run_server(args):
         async def start_shell(server):
             def _start_shell():
                 import IPython
-                IPython.embed()
+
+                IPython.embed(
+                    locals={'server': server},
+                )
 
                 os.kill(os.getpid(), signal.SIGTERM)
 
