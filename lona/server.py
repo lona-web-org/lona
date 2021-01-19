@@ -147,7 +147,7 @@ class LonaServer:
         server_logger.debug('shutting down')
 
         await self.loop.run_in_executor(
-            None, lambda: self.hooks.run('server_stop'))
+            None, lambda: self.hooks.run('server_stop', self))
 
         await self.run_function_async(self.view_runtime_controller.stop)
         await self.loop.run_in_executor(None, self.executor.shutdown)

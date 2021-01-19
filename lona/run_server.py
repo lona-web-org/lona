@@ -89,7 +89,10 @@ def run_server(args):
 
     app.on_shutdown.append(shutdown)
 
-    loop.run_in_executor(None, lambda: server.hooks.run('server_start'))
+    loop.run_in_executor(
+        None,
+        lambda: server.hooks.run('server_start', server)
+    )
 
     # run server
     if cli_args.shell:

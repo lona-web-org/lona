@@ -33,7 +33,7 @@ class HookManager:
 
                 elif isinstance(hook, str):
                     try:
-                        path, attribute = acquire(hook)
+                        path, hook = acquire(hook)
 
                     except Exception:
                         logger.error(
@@ -44,7 +44,7 @@ class HookManager:
 
                         continue
 
-                    if not callable(attribute):
+                    if not callable(hook):
                         logger.error("hook '%s' is not callable", hook)
 
                         continue
@@ -61,7 +61,7 @@ class HookManager:
             return
 
         for hook in self._hooks[name]:
-            logger.debug('running hook %s: %s scheduled', name, hook)
+            logger.debug('running hook %s: %s', name, hook)
 
             try:
                 self.server.run(
