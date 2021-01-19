@@ -173,6 +173,7 @@ class MiddlewareController:
     async def process_request(self, request, view):
         data = MiddlewareData(
             server=self.server,
+            connection=request.connection,
             request=request,
             view=view,
         )
