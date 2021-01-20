@@ -108,6 +108,9 @@ routes = [
     Route('/events/class-based-view/',
           'views/events/class_based_view.py::ClassBasedView'),
 
+    Route('/events/event-bubbling/',
+          'views/events/event_bubbling.py::View'),
+
     # locking
     Route('/locking/html-tree/',
           'views/locking/html_tree_locking.py::LockingView'),
