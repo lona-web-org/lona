@@ -43,7 +43,7 @@ class CustomEventWidget(Widget):
         data = {
             'node': input_event.node,
             'node_info': input_event.node_info,
-            'type': input_event.input_event_type,
+            'type': input_event.type,
             'name': input_event.name,
             'data': input_event.data,
         }

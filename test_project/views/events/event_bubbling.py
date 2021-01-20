@@ -109,7 +109,7 @@ class View:
         self.console.nodes.append(message)
 
     def handle_input_event_root(self, input_event):
-        if input_event.input_event_type == 'change':
+        if input_event.type == 'change':
             self.stop_at = input_event.data
 
             return

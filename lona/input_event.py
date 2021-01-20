@@ -16,25 +16,25 @@ class InputEvent:
 
         # parse input event type
         if isinstance(event_payload[0], str):
-            self.input_event_type = INPUT_EVENT_TYPE.CUSTOM
+            self.type = INPUT_EVENT_TYPE.CUSTOM
             self.name = event_payload[0]
             self.data = event_payload[1]
             self.node_info = event_payload[2:]
 
         elif event_payload[0] == INPUT_EVENT_TYPE.CLICK:
-            self.input_event_type = INPUT_EVENT_TYPE.CLICK
+            self.type = INPUT_EVENT_TYPE.CLICK
             self.name = 'click'
             self.data = event_payload[1]
             self.node_info = event_payload[2:]
 
         elif event_payload[0] == INPUT_EVENT_TYPE.CHANGE:
-            self.input_event_type = INPUT_EVENT_TYPE.CHANGE
+            self.type = INPUT_EVENT_TYPE.CHANGE
             self.name = 'change'
             self.data = event_payload[1]
             self.node_info = event_payload[2:]
 
         elif event_payload[0] == INPUT_EVENT_TYPE.SUBMIT:
-            self.input_event_type = INPUT_EVENT_TYPE.SUBMIT
+            self.type = INPUT_EVENT_TYPE.SUBMIT
             self.name = 'submit'
             self.data = event_payload[1]
             self.node_info = event_payload[2:]
