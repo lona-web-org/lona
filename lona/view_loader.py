@@ -17,7 +17,7 @@ class ViewSpec:
         self.multi_user = getattr(self.view, 'multi_user', False)
         self.is_class_based = False
         self.has_input_event_handler = False
-        self.has_root_input_event_handler = False
+        self.has_input_event_root_handler = False
 
         if inspect.isclass(self.view):
             self.is_class_based = True
@@ -25,8 +25,8 @@ class ViewSpec:
             self.has_input_event_handler = hasattr(
                 self.view, 'handle_input_event')
 
-            self.has_root_input_event_handler = hasattr(
-                self.view, 'handle_root_input_event')
+            self.has_input_event_root_handler = hasattr(
+                self.view, 'handle_input_event_root')
 
 
 class ViewLoader:

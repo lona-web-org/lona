@@ -282,9 +282,9 @@ class ViewRuntime:
                 if data:
                     self.send_data(data=data)
 
-        # root input event handler (class based views)
-        if self.view_spec.has_root_input_event_handler:
-            input_event = self.view.handle_root_input_event(input_event)
+        # input event root handler (class based views)
+        if self.view_spec.has_input_event_root_handler:
+            input_event = self.view.handle_input_event_root(input_event)
 
             if not input_event:
                 send_html_update()
