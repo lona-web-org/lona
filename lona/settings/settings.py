@@ -42,11 +42,14 @@ class Settings:
     def get(self, *args):
         return getattr(self._values, *args)
 
+    def update(self, settings):
+        self._values.update(settings)
+
     def __iter__(self):
         return self._values.__iter__()
 
     def __getattribute__(self, name):
-        if name in ('get', 'add') or name.startswith('_'):
+        if name in ('get', 'add', 'update') or name.startswith('_'):
             return super().__getattribute__(name)
 
         return self._values[name]

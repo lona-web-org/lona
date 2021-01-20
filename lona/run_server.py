@@ -6,6 +6,7 @@ import code
 import os
 
 from aiohttp.web import Application, run_app
+from jinja2 import Environment
 
 from lona.logging import LogFormatter, LogFilter
 from lona.server import LonaServer
@@ -29,6 +30,8 @@ def run_server(args):
     parser.add_argument('--port', type=int, default=8080)
     parser.add_argument('--shutdown-timeout', type=float, default=0.0)
     parser.add_argument('-s', '--settings', nargs='+')
+    parser.add_argument('-o', '--settings-pre-overrides', nargs='+')
+    parser.add_argument('-O', '--settings-post-overrides', nargs='+')
     parser.add_argument('--project-root', type=str, default=os.getcwd())
     parser.add_argument('--shell', action='store_true')
     parser.add_argument('--loggers', type=str, nargs='+')
@@ -81,6 +84,38 @@ def run_server(args):
 
         logger.debug("project settings 'settings.py' found")
 
+    # setup settings overrides
+    def parse_overrides(raw_overrides):
+        environment = Environment()
+        overrides = {}
+
+        for override in raw_overrides:
+            if '=' not in override:
+                logger.error(
+                    "settings overrides: invalid format: '%s'", override)
+
+                continue
+
+            name, value = override.split('=', 1)
+            value = environment.compile_expression(value)()
+
+            overrides[name] = value
+
+        return overrides
+
+    settings_pre_overrides = {}
+    settings_post_overrides = {}
+
+    if cli_args.settings_pre_overrides:
+        settings_pre_overrides = parse_overrides(
+            cli_args.settings_pre_overrides
+        )
+
+    if cli_args.settings_post_overrides:
+        settings_post_overrides = parse_overrides(
+            cli_args.settings_post_overrides
+        )
+
     # setup lona server
     app = Application()
 
@@ -89,6 +124,8 @@ def run_server(args):
         loop=loop,
         project_root=cli_args.project_root,
         settings_paths=settings_paths,
+        settings_pre_overrides=settings_pre_overrides,
+        settings_post_overrides=settings_post_overrides,
     )
 
     async def shutdown(app):

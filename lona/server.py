@@ -36,7 +36,10 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 
 class LonaServer:
-    def __init__(self, app, project_root, settings_paths=[], loop=None):
+    def __init__(self, app, project_root, settings_paths=[],
+                 settings_pre_overrides={}, settings_post_overrides={},
+                 loop=None):
+
         server_logger.debug("starting server in '%s'", project_root)
 
         self.app = app
@@ -49,18 +52,28 @@ class LonaServer:
         # setup settings
         server_logger.debug('setup settings')
 
-        self.settings = Settings()
-
         self.settings_paths = [
             DEFAULT_SETTINGS_PRE,
             *settings_paths,
             DEFAULT_SETTINGS_POST,
         ]
 
+        self.settings = Settings()
+
+        if settings_pre_overrides:
+            server_logger.debug('applying settings pre overrides')
+
+            self.settings.update(settings_pre_overrides)
+
         for import_string in self.settings_paths:
             server_logger.debug("loading settings from '%s'", import_string)
 
             self.settings.add(import_string)
+
+        if settings_post_overrides:
+            server_logger.debug('applying settings post overrides')
+
+            self.settings.update(settings_post_overrides)
 
         # setup threads
         self.executor = ThreadPoolExecutor(
