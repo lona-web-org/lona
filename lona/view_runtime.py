@@ -292,7 +292,7 @@ class ViewRuntime:
                 return
 
         # widgets
-        for widget in input_event.widgets:
+        for widget in input_event.widgets[::-1]:
             input_event = widget.handle_input_event(input_event)
 
             if not input_event:
