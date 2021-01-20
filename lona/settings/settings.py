@@ -22,11 +22,21 @@ class Settings:
 
         self._paths.append(path)
 
-        values = runpy.run_path(
-            path,
-            init_globals=self._values,
-            run_name=path,
-        )
+        try:
+            values = runpy.run_path(
+                path,
+                init_globals=self._values,
+                run_name=path,
+            )
+
+        except Exception:
+            logger.error(
+                "exception raised while loading settings '%s'",
+                path,
+                exc_info=True
+            )
+
+            return
 
         self._values = {}
 
