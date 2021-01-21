@@ -74,12 +74,12 @@ class ViewRuntime:
         }
 
     def start(self):
-        request = Request(
+        self.request = Request(
             view_runtime=self,
             connection=self.start_connection,
         )
 
-        view_args = (request,)
+        view_args = (self.request,)
         view_kwargs = {}
 
         if not self.frontend:
@@ -113,7 +113,7 @@ class ViewRuntime:
         except(StopReason, CancelledError):
             pass
 
-        except Exception as e:
+        except Exception as exception:
             logger.error(
                 'Exception raised while running %s',
                 self.view,
@@ -121,7 +121,11 @@ class ViewRuntime:
             )
 
             return self.handle_raw_response_dict(
-                self.server.view_runtime_controller.handle_500(request, e))
+                self.server.view_runtime_controller.handle_500(
+                    self.request,
+                    exception,
+                )
+            )
 
         finally:
             self.is_stopped = True
@@ -146,6 +150,31 @@ class ViewRuntime:
         # clean up
         if self.start_connection:  # multi user views have no start_connection
             self.server.view_runtime_controller.remove_view_runtime(self)
+
+    def issue_500_error(self, exception):
+        self.stop_reason = exception
+
+        for pending_input_event in self.pending_input_events.copy().items():
+            if not pending_input_event[1]:
+                continue
+
+            name, (future, nodes) = pending_input_event
+
+            future.set_exception(exception)
+
+        if self.is_stopped:
+            self.handle_raw_response_dict(
+                self.server.view_runtime_controller.handle_500(
+                    self.request,
+                    exception,
+                )
+            )
+
+            logger.error(
+                'Exception raised after running %s',
+                self.view,
+                exc_info=True,
+            )
 
     # connection managment ####################################################
     def add_connection(self, connection, window_id, url):
@@ -282,48 +311,52 @@ class ViewRuntime:
                 if data:
                     self.send_data(data=data)
 
-        # input event root handler (class based views)
-        if self.view_spec.has_input_event_root_handler:
-            input_event = self.view.handle_input_event_root(input_event)
+        try:
+            # input event root handler (class based views)
+            if self.view_spec.has_input_event_root_handler:
+                input_event = self.view.handle_input_event_root(input_event)
 
-            if not input_event:
-                send_html_update()
+                if not input_event:
+                    send_html_update()
 
-                return
+                    return
 
-        # widgets
-        for widget in input_event.widgets[::-1]:
-            input_event = widget.handle_input_event(input_event)
+            # widgets
+            for widget in input_event.widgets[::-1]:
+                input_event = widget.handle_input_event(input_event)
 
-            if not input_event:
-                send_html_update()
+                if not input_event:
+                    send_html_update()
 
-                return
+                    return
 
-        # pending input events
-        if(input_event.name in self.pending_input_events and
-           self.pending_input_events[input_event.name] is not None):
+            # pending input events
+            if(input_event.name in self.pending_input_events and
+               self.pending_input_events[input_event.name] is not None):
 
-            future, nodes = self.pending_input_events[input_event.name]
+                future, nodes = self.pending_input_events[input_event.name]
 
-            if not nodes or input_event.node in nodes:
-                future.set_result(input_event)
-                self.pending_input_events[input_event.name] = None
+                if not nodes or input_event.node in nodes:
+                    future.set_result(input_event)
+                    self.pending_input_events[input_event.name] = None
 
-                return
+                    return
 
-        if self.pending_input_events['event'] is not None:
-            future, nodes = self.pending_input_events['event']
+            if self.pending_input_events['event'] is not None:
+                future, nodes = self.pending_input_events['event']
 
-            if not nodes or input_event.node in nodes:
-                future.set_result(input_event)
-                self.pending_input_events['event'] = None
+                if not nodes or input_event.node in nodes:
+                    future.set_result(input_event)
+                    self.pending_input_events['event'] = None
 
-                return
+                    return
 
-        # input event handler (class based views)
-        if self.view_spec.has_input_event_handler:
-            input_event = self.view.handle_input_event(input_event)
+            # input event handler (class based views)
+            if self.view_spec.has_input_event_handler:
+                input_event = self.view.handle_input_event(input_event)
 
-            if not input_event:
-                send_html_update()
+                if not input_event:
+                    send_html_update()
+
+        except Exception as exception:
+            self.issue_500_error(exception)
