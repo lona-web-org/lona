@@ -9,7 +9,6 @@ logger = logging.getLogger('lona.view_loader')
 
 class ViewSpec:
     # TODO: add support for async views
-    # TODO: find view priority
 
     def __init__(self, view):
         self.view = view

@@ -91,16 +91,13 @@ class Client:
         self._assert_view_is_interactive()
         self._assert_view_is_running()
 
-        priority = self.request.server.settings.DEFAULT_CUSTOM_MESSAGE_PRIORITY
-
         if not broadcast:
-            self.request.connection.send_str(
-                string, priority=priority, sync=True)
+            self.request.connection.send_str(string, sync=True)
 
             return
 
         for connection in self.request.server.websocket_connections:
-            connection.send_str(string, priority=priority, sync=True)
+            connection.send_str(string, sync=True)
 
     def await_input_event(self, **kwargs):
         return self. _await_specific_input_event(

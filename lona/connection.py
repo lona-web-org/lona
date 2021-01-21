@@ -20,7 +20,7 @@ class Connection:
     def user(self, value):
         self._user = value
 
-    def send_str(self, string, priority=None, sync=True):
+    def send_str(self, string, sync=True):
         if not self.is_interactive:
             raise NotInteractiveError
 
