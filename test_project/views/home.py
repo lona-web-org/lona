@@ -83,6 +83,11 @@ def home(request):
             <li><a href="/frontend/custom-event/">Custom Event</a></li>
             <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
         </ul>
+
+        <h2>Contrib</h2>
+        <ul>
+            <li><a href="/contrib/chart-js/">Chart.js</a></li>
+        </ul>
     """  # NOQA
 
     return body

@@ -139,6 +139,10 @@ routes = [
     Route('/frontend/custom-messages/',
           'views/frontend/custom_messages.py::handle_request'),
 
+    # contrib
+    Route('/contrib/chart-js/',
+          'views/contrib/chartjs.py::handle_request'),
+
     # home
     Route('/', 'views/home.py::home'),
 ]
