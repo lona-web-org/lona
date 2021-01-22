@@ -459,29 +459,16 @@ class LonaServer:
 
             return Response(status=503, body='Service Unavailable')
 
-        if match:
-            # non interactive views
-            if not route.interactive:
-                http_logger.debug('non-interactive mode')
+        # run non interactive view or frontend
+        if match and not route.interactive:
+            frontend = False
 
-                view_runtime = ViewRuntime(
-                    server=self,
-                    url=http_request.path,
-                    route=route,
-                    match_info=match_info,
-                    post_data=await http_request.post(),
-                    frontend=False,
-                    start_connection=connection,
-                )
+            http_logger.debug('non-interactive mode')
 
-                response_dict = await self.run_function_async(
-                    view_runtime.start,
-                )
+        else:
+            http_logger.debug('frontend mode')
 
-                return self.render_response(response_dict)
-
-        # frontend views
-        http_logger.debug('frontend mode')
+            frontend = True
 
         view_runtime = ViewRuntime(
             server=self,
@@ -489,7 +476,7 @@ class LonaServer:
             route=route,
             match_info=match_info,
             post_data=await http_request.post(),
-            frontend=True,
+            frontend=frontend,
             start_connection=connection,
         )
 
