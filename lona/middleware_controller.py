@@ -179,7 +179,7 @@ class MiddlewareController:
             data,
         )
 
-    async def process_request(self, request, view):
+    def process_request(self, request, view):
         data = MiddlewareData(
             server=self.server,
             connection=request.connection,
@@ -187,8 +187,4 @@ class MiddlewareController:
             view=view,
         )
 
-        return await self.server.run_function_async(
-            self._run_middlewares,
-            'process_request',
-            data,
-        )
+        return self._run_middlewares('process_request', data)

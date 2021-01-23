@@ -73,28 +73,59 @@ class ViewRuntime:
             'submit': None,
         }
 
-    def start(self):
         self.request = Request(
             view_runtime=self,
             connection=self.start_connection,
         )
 
-        view_args = (self.request,)
-        view_kwargs = {}
+        self.view_args = (self.request,)
+        self.view_kwargs = {}
 
         if not self.frontend:
-            view_kwargs = dict(self.match_info or {})
+            self.view_kwargs = dict(self.match_info or {})
 
-        # start view
+    def run_middlewares(self):
+        try:
+            handled, raw_response_dict, middleware = \
+                self.server.middleware_controller.process_request(
+                    view=self.view,
+                    request=self.request,
+                )
+
+            if handled:
+                if not raw_response_dict:
+                    raw_response_dict = ''
+
+                return self.handle_raw_response_dict(raw_response_dict)
+
+        except Exception as exception:
+            logger.error(
+                'Exception raised while running middleware hooks',
+                exc_info=True,
+            )
+
+            return self.handle_raw_response_dict(
+                self.server.view_runtime_controller.handle_500(
+                    self.request,
+                    exception,
+                )
+            )
+
+    def start(self):
         try:
             self.send_view_start()
 
             if self.view_spec.is_class_based:
                 raw_response_dict = self.view.handle_request(
-                    *view_args, **view_kwargs)
+                    *self.view_args,
+                    **self.view_kwargs,
+                )
 
             else:
-                raw_response_dict = self.view(*view_args, **view_kwargs)
+                raw_response_dict = self.view(
+                    *self.view_args,
+                    **self.view_kwargs,
+                )
 
             # response dicts
             if raw_response_dict:

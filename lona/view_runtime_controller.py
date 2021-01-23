@@ -7,7 +7,6 @@ from lona.html.abstract_node import AbstractNode
 from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
 from lona.imports import acquire
-from lona.request import Request
 from lona.types import Mapping
 from lona.json import dumps
 
@@ -257,9 +256,6 @@ class ViewRuntimeController:
 
                 return
 
-            # FIXME: A view runtime object has to be created always to run
-            # request middlewares on the current request.
-            # Otherwise authentication would not be possible.
             view_runtime = ViewRuntime(
                 server=self.server,
                 url=url,
@@ -269,28 +265,16 @@ class ViewRuntimeController:
                 start_connection=connection,
             )
 
-            request = Request(
-                view_runtime=view_runtime,
+            view_runtime.add_connection(
                 connection=connection,
+                window_id=window_id,
+                url=url,
             )
 
-            # run request middlewares
-            handled, raw_response_dict, middleware = \
-                self.server.run_coroutine_sync(
-                    self.server.middleware_controller.process_request(
-                        request=request,
-                        view=view_runtime.view,
-                    ),
-                )
+            response_dict = view_runtime.run_middlewares()
 
-            if handled:
-                # message got handled by a middleware
-                if raw_response_dict:
-                    view_runtime.handle_raw_response_dict(
-                        raw_response_dict,
-                        connections={connection: (window_id, url, )},
-                    )
-
+            # request got handled by a middleware
+            if response_dict:
                 return
 
             # reconnect or close previous started single user views
@@ -336,12 +320,6 @@ class ViewRuntimeController:
                 self.running_single_user_views[user] = []
 
             self.running_single_user_views[user].append(view_runtime)
-
-            view_runtime.add_connection(
-                connection=connection,
-                window_id=window_id,
-                url=url,
-            )
 
             view_runtime.start()
 

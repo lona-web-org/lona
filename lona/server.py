@@ -481,7 +481,12 @@ class LonaServer:
         )
 
         response_dict = await self.run_function_async(
-            view_runtime.start,
+            view_runtime.run_middlewares,
         )
+
+        if not response_dict:
+            response_dict = await self.run_function_async(
+                view_runtime.start,
+            )
 
         return self.render_response(response_dict)
