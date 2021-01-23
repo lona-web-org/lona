@@ -82,6 +82,19 @@ routes = [
         'views/error_types/non_interactive_feature_error.py::handle_request',
     ),
 
+    # crashes
+    Route('/crashes/process-connection/',
+          'views/crashes/middlewares.py::handle_request'),
+
+    Route('/crashes/process-request/',
+          'views/crashes/middlewares.py::handle_request'),
+
+    Route('/crashes/input-events/',
+          'views/crashes/input_events.py::CrashingEventHandler'),
+
+    Route('/crashes/handle-500/',
+          'views/crashes/handle_500.py::handle_request'),
+
     # routing
     Route('/routing/url-args/<a:[^/]+>/<b:[^/]+>/<c:[^/]+>/',
           'views/routing/url_args.py::handle_request'),

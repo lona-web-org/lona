@@ -14,25 +14,6 @@ TEMPLATE_EXTRA_CONTEXT = {
     'extra_context_variable': 'bar',
 }
 
-if os.environ.get('DJANGO', '0') == '1':
-    class RateLimitMiddleware:
-        VIEW_MAX = 2
-
-        def process_request(self, data):
-            request = data.request
-            user = request.user
-
-            if request.server.get_running_views_count(user) < self.VIEW_MAX:
-
-                return data
-
-            return 'To many running views'
-
-    MIDDLEWARES = [
-        'lona.contrib.django.auth.DjangoSessionMiddleware',
-        RateLimitMiddleware,
-    ]
-
 HOOKS = {
     'server_stop': [
         'hooks.py::server_stop',
@@ -41,3 +22,16 @@ HOOKS = {
         'hooks.py::server_start'
     ],
 }
+
+MIDDLEWARES = [
+    'middlewares.py::CrashingMiddleware',
+]
+
+ERROR_404_HANDLER = 'views/handle_404.py::handle_404'
+ERROR_500_HANDLER = 'views/handle_500.py::handle_500'
+
+if os.environ.get('DJANGO', '0') == '1':
+    MIDDLEWARES += [
+        'lona.contrib.django.auth.DjangoSessionMiddleware',
+        'middlewares.py::RateLimitMiddleware',
+    ]

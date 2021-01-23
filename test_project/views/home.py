@@ -43,6 +43,15 @@ def home(request):
             <li><a href="/error-types/non-interactive-feature-error/">Non Interactive Feature Error</a></li>
         </ul>
 
+        <h2>Crashes</h2>
+        <ul>
+            <li><a class="lona-ignore" href="/crashes/process-connection/">Middleware.process_connection()</a></li>
+            <li><a href="/crashes/process-request/">Middleware.process_middleware()</a></li>
+            <li><a href="/crashes/input-events/">Input Events</a></li>
+            <li><a href="/crashes/handle-404/">404 Handler</a></li>
+            <li><a href="/crashes/handle-500/">500 Handler</a></li>
+        </ul>
+
         <h2>Routing</h2>
         <ul>
             <li><a href="/routing/url-args/foo/bar/baz/">URL Arguments</a></li>
