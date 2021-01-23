@@ -40,7 +40,7 @@ class ViewRuntime:
             self.view = route.view
 
         else:
-            self.view = self.server.settings.ERROR_404_HANDLER
+            self.view = self.server.view_runtime_controller.handle_404
 
         if frontend:
             self.view = self.server.settings.FRONTEND_VIEW
