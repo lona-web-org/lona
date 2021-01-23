@@ -5,6 +5,7 @@ import asyncio
 from yarl import URL
 
 from lona.exceptions import StopReason, UserAbort
+from lona.html.abstract_node import AbstractNode
 from lona.html.document import Document
 from lona.input_event import InputEvent
 from lona.request import Request
@@ -129,6 +130,10 @@ class ViewRuntime:
 
             # response dicts
             if raw_response_dict:
+                if isinstance(raw_response_dict, AbstractNode):
+                    self.request.client.show(html=raw_response_dict)
+
+                    return
 
                 # check if non-interactive features got used in
                 # interactive mode
