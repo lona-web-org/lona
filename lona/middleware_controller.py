@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from lona.imports import acquire
@@ -83,13 +84,15 @@ class MiddlewareController:
                 if not callable(hook):
                     continue
 
+                is_coroutine_function = asyncio.iscoroutinefunction(hook)
+
                 self.hooks[hook_name].append(
-                    (middleware, hook, ),
+                    (middleware, hook, is_coroutine_function),
                 )
 
                 logger.debug('%s.%s discovered', middleware, hook_name)
 
-    async def _run_middlewares(self, hook_name, data):
+    def _run_middlewares(self, hook_name, data):
         if hook_name not in self.HOOK_NAMES:
             raise NotImplementedError("unknown hook '{}'".format(hook_name))
 
@@ -99,7 +102,7 @@ class MiddlewareController:
             repr(data),
         )
 
-        for middleware, hook in self.hooks[hook_name]:
+        for middleware, hook, is_coroutine_function in self.hooks[hook_name]:
             logger.debug(
                 'running %s.%s(%s)',
                 middleware,
@@ -109,7 +112,11 @@ class MiddlewareController:
 
             # run middleware hook
             try:
-                return_value = await self.server.run(hook, data)
+                if is_coroutine_function:
+                    return_value = self.server.run_coroutine_sync(hook, data)
+
+                else:
+                    return_value = hook(data)
 
             except Exception:
                 logger.error(
@@ -153,7 +160,8 @@ class MiddlewareController:
             connection=connection,
         )
 
-        return await self._run_middlewares(
+        return await self.server.run_function_async(
+            self._run_middlewares,
             'process_connection',
             data,
         )
@@ -165,7 +173,8 @@ class MiddlewareController:
             message=message,
         )
 
-        return await self._run_middlewares(
+        return await self.server.run_function_async(
+            self._run_middlewares,
             'process_websocket_message',
             data,
         )
@@ -178,7 +187,8 @@ class MiddlewareController:
             view=view,
         )
 
-        return await self._run_middlewares(
+        return await self.server.run_function_async(
+            self._run_middlewares,
             'process_request',
             data,
         )
