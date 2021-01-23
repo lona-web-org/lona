@@ -35,3 +35,5 @@ if os.environ.get('DJANGO', '0') == '1':
         'lona.contrib.django.auth.DjangoSessionMiddleware',
         'middlewares.py::RateLimitMiddleware',
     ]
+
+    ERROR_500_HANDLER = 'views/django/handle_500.py::handle_500'
