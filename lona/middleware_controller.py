@@ -111,22 +111,11 @@ class MiddlewareController:
             )
 
             # run middleware hook
-            try:
-                if is_coroutine_function:
-                    return_value = self.server.run_coroutine_sync(hook, data)
+            if is_coroutine_function:
+                return_value = self.server.run_coroutine_sync(hook, data)
 
-                else:
-                    return_value = hook(data)
-
-            except Exception:
-                logger.error(
-                    'Exception raised while running %s.%s',
-                    middleware,
-                    hook_name,
-                    exc_info=True,
-                )
-
-                continue
+            else:
+                return_value = hook(data)
 
             if return_value is None:
                 # if the middleware does not return the data object it is
@@ -158,6 +147,7 @@ class MiddlewareController:
         data = MiddlewareData(
             server=self.server,
             connection=connection,
+            request=connection.http_request,
         )
 
         return await self.server.run_function_async(

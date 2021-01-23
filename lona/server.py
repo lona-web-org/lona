@@ -449,7 +449,19 @@ class LonaServer:
             return await self.handle_websocket_request(http_request)
 
         # setup connection
-        connection, middleware_data = await self.setup_connection(http_request)
+        try:
+            connection, middleware_data = await self.setup_connection(
+                http_request,
+            )
+
+        except Exception:
+            http_logger.error(
+                'Exception occurred while setting connection up',
+                exc_info=True,
+            )
+
+            return Response(status=500, body='500: Internal Error')
+
         handled, data, middleware = middleware_data
 
         # connection got closed by middleware
@@ -457,7 +469,7 @@ class LonaServer:
             if data:
                 return self.render_response(data)
 
-            return Response(status=503, body='Service Unavailable')
+            return Response(status=503, body='503: Service Unavailable')
 
         # run non interactive view or frontend
         if match and not route.interactive:
