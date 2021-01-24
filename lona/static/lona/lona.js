@@ -575,8 +575,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
-            lona_window._widgets_to_setup.shift();
-
             if(widget === undefined) {
                 return;
             };
@@ -595,8 +593,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // nodes_updated
         lona_window._widgets_to_update_nodes.forEach(function(node_id) {
             var widget = lona_window._widgets[node_id];
-
-            lona_window._widgets_to_update_nodes.shift();
 
             if(widget === undefined) {
                 return;
@@ -619,8 +615,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
-            lona_window._widgets_to_update_data.shift();
-
             if(widget === undefined) {
                 return;
             };
@@ -632,6 +626,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
             } finally {};
         });
+
+        lona_window._widgets_to_setup = [];
+        lona_window._widgets_to_update_nodes = [];
+        lona_window._widgets_to_update_data = [];
     };
 
     // html rendering ---------------------------------------------------------
