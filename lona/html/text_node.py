@@ -3,8 +3,6 @@ from lona.protocol import NODE_TYPE
 
 
 class TextNode(AbstractNode):
-    # TODO: add __len__ method
-
     def __init__(self, string):
         self._id = self.gen_id()
         self._string = str(string)
@@ -51,6 +49,12 @@ class TextNode(AbstractNode):
 
     def __str__(self):
         return self._string
+
+    def __len__(self):
+        return len(self._string)
+
+    def __bool__(self):
+        return True
 
     def __repr__(self):
         return '<TextNode({})>'.format(repr(self._string))
