@@ -3,7 +3,6 @@ from textwrap import indent
 from lona.html.attribute_dict import AttributeDict
 from lona.html.attribute_list import AttributeList
 from lona.html.abstract_node import AbstractNode
-from lona.html.text_node import TextNode
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
 
@@ -33,12 +32,6 @@ class Node(AbstractNode):
 
         # args (nodes)
         for arg in args:
-            if not isinstance(arg, (AbstractNode, str)):
-                arg = str(arg)
-
-            if isinstance(arg, str):
-                arg = TextNode(arg)
-
             self.append(arg)
 
         # kwargs (attributes)

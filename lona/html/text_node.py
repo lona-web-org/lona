@@ -7,7 +7,7 @@ class TextNode(AbstractNode):
 
     def __init__(self, string):
         self._id = self.gen_id()
-        self._string = string
+        self._string = str(string)
 
     def wrap_method(self, method):
         def wrapper(*args, **kwargs):

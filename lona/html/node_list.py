@@ -11,11 +11,11 @@ class NodeList:
 
     # list helper #############################################################
     def _check_node(self, node):
-        if not isinstance(node, (AbstractNode, str)):
-            raise ValueError
-
-        if isinstance(node, str):
+        if isinstance(node, (str, int, float, bool, )):
             node = TextNode(node)
+
+        if not isinstance(node, AbstractNode):
+            raise ValueError('unsupported type: {}'.format(repr(node)))
 
         return node
 
