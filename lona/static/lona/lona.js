@@ -109,6 +109,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._url = undefined;
     this._text_nodes = {};
     this._widget_marker = {};
+    this._widget_data = {};
     this._widgets = {};
     this._widgets_to_setup = [];
     this._widgets_to_update_nodes = [];
@@ -136,6 +137,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._clear_node_cache = function() {
         this._text_nodes = {};
         this._widget_marker = {};
+        this._widget_data = {};
         this._widgets_to_setup = [];
         this._widgets_to_update_nodes = [];
         this._widgets_to_update_data = [];
@@ -176,6 +178,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 };
 
                 delete lona_window._widgets[key];
+                delete lona_window._widget_data[key];
             };
         });
     };
@@ -496,7 +499,9 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         return node_list;
     };
 
-    this._apply_widget_data_update = function(widget, updates) {
+    this._apply_widget_data_update = function(node_id, updates) {
+        var widget_data = this._widget_data[node_id];
+
         for(var index in updates) {
             var update = updates[index];
             var key_path = update[0];
@@ -504,7 +509,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
             // key path
             var parent_data = undefined;
-            var data = widget.data;
+            var data = this._widget_data[node_id];
 
             key_path.forEach(function(key) {
                 parent_data = data;
@@ -518,7 +523,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             // RESET
             } else if(operation == Lona.symbols.OPERATION.RESET) {
                 if(parent_data === undefined) {
-                    widget.data = update[2];
+                    this._widget_data[node_id] = update[2];
 
                 } else {
                     parent_data = update[2];
@@ -536,7 +541,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 };
 
                 if(parent_data === undefined) {
-                    widget.data = new_data;
+                    this._widget_data[node_id] = new_data;
 
                 } else {
                     parent_data[key_path[key_path.length-1]] = new_data;
@@ -566,6 +571,9 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // setup
         lona_window._widgets_to_setup.forEach(function(node_id) {
             var widget = lona_window._widgets[node_id];
+            var widget_data = lona_window._widget_data[node_id];
+
+            widget.data = JSON.parse(JSON.stringify(widget_data));
 
             lona_window._widgets_to_setup.shift();
 
@@ -607,6 +615,9 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // data_updated
         lona_window._widgets_to_update_data.forEach(function(node_id) {
             var widget = lona_window._widgets[node_id];
+            var widget_data = lona_window._widget_data[node_id];
+
+            widget.data = JSON.parse(JSON.stringify(widget_data));
 
             lona_window._widgets_to_update_data.shift();
 
@@ -730,9 +741,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                 var widget = new widget_class(window_shim);
 
-                widget.data = widget_data;
-
                 lona_window._widgets[node_id] = widget;
+                lona_window._widget_data[node_id] = widget_data;
                 lona_window._widgets_to_setup.splice(0, 0, node_id);
             };
         };
@@ -810,9 +820,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                 // data
                 if(data_updates.length > 0) {
-                    this._apply_widget_data_update(
-                        this._widgets[node_id], data_updates);
-
+                    this._apply_widget_data_update(node_id, data_updates);
                     lona_window._widgets_to_update_data.splice(0, 0, node_id);
                 };
 
