@@ -4,8 +4,6 @@ from lona.protocol import OPERATION
 
 
 class NodeList:
-    # TODO: add support for slices
-
     def __init__(self, node):
         self._node = node
         self._nodes = []
@@ -22,7 +20,7 @@ class NodeList:
         return node
 
     def _prepare_node(self, node):
-        if node.parent:
+        if node.parent and node.parent is not self._node:
             node.parent.remove(node)
 
         elif node == self._node.root:
