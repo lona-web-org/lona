@@ -11,6 +11,7 @@ def home(request):
             <ul>
                 <li><a href="/admin/">Django Admin</a></li>
                 <li><a href="/django/login-required/">Login Required</a></li>
+                <li><a href="/django/forms/">Forms</a></li>
             </ul>
         """  # NOQA
 
