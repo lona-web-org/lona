@@ -48,6 +48,7 @@ def home(request):
         <ul>
             <li><a class="lona-ignore" href="/crashes/process-connection/">Middleware.process_connection()</a></li>
             <li><a href="/crashes/process-request/">Middleware.process_middleware()</a></li>
+            <li><a href="/crashes/response-dict/">Response Dict</a></li>
             <li><a href="/crashes/input-events/">Input Events</a></li>
             <li><a href="/crashes/handle-404/">404 Handler</a></li>
             <li><a href="/crashes/handle-500/">500 Handler</a></li>

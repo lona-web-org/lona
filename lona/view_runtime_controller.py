@@ -103,8 +103,6 @@ class ViewRuntimeController:
 
     # response dicts ##########################################################
     def render_response_dict(self, raw_response_dict, view_name):
-        # TODO: warn if keys are ambiguous
-
         response_dict = {
             'status': 200,
             'content_type': 'text/html',
@@ -112,6 +110,16 @@ class ViewRuntimeController:
             'file': '',
             'redirect': '',
             'http_redirect': '',
+        }
+
+        key_words = {
+            'text',
+            'redirect',
+            'http_redirect',
+            'template',
+            'template_string',
+            'file',
+            'json',
         }
 
         # Node response
@@ -128,8 +136,18 @@ class ViewRuntimeController:
 
             return response_dict
 
-        # find keys
+        # response dict
         elif isinstance(raw_response_dict, dict):
+
+            # check keys
+            if len(set(raw_response_dict) & key_words) != 1:
+                raise RuntimeError(
+                    'response dicts have to contain exactly one keyword of:{}'.format(  # NOQA
+                        ', '.join(key_words),
+                    )
+                )
+
+            # find keys
             for key in response_dict.keys():
                 if key in raw_response_dict:
                     value = raw_response_dict[key]

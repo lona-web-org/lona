@@ -92,6 +92,9 @@ routes = [
     Route('/crashes/process-request/',
           'views/crashes/middlewares.py::handle_request'),
 
+    Route('/crashes/response-dict/',
+          'views/crashes/response_dict.py::handle_request'),
+
     Route('/crashes/input-events/',
           'views/crashes/input_events.py::CrashingEventHandler'),
 
