@@ -30,8 +30,6 @@ class ViewRuntimeController:
         # }
 
     def start(self):
-        # TODO: add support for custom view priorities
-
         # error handler
         logger.debug('loading error handler')
 

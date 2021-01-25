@@ -23,6 +23,7 @@ def home(request):
             <li><a href="/view-types/multi-user-view/">Multi User View</a></li>
             <li><a href="/view-types/daemonized-view/">Daemonized View</a></li>
             <li><a href="/view-types/class-based-view/">Class Based View</a></li>
+            <li><a href="/view-types/async-view/">Async View</a></li>
         </ul>
 
         <h2>Response Types</h2>

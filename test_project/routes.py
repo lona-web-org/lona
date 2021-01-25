@@ -51,6 +51,9 @@ routes = [
     Route('/view-types/class-based-view/',
           'views/view_types/class_based_view.py::ClassBasedView'),
 
+    Route('/view-types/async-view/',
+          'views/view_types/async_view.py::AsyncView'),
+
     # response types
     Route('/response-types/template-response/',
           'views/response_types/template_response.py::handle_request'),

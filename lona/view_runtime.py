@@ -63,6 +63,7 @@ class ViewRuntime:
 
         self.document = Document(loop=self.server.loop)
 
+        self.stopped = asyncio.Future(loop=self.server.loop)
         self.is_stopped = False
         self.stop_reason = None
         self.is_daemon = False
@@ -167,37 +168,47 @@ class ViewRuntime:
             self.is_stopped = True
             self.send_view_stop()
 
-    def stop(self, reason=UserAbort):
+    def stop(self, reason=UserAbort, clean_up=True):
         self.stop_reason = reason
 
-        # drop all connections
-        self.connections = {}
+        if not isinstance(self.stop_reason, Exception):
+            self.stop_reason = self.stop_reason()
+
+        # let all calls on request.view.await_sync() crash with
+        # the set stop reason
+        def _set_stopped():
+            if not self.stopped.done() and not self.stopped.cancelled():
+                self.stopped.set_result(True)
+
+        self.server.loop.call_soon_threadsafe(_set_stopped)
 
         # cancel all pending user input events
-        for event_name, pending in self.pending_input_events.items():
-            if not pending:
-                continue
-
-            future, nodes = pending
-
-            if not future.done() and not future.cancelled():
-                future.set_exception(self.stop_reason())
-
-        # clean up
-        if self.start_connection:  # multi user views have no start_connection
-            self.server.view_runtime_controller.remove_view_runtime(self)
-
-    def issue_500_error(self, exception):
-        self.stop_reason = exception
-
         for pending_input_event in self.pending_input_events.copy().items():
             if not pending_input_event[1]:
                 continue
 
             name, (future, nodes) = pending_input_event
 
-            future.set_exception(exception)
+            if not future.done() and not future.cancelled():
+                future.set_exception(self.stop_reason)
 
+        # clean up
+        if clean_up:
+            # drop all connections
+            self.connections = {}
+
+            # multi user views have no start_connection
+            if self.start_connection:
+                self.server.view_runtime_controller.remove_view_runtime(self)
+
+    def issue_500_error(self, exception):
+        # stop the runtime but don't run cleanup code to get the
+        # output of the 500 handle through
+        self.stop(reason=exception, clean_up=False)
+
+        # run 500 handler
+        # this runs if the crash happened in an input event handler after
+        # the view stopped
         if self.is_stopped:
             self.handle_raw_response_dict(
                 self.server.view_runtime_controller.handle_500(
@@ -212,7 +223,7 @@ class ViewRuntime:
                 exc_info=True,
             )
 
-    # connection managment ####################################################
+    # connection management ###################################################
     def add_connection(self, connection, window_id, url):
         self.connections[connection] = (window_id, url, )
 

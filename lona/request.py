@@ -1,11 +1,17 @@
+import asyncio
+
+from lona.context import current_thread_is_main_thread
 from lona.types import Symbol
 
 
 class Client:
-    # TODO: make calls like client.await_click(node_id='button') possible
-
     def __init__(self, request):
         self.request = request
+
+    def _assert_not_main_thread(self):
+        if current_thread_is_main_thread():
+            raise RuntimeError(
+                'this function is not supposed to run in the main thread')
 
     def _assert_single_user_request(self):
         if self.request._view_runtime.view_spec.multi_user:
@@ -22,6 +28,7 @@ class Client:
             raise self.request._view_runtime.stop_reason
 
     def _await_specific_input_event(self, *nodes, event_type='', **kwargs):
+        self._assert_not_main_thread()
         self._assert_single_user_request()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
@@ -49,6 +56,7 @@ class Client:
     def show(self, html=None, template=None, template_string=None, title=None,
              **kwargs):
 
+        self._assert_not_main_thread()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
 
@@ -81,6 +89,7 @@ class Client:
                 self.request._view_runtime.send_data(data=data, title=title)
 
     def set_title(self, title):
+        self._assert_not_main_thread()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
 
@@ -88,6 +97,7 @@ class Client:
             self.request._view_runtime.send_data(title=title)
 
     def send_str(self, string, broadcast=False):
+        self._assert_not_main_thread()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
 
@@ -141,6 +151,39 @@ class View:
         self.request.client._assert_single_user_request()
 
         self.request._view_runtime.is_daemon = True
+
+    def await_sync(self, awaitable):
+        async def _await(future):
+            return await future
+
+        if asyncio.isfuture(awaitable):
+            awaitable = _await(awaitable)
+
+        concurrent_future = asyncio.run_coroutine_threadsafe(
+            asyncio.wait(
+                [
+                    self.request._view_runtime.stopped,
+                    awaitable,
+                ],
+                return_when=asyncio.FIRST_COMPLETED,
+            ),
+            loop=self.request.server.loop,
+        )
+
+        finished, pending = concurrent_future.result()
+
+        finished = finished.pop()
+        pending = pending.pop()
+
+        if finished is self.request._view_runtime.stopped:
+            pending.cancel()
+
+            raise self.request._view_runtime.stop_reason
+
+        return finished.result()
+
+    def sleep(self, *args, **kwargs):
+        return self.await_sync(asyncio.sleep(*args, **kwargs))
 
 
 class Request:
