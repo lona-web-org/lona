@@ -151,7 +151,9 @@ class ViewRuntimeController:
             response_dict['http_redirect'] = raw_response_dict['http_redirect']
 
         # template response
-        elif 'template' in raw_response_dict:
+        elif('template' in raw_response_dict or
+             'template_string' in raw_response_dict):
+
             logger.debug("'%s' is a template view", view_name)
 
             template_context = raw_response_dict
@@ -159,11 +161,21 @@ class ViewRuntimeController:
             if 'context' in template_context:
                 template_context = template_context['context']
 
-            response_dict['text'] = \
-                self.server.templating_engine.render_template(
-                    raw_response_dict['template'],
-                    template_context,
-                )
+            # template file
+            if 'template' in raw_response_dict:
+                response_dict['text'] = \
+                    self.server.templating_engine.render_template(
+                        raw_response_dict['template'],
+                        template_context,
+                    )
+
+            # template string
+            else:
+                response_dict['text'] = \
+                    self.server.templating_engine.render_string(
+                        raw_response_dict['template_string'],
+                        template_context,
+                    )
 
         # json response
         elif 'json' in raw_response_dict:
