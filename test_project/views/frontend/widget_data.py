@@ -1,5 +1,3 @@
-import time
-
 from lona.html import HTML, Div, H1, Br, Widget, A
 from lona.static_files import Script
 from lona.json import dumps
@@ -54,27 +52,27 @@ def handle_request(request):
             widget.data['list'].append(i)
             widget.update_state()
             request.client.show(html)
-            time.sleep(1)
+            request.view.sleep(1)
 
         widget.data['list'].remove(2)
         widget.update_state()
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)
 
         widget.data['list'].insert(2, 2)
         widget.update_state()
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)
 
         widget.data['list'].clear()
         widget.update_state()
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)
 
         widget.data['list'] = [5, 4, 3, 2, 1]
         widget.update_state()
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)
 
         # dict
         widget.data = [{}]
@@ -83,19 +81,19 @@ def handle_request(request):
             widget.data[0][i] = i
             widget.update_state()
             request.client.show(html)
-            time.sleep(1)
+            request.view.sleep(1)
 
         widget.data[0].pop(2)
         widget.update_state()
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)
 
         widget.data[0].clear()
         widget.update_state()
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)
 
         widget.data[0] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
         widget.update_state()
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)

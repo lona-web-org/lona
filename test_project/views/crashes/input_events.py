@@ -1,5 +1,4 @@
 from datetime import datetime
-import time
 
 from lona.html import Widget, Button, HTML, Div, Br, H1
 
@@ -66,7 +65,7 @@ class CrashingEventHandler:
 
                 request.client.show(html)
 
-                time.sleep(1)
+                request.view.sleep(1)
 
     def handle_input_event_root(self, input_event):
         if input_event.node_has_id('handle_input_event_root'):

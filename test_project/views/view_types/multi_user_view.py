@@ -1,5 +1,4 @@
 from datetime import datetime
-import time
 
 from lona.html import Strong, Span, Div, H1
 from lona.decorators import multi_user
@@ -24,4 +23,4 @@ def handle_request(request):
     while True:
         span.set_text(str(datetime.now()))
         request.client.show(html)
-        time.sleep(1)
+        request.view.sleep(1)

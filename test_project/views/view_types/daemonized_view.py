@@ -1,5 +1,3 @@
-import time
-
 from lona.html import Div, H1, Button
 
 
@@ -31,7 +29,7 @@ def handle_request(request, name='blank'):
         log.set_text('Counting ({}/15)'.format(i+1))
         request.client.show(html)
 
-        time.sleep(1)
+        request.view.sleep(1)
 
     message.set_text('View stopped')
     request.client.show(html)

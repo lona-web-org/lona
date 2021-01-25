@@ -1,5 +1,3 @@
-import time
-
 from lona.html import HTML, Div, H1, A
 
 
@@ -24,7 +22,7 @@ def handle_request(request):
             request.client.set_title(title)
             request.client.show()
 
-            time.sleep(1)
+            request.view.sleep(1)
 
         for i in range(3):
             title = 'Title {}'.format(i)
@@ -32,4 +30,4 @@ def handle_request(request):
             div.set_text("using show; Title should be '{}'".format(title))
             request.client.show(html, title=title)
 
-            time.sleep(1)
+            request.view.sleep(1)

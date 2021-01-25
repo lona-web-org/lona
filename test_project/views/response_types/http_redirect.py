@@ -1,5 +1,3 @@
-import time
-
 from lona.html import Div, H1, P, Strong
 
 
@@ -16,7 +14,7 @@ def handle_request(request):
 
         request.client.show(html)
 
-        time.sleep(1)
+        request.view.sleep(1)
 
     return {
         'http_redirect': '/',
