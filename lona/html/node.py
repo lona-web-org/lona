@@ -69,6 +69,12 @@ class Node(AbstractNode):
 
                 self._style._reset(value)
 
+            elif name == 'attributes':
+                if not isinstance(value, dict):
+                    raise ValueError('attributes has to be dict')
+
+                self._attributes._reset(value)
+
             elif name == 'nodes':
                 if not isinstance(value, list):
                     value = [value]
