@@ -108,3 +108,14 @@ class Widget(AbstractNode):
 
     def __repr__(self):
         return self.__str__()
+
+    # node helper #############################################################
+    def hide(self):
+        with self.lock():
+            for node in self.nodes:
+                node.hide()
+
+    def show(self):
+        with self.lock():
+            for node in self.nodes:
+                node.show()
