@@ -1,12 +1,12 @@
 from collections import OrderedDict
 
 from lona.html.nodes import (
-    Select as SelectNode,
     Form as FormNode,
+    SelectNode,
+    OptionNode,
     Widget,
-    Option,
+    InputNode,
     Label,
-    Input,
     Table,
     Ul,
     Li,
@@ -35,7 +35,7 @@ class FormField(Widget):
         self.kwargs = kwargs
 
     def get_input_node(self, name):
-        return Input(name, changeable=True)
+        return InputNode(name, changeable=True)
 
     def setup(self, name):
         # setup input
@@ -302,7 +302,7 @@ class Form(Widget, metaclass=OrderedClassMembers):
 # buttons
 class Submit(FormField):
     def get_input_node(self, name):
-        return Input(type='submit', name=name)
+        return InputNode(type='submit', name=name)
 
     def setup(self, name):
         super().setup(name)
@@ -312,7 +312,7 @@ class Submit(FormField):
 
 class Reset(FormField):
     def get_input_node(self, name):
-        return Input(type='reset', name=name)
+        return InputNode(type='reset', name=name)
 
     def setup(self, name):
         super().setup(name)
@@ -332,7 +332,7 @@ class TextField(FormField):
         if 'placeholder' in self.kwargs:
             input_args['placeholder'] = self.kwargs['placeholder']
 
-        return Input(changeable=True, **input_args)
+        return InputNode(changeable=True, **input_args)
 
     def check(self):
         value = self.get_value()
@@ -359,7 +359,7 @@ class ColorField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(changeable=True, **input_args)
+        return InputNode(changeable=True, **input_args)
 
 
 class DateField(FormField):
@@ -372,7 +372,7 @@ class DateField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(changeable=True, **input_args)
+        return InputNode(changeable=True, **input_args)
 
 
 class WeekField(FormField):
@@ -385,7 +385,7 @@ class WeekField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(changeable=True, **input_args)
+        return InputNode(changeable=True, **input_args)
 
 
 class TimeField(FormField):
@@ -398,7 +398,7 @@ class TimeField(FormField):
             'value': self.kwargs.get('default', ''),
         }
 
-        return Input(changeable=True, **input_args)
+        return InputNode(changeable=True, **input_args)
 
 
 class CheckboxField(FormField):
@@ -408,7 +408,7 @@ class CheckboxField(FormField):
             'name': name,
         }
 
-        input_node = Input(changeable=True, **input_args)
+        input_node = InputNode(changeable=True, **input_args)
 
         if 'default' in self.kwargs and self.kwargs['default']:
             input_node.attributes['checked'] = ''
@@ -440,7 +440,7 @@ class Select(FormField):
             for choice in self.kwargs['choices']:
                 value, selected = choice
 
-                option = Option(value, value=value)
+                option = OptionNode(value, value=value)
 
                 if selected:
                     option.attributes['selected'] = ''

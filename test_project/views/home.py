@@ -66,6 +66,7 @@ def home(request):
         <ul>
             <li><a href="/events/click-events/">Click Events</a></li>
             <li><a href="/events/change-events/">Change Events</a></li>
+            <li><a href="/events/data-binding/">Data Binding</a></li>
             <li><a href="/events/non-node-events/">Non-Node Events</a></li>
             <li><a href="/events/widget-event-handler/">Widget Event Handler</a></li>
             <li><a href="/events/class-based-view/">Class Based View</a></li>

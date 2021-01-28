@@ -1,4 +1,4 @@
-from lona.html import TextInput, Checkbox, Div, H1, Pre
+from lona.html import TextInputNode, CheckboxNode, Div, H1, Pre
 from pprint import pformat
 
 
@@ -14,8 +14,8 @@ def handle_request(request):
         H1('Change Events'),
         Div(
             Div(
-                Div(Checkbox(changeable=True)),
-                Div(TextInput(changeable=True, value='Change me')),
+                Div(CheckboxNode(changeable=True)),
+                Div(TextInputNode(changeable=True, value='Change me')),
                 style={
                     'float': 'left',
                     'width': '50%',

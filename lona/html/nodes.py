@@ -142,6 +142,10 @@ class Form(Node):
     TAG_NAME = 'form'
 
 
+class Fieldset(Node):
+    TAG_NAME = 'form'
+
+
 class Label(Node):
     TAG_NAME = 'label'
 
@@ -151,28 +155,32 @@ class Button(Node):
     CLASS_LIST = ['lona-clickable']
 
 
-class Input(Node):
+class InputNode(Node):
     TAG_NAME = 'input'
     SINGLE_TAG = True
 
 
-class TextInput(Input):
+class TextInputNode(InputNode):
     ATTRIBUTES = {
         'type': 'text',
     }
 
 
-class Checkbox(Input):
+class CheckboxNode(InputNode):
     ATTRIBUTES = {
         'type': 'checkbox',
     }
 
 
-class Select(Node):
+class TextAreaNode(Node):
+    TAG_NAME = 'textarea'
+
+
+class SelectNode(Node):
     TAG_NAME = 'select'
 
 
-class Option(Node):
+class OptionNode(Node):
     TAG_NAME = 'option'
 
 

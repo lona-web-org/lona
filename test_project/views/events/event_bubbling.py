@@ -1,4 +1,14 @@
-from lona.html import Widget, Button, Select, Option, HTML, Div, Pre, H1, P
+from lona.html import (
+    SelectNode,
+    OptionNode,
+    Widget,
+    Button,
+    HTML,
+    Div,
+    Pre,
+    H1,
+    P,
+)
 
 
 class BubblingWidget(Widget):
@@ -47,29 +57,29 @@ class View:
             H1('Event Bubbling'),
             Div(
                 'Stop Event at ',
-                Select(
-                    Option(
+                SelectNode(
+                    OptionNode(
                         '---',
                         value='',
                         selected=True,
                     ),
-                    Option(
+                    OptionNode(
                         'handle_input_event_root',
                         value='handle_input_event_root',
                     ),
-                    Option(
+                    OptionNode(
                         'Widget 1',
                         value='Widget 1',
                     ),
-                    Option(
+                    OptionNode(
                         'Widget 2',
                         value='Widget 2',
                     ),
-                    Option(
+                    OptionNode(
                         'Widget 3',
                         value='Widget 3',
                     ),
-                    Option(
+                    OptionNode(
                         'handle_input_event',
                         value='handle_input_event',
                     ),

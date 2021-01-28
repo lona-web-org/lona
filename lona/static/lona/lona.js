@@ -800,6 +800,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._apply_update = function(html_data) {
         var lona_window = this;
         var symbols = Lona.symbols;
+        var property_names = ['value', 'checked'];
 
         for(var index in html_data) {
             var update = html_data[index];
@@ -929,7 +930,16 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                     // SET
                     if(operation == symbols.OPERATION.SET) {
-                        node.setAttribute(update[1], update[2]);
+                        var name = update[1];
+
+                        // properties
+                        if(property_names.indexOf(name) > -1) {
+                            node[update[1]] = update[2];
+
+                        // attributes
+                        } else {
+                            node.setAttribute(update[1], update[2]);
+                        }
 
                     // RESET
                     } else if(operation == symbols.OPERATION.RESET) {

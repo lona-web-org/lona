@@ -130,6 +130,9 @@ routes = [
     Route('/events/event-bubbling/',
           'views/events/event_bubbling.py::View'),
 
+    Route('/events/data-binding/',
+          'views/events/data_binding.py::handle_request'),
+
     # locking
     Route('/locking/html-tree/',
           'views/locking/html_tree_locking.py::LockingView'),
