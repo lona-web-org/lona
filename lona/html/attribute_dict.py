@@ -37,7 +37,7 @@ class AttributeDict:
 
     def __setitem__(self, name, value):
         if not isinstance(value, (int, bool, float, str)):
-            raise ValueError('unsupported type')
+            raise ValueError('unsupported type: {}'.format(type(value)))
 
         if name in ('id', 'class', 'style'):
             raise RuntimeError(
