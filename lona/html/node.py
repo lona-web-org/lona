@@ -16,7 +16,7 @@ class Node(AbstractNode):
     STYLE = {}
     LONA_CLASS_LIST = []
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, tag_name=None, single_tag=None, **kwargs):
         self._id = self.gen_id()
 
         self._id_list = AttributeList(self, self.ID_LIST)
@@ -24,6 +24,15 @@ class Node(AbstractNode):
         self._style = AttributeDict(self, self.STYLE)
         self._attributes = AttributeDict(self, self.ATTRIBUTES)
         self._nodes = NodeList(self)
+
+        # tag overrides
+        self.tag_name = tag_name or self.TAG_NAME
+
+        if single_tag is None:
+            self.single_tag = self.SINGLE_TAG
+
+        else:
+            self.single_tag = single_tag
 
         # lona classes
         for class_name in self.LONA_CLASS_LIST:
@@ -194,7 +203,7 @@ class Node(AbstractNode):
         return [
             NODE_TYPE.NODE,
             self._id,
-            self.TAG_NAME,
+            self.tag_name,
             self._id_list._serialize(),
             self._class_list._serialize(),
             self._style._serialize(),
@@ -243,7 +252,7 @@ class Node(AbstractNode):
         with self.document.lock():
             # opening tag
             string = '<{} lona-node-id="_{}"'.format(
-                self.TAG_NAME,
+                self.tag_name,
                 self._id,
             )
 
@@ -261,7 +270,7 @@ class Node(AbstractNode):
                 string += ' '
                 string += self.attributes.to_attribute_string()
 
-            if self.SINGLE_TAG:
+            if self.single_tag:
                 string += ' />'
 
             else:
@@ -274,8 +283,8 @@ class Node(AbstractNode):
                 string += '\n'
 
             # closing tag
-            if not self.SINGLE_TAG:
-                string += '</{}>'.format(self.TAG_NAME)
+            if not self.single_tag:
+                string += '</{}>'.format(self.tag_name)
 
             return string
 
