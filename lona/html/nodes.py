@@ -160,6 +160,20 @@ class InputNode(Node):
     SINGLE_TAG = True
 
 
+class Submit(InputNode):
+    ATTRIBUTES = {
+        'type': 'submit',
+        'value': 'Submit',
+    }
+
+
+class Reset(InputNode):
+    ATTRIBUTES = {
+        'type': 'reset',
+        'value': 'Reset',
+    }
+
+
 class TextInputNode(InputNode):
     ATTRIBUTES = {
         'type': 'text',
