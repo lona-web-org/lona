@@ -175,8 +175,14 @@ if DJANGO:
         Route('/django/login-required/',
               'views/django/permission_views.py::django_login_required'),
 
-        Route('/django/forms/',
-              'views/django/forms.py::handle_request'),
+        Route('/django/template-based-form/',
+              'views/django/template_based_form.py::handle_request'),
+
+        Route('/django/node-based-form/',
+              'views/django/node_based_form.py::handle_request'),
+
+        Route('/django/data-binding-form/',
+              'views/django/data_binding_form.py::handle_request'),
 
         Route(MATCH_ALL, wsgi_handler, http_pass_through=True),
     ]

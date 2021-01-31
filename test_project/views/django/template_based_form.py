@@ -2,7 +2,7 @@ from django import forms
 
 
 class NameForm(forms.Form):
-    name = forms.CharField(label='Your name', max_length=100)
+    name = forms.CharField(label='Your name', max_length=3)
 
 
 def handle_request(request):
@@ -10,7 +10,7 @@ def handle_request(request):
         <h1>Django Forms</h1>
 
         {% if name %}
-            {{ name }}
+            Hello {{ name }}
         {% endif %}
 
         <form action="." method="post">
