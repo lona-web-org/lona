@@ -1,9 +1,35 @@
+from lona.html.parsing import html_string_to_node_list
+from lona.html.text_node import TextNode
 from lona.html.widget import Widget
 
 
 class HTML(Widget):
     def __init__(self, *nodes):
-        self.nodes = [*nodes]
+        self.nodes = []
+
+        for node in nodes:
+
+            # strings
+            if isinstance(node, str):
+
+                # escaped text
+                if node.startswith('\\'):
+                    self.nodes.append(TextNode(node[1:]))
+
+                # html string
+                elif '<' in node or '>' in node:
+                    if len(nodes) > 1:
+                        self.nodes.append(HTML(node))
+
+                    else:
+                        self.nodes = html_string_to_node_list(node)
+
+                else:
+                    self.nodes.append(TextNode(node))
+
+            # lona nodes
+            else:
+                self.nodes.append(node)
 
     def insert(self, *args, **kwargs):
         return self.nodes.insert(*args, **kwargs)
