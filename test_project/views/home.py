@@ -81,12 +81,6 @@ def home(request):
             <li><a href="/locking/server-state/">Server State</a></li>
         </ul>
 
-        <h2>Forms</h2>
-        <ul>
-            <li><a href="/forms/interactive-form/">Interactive Form</a></li>
-            <li><a href="/forms/non-interactive-form/">Non-Interactive Form</a></li>
-        </ul>
-
         <h2>Window Actions</h2>
         <ul>
             <li><a href="/window-actions/set-title/">Set Title</a></li>

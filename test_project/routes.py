@@ -140,13 +140,6 @@ routes = [
     Route('/locking/server-state/',
           'views/locking/server_state_locking.py::LockingView'),
 
-    # forms
-    Route('/forms/interactive-form/',
-          'views/forms/interactive_form.py::handle_request'),
-
-    Route('/forms/non-interactive-form/',
-          'views/forms/non_interactive_form.py::handle_request'),
-
     # window actions
     Route('/window-actions/set-title/',
           'views/window_actions/set_title.py::handle_request'),
