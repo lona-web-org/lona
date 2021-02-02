@@ -1087,6 +1087,14 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                 if(node.getAttribute('type') == 'checkbox') {
                     event_data = node.checked;
+
+                } else if(node.type == 'select-multiple') {
+                    event_data = [];
+
+                    Array.from(node.selectedOptions).forEach(function(option) {
+                        event_data.push(option.value);
+                    });
+
                 };
 
                 lona_window.fire_input_event(
@@ -1108,42 +1116,37 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 event.preventDefault();
 
                 // find muliple selects
-                // FIXME: why does this not work with plain FormData?
                 var multi_selects = {};
 
                 this.querySelectorAll('select[multiple]').forEach(
                     function(select_node) {
+                        var name = select_node.name;
+
                         multi_selects[select_node.name] = [];
 
-                        select_node.querySelectorAll('option').forEach(
-                            function(option_node) {
-                                if(!option_node.selected) {
-                                    return;
-                                };
-
-                                multi_selects[select_node.name].push(
-                                    option_node.value);
+                        Array.from(select_node.selectedOptions).forEach(
+                            function(option) {
+                                multi_selects[name].push(option.value);
                             }
                         );
                     }
                 );
 
                 // generate form data
-                var form_data = new FormData(this);
+                var raw_form_data = new FormData(this);
+                var form_data = {};
+
+                for(let [key, value] of raw_form_data.entries()) {
+                    if(key in multi_selects) {
+                        form_data[key] = multi_selects[key];
+
+                    } else {
+                        form_data[key] = value;
+
+                    };
+                };
 
                 if(!lona_window._view_stopped) {
-                    var data = {};
-
-                    for(let [key, value] of form_data.entries()) {
-                        if(key in multi_selects) {
-                            data[key] = multi_selects[key];
-
-                        } else {
-                            data[key] = value;
-
-                        };
-                    }
-
                     lona_window.fire_input_event(
                         undefined,
                         node,
@@ -1172,13 +1175,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                         lona_window.run_view(href);
 
                     } else if(method == 'post') {
-                        var post_data = {};
+                        lona_window.run_view(action, form_data);
 
-                        for(let [key, value] of form_data.entries()) {
-                            post_data[key] = value;
-                        }
-
-                        lona_window.run_view(action, post_data);
                     };
                 };
 
