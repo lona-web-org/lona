@@ -84,10 +84,15 @@ class MiddlewareController:
                 if not callable(hook):
                     continue
 
-                is_coroutine_function = asyncio.iscoroutinefunction(hook)
+                if asyncio.iscoroutinefunction(hook):
+                    logger.error(
+                        '%s.%s is a coroutine function',
+                        middleware,
+                        hook_name,
+                    )
 
                 self.hooks[hook_name].append(
-                    (middleware, hook, is_coroutine_function),
+                    (middleware, hook, ),
                 )
 
                 logger.debug('%s.%s discovered', middleware, hook_name)
@@ -102,7 +107,7 @@ class MiddlewareController:
             repr(data),
         )
 
-        for middleware, hook, is_coroutine_function in self.hooks[hook_name]:
+        for middleware, hook in self.hooks[hook_name]:
             logger.debug(
                 'running %s.%s(%s)',
                 middleware,
@@ -111,11 +116,7 @@ class MiddlewareController:
             )
 
             # run middleware hook
-            if is_coroutine_function:
-                return_value = self.server.run_coroutine_sync(hook, data)
-
-            else:
-                return_value = hook(data)
+            return_value = hook(data)
 
             if return_value is None:
                 # if the middleware does not return the data object it is
