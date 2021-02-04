@@ -1,9 +1,8 @@
 from traceback import format_exception
 from textwrap import indent
+import threading
 import datetime
 import logging
-
-from lona.context import get_current_context_name
 
 
 class LogFilter(logging.Filter):
@@ -31,16 +30,15 @@ class LogFilter(logging.Filter):
 
 class LogFormatter(logging.Formatter):
     def format(self, record):
-        # FIXME: only in debug mode
-        context_name = get_current_context_name()
+        current_thread_name = threading.current_thread().name
 
         # format record string
         time_stamp = datetime.datetime.fromtimestamp(record.created)
         time_stamp_str = time_stamp.strftime('%H:%M:%S.%f')
 
         record_string = '{}{} {}{} {} {} {}'.format(
-            context_name,
-            (30 - len(context_name)) * ' ',
+            current_thread_name,
+            (30 - len(current_thread_name)) * ' ',
 
             record.levelname,
             (8 - len(record.levelname)) * ' ',
