@@ -50,5 +50,6 @@ class AbstractNode:
     def document(self, value):
         self._document = value
 
+    @property
     def lock(self):
-        return self.document.lock()
+        return self.document.lock

@@ -32,7 +32,7 @@ class NodeList:
     def insert(self, index, node):
         node = self._check_node(node)
 
-        with self._node.document.lock():
+        with self._node.document.lock:
             self._prepare_node(node)
             self._nodes.insert(index, node)
 
@@ -43,7 +43,7 @@ class NodeList:
     def append(self, node):
         node = self._check_node(node)
 
-        with self._node.document.lock():
+        with self._node.document.lock:
             self._prepare_node(node)
             self._nodes.append(node)
 
@@ -52,14 +52,14 @@ class NodeList:
             self._changes.append([OPERATION.INSERT, index, node._serialize()])
 
     def remove(self, node):
-        with self._node.document.lock():
+        with self._node.document.lock:
             node.parent = None
 
             self._nodes.remove(node)
             self._changes.append([OPERATION.REMOVE, node._id])
 
     def clear(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             for node in list(self._nodes):
                 node.parent = None
                 self._nodes.remove(node)
@@ -67,28 +67,28 @@ class NodeList:
             self._changes.append([OPERATION.CLEAR])
 
     def __getitem__(self, index):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return self._nodes[index]
 
     def __setitem__(self, index, node):
         node = self._check_node(node)
 
-        with self._node.document.lock():
+        with self._node.document.lock:
             self._prepare_node(node)
             self._nodes[index] = node
 
             self._changes.append([OPERATION.SET, index, node._serialize()])
 
     def __bool__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return bool(self._nodes)
 
     def __len__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return self._nodes.__len__()
 
     def __iter__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return self._nodes.__iter__()
 
     # serialisation ###########################################################
@@ -96,7 +96,7 @@ class NodeList:
         if not isinstance(value, list):
             value = [value]
 
-        with self._node.document.lock():
+        with self._node.document.lock:
             self._nodes.clear()
 
             for node in value:
@@ -125,7 +125,7 @@ class NodeList:
 
     # string representation ###################################################
     def __str__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return '\n'.join([str(i) for i in self._nodes])
 
     def __repr__(self):

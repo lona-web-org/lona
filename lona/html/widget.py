@@ -111,11 +111,11 @@ class Widget(AbstractNode):
 
     # node helper #############################################################
     def hide(self):
-        with self.lock():
+        with self.lock:
             for node in self.nodes:
                 node.hide()
 
     def show(self):
-        with self.lock():
+        with self.lock:
             for node in self.nodes:
                 node.show()

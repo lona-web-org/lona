@@ -249,7 +249,7 @@ class Node(AbstractNode):
 
     # string representation ###################################################
     def __str__(self):
-        with self.document.lock():
+        with self.document.lock:
             # opening tag
             string = '<{} lona-node-id="_{}"'.format(
                 self.tag_name,
@@ -299,6 +299,6 @@ class Node(AbstractNode):
         self.style['display'] = 'none'
 
     def show(self):
-        with self.lock():
+        with self.lock:
             if 'display' in self.style and self.style['display'] == 'none':
                 del self.style['display']

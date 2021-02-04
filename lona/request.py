@@ -81,7 +81,7 @@ class Client:
                     template_context=template_context,
                 )
 
-        with self.request._view_runtime.document.lock():
+        with self.request._view_runtime.document.lock:
             html = html or self.request._view_runtime.document.html
             data = self.request._view_runtime.document.apply(html)
 
@@ -93,7 +93,7 @@ class Client:
         self._assert_view_is_interactive()
         self._assert_view_is_running()
 
-        with self.request._view_runtime.document.lock():
+        with self.request._view_runtime.document.lock:
             self.request._view_runtime.send_data(title=title)
 
     def send_str(self, string, broadcast=False):

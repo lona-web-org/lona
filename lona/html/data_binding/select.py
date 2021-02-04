@@ -56,7 +56,7 @@ class Select(Widget):
         }
 
     def handle_input_event(self, input_event):
-        with self.lock():
+        with self.lock:
             self.value = input_event.data
 
             if self.bubble_up:
@@ -68,7 +68,7 @@ class Select(Widget):
 
     @disabled.setter
     def disabled(self, new_value):
-        with self.lock():
+        with self.lock:
             if new_value:
                 self.input_node.attributes['disabled'] = True
 
@@ -77,12 +77,12 @@ class Select(Widget):
 
     @property
     def values(self):
-        with self.lock():
+        with self.lock:
             return self._values
 
     @values.setter
     def values(self, new_values):
-        with self.lock():
+        with self.lock:
             self._values = []
             self.select_node.clear()
 
@@ -101,7 +101,7 @@ class Select(Widget):
 
     @property
     def value(self):
-        with self.lock():
+        with self.lock:
             value = []
 
             for option in self.select_node.nodes:
@@ -123,7 +123,7 @@ class Select(Widget):
         if not isinstance(new_value, list):
             new_value = [new_value]
 
-        with self.lock():
+        with self.lock:
             for option in self.select_node.nodes:
                 if option.attributes['value'] in new_value:
                     if 'selected' not in option.attributes:

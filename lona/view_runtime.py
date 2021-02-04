@@ -61,7 +61,7 @@ class ViewRuntime:
         #     connection: (window_id, url),
         # }
 
-        self.document = Document(loop=self.server.loop)
+        self.document = Document()
 
         self.stopped = asyncio.Future(loop=self.server.loop)
         self.is_stopped = False
@@ -227,7 +227,7 @@ class ViewRuntime:
     def add_connection(self, connection, window_id, url):
         self.connections[connection] = (window_id, url, )
 
-        with self.document.lock():
+        with self.document.lock:
             self.send_data(
                 data=self.document.serialize(),
                 connections={connection: (window_id, url, )},
@@ -323,7 +323,7 @@ class ViewRuntime:
             )
 
         elif response_dict['text']:
-            with self.document.lock():
+            with self.document.lock:
                 data = self.document.apply(response_dict['text'])
                 self.send_data(data=data, connections=connections)
 
@@ -352,7 +352,7 @@ class ViewRuntime:
         )
 
         def send_html_update():
-            with self.document.lock():
+            with self.document.lock:
                 data = self.document.apply(self.document.html)
 
                 if data:

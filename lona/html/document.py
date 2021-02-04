@@ -1,6 +1,6 @@
+from threading import RLock
 import logging
 
-from lona.locking import LockManager
 from lona.protocol import DATA_TYPE
 from lona.imports import acquire
 
@@ -30,22 +30,18 @@ def _setup_node_classes():
 
 
 class Document:
-    def __init__(self, loop=None, default_document=False):
-        self.loop = loop
+    def __init__(self, default_document=False):
         self.is_default_document = default_document
 
-        self.lock_manager = LockManager(
-            loop=self.loop,
-            pass_through_mode=self.is_default_document,
-        )
-
+        self._lock = RLock()
         self.html = None
 
         if not self.is_default_document:
             _setup_node_classes()
 
+    @property
     def lock(self):
-        return self.lock_manager.lock()
+        return self._lock
 
     def __repr__(self):
         if self.is_default_document:
@@ -84,7 +80,7 @@ class Document:
             if isinstance(node, Widget):
                 widget_path.pop()
 
-        with self.lock():
+        with self.lock:
             iter_nodes(self.html)
 
         if widget[0]:

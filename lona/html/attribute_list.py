@@ -12,24 +12,24 @@ class AttributeList:
         if not isinstance(attribute, (int, bool, float, str)):
             raise ValueError('unsupported type')
 
-        with self._node.document.lock():
+        with self._node.document.lock:
             if attribute not in self._attributes:
                 self._attributes.append(attribute)
                 self._changes.append([OPERATION.ADD, attribute])
 
     def remove(self, attribute):
-        with self._node.document.lock():
+        with self._node.document.lock:
             if attribute in self._attributes:
                 self._attributes.remove(attribute)
                 self._changes.append([OPERATION.REMOVE, attribute])
 
     def clear(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             self._attributes.clear()
             self._changes.append([OPERATION.CLEAR])
 
     def toggle(self, attribute):
-        with self._node.document.lock():
+        with self._node.document.lock:
             if attribute in self._attributes:
                 self.remove(attribute)
 
@@ -40,15 +40,15 @@ class AttributeList:
         return self.add(attribute)
 
     def __len__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return len(self._attributes)
 
     def __bool__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return bool(self._attributes)
 
     def __iter__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return self._attributes.__iter__()
 
     # serialisation ###########################################################
@@ -60,7 +60,7 @@ class AttributeList:
             if not isinstance(i, (int, bool, float, str)):
                 raise ValueError('unsupported type')
 
-        with self._node.document.lock():
+        with self._node.document.lock:
             self._attributes = value
             self._changes.append([OPERATION.RESET, list(value)])
 
@@ -78,7 +78,7 @@ class AttributeList:
 
     # string representation ###################################################
     def __str__(self):
-        with self._node.document.lock():
+        with self._node.document.lock:
             return ' '.join([i for i in self._attributes])
 
     def __repr__(self):

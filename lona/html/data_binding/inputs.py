@@ -83,7 +83,7 @@ class TextInput(Widget):
 
     @disabled.setter
     def disabled(self, new_value):
-        with self.lock():
+        with self.lock:
             if new_value:
                 self.input_node.attributes['disabled'] = True
 
