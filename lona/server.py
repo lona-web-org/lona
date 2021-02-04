@@ -84,7 +84,7 @@ class LonaServer:
         server_logger.debug('setup server state')
 
         if self.settings.SERVER_STATE_ATOMIC:
-            self._state = ServerState(self.loop, initial_data={})
+            self._state = ServerState(initial_data={})
 
         else:
             self._state = {}

@@ -25,7 +25,7 @@ class LockingView:
             request.view.sleep(1)
 
     def handle_input_event(self, input_event):
-        with input_event.request.server.state.lock():
+        with input_event.request.server.state.lock:
             self.message.set_text('Button clicked; Lock')
             input_event.request.client.show(self.html)
 
