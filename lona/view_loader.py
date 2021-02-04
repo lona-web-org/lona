@@ -57,8 +57,6 @@ class ViewSpec:
 
 
 class ViewLoader:
-    # TODO: add api to load 404 and 500 handler
-
     def __init__(self, server):
         self.server = server
 

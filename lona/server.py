@@ -338,7 +338,7 @@ class LonaServer:
         connection = None
 
         async def close_websocket():
-            self.view_runtime_controller._remove_connection(connection)
+            self.view_runtime_controller.remove_connection(connection)
             self._remove_connection(connection)
 
             await websocket.close()
@@ -434,7 +434,6 @@ class LonaServer:
                     http_request,
                 )
 
-            # FIXME: wsgi container
             if asyncio.iscoroutine(response):
                 response = await response
 

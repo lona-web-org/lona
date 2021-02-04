@@ -158,14 +158,10 @@ class ViewRuntimeController:
 
         # redirects
         if 'redirect' in raw_response_dict:
-            # TODO: add support for reverse url lookups
-
             response_dict['redirect'] = raw_response_dict['redirect']
 
         # http redirect
         elif 'http_redirect' in raw_response_dict:
-            # TODO: add support for reverse url lookups
-
             response_dict['http_redirect'] = raw_response_dict['http_redirect']
 
         # template response

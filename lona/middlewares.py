@@ -4,8 +4,6 @@ from lona.protocol import EXIT_CODE, decode_message
 
 
 class AnonymousUser:
-    # TODO: add cookie support to make anonymous sessions possible
-
     def __repr__(self):
         return '<AnonymousUser()>'
 

@@ -43,8 +43,6 @@ class Namespace:
 
 
 class TemplatingEngine:
-    # TODO: warn if settings.FRONTEND_TEMPLATE is not available
-
     def __init__(self, server):
         self.server = server
 
