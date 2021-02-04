@@ -153,34 +153,32 @@ class View:
         self.request._view_runtime.is_daemon = True
 
     def await_sync(self, awaitable):
-        async def _await(future):
-            return await future
-
-        if asyncio.isfuture(awaitable):
-            awaitable = _await(awaitable)
-
-        concurrent_future = asyncio.run_coroutine_threadsafe(
-            asyncio.wait(
+        async def await_awaitable():
+            finished, pending = await asyncio.wait(
                 [
                     self.request._view_runtime.stopped,
                     awaitable,
                 ],
                 return_when=asyncio.FIRST_COMPLETED,
-            ),
+            )
+
+            for finished_future in finished:
+                if finished_future is not self.request._view_runtime.stopped:
+                    return finished_future.result()
+
+            if self.request._view_runtime.stopped in finished:
+                for pending_future in pending:
+                    if(not pending_future.done() and
+                       not pending_future.cancelled()):
+
+                        pending_future.cancel()
+
+                raise self.request._view_runtime.stop_reason
+
+        return asyncio.run_coroutine_threadsafe(
+            await_awaitable(),
             loop=self.request.server.loop,
-        )
-
-        finished, pending = concurrent_future.result()
-
-        finished = finished.pop()
-        pending = pending.pop()
-
-        if finished is self.request._view_runtime.stopped:
-            pending.cancel()
-
-            raise self.request._view_runtime.stop_reason
-
-        return finished.result()
+        ).result()
 
     def sleep(self, *args, **kwargs):
         return self.await_sync(asyncio.sleep(*args, **kwargs))
