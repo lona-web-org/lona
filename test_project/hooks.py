@@ -3,9 +3,9 @@ import logging
 logger = logging.getLogger('test_project')
 
 
-def server_start(server):
-    logger.debug('%s running hooks.server_start', repr(server))
+async def server_startup(app):
+    logger.debug('%s running hooks.server_startup', repr(app['server']))
 
 
-def server_stop(server):
-    logger.debug('%s running hooks.server_stop', repr(server))
+async def server_shutdown(app):
+    logger.debug('%s running hooks.server_shutdown', repr(app['server']))

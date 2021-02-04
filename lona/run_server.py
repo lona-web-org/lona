@@ -128,17 +128,14 @@ def run_server(args):
         settings_post_overrides=settings_post_overrides,
     )
 
+    app['server'] = server
+
     async def shutdown(app):
         print('stopping server')
 
         await server.stop()
 
     app.on_shutdown.append(shutdown)
-
-    loop.run_in_executor(
-        None,
-        lambda: server.hooks.run('server_start', server)
-    )
 
     # run server
     if cli_args.shell:

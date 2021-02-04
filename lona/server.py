@@ -11,7 +11,6 @@ from lona.middleware_controller import MiddlewareController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.settings.settings import Settings
-from lona.hook_manager import HookManager
 from lona.server_state import ServerState
 from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
@@ -150,17 +149,49 @@ class LonaServer:
 
         self.static_file_loader = StaticFileLoader(self)
 
-        # setup hooks
-        self.hooks = HookManager(self)
+        # setup startup hooks
+        server_logger.debug('setup startup hooks')
+
+        for hook in self.settings.STARTUP_HOOKS:
+            if isinstance(hook, str):
+                try:
+                    hook = acquire(hook)[1]
+
+                except Exception:
+                    server_logger.error(
+                        "Exception occurred while importing startup hook '%s'",
+                        hook,
+                        exc_info=True,
+                    )
+
+                    continue
+
+            self.app.on_startup.append(hook)
+
+        # setup shutdown hooks
+        server_logger.debug('setup shutdown hooks')
+
+        for hook in self.settings.SHUTDOWN_HOOKS:
+            if isinstance(hook, str):
+                try:
+                    hook = acquire(hook)[1]
+
+                except Exception:
+                    server_logger.error(
+                        "Exception occurred while importing shutdown hook '%s'",  # NOQA
+                        hook,
+                        exc_info=True,
+                    )
+
+                    continue
+
+            self.app.on_shutdown.append(hook)
 
         # finish
         server_logger.debug('setup finish')
 
     async def stop(self, *args, **kwargs):
         server_logger.debug('shutting down')
-
-        await self.loop.run_in_executor(
-            None, lambda: self.hooks.run('server_stop', self))
 
         await self.run_function_async(self.view_runtime_controller.stop)
         await self.loop.run_in_executor(None, self.executor.shutdown)
