@@ -126,10 +126,10 @@ class LonaServer:
         server_logger.debug('static url set to %s', repr(static_url))
 
         self.app.router.add_route(
-            '*', static_url, self.handle_static_file_request)
+            '*', static_url, self._handle_static_file_request)
 
         self.app.router.add_route(
-            '*', '/{path_info:.*}', self.handle_http_request)
+            '*', '/{path_info:.*}', self._handle_http_request)
 
         # setup view loader
         server_logger.debug('setup view loader')
@@ -196,61 +196,6 @@ class LonaServer:
         await self.run_function_async(self.view_runtime_controller.stop)
         await self.loop.run_in_executor(None, self.executor.shutdown)
 
-    # state ###################################################################
-    @property
-    def state(self):
-        return self._state
-
-    @state.setter
-    def state(self, data):
-        if self.settings.SERVER_STATE_ATOMIC:
-            self._state._reset(data)
-
-        else:
-            self._state = data
-
-    # helper ##################################################################
-    def get_running_views_count(self, *args, **kwargs):
-        return self.view_runtime_controller.get_running_views_count(
-            *args,
-            **kwargs,
-        )
-
-    def get_connection_count(self, user):
-        if user not in self.user:
-            return 0
-
-        return len(self.user[user])
-
-    # connection management ###################################################
-    async def setup_connection(self, http_request, websocket=None):
-        connection = Connection(self, http_request, websocket)
-
-        handled, data, middleware = \
-            await self.middleware_controller.process_connection(
-                connection,
-            )
-
-        if websocket is not None:
-            self.websocket_connections.append(connection)
-
-            if connection.user not in self.user:
-                self.user[connection.user] = []
-
-            self.user[connection.user].append(connection)
-
-        return connection, (handled, data, middleware)
-
-    def remove_connection(self, connection):
-        if connection in self.websocket_connections:
-            self.websocket_connections.remove(connection)
-
-        if connection.user in self.user:
-            self.user[connection.user].remove(connection)
-
-            if len(self.user[connection.user]) == 0:
-                self.user.pop(connection.user)
-
     # asyncio helper ##########################################################
     def run_coroutine_sync(self, coroutine, wait=True):
         future = asyncio.run_coroutine_threadsafe(coroutine, loop=self.loop)
@@ -307,8 +252,37 @@ class LonaServer:
             else:
                 return self.run_function_async(function, *args, **kwargs)
 
+    # connection management ###################################################
+    async def _setup_connection(self, http_request, websocket=None):
+        connection = Connection(self, http_request, websocket)
+
+        handled, data, middleware = \
+            await self.middleware_controller.process_connection(
+                connection,
+            )
+
+        if websocket is not None:
+            self.websocket_connections.append(connection)
+
+            if connection.user not in self.user:
+                self.user[connection.user] = []
+
+            self.user[connection.user].append(connection)
+
+        return connection, (handled, data, middleware)
+
+    def _remove_connection(self, connection):
+        if connection in self.websocket_connections:
+            self.websocket_connections.remove(connection)
+
+        if connection.user in self.user:
+            self.user[connection.user].remove(connection)
+
+            if len(self.user[connection.user]) == 0:
+                self.user.pop(connection.user)
+
     # view helper #############################################################
-    def render_response(self, response_dict):
+    def _render_response(self, response_dict):
         if response_dict['file']:
             return FileResponse(response_dict['file'])
 
@@ -329,7 +303,7 @@ class LonaServer:
         return response
 
     # handle http requests ####################################################
-    async def handle_static_file_request(self, request):
+    async def _handle_static_file_request(self, request):
         rel_path = request.match_info['path']
 
         abs_path = await self.run_function_async(
@@ -345,7 +319,7 @@ class LonaServer:
 
         return FileResponse(abs_path)
 
-    async def handle_websocket_message(self, connection, message):
+    async def _handle_websocket_message(self, connection, message):
         websockets_logger.debug(
             '%s message received %s', connection, message.data)
 
@@ -359,13 +333,13 @@ class LonaServer:
             websockets_logger.debug(
                 '%s message got not handled', connection)
 
-    async def handle_websocket_request(self, http_request):
+    async def _handle_websocket_request(self, http_request):
         websocket = None
         connection = None
 
         async def close_websocket():
-            self.view_runtime_controller.remove_connection(connection)
-            self.remove_connection(connection)
+            self.view_runtime_controller._remove_connection(connection)
+            self._remove_connection(connection)
 
             await websocket.close()
 
@@ -376,7 +350,7 @@ class LonaServer:
         await websocket.prepare(http_request)
 
         # setup connection
-        connection, middleware_data = await self.setup_connection(
+        connection, middleware_data = await self._setup_connection(
             http_request,
             websocket,
         )
@@ -402,7 +376,7 @@ class LonaServer:
             async for message in websocket:
                 if message.type == WSMsgType.TEXT:
                     self.loop.create_task(
-                        self.handle_websocket_message(connection, message),
+                        self._handle_websocket_message(connection, message),
                     )
 
                 elif message.type == WSMsgType.PING:
@@ -419,7 +393,7 @@ class LonaServer:
 
         return websocket
 
-    async def handle_http_request(self, http_request):
+    async def _handle_http_request(self, http_request):
         http_logger.debug('http request incoming')
 
         # resolve path
@@ -469,7 +443,7 @@ class LonaServer:
                 return response
 
             return await self.run_function_async(
-                self.render_response,
+                self._render_response,
                 response,
             )
 
@@ -477,11 +451,11 @@ class LonaServer:
         if(http_request.method == 'GET' and
            http_request.headers.get('upgrade', '').lower() == 'websocket'):
 
-            return await self.handle_websocket_request(http_request)
+            return await self._handle_websocket_request(http_request)
 
         # setup connection
         try:
-            connection, middleware_data = await self.setup_connection(
+            connection, middleware_data = await self._setup_connection(
                 http_request,
             )
 
@@ -498,7 +472,7 @@ class LonaServer:
         # connection got closed by middleware
         if handled:
             if data:
-                return self.render_response(data)
+                return self._render_response(data)
 
             return Response(status=503, body='503: Service Unavailable')
 
@@ -532,4 +506,42 @@ class LonaServer:
                 view_runtime.start,
             )
 
-        return self.render_response(response_dict)
+        return self._render_response(response_dict)
+
+    # state ###################################################################
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, data):
+        if self.settings.SERVER_STATE_ATOMIC:
+            self._state._reset(data)
+
+        else:
+            self._state = data
+
+    # helper ##################################################################
+    def get_running_views_count(self, *args, **kwargs):
+        return self.view_runtime_controller.get_running_views_count(
+            *args,
+            **kwargs,
+        )
+
+    def get_connection_count(self, user):
+        if user not in self.user:
+            return 0
+
+        return len(self.user[user])
+
+    def get_template(self, *args, **kwargs):
+        return self.templating_engine.get_template(*args, **kwargs)
+
+    def render_string(self, *args, **kwargs):
+        return self.templating_engine.render_string(*args, **kwargs)
+
+    def render_template(self, *args, **kwargs):
+        return self.templating_engine.render_template(*args, **kwargs)
+
+    def reverse(self, *args, **kwargs):
+        return self.router.reverse(*args, **kwargs)
