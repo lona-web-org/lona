@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 import logging
 import os
@@ -8,24 +9,51 @@ logger = logging.getLogger('lona.view_loader')
 
 
 class ViewSpec:
-    # TODO: add support for async views
-
     def __init__(self, view):
         self.view = view
 
         self.multi_user = getattr(self.view, 'multi_user', False)
         self.is_class_based = False
-        self.has_input_event_handler = False
         self.has_input_event_root_handler = False
+        self.has_input_event_handler = False
 
         if inspect.isclass(self.view):
             self.is_class_based = True
 
+            self.has_input_event_root_handler = hasattr(
+                self.view, 'handle_input_event_root')
+
             self.has_input_event_handler = hasattr(
                 self.view, 'handle_input_event')
 
-            self.has_input_event_root_handler = hasattr(
-                self.view, 'handle_input_event_root')
+        # check for async code
+        # handle_request
+        if self.is_class_based:
+            handle_request = self.view.handle_request
+
+        else:
+            handle_request = self.view
+
+        if asyncio.iscoroutinefunction(handle_request):
+            logger.error('%s is a coroutine function', handle_request)
+
+        # handle_input_event_root
+        if(self.has_input_event_root_handler and
+           asyncio.iscoroutinefunction(self.view.handle_input_event_root)):
+
+            logger.error(
+                '%s is a coroutine function',
+                self.view.handle_input_event_root,
+            )
+
+        # handle_input_event
+        if(self.has_input_event_handler and
+           asyncio.iscoroutinefunction(self.view.handle_input_event)):
+
+            logger.error(
+                '%s is a coroutine function',
+                self.view.handle_input_event,
+            )
 
 
 class ViewLoader:
