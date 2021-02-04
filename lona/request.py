@@ -1,6 +1,6 @@
+import threading
 import asyncio
 
-from lona.context import current_thread_is_main_thread
 from lona.types import Symbol
 
 
@@ -9,7 +9,7 @@ class Client:
         self.request = request
 
     def _assert_not_main_thread(self):
-        if current_thread_is_main_thread():
+        if threading.current_thread() is threading.main_thread():
             raise RuntimeError(
                 'this function is not supposed to run in the main thread')
 
