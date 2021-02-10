@@ -1,8 +1,6 @@
 import asyncio
 import logging
 
-from lona.imports import acquire
-
 logger = logging.getLogger('lona.middlewares')
 
 
@@ -49,7 +47,7 @@ class MiddlewareController:
 
             try:
                 if isinstance(i, str):
-                    path, middleware_class = acquire(i)
+                    path, middleware_class = self.server.acquire(i)
 
                 else:
                     middleware_class = i

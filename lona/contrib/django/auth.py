@@ -3,8 +3,6 @@ import logging
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sessions.models import Session
 
-from lona.imports import acquire
-
 logger = logging.getLogger('lona.contrib.django.auth')
 
 
@@ -106,7 +104,7 @@ class DjangoSessionMiddleware:
             logger.debug("loading DJANGO_AUTH_DENY_ACCESS_CALLBACK from '%s'",
                          deny_access_callback)
 
-            deny_access_callback = acquire(deny_access_callback)[1]
+            deny_access_callback = server.acquire(deny_access_callback)[1]
 
             settings.DJANGO_AUTH_DENY_ACCESS_CALLBACK = deny_access_callback
 

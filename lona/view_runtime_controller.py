@@ -6,7 +6,6 @@ from lona.protocol import encode_http_redirect, METHOD
 from lona.html.abstract_node import AbstractNode
 from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
-from lona.imports import acquire
 from lona.types import Mapping
 from lona.json import dumps
 
@@ -38,7 +37,7 @@ class ViewRuntimeController:
             self.server.settings.ERROR_404_HANDLER,
         )
 
-        self.error_404_handler = acquire(
+        self.error_404_handler = self.server.acquire(
             self.server.settings.ERROR_404_HANDLER)[1]
 
         logger.debug(
@@ -46,7 +45,7 @@ class ViewRuntimeController:
             self.server.settings.ERROR_404_FALLBACK_HANDLER,
         )
 
-        self.error_404_fallback_handler = acquire(
+        self.error_404_fallback_handler = self.server.acquire(
             self.server.settings.ERROR_404_FALLBACK_HANDLER)[1]
 
         logger.debug(
@@ -54,7 +53,7 @@ class ViewRuntimeController:
             self.server.settings.ERROR_500_HANDLER,
         )
 
-        self.error_500_handler = acquire(
+        self.error_500_handler = self.server.acquire(
             self.server.settings.ERROR_500_HANDLER)[1]
 
         logger.debug(
@@ -62,7 +61,7 @@ class ViewRuntimeController:
             self.server.settings.ERROR_500_FALLBACK_HANDLER,
         )
 
-        self.error_500_fallback_handler = acquire(
+        self.error_500_fallback_handler = self.server.acquire(
             self.server.settings.ERROR_500_FALLBACK_HANDLER)[1]
 
         # multi user views

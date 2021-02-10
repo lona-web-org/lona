@@ -1,7 +1,6 @@
 import logging
 import re
 
-from lona.imports import acquire
 from lona.types import Symbol
 
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
@@ -113,13 +112,15 @@ class Route:
 
 
 class Router:
-    def __init__(self):
+    def __init__(self, server):
+        self.server = server
+
         self.routes = []
 
     def add_route(self, route):
         try:
             if isinstance(route.view, str):
-                acquire(route.view)
+                self.server.acquire(route.view)
 
             self.routes.append(route)
 

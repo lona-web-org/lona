@@ -10,12 +10,12 @@ from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
+from lona.imports import acquire as _acquire
 from lona.settings.settings import Settings
 from lona.server_state import ServerState
 from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
-from lona.imports import acquire
 from lona.routing import Router
 from lona.types import Mapping
 
@@ -42,7 +42,7 @@ class LonaServer:
         server_logger.debug("starting server in '%s'", project_root)
 
         self.app = app
-        self.project_root = project_root
+        self.project_root = os.path.abspath(project_root)
         self.loop = loop or self.app.loop
 
         self.websocket_connections = []
@@ -90,7 +90,7 @@ class LonaServer:
 
         # setup routing
         server_logger.debug('setup routing')
-        self.router = Router()
+        self.router = Router(self)
 
         server_logger.debug("loading routing table from '%s'",
                             self.settings.ROUTING_TABLE)
@@ -98,9 +98,9 @@ class LonaServer:
         routes = []
 
         if self.settings.DEBUG:
-            routes.extend(acquire('lona.debugger.routes.routes')[1])
+            routes.extend(self.acquire('lona.debugger.routes.routes')[1])
 
-        routes.extend(acquire(self.settings.ROUTING_TABLE)[1])
+        routes.extend(self.acquire(self.settings.ROUTING_TABLE)[1])
 
         if routes:
             self.router.add_routes(*routes)
@@ -155,7 +155,7 @@ class LonaServer:
         for hook in self.settings.STARTUP_HOOKS:
             if isinstance(hook, str):
                 try:
-                    hook = acquire(hook)[1]
+                    hook = self.acquire(hook)[1]
 
                 except Exception:
                     server_logger.error(
@@ -174,7 +174,7 @@ class LonaServer:
         for hook in self.settings.SHUTDOWN_HOOKS:
             if isinstance(hook, str):
                 try:
-                    hook = acquire(hook)[1]
+                    hook = self.acquire(hook)[1]
 
                 except Exception:
                     server_logger.error(
@@ -251,6 +251,22 @@ class LonaServer:
             # async
             else:
                 return self.run_function_async(function, *args, **kwargs)
+
+    # path helper #############################################################
+    def resolve_path(self, path):
+        if path.startswith('/'):
+            return path
+
+        return os.path.normpath(os.path.join(self.project_root, path))
+
+    def acquire(self, import_string, *args, **kwargs):
+        if '::' in import_string:
+            script, attribute_name = import_string.split('::')
+            script = self.resolve_path(script)
+
+            import_string = '{}::{}'.format(script, attribute_name)
+
+        return _acquire(import_string, *args, **kwargs)
 
     # connection management ###################################################
     async def _setup_connection(self, http_request, websocket=None):

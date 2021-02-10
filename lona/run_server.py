@@ -44,9 +44,6 @@ def run_server(args):
 
     cli_args = parser.parse_args(args)
 
-    # change working directory to project root
-    os.chdir(cli_args.project_root)
-
     # setup logging
     logging.basicConfig(level={
         'debug': logging.DEBUG,

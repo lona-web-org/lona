@@ -3,8 +3,6 @@ import logging
 
 from jinja2 import Environment, FileSystemLoader
 
-from lona.imports import acquire
-
 logger = logging.getLogger('lona.templating')
 
 BUILTINS = {}
@@ -27,7 +25,7 @@ class Namespace:
         return self.server.static_file_loader.script_tags_html
 
     def _import(self, *args, **kwargs):
-        return acquire(*args, **kwargs)[1]
+        return self.server.acquire(*args, **kwargs)[1]
 
     def resolve_url(self, *args, **kwargs):
         return self.server.router.reverse(*args, **kwargs)
@@ -48,6 +46,10 @@ class TemplatingEngine:
 
         self.template_dirs = (self.server.settings.TEMPLATE_DIRS +
                               self.server.settings.CORE_TEMPLATE_DIRS)
+
+        # resolving potential relative paths
+        for index, template_dir in enumerate(self.template_dirs):
+            self.template_dirs[index] = self.server.resolve_path(template_dir)
 
         logger.debug('loading template_dirs %s',
                      repr(self.template_dirs)[1:-1])

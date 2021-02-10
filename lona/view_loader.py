@@ -3,8 +3,6 @@ import inspect
 import logging
 import os
 
-from lona.imports import acquire
-
 logger = logging.getLogger('lona.view_loader')
 
 
@@ -89,7 +87,7 @@ class ViewLoader:
         logger.debug("importing '%s' ignore_import_cache=%s",
                      import_string, repr(ignore_import_cache))
 
-        path, view = acquire(
+        path, view = self.server.acquire(
             import_string, ignore_import_cache=ignore_import_cache)
 
         logger.debug("'%s' imported from '%s'", import_string, path)
