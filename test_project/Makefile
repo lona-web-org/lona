@@ -24,13 +24,14 @@ shell: env
 
 server: env
 	. $(PYTHON_VENV)/bin/activate && \
-	lona $(args)
+	lona -s settings.py $(args)
 
 debug-server: env
 	. $(PYTHON_VENV)/bin/activate && \
 	lona \
 		--project-root=./ \
-		-s settings.py -s debug_settings.py \
+		-s settings.py \
+		   debug_settings.py \
 		--log-level=debug \
 		$(args)
 
@@ -65,7 +66,7 @@ django-server: django-env django-db
 	DJANGO=1 lona \
 		--project-root=./ \
 		-s settings.py \
-		-s django-project/django_settings.py \
+		   django-project/django_settings.py \
 		$(args)
 
 django-debug-server: django-env django-db
@@ -73,7 +74,7 @@ django-debug-server: django-env django-db
 	DJANGO=1 lona \
 		--project-root=./ \
 		-s settings.py \
-		-s django-project/django_settings.py \
-		-s debug_settings.py \
+		   django-project/django_settings.py \
+		   debug_settings.py \
 		--log-level=debug \
 		$(args)

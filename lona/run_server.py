@@ -76,11 +76,6 @@ def run_server(args):
     # setup settings paths
     settings_paths = list(cli_args.settings or [])
 
-    if os.path.exists('settings.py'):
-        settings_paths.append(os.path.abspath('settings.py'))
-
-        logger.debug("project settings 'settings.py' found")
-
     # setup settings overrides
     def parse_overrides(raw_overrides):
         environment = Environment()
