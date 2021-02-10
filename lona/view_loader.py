@@ -1,13 +1,12 @@
 import asyncio
 import inspect
 import logging
-import os
 
 logger = logging.getLogger('lona.view_loader')
 
 
 class ViewSpec:
-    def __init__(self, view):
+    def __init__(self, view, check_class_based=True):
         self.view = view
 
         self.multi_user = getattr(self.view, 'multi_user', False)
@@ -15,7 +14,7 @@ class ViewSpec:
         self.has_input_event_root_handler = False
         self.has_input_event_handler = False
 
-        if inspect.isclass(self.view):
+        if check_class_based and inspect.isclass(self.view):
             self.is_class_based = True
 
             self.has_input_event_root_handler = hasattr(
@@ -24,10 +23,16 @@ class ViewSpec:
             self.has_input_event_handler = hasattr(
                 self.view, 'handle_input_event')
 
-        # check for async code
+        # check callbacks
         # handle_request
+        handle_request = None
+
         if self.is_class_based:
-            handle_request = self.view.handle_request
+            if not hasattr(self.view, 'handle_request'):
+                logger.error("%s has no attribute 'handle_request'", self.view)
+
+            else:
+                handle_request = self.view.handle_request
 
         else:
             handle_request = self.view
@@ -58,21 +63,7 @@ class ViewLoader:
     def __init__(self, server):
         self.server = server
 
-        self._view_cache = {
-            # contains: {
-            #     import_string: {
-            #         'path': path,
-            #         'view': view,
-            #         'modified': modified,  # return value of os.path.getmtime
-            #     }
-            # }
-        }
-
-        self._view_spec_cache = {
-            # contains {
-            #     cache_key: view_spec,
-            # }
-        }
+        self.setup()
 
     def _gen_cache_key(self, view):
         try:
@@ -83,59 +74,116 @@ class ViewLoader:
         except TypeError:
             return id(view)
 
-    def _load_into_cache(self, import_string, ignore_import_cache):
-        logger.debug("importing '%s' ignore_import_cache=%s",
-                     import_string, repr(ignore_import_cache))
+    def _generate_acquiring_error_view(self, exception):
+        def view(request):
+            raise exception
 
-        path, view = self.server.acquire(
-            import_string, ignore_import_cache=ignore_import_cache)
+        return view
 
-        logger.debug("'%s' imported from '%s'", import_string, path)
-
-        self._view_cache[import_string] = {
-            'path': path,
-            'view': view,
-            'modified': os.path.getmtime(path),
-        }
-
-        self._view_spec_cache[view] = ViewSpec(view)
-
-    def load(self, view):
-        logger.debug("loading '%s'", view)
+    def _acquire(self, view):
+        logger.debug('loading %s', view)
 
         if isinstance(view, str):
-            caching_enabled = self.server.settings.VIEW_CACHING
-            ignore_import_cache = not caching_enabled
+            try:
+                view = self.server.acquire(view)[1]
 
-            if view not in self._view_cache:
-                logger.debug("'%s' is not cached yet", view)
+            except Exception as exception:
+                logger.error(
+                    "exception raised while importing '%s'",
+                    view,
+                    exc_info=True,
+                )
 
-                self._load_into_cache(view, ignore_import_cache)
+                view = self._generate_acquiring_error_view(exception)
 
-            elif not caching_enabled:
-                path = self._view_cache[view]['path']
-                modified = self._view_cache[view]['modified']
+        return view
 
-                if os.path.getmtime(path) > modified:
-                    logger.debug("'%s' is modified in file system",
-                                 view)
+    def _handle_404(self, request):
+        try:
+            return self._error_404_handler(request)
 
-                    self._load_into_cache(view, ignore_import_cache)
+        except Exception:
+            logger.error(
+                'Exception occurred while running %s. Falling back to %s',
+                self._error_404_handler,
+                self._error_404_fallback_handler,
+                exc_info=True,
+            )
 
-            else:
-                logger.debug("loading '%s' from cache", view)
+        return self._error_404_fallback_handler(request)
 
-        else:
-            cache_key = self._gen_cache_key(view)
+    def _handle_500(self, request, exception):
+        try:
+            return self._error_500_handler(request, exception)
 
-            if cache_key not in self._view_spec_cache:
-                self._view_spec_cache[cache_key] = ViewSpec(view)
+        except Exception:
+            logger.error(
+                'Exception occurred while running %s. Falling back to %s',
+                self._error_500_handler,
+                self._error_500_fallback_handler,
+                exc_info=True,
+            )
 
-            return view
+        return self._error_500_fallback_handler(request, exception)
 
-        return self._view_cache[view]['view']
+    def setup(self):
+        # views
+        logger.debug('loading views from routes')
 
-    def get_view_spec(self, view):
+        self._cache = {}
+
+        for route in self.server.router.routes:
+            view = self._acquire(route.view)
+            cache_key = self._gen_cache_key(route.view)
+            view_spec = ViewSpec(view)
+            self._cache[cache_key] = (view_spec, view)
+
+            if route.frontend_view:
+                view = self._acquire(route.frontend_view)
+                cache_key = self._gen_cache_key(route.frontend_view)
+                view_spec = ViewSpec(view)
+                self._cache[cache_key] = (view_spec, view)
+
+        # frontend view
+        frontend_view = self._acquire(self.server.settings.FRONTEND_VIEW)
+        frontend_view_spec = ViewSpec(frontend_view)
+
+        cache_key = self._gen_cache_key(self.server.settings.FRONTEND_VIEW)
+        self._cache[cache_key] = (frontend_view_spec, frontend_view)
+
+        # 404 handler
+        self._error_404_handler = self._acquire(
+            self.server.settings.ERROR_404_HANDLER,
+        )
+
+        self._error_404_fallback_handler = self._acquire(
+            self.server.settings.ERROR_404_FALLBACK_HANDLER,
+        )
+
+        cache_key = self._gen_cache_key(self.server.settings.ERROR_404_HANDLER)
+        view_spec = ViewSpec(self._error_404_handler)
+        self._cache[cache_key] = (view_spec, self._handle_404)
+
+        if view_spec.is_class_based:
+            logger.error('404 handler should be simple callback')
+
+        # 500 handler
+        self._error_500_handler = self._acquire(
+            self.server.settings.ERROR_500_HANDLER,
+        )
+
+        self._error_500_fallback_handler = self._acquire(
+            self.server.settings.ERROR_500_FALLBACK_HANDLER,
+        )
+
+        cache_key = self._gen_cache_key(self.server.settings.ERROR_500_HANDLER)
+        view_spec = ViewSpec(self._error_500_handler)
+        self._cache[cache_key] = (view_spec, self._handle_500)
+
+        if view_spec.is_class_based:
+            logger.error('500 handler should be simple callback')
+
+    def load(self, view):
         cache_key = self._gen_cache_key(view)
 
-        return self._view_spec_cache[cache_key]
+        return self._cache[cache_key]

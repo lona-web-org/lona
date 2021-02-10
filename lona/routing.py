@@ -15,7 +15,7 @@ logger = logging.getLogger('lona.routing')
 
 class Route:
     def __init__(self, *args, name='', method='*', interactive=True,
-                 http_pass_through=False, frontend_view=''):
+                 http_pass_through=False, frontend_view=None):
 
         self.method = '*'
         self.raw_pattern = ''
@@ -112,20 +112,11 @@ class Route:
 
 
 class Router:
-    def __init__(self, server):
-        self.server = server
-
+    def __init__(self):
         self.routes = []
 
     def add_route(self, route):
-        try:
-            if isinstance(route.view, str):
-                self.server.acquire(route.view)
-
-            self.routes.append(route)
-
-        except ImportError:
-            logger.error("'%s' cannot be imported", route.view, exc_info=True)
+        self.routes.append(route)
 
     def add_routes(self, *routes):
         for route in routes:

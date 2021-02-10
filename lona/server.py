@@ -90,7 +90,7 @@ class LonaServer:
 
         # setup routing
         server_logger.debug('setup routing')
-        self.router = Router(self)
+        self.router = Router()
 
         server_logger.debug("loading routing table from '%s'",
                             self.settings.ROUTING_TABLE)
@@ -432,10 +432,7 @@ class LonaServer:
 
             # load view
             if isinstance(route.view, str):
-                view = await self.run_function_async(
-                    self.view_loader.load,
-                    route.view,
-                )
+                view_spec, view = self.view_loader.load(route.view)
 
             else:
                 view = route.view

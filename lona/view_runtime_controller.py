@@ -29,42 +29,6 @@ class ViewRuntimeController:
         # }
 
     def start(self):
-        # error handler
-        logger.debug('loading error handler')
-
-        logger.debug(
-            "loading 404 handler from '%s'",
-            self.server.settings.ERROR_404_HANDLER,
-        )
-
-        self.error_404_handler = self.server.acquire(
-            self.server.settings.ERROR_404_HANDLER)[1]
-
-        logger.debug(
-            "loading 404 fallback handler from '%s'",
-            self.server.settings.ERROR_404_FALLBACK_HANDLER,
-        )
-
-        self.error_404_fallback_handler = self.server.acquire(
-            self.server.settings.ERROR_404_FALLBACK_HANDLER)[1]
-
-        logger.debug(
-            "loading 500 handler from '%s'",
-            self.server.settings.ERROR_500_HANDLER,
-        )
-
-        self.error_500_handler = self.server.acquire(
-            self.server.settings.ERROR_500_HANDLER)[1]
-
-        logger.debug(
-            "loading 500 fallback handler from '%s'",
-            self.server.settings.ERROR_500_FALLBACK_HANDLER,
-        )
-
-        self.error_500_fallback_handler = self.server.acquire(
-            self.server.settings.ERROR_500_FALLBACK_HANDLER)[1]
-
-        # multi user views
         logger.debug('starting multi user views')
 
         for route in self.server.router.routes:
@@ -198,35 +162,6 @@ class ViewRuntimeController:
             response_dict['content_type'] = 'application/json'
 
         return response_dict
-
-    # error handler ###########################################################
-    def handle_404(self, request):
-        try:
-            return self.error_404_handler(request)
-
-        except Exception:
-            logger.error(
-                'Exception occurred while running %s. Falling back to %s',
-                self.error_404_handler,
-                self.error_404_fallback_handler,
-                exc_info=True,
-            )
-
-        return self.error_404_fallback_handler(request)
-
-    def handle_500(self, request, exception):
-        try:
-            return self.error_500_handler(request, exception)
-
-        except Exception:
-            logger.error(
-                'Exception occurred while running %s. Falling back to %s',
-                self.error_500_handler,
-                self.error_500_fallback_handler,
-                exc_info=True,
-            )
-
-        return self.error_500_fallback_handler(request, exception)
 
     # view management #########################################################
     def remove_connection(self, connection, window_id=None):

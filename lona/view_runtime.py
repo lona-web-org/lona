@@ -40,7 +40,7 @@ class ViewRuntime:
             self.view = route.view
 
         else:
-            self.view = self.server.view_runtime_controller.handle_404
+            self.view = self.server.settings.ERROR_404_HANDLER
 
         if frontend:
             self.view = self.server.settings.FRONTEND_VIEW
@@ -48,8 +48,7 @@ class ViewRuntime:
             if route and route.frontend_view:
                 self.view = route.frontend_view
 
-        self.view = self.server.view_loader.load(self.view)
-        self.view_spec = self.server.view_loader.get_view_spec(self.view)
+        self.view_spec, self.view = self.server.view_loader.load(self.view)
         self.name = repr(self.view)
 
         if self.view_spec.is_class_based:
@@ -106,8 +105,12 @@ class ViewRuntime:
                 exc_info=True,
             )
 
+            view_spec, view = self.server.view_loader.load(
+                self.server.settings.ERROR_500_HANDLER,
+            )
+
             return self.handle_raw_response_dict(
-                self.server.view_runtime_controller.handle_500(
+                view(
                     self.request,
                     exception,
                 )
@@ -157,8 +160,12 @@ class ViewRuntime:
                 exc_info=True,
             )
 
+            view_spec, view = self.server.view_loader.load(
+                self.server.settings.ERROR_500_HANDLER,
+            )
+
             return self.handle_raw_response_dict(
-                self.server.view_runtime_controller.handle_500(
+                view(
                     self.request,
                     exception,
                 )
@@ -210,8 +217,12 @@ class ViewRuntime:
         # this runs if the crash happened in an input event handler after
         # the view stopped
         if self.is_stopped:
+            view_spec, view = self.server.view_loader.load(
+                self.server.settings.ERROR_500_HANDLER,
+            )
+
             self.handle_raw_response_dict(
-                self.server.view_runtime_controller.handle_500(
+                view(
                     self.request,
                     exception,
                 )

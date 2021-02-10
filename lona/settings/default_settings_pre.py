@@ -38,7 +38,6 @@ SERVER_STATE_ATOMIC = True
 
 # views
 FRONTEND_VIEW = 'lona.views.frontend'
-VIEW_CACHING = True
 
 # error handler
 ERROR_404_HANDLER = 'lona.views.handle_404'
