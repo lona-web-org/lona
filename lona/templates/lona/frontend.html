@@ -60,15 +60,23 @@
 
       };
 
-      lona_context.add_message_handler(function(lona_context, message) {
-        if(!message.json_data || !message.json_data.notification) {
-          return message;
+      lona_context.add_message_handler(function(lona_context, raw_message) {
+        try {
+          var message = JSON.parse(raw_message);
+
+        } catch {
+          return raw_message;
+
+        };
+
+        if(!message.notification) {
+          return raw_message;
         };
 
         show_message(
-          message.json_data.notification.message,
-          message.json_data.notification.color,
-          message.json_data.notification.timeout,
+          message.notification.message,
+          message.notification.color,
+          message.notification.timeout,
         );
 
       });

@@ -1261,6 +1261,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             document.title = this.lona_context.settings.title;
         };
 
+        message = Lona.symbols.PROTOCOL.MESSAGE_PREFIX + JSON.stringify(message);
+
         this.lona_context.send(message);
     };
 
@@ -1310,6 +1312,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         ).concat(
             node_info,
         );
+
+        message = Lona.symbols.PROTOCOL.MESSAGE_PREFIX + JSON.stringify(message);
 
         this.lona_context.send(message);
     };
@@ -1399,12 +1403,7 @@ Lona.LonaContext = function(settings) {
         };
     };
 
-    this._run_message_handler = function(raw_message, json_data) {
-        message = {
-            raw_message: raw_message,
-            json_data: json_data,
-        };
-
+    this._run_message_handler = function(message) {
         for(var i in this._message_handler) {
             var message_handler = this._message_handler[i];
 
@@ -1436,8 +1435,17 @@ Lona.LonaContext = function(settings) {
 
         console.debug('lona rx <<', raw_message);
 
+        // all lona messages start with 'lona:'
+        if(!raw_message.startsWith(Lona.symbols.PROTOCOL.MESSAGE_PREFIX)) {
+            return this.lona_context._run_message_handler(raw_message);
+        };
+
         // parse json
         try {
+            raw_message = raw_message.substring(
+                Lona.symbols.PROTOCOL.MESSAGE_PREFIX.length,
+            );
+
             var json_data = JSON.parse(raw_message);
 
         } catch {
@@ -1448,14 +1456,12 @@ Lona.LonaContext = function(settings) {
 
         // all lona messages are Arrays
         if(!Array.isArray(json_data)) {
-            return this.lona_context._run_message_handler(
-                raw_message, json_data);
+            return this.lona_context._run_message_handler(raw_message);
         };
 
         // all lona messages have to start with a window id
         if(!Number.isInteger(json_data[0])) {
-            return this.lona_context._run_message_handler(
-                raw_message, json_data);
+            return this.lona_context._run_message_handler(raw_message);
         };
 
         var window_id = json_data[0];

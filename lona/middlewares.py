@@ -1,6 +1,8 @@
-import json
+import logging
 
-from lona.protocol import EXIT_CODE, decode_message
+from lona.protocol import PROTOCOL, EXIT_CODE, decode_message
+
+logger = logging.getLogger('lona.protocol')
 
 
 class AnonymousUser:
@@ -19,20 +21,16 @@ class LonaMessageMiddleware:
         return data
 
     def process_websocket_message(self, data):
-        try:
-            data.json_data = json.loads(data.message)
-
-        except ValueError:
-            data.json_data = None
-
-        if not data.json_data:
+        if not data.message.startswith(PROTOCOL.MESSAGE_PREFIX.value):
             return data
 
         exit_code, window_id, method, url, payload = decode_message(
-            data.json_data,
+            data.message,
         )
 
         if exit_code != EXIT_CODE.SUCCESS:
+            logger.error('invalid lona message received: %s', data.message)
+
             return data
 
         data.server.view_runtime_controller.handle_lona_message(

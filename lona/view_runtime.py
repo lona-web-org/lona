@@ -9,7 +9,6 @@ from lona.html.abstract_node import AbstractNode
 from lona.html.document import Document
 from lona.input_event import InputEvent
 from lona.request import Request
-from lona.json import dumps
 
 from lona.protocol import (
     encode_http_redirect,
@@ -266,8 +265,7 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in connections.items():
-            message = dumps(
-                encode_redirect(window_id, str(url), target_url))
+            message = encode_redirect(window_id, str(url), target_url)
 
             connection.send_str(message)
 
@@ -275,8 +273,7 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in connections.items():
-            message = dumps(
-                encode_http_redirect(window_id, str(url), target_url))
+            message = encode_http_redirect(window_id, str(url), target_url)
 
             connection.send_str(message)
 
@@ -285,13 +282,11 @@ class ViewRuntime:
 
         # send message
         for connection, (window_id, url) in list(connections.items()):
-            message = dumps(
-                encode_data(
-                    window_id=window_id,
-                    url=url,
-                    title=title,
-                    data=data,
-                )
+            message = encode_data(
+                window_id=window_id,
+                url=url,
+                title=title,
+                data=data,
             )
 
             connection.send_str(message)
@@ -300,7 +295,7 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in list(connections.items()):
-            message = dumps(encode_view_start(window_id=window_id, url=url))
+            message = encode_view_start(window_id=window_id, url=url)
 
             connection.send_str(message)
 
@@ -308,7 +303,7 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in list(connections.items()):
-            message = dumps(encode_view_stop(window_id=window_id, url=url))
+            message = encode_view_stop(window_id=window_id, url=url)
 
             connection.send_str(message)
 

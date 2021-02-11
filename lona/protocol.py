@@ -1,4 +1,13 @@
+import json
+
 from lona.types import Symbol
+from lona.json import dumps
+
+
+class PROTOCOL(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
+    MESSAGE_PREFIX = Symbol('MESSAGE_PREFIX', 'lona:')
 
 
 class EXIT_CODE(Symbol):
@@ -57,11 +66,17 @@ class OPERATION(Symbol):
     REMOVE = Symbol('REMOVE', 606)
 
 
-def decode_message(message):
+def decode_message(raw_message):
     """
     returns: (exit_code, window_id, method, url, payload)
 
     """
+
+    if not raw_message.startswith(PROTOCOL.MESSAGE_PREFIX.value):
+        return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+
+    message = raw_message[len(PROTOCOL.MESSAGE_PREFIX.value):]
+    message = json.loads(message)
 
     if not isinstance(message, list):
         return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
@@ -96,20 +111,25 @@ def decode_message(message):
 
 
 def encode_redirect(window_id, url, target_url):
-    return [window_id, METHOD.REDIRECT, url, target_url]
+    return PROTOCOL.MESSAGE_PREFIX.value + dumps(
+        [window_id, METHOD.REDIRECT, url, target_url])
 
 
 def encode_http_redirect(window_id, url, target_url):
-    return [window_id, METHOD.HTTP_REDIRECT, url, target_url]
+    return PROTOCOL.MESSAGE_PREFIX.value + dumps(
+        [window_id, METHOD.HTTP_REDIRECT, url, target_url])
 
 
 def encode_data(window_id, url, title, data):
-    return [window_id, METHOD.DATA, url, title, data]
+    return PROTOCOL.MESSAGE_PREFIX.value + dumps(
+        [window_id, METHOD.DATA, url, title, data])
 
 
 def encode_view_start(window_id, url):
-    return [window_id, METHOD.VIEW_START, url]
+    return PROTOCOL.MESSAGE_PREFIX.value + dumps(
+        [window_id, METHOD.VIEW_START, url])
 
 
 def encode_view_stop(window_id, url):
-    return [window_id, METHOD.VIEW_STOP, url]
+    return PROTOCOL.MESSAGE_PREFIX.value + dumps(
+        [window_id, METHOD.VIEW_STOP, url])

@@ -1,16 +1,15 @@
 import json
 
-from lona.html.widget_data import WidgetData
-from lona.types import Symbol
-
 SEPARATORS = (',', ':')
 
 
 def default(value):
-    if isinstance(value, Symbol):
+    # this function does not use isinstance() to avoid import loops
+
+    if value.__class__.__name__ == 'Symbol':
         return value.value
 
-    if isinstance(value, WidgetData):
+    if value.__class__.__name__ == 'WidgetData':
         return value._data
 
     raise TypeError

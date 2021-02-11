@@ -209,7 +209,7 @@ class ViewRuntimeController:
 
             # route is not interactive; issue a http redirect
             if match and (route.http_pass_through or not route.interactive):
-                message = dumps(encode_http_redirect(window_id, url, url))
+                message = encode_http_redirect(window_id, url, url)
                 connection.send_str(message)
 
                 return
