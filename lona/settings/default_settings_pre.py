@@ -1,5 +1,6 @@
 import os
 
+MONITOR_CLASS = 'lona.monitor.LonaMonitor'
 DEBUG = False
 
 MAX_WORKERS = 10

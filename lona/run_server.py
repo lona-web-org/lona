@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from functools import partial
 import asyncio
 import logging
 import signal
@@ -19,6 +20,14 @@ try:
 except ImportError:
     IPYTHON = False
 
+try:
+    import aiomonitor  # NOQA
+
+    AIOMONITOR = True
+
+except ImportError:
+    AIOMONITOR = False
+
 
 def run_server(args):
     loop = asyncio.get_event_loop()
@@ -35,6 +44,10 @@ def run_server(args):
     parser.add_argument('--project-root', type=str, default=os.getcwd())
     parser.add_argument('--shell', action='store_true')
     parser.add_argument('--loggers', type=str, nargs='+')
+    parser.add_argument('--monitor', action='store_true')
+    parser.add_argument('--monitor-host', type=str, default='localhost')
+    parser.add_argument('--monitor-port', type=int, default=50101)
+    parser.add_argument('--monitor-console-port', type=int, default=50102)
 
     parser.add_argument(
         '-l', '--log-level',
@@ -149,9 +162,35 @@ def run_server(args):
 
         loop.create_task(start_shell(server))
 
-    run_app(
+    _run_app = partial(
+        run_app,
         app=app,
         host=cli_args.host,
         port=cli_args.port,
         shutdown_timeout=cli_args.shutdown_timeout,
     )
+
+    if cli_args.monitor:
+        if not AIOMONITOR:
+            exit('aiomonitor is not installed')
+
+        monitor_args = {
+            'loop': loop,
+            'host': cli_args.monitor_host,
+            'port': cli_args.monitor_port,
+            'console_port': cli_args.monitor_console_port,
+            'locals': {
+                'server': server,
+                'cli_args': vars(cli_args),
+                'log_formatter': log_formatter,
+                'log_filter': log_filter,
+            },
+        }
+
+        monitor_class = server.acquire(server.settings.MONITOR_CLASS)[1]
+
+        with monitor_class(**monitor_args):
+            _run_app()
+
+    else:
+        _run_app()

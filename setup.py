@@ -17,6 +17,7 @@ setup(
     install_requires=[
         'aiohttp>=3,<4',
         'jinja2',
+        'aiomonitor',
     ],
     scripts=[
         'bin/lona',

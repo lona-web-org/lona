@@ -77,6 +77,7 @@ class LonaServer:
         # setup threads
         self.executor = ThreadPoolExecutor(
             max_workers=self.settings.MAX_WORKERS,
+            thread_name_prefix='LonaWorker',
         )
 
         # setup server state
