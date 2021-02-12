@@ -28,24 +28,32 @@ class Client:
             raise self.request._view_runtime.stop_reason
 
     def _await_specific_input_event(self, *nodes, event_type='', **kwargs):
-        self._assert_not_main_thread()
-        self._assert_single_user_request()
-        self._assert_view_is_interactive()
-        self._assert_view_is_running()
+        self.request._view_runtime.state = \
+            self.request._view_runtime.STATE.WAITING_FOR_INPUT
 
-        if nodes:
-            nodes = list(nodes)
+        try:
+            self._assert_not_main_thread()
+            self._assert_single_user_request()
+            self._assert_view_is_interactive()
+            self._assert_view_is_running()
 
-        if len(nodes) == 1 and isinstance(nodes[0], list):
-            nodes = nodes[0]
+            if nodes:
+                nodes = list(nodes)
 
-        if kwargs:
-            self.show(**kwargs)
+            if len(nodes) == 1 and isinstance(nodes[0], list):
+                nodes = nodes[0]
 
-        return self.request._view_runtime.await_input_event(
-            nodes=nodes,
-            event_type=event_type,
-        )
+            if kwargs:
+                self.show(**kwargs)
+
+            return self.request._view_runtime.await_input_event(
+                nodes=nodes,
+                event_type=event_type,
+            )
+
+        finally:
+            self.request._view_runtime.state = \
+                self.request._view_runtime.STATE.RUNNING
 
     def ping(self):
         self._assert_view_is_interactive()
@@ -152,7 +160,7 @@ class View:
 
         self.request._view_runtime.is_daemon = True
 
-    def await_sync(self, awaitable):
+    def _await_sync(self, awaitable):
         async def await_awaitable():
             finished, pending = await asyncio.wait(
                 [
@@ -180,8 +188,27 @@ class View:
             loop=self.request.server.loop,
         ).result()
 
+    def await_sync(self, *args, **kwargs):
+        self.request._view_runtime.state = \
+            self.request._view_runtime.STATE.WAITING_FOR_IOLOOP
+
+        try:
+            return self._await_sync(*args, **kwargs)
+
+        finally:
+            self.request._view_runtime.state = \
+                self.request._view_runtime.STATE.RUNNING
+
     def sleep(self, *args, **kwargs):
-        return self.await_sync(asyncio.sleep(*args, **kwargs))
+        self.request._view_runtime.state = \
+            self.request._view_runtime.STATE.SLEEPING
+
+        try:
+            return self._await_sync(asyncio.sleep(*args, **kwargs))
+
+        finally:
+            self.request._view_runtime.state = \
+                self.request._view_runtime.STATE.RUNNING
 
 
 class Request:

@@ -64,6 +64,43 @@ class ViewRuntimeController:
         for route, view in self.running_multi_user_views.items():
             view.stop(reason=ServerStop)
 
+    # helper ##################################################################
+    def iter_single_user_view_runtimes(self):
+        # this method is not thread safe
+        # only for debug purposes
+        # yields: view_runtime
+
+        running_single_user_views = self.running_single_user_views.copy()
+
+        for user, view_runtimes in running_single_user_views.items():
+            for view_runtime in view_runtimes.copy():
+                yield view_runtime
+
+    def iter_multi_user_view_runtimes(self):
+        # this method is not thread safe
+        # only for debug purposes
+        # yields: view_runtime
+
+        running_multi_user_views = self.running_multi_user_views.copy()
+
+        for route, view_runtime in running_multi_user_views.items():
+            yield view_runtime
+
+    def get_view_runtime(self, view_runtime_id):
+        # this method is not thread safe
+        # only for debug purposes
+        # yields: view_runtime
+
+        # multi user view runtimes
+        for view_runtime in self.iter_multi_user_view_runtimes():
+            if view_runtime.view_runtime_id == view_runtime_id:
+                return view_runtime
+
+        # single user view runtimes
+        for view_runtime in self.iter_single_user_view_runtimes():
+            if view_runtime.view_runtime_id == view_runtime_id:
+                return view_runtime
+
     # response dicts ##########################################################
     def render_response_dict(self, raw_response_dict, view_name):
         response_dict = {

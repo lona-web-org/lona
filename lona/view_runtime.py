@@ -1,14 +1,18 @@
 from concurrent.futures import CancelledError
+from datetime import datetime
+import threading
 import logging
 import asyncio
+import time
 
 from yarl import URL
 
-from lona.exceptions import StopReason, UserAbort
+from lona.exceptions import StopReason, ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
 from lona.html.document import Document
 from lona.input_event import InputEvent
 from lona.request import Request
+from lona.types import Symbol
 
 from lona.protocol import (
     encode_http_redirect,
@@ -23,6 +27,19 @@ logger = logging.getLogger('lona.view_runtime')
 
 
 class ViewRuntime:
+    class STATE(Symbol):
+        NOT_STARTED = Symbol('NOT_STARTED', 10)
+
+        RUNNING = Symbol('RUNNING', 21)
+        WAITING_FOR_IOLOOP = Symbol('WAITING_FOR_IOLOOP', 22)
+        SLEEPING = Symbol('SLEEPING', 23)
+        WAITING_FOR_INPUT = Symbol('WAITING_FOR_INPUT', 24)
+
+        FINISHED = Symbol('FINISHED', 31)
+        CRASHED = Symbol('CRASHED', 32)
+        STOPPED_BY_USER = Symbol('STOPPED_BY_USER', 33)
+        STOPPED_BY_SERVER = Symbol('STOPPED_BY_SERVER', 34)
+
     def __init__(self, server, url, route, match_info, post_data={},
                  frontend=False, start_connection=None):
 
@@ -66,6 +83,12 @@ class ViewRuntime:
         self.stop_reason = None
         self.is_daemon = False
 
+        self.state = self.STATE.NOT_STARTED
+        self.thread_ident = None
+        self.view_runtime_id = None
+        self.started_at = None
+        self.stopped_at = None
+
         self.pending_input_events = {
             'event': None,
             'click': None,
@@ -84,6 +107,30 @@ class ViewRuntime:
         if not self.frontend:
             self.view_kwargs = dict(self.match_info or {})
 
+    # state ###################################################################
+    @property
+    def state(self):
+        if self.is_stopped:
+            if self.stop_reason is not None:
+                if isinstance(self.stop_reason, UserAbort):
+                    return self.STATE.STOPPED_BY_USER
+
+                elif isinstance(self.stop_reason, ServerStop):
+                    return self.STATE.STOPPED_BY_SERVER
+
+                else:
+                    return self.STATE.CRASHED
+
+            else:
+                return self.STATE.FINISHED
+
+        return self._state
+
+    @state.setter
+    def state(self, new_state):
+        self._state = new_state
+
+    # middlewares #############################################################
     def run_middlewares(self):
         try:
             handled, raw_response_dict, middleware = \
@@ -115,8 +162,16 @@ class ViewRuntime:
                 )
             )
 
+    # start and stop ##########################################################
     def start(self):
         try:
+            # update internal state
+            self.thread_ident = threading.current_thread().ident
+            self.view_runtime_id = time.monotonic_ns()
+            self.state = self.STATE.RUNNING
+            self.started_at = datetime.now()
+
+            # start view
             self.send_view_start()
 
             if self.view_spec.is_class_based:
@@ -153,6 +208,8 @@ class ViewRuntime:
             pass
 
         except Exception as exception:
+            self.stop_reason = exception
+
             logger.error(
                 'Exception raised while running %s',
                 self.view,
@@ -172,6 +229,7 @@ class ViewRuntime:
 
         finally:
             self.is_stopped = True
+            self.stopped_at = datetime.now()
             self.send_view_stop()
 
     def stop(self, reason=UserAbort, clean_up=True):
