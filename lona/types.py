@@ -73,8 +73,8 @@ class Symbol:
 
 
 class Mapping:
-    def __init__(self):
-        self.entries = []
+    def __init__(self, entries=None):
+        self.entries = entries or []
 
     def get_entry(self, key):
         for entry in self.entries:
@@ -96,6 +96,9 @@ class Mapping:
                 return entry[1]
 
         raise KeyError(key)
+
+    def copy(self):
+        return Mapping(self.entries.copy())
 
     def __getitem__(self, key):
         entry = self.get_entry(key)
