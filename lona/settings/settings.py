@@ -50,7 +50,7 @@ class Settings:
             self._values[key] = deepcopy(value)
 
     def get(self, *args):
-        return getattr(self._values, *args)
+        return self._values.get(*args)
 
     def update(self, settings):
         self._values.update(settings)
