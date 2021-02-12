@@ -26,15 +26,6 @@ server: env
 	. $(PYTHON_VENV)/bin/activate && \
 	lona -s settings.py $(args)
 
-debug-server: env
-	. $(PYTHON_VENV)/bin/activate && \
-	lona \
-		--project-root=./ \
-		-s settings.py \
-		   debug_settings.py \
-		--log-level=debug \
-		$(args)
-
 # Django environment ##########################################################
 $(DJANGO_PYTHON_VENV)/.created: REQUIREMENTS.Django.txt
 	rm -rf $(DJANGO_PYTHON_VENV) && \
@@ -67,14 +58,4 @@ django-server: django-env django-db
 		--project-root=./ \
 		-s settings.py \
 		   django-project/django_settings.py \
-		$(args)
-
-django-debug-server: django-env django-db
-	. $(DJANGO_PYTHON_VENV)/bin/activate && \
-	DJANGO=1 lona \
-		--project-root=./ \
-		-s settings.py \
-		   django-project/django_settings.py \
-		   debug_settings.py \
-		--log-level=debug \
 		$(args)

@@ -1,8 +1,6 @@
 import os
 
 MONITOR_CLASS = 'lona.monitor.LonaMonitor'
-DEBUG = False
-
 MAX_WORKERS = 10
 
 # routing
@@ -10,7 +8,7 @@ ROUTING_TABLE = 'lona.settings.default_routes.routes'
 
 # templating
 CORE_TEMPLATE_DIRS = [
-    os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
+    os.path.join(os.path.dirname(__file__), 'templates'),
 ]
 
 TEMPLATE_DIRS = []
@@ -23,7 +21,7 @@ TEMPLATE_EXTRA_CONTEXT = {}
 
 # static files
 CORE_STATIC_DIRS = [
-    os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static'),
+    os.path.join(os.path.dirname(__file__), 'static'),
 ]
 
 STATIC_DIRS = []

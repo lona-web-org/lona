@@ -11,22 +11,17 @@ from lona.middleware_controller import MiddlewareController
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
-from lona.settings.settings import Settings
 from lona.server_state import ServerState
 from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
+from lona.settings import Settings
 from lona.routing import Router
 from lona.types import Mapping
 
-DEFAULT_SETTINGS_PRE = os.path.join(
+DEFAULT_SETTINGS = os.path.join(
     os.path.dirname(__file__),
-    'settings/default_settings_pre.py',
-)
-
-DEFAULT_SETTINGS_POST = os.path.join(
-    os.path.dirname(__file__),
-    'settings/default_settings_post.py',
+    'default_settings.py',
 )
 
 server_logger = logging.getLogger('lona.server')
@@ -52,9 +47,8 @@ class LonaServer:
         server_logger.debug('setup settings')
 
         self.settings_paths = [
-            DEFAULT_SETTINGS_PRE,
+            DEFAULT_SETTINGS,
             *settings_paths,
-            DEFAULT_SETTINGS_POST,
         ]
 
         self.settings = Settings()
@@ -96,12 +90,7 @@ class LonaServer:
         server_logger.debug("loading routing table from '%s'",
                             self.settings.ROUTING_TABLE)
 
-        routes = []
-
-        if self.settings.DEBUG:
-            routes.extend(self.acquire('lona.debugger.routes.routes')[1])
-
-        routes.extend(self.acquire(self.settings.ROUTING_TABLE)[1])
+        routes = self.acquire(self.settings.ROUTING_TABLE)[1]
 
         if routes:
             self.router.add_routes(*routes)
