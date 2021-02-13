@@ -4,6 +4,18 @@ PYTHON_VENV=env
 DJANGO_PYTHON=python3
 DJANGO_PYTHON_VENV=django-env
 
+MONITOR_HOST=localhost
+MONITOR_PORT=50101
+MONITOR_CONSOLE_PORT=50102
+
+LONA_DEFAULT_ARGS=--monitor \
+                  --monitor-host=$(MONITOR_HOST) \
+                  --monitor-port=$(MONITOR_PORT) \
+                  --monitor-console-port=$(MONITOR_CONSOLE_PORT)
+
+monitor:
+	rlwrap nc localhost $(MONITOR_PORT)
+
 # non Django environment ######################################################
 $(PYTHON_VENV)/.created: REQUIREMENTS.txt
 	rm -rf $(PYTHON_VENV) && \
@@ -24,7 +36,7 @@ shell: env
 
 server: env
 	. $(PYTHON_VENV)/bin/activate && \
-	lona -s settings.py $(args)
+	lona $(LONA_DEFAULT_ARGS) -s settings.py $(args)
 
 # Django environment ##########################################################
 $(DJANGO_PYTHON_VENV)/.created: REQUIREMENTS.Django.txt
@@ -55,6 +67,7 @@ django-shell: django-env django-db
 django-server: django-env django-db
 	. $(DJANGO_PYTHON_VENV)/bin/activate && \
 	DJANGO=1 lona \
+		$(LONA_DEFAULT_ARGS) \
 		--project-root=./ \
 		-s settings.py \
 		   django-project/django_settings.py \
