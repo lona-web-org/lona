@@ -57,6 +57,7 @@ class Route:
             # path is no pattern but simple string
             if not groups:
                 self.path = self.raw_pattern
+                self.format_string = self.raw_pattern
 
                 if self.optional_trailing_slash:
                     self.path = self.path[:-3]
