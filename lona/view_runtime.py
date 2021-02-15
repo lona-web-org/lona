@@ -241,7 +241,7 @@ class ViewRuntime:
         # let all calls on request.view.await_sync() crash with
         # the set stop reason
         def _set_stopped():
-            if not self.stopped.done() and not self.stopped.cancelled():
+            if not self.stopped.done():
                 self.stopped.set_result(True)
 
         self.server.loop.call_soon_threadsafe(_set_stopped)
@@ -253,7 +253,7 @@ class ViewRuntime:
 
             name, (future, nodes) = pending_input_event
 
-            if not future.done() and not future.cancelled():
+            if not future.done():
                 future.set_exception(self.stop_reason)
 
         # clean up
