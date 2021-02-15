@@ -176,9 +176,7 @@ class View:
 
             if self.request._view_runtime.stopped in finished:
                 for pending_future in pending:
-                    if(not pending_future.done() and
-                       not pending_future.cancelled()):
-
+                    if not pending_future.done():
                         pending_future.cancel()
 
                 raise self.request._view_runtime.stop_reason
