@@ -1,11 +1,9 @@
-from types import ModuleType
 import importlib
 import inspect
 import runpy
 
 
 def acquire(import_string, ignore_import_cache=False):
-    path = ''
     attribute = None
 
     # scripts
@@ -17,7 +15,6 @@ def acquire(import_string, ignore_import_cache=False):
             raise ImportError("script '{}' has no attribute '{}'".format(
                 script, attribute_name))
 
-        path = script
         attribute = attributes[attribute_name]
 
     # modules
@@ -37,13 +34,7 @@ def acquire(import_string, ignore_import_cache=False):
 
         attribute = getattr(module, attribute_name)
 
-        if isinstance(attribute, ModuleType):
-            path = inspect.getfile(attribute)
-
-        else:
-            path = inspect.getfile(module)
-
     else:
         raise TypeError('invalid import string')
 
-    return path, attribute
+    return attribute

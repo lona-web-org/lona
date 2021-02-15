@@ -25,7 +25,7 @@ class Namespace:
         return self.server.static_file_loader.script_tags_html
 
     def _import(self, *args, **kwargs):
-        return self.server.acquire(*args, **kwargs)[1]
+        return self.server.acquire(*args, **kwargs)
 
     def resolve_url(self, *args, **kwargs):
         return self.server.router.reverse(*args, **kwargs)

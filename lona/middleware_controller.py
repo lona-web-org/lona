@@ -47,7 +47,7 @@ class MiddlewareController:
 
             try:
                 if isinstance(i, str):
-                    path, middleware_class = self.server.acquire(i)
+                    middleware_class = self.server.acquire(i)
 
                 else:
                     middleware_class = i

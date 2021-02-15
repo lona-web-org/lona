@@ -104,7 +104,7 @@ class DjangoSessionMiddleware:
             logger.debug("loading DJANGO_AUTH_DENY_ACCESS_CALLBACK from '%s'",
                          deny_access_callback)
 
-            deny_access_callback = server.acquire(deny_access_callback)[1]
+            deny_access_callback = server.acquire(deny_access_callback)
 
             settings.DJANGO_AUTH_DENY_ACCESS_CALLBACK = deny_access_callback
 

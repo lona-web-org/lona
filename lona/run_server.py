@@ -187,7 +187,7 @@ def run_server(args):
             },
         }
 
-        monitor_class = server.acquire(server.settings.MONITOR_CLASS)[1]
+        monitor_class = server.acquire(server.settings.MONITOR_CLASS)
 
         with monitor_class(**monitor_args):
             _run_app()

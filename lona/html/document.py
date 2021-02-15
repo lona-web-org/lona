@@ -22,9 +22,9 @@ def _setup_node_classes():
     if _node_classes_setup:
         return
 
-    AbstractNode = acquire('lona.html.abstract_node.AbstractNode')[1]
-    Widget = acquire('lona.html.widget.Widget')[1]
-    Node = acquire('lona.html.node.Node')[1]
+    AbstractNode = acquire('lona.html.abstract_node.AbstractNode')
+    Widget = acquire('lona.html.widget.Widget')
+    Node = acquire('lona.html.node.Node')
 
     _node_classes_setup = True
 

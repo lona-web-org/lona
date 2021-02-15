@@ -85,7 +85,7 @@ class ViewLoader:
 
         if isinstance(view, str):
             try:
-                view = self.server.acquire(view)[1]
+                view = self.server.acquire(view)
 
             except Exception as exception:
                 logger.error(

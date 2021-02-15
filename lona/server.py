@@ -90,7 +90,7 @@ class LonaServer:
         server_logger.debug("loading routing table from '%s'",
                             self.settings.ROUTING_TABLE)
 
-        routes = self.acquire(self.settings.ROUTING_TABLE)[1]
+        routes = self.acquire(self.settings.ROUTING_TABLE)
 
         if routes:
             self.router.add_routes(*routes)
@@ -145,7 +145,7 @@ class LonaServer:
         for hook in self.settings.STARTUP_HOOKS:
             if isinstance(hook, str):
                 try:
-                    hook = self.acquire(hook)[1]
+                    hook = self.acquire(hook)
 
                 except Exception:
                     server_logger.error(
@@ -164,7 +164,7 @@ class LonaServer:
         for hook in self.settings.SHUTDOWN_HOOKS:
             if isinstance(hook, str):
                 try:
-                    hook = self.acquire(hook)[1]
+                    hook = self.acquire(hook)
 
                 except Exception:
                     server_logger.error(
