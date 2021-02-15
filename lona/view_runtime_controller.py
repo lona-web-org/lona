@@ -226,17 +226,21 @@ class ViewRuntimeController:
 
         return count
 
-    def handle_lona_message(self, connection, window_id, method, url, payload):
+    def handle_lona_message(self, connection, window_id, view_runtime_id,
+                            method, payload):
+
         """
         this method gets called by the
         lona.middlewares.LonaMessageMiddleware.process_websocket_message
 
         """
 
-        url_object = URL(url)
-
         # views
         if method == METHOD.VIEW:
+            url, post_data = payload
+
+            url_object = URL(url)
+
             # disconnect client window from previous view
             self.remove_connection(connection, window_id)
 
@@ -246,7 +250,12 @@ class ViewRuntimeController:
 
             # route is not interactive; issue a http redirect
             if match and (route.http_pass_through or not route.interactive):
-                message = encode_http_redirect(window_id, url, url)
+                message = encode_http_redirect(
+                    window_id=window_id,
+                    view_runtime_id=None,
+                    target_url=url,
+                )
+
                 connection.send_str(message)
 
                 return
@@ -256,7 +265,7 @@ class ViewRuntimeController:
                 url=url,
                 route=route,
                 match_info=match_info,
-                post_data=payload or {},
+                post_data=post_data or {},
                 start_connection=connection,
             )
 
@@ -289,7 +298,7 @@ class ViewRuntimeController:
 
             if running_view_runtime:
                 if not running_view_runtime.is_stopped:
-                    running_view_runtime.add_connection(
+                    running_view_runtime.reconnect_connection(
                         connection=connection,
                         window_id=window_id,
                         url=url,
@@ -302,7 +311,7 @@ class ViewRuntimeController:
 
             # connect to a multi user view
             elif(route in self.running_multi_user_views):
-                self.running_multi_user_views[route].add_connection(
+                self.running_multi_user_views[route].reconnect_connection(
                     connection=connection,
                     window_id=window_id,
                     url=url,
@@ -326,7 +335,7 @@ class ViewRuntimeController:
                 return
 
             for view_runtime in self.running_single_user_views[user]:
-                if view_runtime.url == url_object:
+                if view_runtime.view_runtime_id == view_runtime_id:
                     view_runtime.handle_input_event(connection, payload)
 
                     break

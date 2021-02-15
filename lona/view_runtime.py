@@ -83,9 +83,9 @@ class ViewRuntime:
         self.stop_reason = None
         self.is_daemon = False
 
+        self.view_runtime_id = time.monotonic_ns()
         self.state = self.STATE.NOT_STARTED
         self.thread_ident = None
-        self.view_runtime_id = None
         self.started_at = None
         self.stopped_at = None
 
@@ -143,7 +143,15 @@ class ViewRuntime:
                 if not raw_response_dict:
                     raw_response_dict = ''
 
-                return self.handle_raw_response_dict(raw_response_dict)
+                self.send_view_start()
+
+                response_dict = self.handle_raw_response_dict(
+                    raw_response_dict,
+                )
+
+                self.send_view_stop()
+
+                return response_dict
 
         except Exception as exception:
             logger.error(
@@ -167,7 +175,6 @@ class ViewRuntime:
         try:
             # update internal state
             self.thread_ident = threading.current_thread().ident
-            self.view_runtime_id = time.monotonic_ns()
             self.state = self.STATE.RUNNING
             self.started_at = datetime.now()
 
@@ -296,8 +303,29 @@ class ViewRuntime:
         self.connections[connection] = (window_id, url, )
 
         with self.document.lock:
+            data_type, data = self.document.serialize()
+
+            if not data:
+                return
+
             self.send_data(
-                data=self.document.serialize(),
+                data=[data_type, data],
+                connections={connection: (window_id, url, )},
+            )
+
+    def reconnect_connection(self, connection, window_id, url):
+        self.connections[connection] = (window_id, url, )
+
+        with self.document.lock:
+            self.send_view_start()
+
+            data_type, data = self.document.serialize()
+
+            if not data:
+                return
+
+            self.send_data(
+                data=[data_type, data],
                 connections={connection: (window_id, url, )},
             )
 
@@ -323,7 +351,11 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in connections.items():
-            message = encode_redirect(window_id, str(url), target_url)
+            message = encode_redirect(
+                window_id=window_id,
+                view_runtime_id=self.view_runtime_id,
+                target_url=target_url,
+            )
 
             connection.send_str(message)
 
@@ -331,7 +363,11 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in connections.items():
-            message = encode_http_redirect(window_id, str(url), target_url)
+            message = encode_http_redirect(
+                window_id=window_id,
+                view_runtime_id=self.view_runtime_id,
+                target_url=target_url,
+            )
 
             connection.send_str(message)
 
@@ -342,7 +378,7 @@ class ViewRuntime:
         for connection, (window_id, url) in list(connections.items()):
             message = encode_data(
                 window_id=window_id,
-                url=url,
+                view_runtime_id=self.view_runtime_id,
                 title=title,
                 data=data,
             )
@@ -353,7 +389,10 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in list(connections.items()):
-            message = encode_view_start(window_id=window_id, url=url)
+            message = encode_view_start(
+                window_id=window_id,
+                view_runtime_id=self.view_runtime_id,
+            )
 
             connection.send_str(message)
 
@@ -361,7 +400,10 @@ class ViewRuntime:
         connections = connections or self.connections
 
         for connection, (window_id, url) in list(connections.items()):
-            message = encode_view_stop(window_id=window_id, url=url)
+            message = encode_view_stop(
+                window_id=window_id,
+                view_runtime_id=self.view_runtime_id,
+            )
 
             connection.send_str(message)
 
@@ -403,7 +445,7 @@ class ViewRuntime:
 
         return self.server.run_coroutine_sync(_await_input_event())
 
-    def handle_input_event(self, connection, event_payload):
+    def handle_input_event(self, connection, payload):
         request = Request(
             view_runtime=self,
             connection=connection,
@@ -411,7 +453,7 @@ class ViewRuntime:
 
         input_event = InputEvent(
             request=request,
-            event_payload=event_payload,
+            payload=payload,
             document=self.document,
         )
 

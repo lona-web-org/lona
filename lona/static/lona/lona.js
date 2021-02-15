@@ -106,7 +106,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
     // window state -----------------------------------------------------------
     this._view_stopped = undefined;
-    this._url = undefined;
+    this._view_runtime_id = undefined;
     this._text_nodes = {};
     this._widget_marker = {};
     this._widget_data = {};
@@ -1151,7 +1151,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                         undefined,
                         node,
                         Lona.symbols.INPUT_EVENT_TYPE.SUBMIT,
-                        data,
+                        form_data,
                     );
 
                 } else {
@@ -1187,43 +1187,57 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
     // public api -------------------------------------------------------------
     this.handle_websocket_message = function(message) {
+        var window_id = message[0];
+        var view_runtime_id = message[1];
+        var method = message[2];
+        var payload = message[3];
+
+        // view start
+        if(method == Lona.symbols.METHOD.VIEW_START) {
+            this._view_runtime_id = view_runtime_id;
+            this._view_stopped = false;
+
+            return;
+
         // redirect
-        if(message[1] == Lona.symbols.METHOD.REDIRECT) {
+        } else if(method == Lona.symbols.METHOD.REDIRECT) {
             // TODO: implement loop detection
 
             if(this.lona_context.settings.follow_redirects) {
-                this.run_view(message[3]);
+                this.run_view(payload);
 
             } else {
                 console.debug(
-                    "lona: redirect to '" + message[3] + "' skipped");
+                    "lona: redirect to '" + payload + "' skipped");
 
             };
 
         // http redirect
-        } else if(message[1] == Lona.symbols.METHOD.HTTP_REDIRECT) {
+        } else if(method == Lona.symbols.METHOD.HTTP_REDIRECT) {
             if(this.lona_context.settings.follow_http_redirects) {
-                window.location = message[3];
+                window.location = payload;
 
             } else {
                 console.debug(
-                    "lona: http redirect to '" + message[3] + "' skipped");
+                    "lona: http redirect to '" + payload + "' skipped");
 
             };
+        };
+
+        if(this._view_runtime_id == undefined ||
+           view_runtime_id != this._view_runtime_id) {
+
+            // the runtime is not fully setup yet or the incoming message 
+            // seems to be related to a previous runtime connected to this
+            // window
+
+            return;
+        };
 
         // data
-        } else if(message[1] == Lona.symbols.METHOD.DATA) {
-            var url = message[2];
-
-            if(url != this._url) {
-                // this HTML message seems to be related to a previous view
-
-                return;
-            };
-
-            var title = message[3];
-            var html = message[4];
-            var widget_data = message[5];
+        if(method == Lona.symbols.METHOD.DATA) {
+            var title = payload[0];
+            var html = payload[1];
 
             if(this.lona_context.settings.update_title && title) {
                 document.title = title;
@@ -1233,7 +1247,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 this._show_html(html);
             };
 
-        } else if(message[1] == Lona.symbols.METHOD.VIEW_STOP) {
+        // view stop
+        } else if(method == Lona.symbols.METHOD.VIEW_STOP) {
             this._view_stopped = true;
 
         };
@@ -1243,14 +1258,13 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // Save the requested url to only show HTML messages that are related
         // to this request.
         // This prevents glitches when switching urls fast.
-        this._url = url;
-        this._view_stopped = false;
+        this._view_runtime_id = undefined;
 
         var message = [
             this._window_id,
+            this._view_runtime_id,
             Lona.symbols.METHOD.VIEW,
-            url,
-            post_data,
+            [url, post_data],
         ];
 
         if(this.lona_context.settings.update_address_bar) {
@@ -1271,10 +1285,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             data = [];
         };
 
-        if(Array.isArray(data)) {
-            data = [data];
-        };
-
         // node info
         var lona_node_id = undefined;
         var node_tag_name = undefined;
@@ -1293,7 +1303,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             node_class = node.classList.value || '';
         };
 
-        var node_info = [
+        // send event message
+        var payload = [
+            event_type,
+            data,
             widget_id,
             lona_node_id,
             node_tag_name,
@@ -1301,17 +1314,12 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             node_class,
         ];
 
-        // send event message
         var message = [
             this._window_id,
+            this._view_runtime_id,
             Lona.symbols.METHOD.INPUT_EVENT,
-            this._url,
-            event_type,
-        ].concat(
-            data,
-        ).concat(
-            node_info,
-        );
+            payload,
+        ]
 
         message = Lona.symbols.PROTOCOL.MESSAGE_PREFIX + JSON.stringify(message);
 

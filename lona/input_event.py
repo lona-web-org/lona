@@ -2,9 +2,9 @@ from lona.protocol import INPUT_EVENT_TYPE
 
 
 class InputEvent:
-    def __init__(self, request, event_payload, document):
+    def __init__(self, request, payload, document):
         self.request = request
-        self.event_payload = event_payload
+        self.payload = payload
         self.document = document
 
         self.data = {}
@@ -15,29 +15,29 @@ class InputEvent:
         self.class_list = []
 
         # parse input event type
-        if isinstance(event_payload[0], str):
+        if isinstance(payload[0], str):
             self.type = INPUT_EVENT_TYPE.CUSTOM
-            self.name = event_payload[0]
-            self.data = event_payload[1]
-            self.node_info = event_payload[2:]
+            self.name = payload[0]
+            self.data = payload[1]
+            self.node_info = payload[2:]
 
-        elif event_payload[0] == INPUT_EVENT_TYPE.CLICK:
+        elif payload[0] == INPUT_EVENT_TYPE.CLICK:
             self.type = INPUT_EVENT_TYPE.CLICK
             self.name = 'click'
-            self.data = event_payload[1]
-            self.node_info = event_payload[2:]
+            self.data = payload[1]
+            self.node_info = payload[2:]
 
-        elif event_payload[0] == INPUT_EVENT_TYPE.CHANGE:
+        elif payload[0] == INPUT_EVENT_TYPE.CHANGE:
             self.type = INPUT_EVENT_TYPE.CHANGE
             self.name = 'change'
-            self.data = event_payload[1]
-            self.node_info = event_payload[2:]
+            self.data = payload[1]
+            self.node_info = payload[2:]
 
-        elif event_payload[0] == INPUT_EVENT_TYPE.SUBMIT:
+        elif payload[0] == INPUT_EVENT_TYPE.SUBMIT:
             self.type = INPUT_EVENT_TYPE.SUBMIT
             self.name = 'submit'
-            self.data = event_payload[1]
-            self.node_info = event_payload[2:]
+            self.data = payload[1]
+            self.node_info = payload[2:]
 
         # find node
         # node info contains a lona node id

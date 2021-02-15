@@ -3,6 +3,8 @@ import json
 from lona.types import Symbol
 from lona.json import dumps
 
+NoneType = type(None)
+
 
 class PROTOCOL(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
@@ -68,68 +70,85 @@ class OPERATION(Symbol):
 
 def decode_message(raw_message):
     """
-    returns: (exit_code, window_id, method, url, payload)
+    returns: (exit_code, window_id, view_runtime_id, method, payload)
 
     """
 
-    if not raw_message.startswith(PROTOCOL.MESSAGE_PREFIX.value):
+    def _invalid_message():
         return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+
+    if not raw_message.startswith(PROTOCOL.MESSAGE_PREFIX.value):
+        return _invalid_message()
 
     message = raw_message[len(PROTOCOL.MESSAGE_PREFIX.value):]
-    message = json.loads(message)
+
+    try:
+        message = json.loads(message)
+
+    except json.JSONDecodeError:
+        return _invalid_message()
 
     if not isinstance(message, list):
-        return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+        return _invalid_message()
 
+    if len(message) != 4:
+        return _invalid_message()
+
+    # window_id
     if not isinstance(message[0], int):
-        return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+        return _invalid_message()
+
+    # view_runtime_id
+    if not isinstance(message[1], (int, NoneType)):
+        return _invalid_message()
+
+    window_id, view_runtime_id, method, payload = message
 
     # view
-    if message[1] == METHOD.VIEW:
-        if not isinstance(message[2], str):
-            return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+    if method == METHOD.VIEW:
+        if not isinstance(payload[0], str):
+            return _invalid_message()
 
-        payload = None
+        if not isinstance(payload[1], (dict, NoneType)):
+            return _invalid_message()
 
-        if len(message) > 3:
-            payload = message[3]
-
-        return EXIT_CODE.SUCCESS, message[0], METHOD.VIEW, message[2], payload
+        return (EXIT_CODE.SUCCESS, *message)
 
     # input event
-    if message[1] == METHOD.INPUT_EVENT:
-        if not isinstance(message[2], str):
-            return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+    if method == METHOD.INPUT_EVENT:
+        if not (isinstance(payload[0], str) or 304 > payload[0] > 300):
+            return _invalid_message()
 
-        if not (isinstance(message[3], str) or 304 > message[3] > 300):
-            return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+        return (EXIT_CODE.SUCCESS, *message)
 
-        return (EXIT_CODE.SUCCESS, message[0], METHOD.INPUT_EVENT,
-                message[2], message[3:])
-
-    return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
+    return (EXIT_CODE.INVALID_METHOD, *message)
 
 
-def encode_redirect(window_id, url, target_url):
+def encode_redirect(window_id, view_runtime_id, target_url):
     return PROTOCOL.MESSAGE_PREFIX.value + dumps(
-        [window_id, METHOD.REDIRECT, url, target_url])
+        [window_id, view_runtime_id, METHOD.REDIRECT, target_url],
+    )
 
 
-def encode_http_redirect(window_id, url, target_url):
+def encode_http_redirect(window_id, view_runtime_id, target_url):
     return PROTOCOL.MESSAGE_PREFIX.value + dumps(
-        [window_id, METHOD.HTTP_REDIRECT, url, target_url])
+        [window_id, view_runtime_id, METHOD.HTTP_REDIRECT, target_url],
+    )
 
 
-def encode_data(window_id, url, title, data):
+def encode_data(window_id, view_runtime_id, title, data):
     return PROTOCOL.MESSAGE_PREFIX.value + dumps(
-        [window_id, METHOD.DATA, url, title, data])
+        [window_id, view_runtime_id, METHOD.DATA, [title, data]],
+    )
 
 
-def encode_view_start(window_id, url):
+def encode_view_start(window_id, view_runtime_id):
     return PROTOCOL.MESSAGE_PREFIX.value + dumps(
-        [window_id, METHOD.VIEW_START, url])
+        [window_id, view_runtime_id, METHOD.VIEW_START, None],
+    )
 
 
-def encode_view_stop(window_id, url):
+def encode_view_stop(window_id, view_runtime_id):
     return PROTOCOL.MESSAGE_PREFIX.value + dumps(
-        [window_id, METHOD.VIEW_STOP, url])
+        [window_id, view_runtime_id, METHOD.VIEW_STOP, view_runtime_id, None],
+    )
