@@ -1,3 +1,4 @@
+from copy import deepcopy
 from random import randint
 
 from lona.html import HTML, Button, Div, H1
@@ -25,17 +26,21 @@ def handle_request(request):
 
     chart = Chart(
         type='line',
-        data=chart_data.copy(),
+        data=deepcopy(chart_data),
     )
 
     chart2 = Chart(
         type='line',
-        data=chart_data.copy(),
+        data=deepcopy(chart_data),
     )
 
     html = HTML(
         H1('Chart.js'),
-        Button('Update'),
+
+        Button('Update', id='update'),
+        Button('Daemonize', id='daemonize'),
+        Button('Stop', id='stop'),
+
         Div(
             chart,
             style={
@@ -51,10 +56,17 @@ def handle_request(request):
     )
 
     while True:
-        request.client.await_input_event(html=html)
+        input_event = request.client.await_input_event(html=html)
 
-        chart.data['data']['datasets'][0]['data'].append(randint(0, 100))
-        chart.data['data']['datasets'][0]['data'].pop(0)
+        if input_event.node_has_id('stop'):
+            return
 
-        chart2.data['data']['datasets'][0]['data'].append(randint(0, 100))
-        chart2.data['data']['datasets'][0]['data'].pop(0)
+        elif input_event.node_has_id('daemonize'):
+            request.view.daemonize()
+
+        elif input_event.node_has_id('update'):
+            chart.data['data']['datasets'][0]['data'].append(randint(0, 100))
+            chart.data['data']['datasets'][0]['data'].pop(0)
+
+            chart2.data['data']['datasets'][0]['data'].append(randint(0, 100))
+            chart2.data['data']['datasets'][0]['data'].pop(0)
