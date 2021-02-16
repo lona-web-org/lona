@@ -1,12 +1,6 @@
-from lona.html.forms import (
-    Form as BaseForm,
-    CheckboxField,
-    Submit,
-    Reset,
-)
-
-from lona.html.nodes import (
-    Button as ButtonNode,
+from lona.html import (
+    TextInput as BaseTextInput,
+    Button as BaseButton,
     Widget,
     Div,
     H5,
@@ -146,35 +140,20 @@ class ColMd12(Div):
     CLASS_LIST = ['col-md-12']
 
 
-# forms #######################################################################
-class Form(BaseForm):
-    STATIC_FILES = STATIC_FILES
+# inputs ######################################################################
+class TextInput(BaseTextInput):
+    CLASS_LIST = ['form-control']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        for field_name, field in self.fields.items():
-            if isinstance(field, CheckboxField):
-                continue
-
-            field.input.class_list.append('form-control')
-
-        for node in self.extra_nodes:
-            if isinstance(node, (Submit, Reset)):  # FIXME
-                node.input.style['margin-right'] = '0.5em'
-                node.input.style['margin-top'] = '0.5em'
-
-            if isinstance(node, Submit):
-                node.input.class_list.append('btn')
-                node.input.class_list.append('btn-primary')
-
-            elif isinstance(node, Reset):
-                node.input.class_list.append('btn')
-                node.input.class_list.append('btn-secondary')
+class InlineTextInput(TextInput):
+    STYLE = {
+        'width': 'auto',
+        'display': 'inline',
+    }
 
 
 # buttons #####################################################################
-class _Button(ButtonNode):
+class _Button(BaseButton):
     STATIC_FILES = STATIC_FILES
 
     ATTRIBUTES = {
