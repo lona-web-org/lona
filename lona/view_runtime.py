@@ -410,11 +410,10 @@ class ViewRuntime:
     def handle_raw_response_dict(self, raw_response_dict, connections={}):
         connections = connections or self.connections
 
-        response_dict = \
-            self.server.view_runtime_controller.render_response_dict(
-                raw_response_dict,
-                view_name=self.name,
-            )
+        response_dict = self.server.response_parser.render_response_dict(
+            raw_response_dict=raw_response_dict,
+            view_name=self.name,
+        )
 
         if response_dict['redirect']:
             self.send_redirect(

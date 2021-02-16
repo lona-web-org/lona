@@ -8,6 +8,7 @@ from aiohttp import WSMsgType
 
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
+from lona.response_parser import ResponseParser
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
@@ -125,6 +126,11 @@ class LonaServer:
         server_logger.debug('setup view loader')
 
         self.view_loader = ViewLoader(self)
+
+        # setup response parser
+        server_logger.debug('setup response parser')
+
+        self.response_parser = ResponseParser(self)
 
         # setup views
         server_logger.debug('setup view runtime controller')
