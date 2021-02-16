@@ -4,7 +4,7 @@ MONITOR_CLASS = 'lona.monitor.LonaMonitor'
 MAX_WORKERS = 10
 
 # routing
-ROUTING_TABLE = 'lona.settings.default_routes.routes'
+ROUTING_TABLE = 'lona.default_routes.routes'
 
 # templating
 CORE_TEMPLATE_DIRS = [
