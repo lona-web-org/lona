@@ -6,7 +6,7 @@ logger = logging.getLogger('lona.view_loader')
 
 
 class ViewSpec:
-    def __init__(self, view, check_class_based=True, route=None):
+    def __init__(self, view, route=None):
         self.view = view
         self.route = route
 
@@ -15,7 +15,7 @@ class ViewSpec:
         self.has_input_event_root_handler = False
         self.has_input_event_handler = False
 
-        if check_class_based and inspect.isclass(self.view):
+        if inspect.isclass(self.view):
             self.is_class_based = True
 
             self.has_input_event_root_handler = hasattr(
