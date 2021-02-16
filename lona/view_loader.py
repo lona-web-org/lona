@@ -6,8 +6,9 @@ logger = logging.getLogger('lona.view_loader')
 
 
 class ViewSpec:
-    def __init__(self, view, check_class_based=True):
+    def __init__(self, view, check_class_based=True, route=None):
         self.view = view
+        self.route = route
 
         self.multi_user = getattr(self.view, 'multi_user', False)
         self.is_class_based = False
@@ -37,26 +38,30 @@ class ViewSpec:
         else:
             handle_request = self.view
 
-        if asyncio.iscoroutinefunction(handle_request):
-            logger.error('%s is a coroutine function', handle_request)
+        if not self.route or not self.route.http_pass_through:
+            # if a view talks to the aiohttp directly through http pass
+            # through mode, coroutines have to be allowed
 
-        # handle_input_event_root
-        if(self.has_input_event_root_handler and
-           asyncio.iscoroutinefunction(self.view.handle_input_event_root)):
+            if asyncio.iscoroutinefunction(handle_request):
+                logger.error('%s is a coroutine function', handle_request)
 
-            logger.error(
-                '%s is a coroutine function',
-                self.view.handle_input_event_root,
-            )
+            # handle_input_event_root
+            if(self.has_input_event_root_handler and
+               asyncio.iscoroutinefunction(self.view.handle_input_event_root)):
 
-        # handle_input_event
-        if(self.has_input_event_handler and
-           asyncio.iscoroutinefunction(self.view.handle_input_event)):
+                logger.error(
+                    '%s is a coroutine function',
+                    self.view.handle_input_event_root,
+                )
 
-            logger.error(
-                '%s is a coroutine function',
-                self.view.handle_input_event,
-            )
+            # handle_input_event
+            if(self.has_input_event_handler and
+               asyncio.iscoroutinefunction(self.view.handle_input_event)):
+
+                logger.error(
+                    '%s is a coroutine function',
+                    self.view.handle_input_event,
+                )
 
 
 class ViewLoader:
@@ -135,7 +140,7 @@ class ViewLoader:
         for route in self.server.router.routes:
             view = self._acquire(route.view)
             cache_key = self._gen_cache_key(route.view)
-            view_spec = ViewSpec(view)
+            view_spec = ViewSpec(view, route=route)
             self._cache[cache_key] = (view_spec, view)
 
             if route.frontend_view:
