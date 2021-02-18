@@ -510,5 +510,8 @@ class ViewRuntime:
                 if not input_event:
                     send_html_update()
 
+        except(StopReason, CancelledError):
+            pass
+
         except Exception as exception:
             self.issue_500_error(exception)
