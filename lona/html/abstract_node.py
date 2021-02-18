@@ -1,5 +1,5 @@
-from datetime import datetime
 import inspect
+import time
 
 from lona.html.document import Document
 
@@ -16,7 +16,7 @@ class AbstractNode:
 
     @classmethod
     def gen_id(cls):
-        return str(datetime.timestamp(datetime.now())).replace('.', '')
+        return str(time.monotonic_ns())
 
     @property
     def parent(self):
