@@ -111,6 +111,17 @@ class ViewRuntimeController:
 
         return count
 
+    def view_is_already_running(self, request):
+        if request.user in self.running_single_user_views:
+            for view_runtime in self.running_single_user_views[request.user]:
+                if(view_runtime.route == request.route and
+                   view_runtime.match_info == request.match_info and
+                   view_runtime.is_daemon):
+
+                    return True
+
+        return False
+
     # view management #########################################################
     def remove_connection(self, connection, window_id=None):
         for user, view_runtimes in self.running_single_user_views.items():

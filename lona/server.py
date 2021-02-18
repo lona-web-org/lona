@@ -536,6 +536,12 @@ class LonaServer:
             **kwargs,
         )
 
+    def view_is_already_running(self, *args, **kwargs):
+        return self.view_runtime_controller.view_is_already_running(
+            *args,
+            **kwargs,
+        )
+
     def get_connection_count(self, user):
         if user not in self.user:
             return 0
