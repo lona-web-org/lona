@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from argparse import ArgumentParser
 from functools import partial
 import asyncio
@@ -126,21 +127,26 @@ def run_server(args):
 
     server = LonaServer(
         app=app,
-        loop=loop,
         project_root=cli_args.project_root,
         settings_paths=settings_paths,
         settings_pre_overrides=settings_pre_overrides,
         settings_post_overrides=settings_post_overrides,
     )
 
-    app['server'] = server
+    executor = ThreadPoolExecutor(
+        max_workers=server.settings.MAX_WORKERS,
+        thread_name_prefix='LonaWorker',
+    )
 
     async def shutdown(app):
-        print('stopping server')
+        server = app['lona_server']
 
-        await server.stop()
+        await server.loop.run_in_executor(None, server.executor.shutdown)
 
     app.on_shutdown.append(shutdown)
+
+    server.set_loop(loop)
+    server.set_executor(executor)
 
     # run server
     if cli_args.shell:

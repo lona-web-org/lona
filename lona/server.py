@@ -1,10 +1,15 @@
-from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import logging
 import os
 
-from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
 from aiohttp import WSMsgType
+
+from aiohttp.web import (
+    WebSocketResponse,
+    FileResponse,
+    HTTPFound,
+    Response,
+)
 
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
@@ -32,25 +37,36 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 class LonaServer:
     def __init__(self, app, project_root, settings_paths=[],
-                 settings_pre_overrides={}, settings_post_overrides={},
-                 loop=None):
+                 settings_pre_overrides={}, settings_post_overrides={}):
 
         server_logger.debug("starting server in '%s'", project_root)
 
-        self.app = app
         self.project_root = os.path.abspath(project_root)
-        self.loop = loop or self.app.loop
-
         self.websocket_connections = []
         self.user = Mapping()
+        self._loop = None
+        self._executor = None
+
+        # setup aiohttp app
+        self._app = app
+        self._app['lona_server'] = self
+
+        self._app.on_startup.append(self.start)
+        self._app.on_shutdown.append(self.stop)
 
         # setup settings
         server_logger.debug('setup settings')
 
         self.settings_paths = [
             DEFAULT_SETTINGS,
-            *settings_paths,
         ]
+
+        for path in settings_paths:
+            self.settings_paths.append(
+                os.path.normpath(
+                    os.path.join(self.project_root, path),
+                )
+            )
 
         self.settings = Settings()
 
@@ -68,12 +84,6 @@ class LonaServer:
             server_logger.debug('applying settings post overrides')
 
             self.settings.update(settings_post_overrides)
-
-        # setup threads
-        self.executor = ThreadPoolExecutor(
-            max_workers=self.settings.MAX_WORKERS,
-            thread_name_prefix='LonaWorker',
-        )
 
         # setup server state
         server_logger.debug('setup server state')
@@ -116,10 +126,10 @@ class LonaServer:
 
         server_logger.debug('static url set to %s', repr(static_url))
 
-        self.app.router.add_route(
+        self._app.router.add_route(
             '*', static_url, self._handle_static_file_request)
 
-        self.app.router.add_route(
+        self._app.router.add_route(
             '*', '/{path_info:.*}', self._handle_http_request)
 
         # setup view loader
@@ -136,7 +146,6 @@ class LonaServer:
         server_logger.debug('setup view runtime controller')
 
         self.view_runtime_controller = ViewRuntimeController(self)
-        self.view_runtime_controller.start()
 
         # setup static files
         # the static file loader has to be started last because it does
@@ -162,7 +171,7 @@ class LonaServer:
 
                     continue
 
-            self.app.on_startup.append(hook)
+            self._app.on_startup.append(hook)
 
         # setup shutdown hooks
         server_logger.debug('setup shutdown hooks')
@@ -181,20 +190,51 @@ class LonaServer:
 
                     continue
 
-            self.app.on_shutdown.append(hook)
+            self._app.on_shutdown.append(hook)
 
         # finish
         server_logger.debug('setup finish')
 
+    def set_loop(self, loop):
+        self._loop = loop
+
+    def set_executor(self, executor):
+        self._executor = executor
+
+    @property
+    def loop(self):
+        return self._loop
+
+    @property
+    def executor(self):
+        return self._executor
+
+    async def start(self, *args, **kwargs):
+        server_logger.debug('start')
+
+        if not self._loop:
+            raise RuntimeError('loop is not set')
+
+        if not self._executor:
+            raise RuntimeError('executor is not set')
+
+        self.view_runtime_controller.start()
+
     async def stop(self, *args, **kwargs):
-        server_logger.debug('shutting down')
+        server_logger.debug('stop')
 
         await self.run_function_async(self.view_runtime_controller.stop)
-        await self.loop.run_in_executor(None, self.executor.shutdown)
+
+        for connection in self.websocket_connections.copy():
+            try:
+                await connection.websocket.close()
+
+            except Exception:
+                pass
 
     # asyncio helper ##########################################################
     def run_coroutine_sync(self, coroutine, wait=True):
-        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self.loop)
+        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self._loop)
 
         if wait:
             return future.result()
@@ -205,7 +245,7 @@ class LonaServer:
         def _function():
             return function(*args, **kwargs)
 
-        return self.loop.run_in_executor(self.executor, _function)
+        return self._loop.run_in_executor(self._executor, _function)
 
     def run(self, function_or_coroutine,
             *args, sync=False, wait=True, **kwargs):
@@ -242,7 +282,7 @@ class LonaServer:
                 if wait:
                     return function(*args, **kwargs)
 
-                return self.loop.run_in_executor(self.executor, _function)
+                return self._loop.run_in_executor(self._executor, _function)
 
             # async
             else:
@@ -387,7 +427,7 @@ class LonaServer:
         try:
             async for message in websocket:
                 if message.type == WSMsgType.TEXT:
-                    self.loop.create_task(
+                    self._loop.create_task(
                         self._handle_websocket_message(connection, message),
                     )
 
