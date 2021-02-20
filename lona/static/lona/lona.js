@@ -1025,6 +1025,26 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     // events -----------------------------------------------------------------
+    this._get_input_value = function(node) {
+        var value = node.value;
+
+        // checkbox
+        if(node.getAttribute('type') == 'checkbox') {
+            value = node.checked;
+
+        // select multiple
+        } else if(node.type == 'select-multiple') {
+            value = [];
+
+            Array.from(node.selectedOptions).forEach(function(option) {
+                value.push(option.value);
+            });
+
+        };
+
+        return value;
+    };
+
     this._patch_input_events = function() {
         var lona_window = this;
         var lona_context = lona_window.lona_context;
@@ -1079,29 +1099,53 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         var selector = '.lona-changeable:not(.lona-ignore)';
 
         this._root.querySelectorAll(selector).forEach(function(node) {
+
+            // oninput (input delay)
+            if(node.type == 'text' || node.type == 'textarea') {
+                var input_delay = parseInt(
+                    node.getAttribute('data-lona-input-delay'));
+
+                if(input_delay) {
+                    node.oninput = function(event) {
+                        event.preventDefault();
+
+                        var node = event.target || event.srcElement;
+
+                        if(node.delay_timer !== undefined) {
+                            clearTimeout(node.delay_timer);
+                        }
+
+                        node.delay_timer = setTimeout(function() {
+                            var value = lona_window._get_input_value(node);
+
+                            lona_window.fire_input_event(
+                                undefined,
+                                node,
+                                Lona.symbols.INPUT_EVENT_TYPE.CHANGE,
+                                value,
+                            );
+                        }, input_delay);
+
+
+                        return false;
+                    };
+
+                    return;
+                };
+            };
+
+            // onchange
             node.onchange = function(event) {
                 event.preventDefault();
 
                 var node = event.target || event.srcElement;
-                var event_data = node.value;
-
-                if(node.getAttribute('type') == 'checkbox') {
-                    event_data = node.checked;
-
-                } else if(node.type == 'select-multiple') {
-                    event_data = [];
-
-                    Array.from(node.selectedOptions).forEach(function(option) {
-                        event_data.push(option.value);
-                    });
-
-                };
+                var value = lona_window._get_input_value(node);
 
                 lona_window.fire_input_event(
                     undefined,
                     node,
                     Lona.symbols.INPUT_EVENT_TYPE.CHANGE,
-                    event_data,
+                    value,
                 );
 
                 return false;
