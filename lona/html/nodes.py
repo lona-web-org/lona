@@ -71,6 +71,10 @@ class P(Node):
     TAG_NAME = 'p'
 
 
+class I(Node):  # NOQA
+    TAG_NAME = 'i'
+
+
 class Strong(Node):
     TAG_NAME = 'strong'
 
