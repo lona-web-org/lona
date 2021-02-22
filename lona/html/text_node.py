@@ -78,3 +78,6 @@ class TextNode(AbstractNode):
             raise RuntimeError('node has no parent node')
 
         self._parent.remove(self)
+
+    def get_text(self):
+        return self._string

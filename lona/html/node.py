@@ -295,6 +295,25 @@ class Node(AbstractNode):
     def set_text(self, text):
         self.nodes = [str(text)]
 
+    def get_text(self):
+        with self.lock:
+            text = []
+
+            for node in self.nodes:
+                text.append(node.get_text())
+
+            text = ' '.join(text)
+
+            # strip starting and ending whitespaces but preserve \n
+            # this is important for nodes like <pre> which are newline aware
+            while text.startswith('\t') or text.startswith(' '):
+                text = text[1:]
+
+            while text.endswith('\t') or text.endswith(' '):
+                text = text[:1]
+
+            return text
+
     def hide(self):
         self.style['display'] = 'none'
 

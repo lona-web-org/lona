@@ -119,3 +119,15 @@ class Widget(AbstractNode):
         with self.lock:
             for node in self.nodes:
                 node.show()
+
+    def set_text(self, text):
+        self.nodes = [str(text)]
+
+    def get_text(self):
+        with self.lock:
+            text = []
+
+            for node in self.nodes:
+                text.append(node.get_text())
+
+            return ' '.join(text).strip()
