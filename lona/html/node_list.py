@@ -58,6 +58,15 @@ class NodeList:
             self._nodes.remove(node)
             self._changes.append([OPERATION.REMOVE, node._id])
 
+    def pop(self, index):
+        with self._node.document.lock:
+            node = self._nodes.pop(index)
+
+            node.parent = None
+            self._changes.append([OPERATION.REMOVE, node._id])
+
+            return node
+
     def clear(self):
         with self._node.document.lock:
             for node in list(self._nodes):

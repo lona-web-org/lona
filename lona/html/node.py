@@ -241,6 +241,9 @@ class Node(AbstractNode):
 
         self._nodes.remove(node)
 
+    def pop(self, index):
+        return self._nodes.pop(index)
+
     def clear(self):
         self._nodes.clear()
 
