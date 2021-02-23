@@ -33,7 +33,8 @@ Lona.register_widget_class = function(widget_name, javascript_class) {
 };
 
 // JobQueue -------------------------------------------------------------------
-Lona.JobQueue = function() {
+Lona.JobQueue = function(lona_window) {
+    this._lona_window = lona_window;
     this._promises = [];
 
     this._lock = function() {
@@ -72,8 +73,11 @@ Lona.JobQueue = function() {
                 await promise;
             };
 
-        } finally {
             this._unlock();
+
+        } catch(error) {
+            this._lona_window._crashed = true;
+            this._lona_window._print_error(error);
 
         };
     };
@@ -102,9 +106,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._root = root;
     this._window_id = window_id;
 
-    this._job_queue = new Lona.JobQueue();
+    this._job_queue = new Lona.JobQueue(this);
 
     // window state -----------------------------------------------------------
+    this._crashed = false;
     this._view_stopped = undefined;
     this._view_runtime_id = undefined;
     this._text_nodes = {};
@@ -114,6 +119,26 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._widgets_to_setup = [];
     this._widgets_to_update_nodes = [];
     this._widgets_to_update_data = [];
+
+    // error management -------------------------------------------------------
+    this._print_error = function(error) {
+        var error_string;
+
+        if(error.stack) {
+            error_string = error.stack.toString();
+
+        } else {
+            error_string = error.toString();
+
+        };
+
+        this._root.innerHTML = (
+            '<h1>Lona: Uncaught Error</h1>' +
+            '<pre>' + error_string + '</pre>'
+        );
+
+        throw(error);
+    };
 
     // html rendering helper --------------------------------------------------
     this._add_id = function(node, id) {
@@ -171,10 +196,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                 // run deconstructor
                 if(lona_window._widgets[key].deconstruct !== undefined) {
-                    try {
-                        lona_window._widgets[key].deconstruct();
-
-                    } finally {}
+                    lona_window._widgets[key].deconstruct();
                 };
 
                 delete lona_window._widgets[key];
@@ -586,15 +608,11 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 return;
             };
 
-            try {
-                widget.nodes = lona_window._get_widget_nodes(node_id);
+            widget.nodes = lona_window._get_widget_nodes(node_id);
 
-                if(widget.setup !== undefined) {
-                    widget.setup();
-                };
-
-            } finally {};
-
+            if(widget.setup !== undefined) {
+                widget.setup();
+            };
         });
 
         // nodes_updated
@@ -605,14 +623,11 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 return;
             };
 
-            try {
-                widget.nodes = lona_window._get_widget_nodes(node_id);
+            widget.nodes = lona_window._get_widget_nodes(node_id);
 
-                if(widget.nodes_updated !== undefined) {
-                    widget.nodes_updated();
-                };
-
-            } finally {};
+            if(widget.nodes_updated !== undefined) {
+                widget.nodes_updated();
+            };
         });
 
         // data_updated
@@ -626,12 +641,9 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 return;
             };
 
-            try {
-                if(widget.data_updated !== undefined) {
-                    widget.data_updated();
-                };
-
-            } finally {};
+            if(widget.data_updated !== undefined) {
+                widget.data_updated();
+            };
         });
 
         lona_window._widgets_to_setup = [];
@@ -1063,9 +1075,16 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             node.onclick = function(event) {
                 event.preventDefault();
 
-                var element = event.target || event.srcElement;
+                try {
+                    var element = event.target || event.srcElement;
 
-                lona_window.run_view(element.href);
+                    lona_window.run_view(element.href);
+
+                } catch(error) {
+                    lona_window._crashed = true;
+                    lona_window._print_error(error);
+
+                };
 
                 return false;
             };
@@ -1078,25 +1097,32 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             node.onclick = function(event) {
                 event.preventDefault();
 
-                var node = event.target || event.srcElement;
+                try {
+                    var node = event.target || event.srcElement;
 
-                var event_data = {
-                    alt_key: event.altKey,
-                    shift_key: event.shiftKey,
-                    meta_key: event.metaKey,
-                    ctrl_key: event.ctrlKey,
-                    node_width: node.offsetWidth,
-                    node_height: node.offsetHeight,
-                    x: event.offsetX,
-                    y: event.offsetY,
+                    var event_data = {
+                        alt_key: event.altKey,
+                        shift_key: event.shiftKey,
+                        meta_key: event.metaKey,
+                        ctrl_key: event.ctrlKey,
+                        node_width: node.offsetWidth,
+                        node_height: node.offsetHeight,
+                        x: event.offsetX,
+                        y: event.offsetY,
+                    };
+
+                    lona_window.fire_input_event(
+                        undefined,
+                        node,
+                        Lona.symbols.INPUT_EVENT_TYPE.CLICK,
+                        event_data,
+                    );
+
+                } catch(error) {
+                    lona_window._crashed = true;
+                    lona_window._print_error(error);
+
                 };
-
-                lona_window.fire_input_event(
-                    undefined,
-                    node,
-                    Lona.symbols.INPUT_EVENT_TYPE.CLICK,
-                    event_data,
-                );
 
                 return false;
             };
@@ -1116,23 +1142,29 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                     node.oninput = function(event) {
                         event.preventDefault();
 
-                        var node = event.target || event.srcElement;
+                        try {
+                            var node = event.target || event.srcElement;
 
-                        if(node.delay_timer !== undefined) {
-                            clearTimeout(node.delay_timer);
-                        }
+                            if(node.delay_timer !== undefined) {
+                                clearTimeout(node.delay_timer);
+                            }
 
-                        node.delay_timer = setTimeout(function() {
-                            var value = lona_window._get_input_value(node);
+                            node.delay_timer = setTimeout(function() {
+                                var value = lona_window._get_input_value(node);
 
-                            lona_window.fire_input_event(
-                                undefined,
-                                node,
-                                Lona.symbols.INPUT_EVENT_TYPE.CHANGE,
-                                value,
-                            );
-                        }, input_delay);
+                                lona_window.fire_input_event(
+                                    undefined,
+                                    node,
+                                    Lona.symbols.INPUT_EVENT_TYPE.CHANGE,
+                                    value,
+                                );
+                            }, input_delay);
 
+                        } catch(error) {
+                            lona_window._crashed = true;
+                            lona_window._print_error(error);
+
+                        };
 
                         return false;
                     };
@@ -1145,15 +1177,22 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             node.onchange = function(event) {
                 event.preventDefault();
 
-                var node = event.target || event.srcElement;
-                var value = lona_window._get_input_value(node);
+                try {
+                    var node = event.target || event.srcElement;
+                    var value = lona_window._get_input_value(node);
 
-                lona_window.fire_input_event(
-                    undefined,
-                    node,
-                    Lona.symbols.INPUT_EVENT_TYPE.CHANGE,
-                    value,
-                );
+                    lona_window.fire_input_event(
+                        undefined,
+                        node,
+                        Lona.symbols.INPUT_EVENT_TYPE.CHANGE,
+                        value,
+                    );
+
+                } catch(error) {
+                    lona_window._crashed = true;
+                    lona_window._print_error(error);
+
+                };
 
                 return false;
             };
@@ -1166,69 +1205,76 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             node.onsubmit = function(event) {
                 event.preventDefault();
 
-                // find muliple selects
-                var multi_selects = {};
+                try {
+                    // find muliple selects
+                    var multi_selects = {};
 
-                this.querySelectorAll('select[multiple]').forEach(
-                    function(select_node) {
-                        var name = select_node.name;
+                    this.querySelectorAll('select[multiple]').forEach(
+                        function(select_node) {
+                            var name = select_node.name;
 
-                        multi_selects[select_node.name] = [];
+                            multi_selects[select_node.name] = [];
 
-                        Array.from(select_node.selectedOptions).forEach(
-                            function(option) {
-                                multi_selects[name].push(option.value);
-                            }
-                        );
-                    }
-                );
-
-                // generate form data
-                var raw_form_data = new FormData(this);
-                var form_data = {};
-
-                for(let [key, value] of raw_form_data.entries()) {
-                    if(key in multi_selects) {
-                        form_data[key] = multi_selects[key];
-
-                    } else {
-                        form_data[key] = value;
-
-                    };
-                };
-
-                if(!lona_window._view_stopped) {
-                    lona_window.fire_input_event(
-                        undefined,
-                        node,
-                        Lona.symbols.INPUT_EVENT_TYPE.SUBMIT,
-                        form_data,
+                            Array.from(select_node.selectedOptions).forEach(
+                                function(option) {
+                                    multi_selects[name].push(option.value);
+                                }
+                            );
+                        }
                     );
 
-                } else {
-                    // "traditional" form submit
-                    // this is implemented by invoking Method.VIEW with
-                    // post_data set instead of an input event
+                    // generate form data
+                    var raw_form_data = new FormData(this);
+                    var form_data = {};
 
-                    var method = (this.method || 'get').toLowerCase();
-                    var action = this.action || window.location.href;
+                    for(let [key, value] of raw_form_data.entries()) {
+                        if(key in multi_selects) {
+                            form_data[key] = multi_selects[key];
 
-                    if(method == 'get') {
-                        var url = new URL(action);
-                        var href = url.origin + url.pathname;
+                        } else {
+                            form_data[key] = value;
 
-                        var query = new URLSearchParams(form_data).toString();
-
-                        if(query) {
-                            href += '?' + query;
                         };
-
-                        lona_window.run_view(href);
-
-                    } else if(method == 'post') {
-                        lona_window.run_view(action, form_data);
-
                     };
+
+                    if(!lona_window._view_stopped) {
+                        lona_window.fire_input_event(
+                            undefined,
+                            node,
+                            Lona.symbols.INPUT_EVENT_TYPE.SUBMIT,
+                            form_data,
+                        );
+
+                    } else {
+                        // "traditional" form submit
+                        // this is implemented by invoking Method.VIEW with
+                        // post_data set instead of an input event
+
+                        var method = (this.method || 'get').toLowerCase();
+                        var action = this.action || window.location.href;
+
+                        if(method == 'get') {
+                            var url = new URL(action);
+                            var href = url.origin + url.pathname;
+
+                            var query = new URLSearchParams(form_data).toString();
+
+                            if(query) {
+                                href += '?' + query;
+                            };
+
+                            lona_window.run_view(href);
+
+                        } else if(method == 'post') {
+                            lona_window.run_view(action, form_data);
+
+                        };
+                    };
+
+                } catch(error) {
+                    lona_window._crashed = true;
+                    lona_window._print_error(error);
+
                 };
 
                 return false;
@@ -1237,7 +1283,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     // public api -------------------------------------------------------------
-    this.handle_websocket_message = function(message) {
+    this._handle_websocket_message = function(message) {
         var window_id = message[0];
         var view_runtime_id = message[1];
         var method = message[2];
@@ -1305,10 +1351,30 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
     };
 
+    this.handle_websocket_message = function(message) {
+        if(this._crashed) {
+            return;
+        };
+
+        try {
+            return this._handle_websocket_message(message);
+
+        } catch(error) {
+            this._crashed = true;
+            this._print_error(error);
+
+        };
+    };
+
     this.run_view = function(url, post_data) {
         // Save the requested url to only show HTML messages that are related
         // to this request.
         // This prevents glitches when switching urls fast.
+
+        if(this._crashed) {
+            return;
+        };
+
         this._view_runtime_id = undefined;
 
         var message = [
@@ -1332,6 +1398,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     this.fire_input_event = function(widget_id, node, event_type, data) {
+        if(this._crashed) {
+            return;
+        };
+
         if(data == undefined) {
             data = [];
         };
@@ -1444,10 +1514,7 @@ Lona.LonaContext = function(settings) {
         for(var i in this._connect_hooks) {
             var hook = this._connect_hooks[i];
 
-            try {
-                hook(this, event);
-
-            } finally {};
+            hook(this, event);
         };
     };
 
@@ -1455,10 +1522,7 @@ Lona.LonaContext = function(settings) {
         for(var i in this._disconnect_hooks) {
             var hook = this._disconnect_hooks[i];
 
-            try {
-                hook(this, event);
-
-            } finally {};
+            hook(this, event);
         };
     };
 
@@ -1466,14 +1530,11 @@ Lona.LonaContext = function(settings) {
         for(var i in this._message_handler) {
             var message_handler = this._message_handler[i];
 
-            try {
-                var return_value = message_handler(this, message);
+            var return_value = message_handler(this, message);
 
-                if(!return_value) {
-                    return;
-                };
-
-            } finally {};
+            if(!return_value) {
+                return;
+            };
         };
     };
 
