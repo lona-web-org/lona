@@ -251,6 +251,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         while(index > 0) {
             var _node = target_node.childNodes[cursor];
 
+            if(_node == undefined) {
+                break;
+            };
+
             // skip widgets
             if((_node.nodeType == Node.COMMENT_NODE) &&
                (_node.textContent.startsWith('lona-widget:'))) {
