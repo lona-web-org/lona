@@ -36,7 +36,7 @@ class Node(AbstractNode):
 
         # lona classes
         for class_name in self.LONA_CLASS_LIST:
-            if class_name in ('clickable', 'changeable'):
+            if class_name in ('clickable', 'changeable', 'ignore'):
                 setattr(self, class_name, True)
 
         # args (nodes)
@@ -56,7 +56,7 @@ class Node(AbstractNode):
                     name = name[1:]
 
             # lona classes
-            if name in ('clickable', 'changeable'):
+            if name in ('clickable', 'changeable', 'ignore'):
                 setattr(self, name, value)
 
             # change aware attributes
@@ -171,6 +171,18 @@ class Node(AbstractNode):
 
         else:
             self._class_list.remove('lona-changeable')
+
+    @property
+    def ignore(self):
+        return 'lona-ignore' in self._class_list
+
+    @ignore.setter
+    def ignore(self, value):
+        if value:
+            self._class_list.add('lona-ignore')
+
+        else:
+            self._class_list.remove('lona-ignore')
 
     # serialisation ###########################################################
     def _has_changes(self):
