@@ -53,3 +53,9 @@ class AbstractNode:
     @property
     def lock(self):
         return self.document.lock
+
+    def __copy__(self, *args, **kwargs):
+        raise RuntimeError('copy is not supported')
+
+    def __deepcopy__(self, memo):
+        raise RuntimeError('deepcopy is not supported')
