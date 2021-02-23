@@ -251,6 +251,13 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             index--;
         };
 
+        // flatten node list
+        for(var i=0; i<node_list.length; i++) {
+            if(Array.isArray(node_list[i])) {
+                node_list = node_list.flat();
+            };
+        };
+
         // apply node list
         for(var i=0; i<node_list.length; i++) {
             var new_node = node_list[i];
