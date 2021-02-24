@@ -58,9 +58,8 @@ class Widget(AbstractNode):
 
     def _get_changes(self):
         return [
-            self._id,
-            self.nodes._get_changes(),
-            self.data._get_changes(),
+            *self.nodes._get_changes(),
+            *self.data._get_changes(),
         ]
 
     def _clear_changes(self):

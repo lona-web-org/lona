@@ -532,68 +532,66 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         return node_list;
     };
 
-    this._apply_widget_data_update = function(node_id, updates) {
+    this._apply_widget_data_update = function(node_id, update) {
+        var node_id = update[0];
+        var patch_type = update[1];
+        var key_path = update[2];
+        var operation = update[3];
+        var data = update.splice(4);
+
+        // key path
+        var parent_data = undefined;
         var widget_data = this._widget_data[node_id];
 
-        for(var index in updates) {
-            var update = updates[index];
-            var key_path = update[0];
-            var operation = update[1];
+        key_path.forEach(function(key) {
+            parent_data = widget_data;
+            widget_data = widget_data[key];
+        });
 
-            // key path
-            var parent_data = undefined;
-            var data = this._widget_data[node_id];
+        // SET
+        if(operation == Lona.symbols.OPERATION.SET) {
+            widget_data[data[0]] = data[1];
 
-            key_path.forEach(function(key) {
-                parent_data = data;
-                data = data[key];
-            });
+        // RESET
+        } else if(operation == Lona.symbols.OPERATION.RESET) {
+            if(parent_data === undefined) {
+                this._widget_data[node_id] = data[0];
 
-            // SET
-            if(operation == Lona.symbols.OPERATION.SET) {
-                data[update[2]] = update[3];
+            } else {
+                parent_data = data[0];
 
-            // RESET
-            } else if(operation == Lona.symbols.OPERATION.RESET) {
-                if(parent_data === undefined) {
-                    this._widget_data[node_id] = update[2];
+            };
 
-                } else {
-                    parent_data = update[2];
+        // CLEAR
+        } else if(operation == Lona.symbols.OPERATION.CLEAR) {
+            if(data instanceof Array) {
+                var new_data = [];
 
-                };
+            } else if(data instanceof Object) {
+                var new_data = {};
 
-            // CLEAR
-            } else if(operation == Lona.symbols.OPERATION.CLEAR) {
-                if(data instanceof Array) {
-                    var new_data = [];
+            };
 
-                } else if(data instanceof Object) {
-                    var new_data = {};
+            if(parent_data === undefined) {
+                this._widget_data[node_id] = new_data;
 
-                };
+            } else {
+                parent_data[key_path[key_path.length-1]] = new_data;
 
-                if(parent_data === undefined) {
-                    this._widget_data[node_id] = new_data;
+            };
 
-                } else {
-                    parent_data[key_path[key_path.length-1]] = new_data;
+        // INSERT
+        } else if(operation == Lona.symbols.OPERATION.INSERT) {
+            widget_data.splice(data[0], 0, data[1]);
 
-                };
+        // REMOVE
+        } else if(operation == Lona.symbols.OPERATION.REMOVE) {
+            if(widget_data instanceof Array) {
+                widget_data.splice(data[0], 1);
 
-            // INSERT
-            } else if(operation == Lona.symbols.OPERATION.INSERT) {
-                data.splice(update[2], 0, update[3]);
+            } else if(data instanceof Object) {
+                delete widget_data[data[0]];
 
-            // REMOVE
-            } else if(operation == Lona.symbols.OPERATION.REMOVE) {
-                if(data instanceof Array) {
-                    data.splice(update[2], 1);
-
-                } else if(data instanceof Object) {
-                    delete data[update[2]];
-
-                };
             };
         };
     };
@@ -784,42 +782,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         return node_list;
     };
 
-    this._apply_node_updates = function(node_id, updates) {
-        for(var i in updates) {
-            var update = updates[i];
-            var operation = update[0];
-
-            // SET
-            if(operation == Lona.symbols.OPERATION.SET) {
-                var node_list = this._render_node(update[2]);
-
-                this._set_node(node_list, node_id, update[1]);
-
-            // RESET
-            } else if(operation == Lona.symbols.OPERATION.RESET) {
-                var node_list = this._render_nodes(update[1]);
-
-                this._clear_node(node_id);
-                this._insert_node(node_list, node_id, 0);
-
-            // CLEAR
-            } else if(operation == Lona.symbols.OPERATION.CLEAR) {
-                this._clear_node(node_id);
-
-            // INSERT
-            } else if(operation == Lona.symbols.OPERATION.INSERT) {
-                var node_list = this._render_node(update[2]);
-
-                this._insert_node(node_list, node_id, update[1])
-
-            // REMOVE
-            } else if(operation == Lona.symbols.OPERATION.REMOVE) {
-                this._remove_node(update[1]);
-
-            };
-        };
-    };
-
     this._apply_update = function(html_data) {
         var lona_window = this;
         var symbols = Lona.symbols;
@@ -827,27 +789,30 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
         for(var index in html_data) {
             var update = html_data[index];
+
             var node_id = update[0];
+            var patch_type = update[1];
+            var operation = update[2];
 
             // Widget
             if(node_id in this._widget_marker) {
-                var node_updates = update[1];
-                var data_updates = update[2];
 
                 // nodes
-                if(node_updates.length > 0) {
+                if(patch_type == symbols.PATCH_TYPE.NODES) {
                     lona_window._apply_node_updates(node_id, node_updates);
                     lona_window._widgets_to_update_nodes.push(node_id);
-                };
 
-                // data
-                if(data_updates.length > 0) {
-                    this._apply_widget_data_update(node_id, data_updates);
+                // widget data
+                } else if(patch_type == symbols.PATCH_TYPE.WIDGET_DATA) {
+                    this._apply_widget_data_update(node_id, update);
                     lona_window._widgets_to_update_data.splice(0, 0, node_id);
+
                 };
 
             // Node
             } else {
+                var data = update.splice(3);
+
                 var selector = '[lona-node-id=_' + node_id + ']';
                 var node = lona_window._root.querySelector(selector);
 
@@ -855,20 +820,11 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                     continue;
                 };
 
-                var id_updates = update[1];
-                var class_updates = update[2];
-                var style_updates = update[3];
-                var attribute_updates = update[4];
-                var node_updates = update[5];
-
-                // id
-                for(var index in id_updates) {
-                    var update = id_updates[index];
-                    var operation = update[0];
-
+                // id_list
+                if(patch_type == symbols.PATCH_TYPE.ID_LIST) {
                     // ADD
                     if(operation == symbols.OPERATION.ADD) {
-                        lona_window._add_id(node, update[1]);
+                        lona_window._add_id(node, data[0]);
 
                     // RESET
                     } else if(operation == symbols.OPERATION.RESET) {
@@ -876,14 +832,14 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                         lona_window._add_id(node, 'lona-' + node_id)
 
-                        for(var i in update[1]) {
-                            lona_window._add_id(update[1][i]);
+                        for(var i in data) {
+                            lona_window._add_id(data[0]);
 
                         };
 
                     // REMOVE
                     } else if(operation == symbols.OPERATION.REMOVE) {
-                        lona_window._remove_id(node, update[1]);
+                        lona_window._remove_id(node, data[0]);
 
                     // CLEAR
                     } else if(operation == symbols.OPERATION.CLEAR) {
@@ -892,76 +848,64 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                         lona_window._add_id(node, 'lona-' + node_id)
 
                     };
-                };
 
-                // class
-                for(var index in class_updates) {
-                    var update = class_updates[index];
-                    var operation = update[0];
-
+                // class list
+                } else if(patch_type == symbols.PATCH_TYPE.CLASS_LIST) {
                     // ADD
                     if(operation == symbols.OPERATION.ADD) {
-                        node.classList.add(update[1]);
+                        node.classList.add(data[0]);
 
                     // RESET
                     } else if(operation == symbols.OPERATION.RESET) {
-                        node.classList = update[1].join(' ');
+                        node.classList = data[0].join(' ');
 
                     // REMOVE
                     } else if(operation == symbols.OPERATION.REMOVE) {
-                        node.classList.remove(update[1]);
+                        node.classList.remove(data[0]);
 
                     // CLEAR
                     } else if(operation == symbols.OPERATION.CLEAR) {
                         node.classList = '';
 
                     };
-                };
-                
-                // style
-                for(var index in style_updates) {
-                    var update = style_updates[index];
-                    var operation = update[0];
 
+                // style
+                } else if(patch_type == symbols.PATCH_TYPE.STYLE) {
                     // SET
                     if(operation == symbols.OPERATION.SET) {
-                        node.style[update[1]] = update[2];
+                        node.style[data[0]] = data[1];
 
                     // RESET
                     } else if(operation == symbols.OPERATION.RESET) {
                         node.removeAttribute('style');
 
-                        for(var key in update[1]) {
-                            node.style[key] = update[1][key];
+                        for(var key in data[0]) {
+                            node.style[key] = data[0][key];
                         };
 
                     // REMOVE
                     } else if(operation == symbols.OPERATION.REMOVE) {
-                        node.style[update[1]] = '';
+                        node.style[data[0]] = '';
 
                     // CLEAR
                     } else if(operation == symbols.OPERATION.CLEAR) {
                         node.removeAttribute('style');
 
                     };
-                };
 
                 // attributes
-                for(var index in attribute_updates) {
-                    var update = attribute_updates[index];
-                    var operation = update[0];
-
+                } else if(patch_type == symbols.PATCH_TYPE.ATTRIBUTES) {
                     // SET
                     if(operation == symbols.OPERATION.SET) {
-                        var name = update[1];
+                        var name = data[0];
 
                         // properties
                         if(property_names.indexOf(name) > -1) {
-                            node[update[1]] = update[2];
+                            node[data[0]] = data[1];
 
                         // attributes
                         } else {
-                            node.setAttribute(update[1], update[2]);
+                            node.setAttribute(data[0], data[1]);
                         }
 
                     // RESET
@@ -976,13 +920,13 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                         });
 
-                        for(var name in update[1]) {
-                            node.setAttribute(name, update[1][name]);
+                        for(var name in data[0]) {
+                            node.setAttribute(name, data[0][name]);
                         };
 
                     // REMOVE
                     } else if(operation == symbols.OPERATION.REMOVE) {
-                        node.removeAttribute(update[1]);
+                        node.removeAttribute(data[0]);
 
                     // CLEAR
                     } else if(operation == symbols.OPERATION.CLEAR) {
@@ -996,13 +940,39 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
                         });
                     };
-                };
 
                 // nodes
-                if(node_updates.length > 0) {
-                    lona_window._apply_node_updates(node_id, node_updates);
-                };
+                } else if(patch_type == symbols.PATCH_TYPE.NODES) {
 
+                    // SET
+                    if(operation == Lona.symbols.OPERATION.SET) {
+                        var node_list = this._render_node(data[1]);
+
+                        this._set_node(node_list, node_id, data[0]);
+
+                    // RESET
+                    } else if(operation == Lona.symbols.OPERATION.RESET) {
+                        var node_list = this._render_nodes(data[0]);
+
+                        this._clear_node(node_id);
+                        this._insert_node(node_list, node_id, 0);
+
+                    // CLEAR
+                    } else if(operation == Lona.symbols.OPERATION.CLEAR) {
+                        this._clear_node(node_id);
+
+                    // INSERT
+                    } else if(operation == Lona.symbols.OPERATION.INSERT) {
+                        var node_list = this._render_node(data[1]);
+
+                        this._insert_node(node_list, node_id, data[0])
+
+                    // REMOVE
+                    } else if(operation == Lona.symbols.OPERATION.REMOVE) {
+                        this._remove_node(data[0]);
+
+                    };
+                };
             };
         };
     };

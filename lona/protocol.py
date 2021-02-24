@@ -57,15 +57,26 @@ class DATA_TYPE(Symbol):
     HTML_UPDATE = Symbol('HTML_UPDATE', 503)
 
 
+class PATCH_TYPE(Symbol):
+    _INCLUDE_IN_FRONTEND_LIBRARY = True
+
+    ID_LIST = Symbol('ID_LIST', 601)
+    CLASS_LIST = Symbol('CLASS_LIST', 602)
+    STYLE = Symbol('STYLE', 603)
+    ATTRIBUTES = Symbol('ATTRIBUTES', 604)
+    NODES = Symbol('NODES', 605)
+    WIDGET_DATA = Symbol('WIDGET_DATA', 606)
+
+
 class OPERATION(Symbol):
     _INCLUDE_IN_FRONTEND_LIBRARY = True
 
-    SET = Symbol('SET', 601)
-    RESET = Symbol('RESET', 602)
-    ADD = Symbol('ADD', 603)
-    CLEAR = Symbol('CLEAR', 604)
-    INSERT = Symbol('INSERT', 605)
-    REMOVE = Symbol('REMOVE', 606)
+    SET = Symbol('SET', 701)
+    RESET = Symbol('RESET', 702)
+    ADD = Symbol('ADD', 703)
+    CLEAR = Symbol('CLEAR', 704)
+    INSERT = Symbol('INSERT', 705)
+    REMOVE = Symbol('REMOVE', 706)
 
 
 def decode_message(raw_message):

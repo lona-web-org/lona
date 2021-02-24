@@ -1,7 +1,11 @@
-from lona.protocol import OPERATION
+from time import monotonic_ns
+
+from lona.protocol import OPERATION, PATCH_TYPE
 
 
 class AttributeList:
+    PATCH_TYPE = None
+
     def __init__(self, node, *args, **kwargs):
         self._node = node
         self._attributes = list(*args, **kwargs)
@@ -15,18 +19,38 @@ class AttributeList:
         with self._node.document.lock:
             if attribute not in self._attributes:
                 self._attributes.append(attribute)
-                self._changes.append([OPERATION.ADD, attribute])
+
+                self._changes.append([
+                    monotonic_ns(),
+                    self._node._id,
+                    self.PATCH_TYPE,
+                    OPERATION.ADD,
+                    attribute,
+                ])
 
     def remove(self, attribute):
         with self._node.document.lock:
             if attribute in self._attributes:
                 self._attributes.remove(attribute)
-                self._changes.append([OPERATION.REMOVE, attribute])
+
+                self._changes.append([
+                    monotonic_ns(),
+                    self._node._id,
+                    self.PATCH_TYPE,
+                    OPERATION.REMOVE,
+                    attribute,
+                ])
 
     def clear(self):
         with self._node.document.lock:
             self._attributes.clear()
-            self._changes.append([OPERATION.CLEAR])
+
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.CLEAR,
+            ])
 
     def toggle(self, attribute):
         with self._node.document.lock:
@@ -62,7 +86,14 @@ class AttributeList:
 
         with self._node.document.lock:
             self._attributes = value
-            self._changes.append([OPERATION.RESET, list(value)])
+
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.RESET,
+                list(value),
+            ])
 
     def _has_changes(self):
         return bool(self._changes)
@@ -83,3 +114,17 @@ class AttributeList:
 
     def __repr__(self):
         return '<AttributeList({})>'.format(repr(self._attributes))
+
+
+class IDList(AttributeList):
+    PATCH_TYPE = PATCH_TYPE.ID_LIST
+
+    def __repr__(self):
+        return '<IDList({})>'.format(repr(self._attributes))
+
+
+class ClassList(AttributeList):
+    PATCH_TYPE = PATCH_TYPE.CLASS_LIST
+
+    def __repr__(self):
+        return '<ClassList({})>'.format(repr(self._attributes))

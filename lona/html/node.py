@@ -1,7 +1,7 @@
 from textwrap import indent
 
-from lona.html.attribute_dict import AttributeDict
-from lona.html.attribute_list import AttributeList
+from lona.html.attribute_dict import AttributeDict, StyleDict
+from lona.html.attribute_list import IDList, ClassList
 from lona.html.abstract_node import AbstractNode
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
@@ -19,9 +19,9 @@ class Node(AbstractNode):
     def __init__(self, *args, tag_name=None, single_tag=None, **kwargs):
         self._id = self.gen_id()
 
-        self._id_list = AttributeList(self, self.ID_LIST)
-        self._class_list = AttributeList(self, self.CLASS_LIST)
-        self._style = AttributeDict(self, self.STYLE)
+        self._id_list = IDList(self, self.ID_LIST)
+        self._class_list = ClassList(self, self.CLASS_LIST)
+        self._style = StyleDict(self, self.STYLE)
         self._attributes = AttributeDict(self, self.ATTRIBUTES)
         self._nodes = NodeList(self)
 
@@ -196,12 +196,11 @@ class Node(AbstractNode):
 
     def _get_changes(self):
         return [
-            self._id,
-            self._id_list._get_changes(),
-            self._class_list._get_changes(),
-            self._style._get_changes(),
-            self._attributes._get_changes(),
-            self._nodes._get_changes(),
+            *self._id_list._get_changes(),
+            *self._class_list._get_changes(),
+            *self._style._get_changes(),
+            *self._attributes._get_changes(),
+            *self._nodes._get_changes(),
         ]
 
     def _clear_changes(self):

@@ -1,6 +1,7 @@
+from time import monotonic_ns
 from copy import deepcopy
 
-from lona.protocol import OPERATION
+from lona.protocol import OPERATION, PATCH_TYPE
 
 
 def check_value(value):
@@ -34,6 +35,9 @@ class ListOverlay:
             self._original_data.append(item)
 
             self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.INSERT,
                 len(self._original_data) - 1,
@@ -44,8 +48,13 @@ class ListOverlay:
         with self._widget.lock:
             self._original_data.clear()
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.CLEAR])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.CLEAR,
+            ])
 
     def copy(self, *args, **kwargs):
         with self._widget.lock:
@@ -73,6 +82,9 @@ class ListOverlay:
             self._original_data.insert(index, item)
 
             self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.INSERT,
                 self._original_data.index(item),
@@ -83,8 +95,14 @@ class ListOverlay:
         with self._widget.lock:
             item = self._original_data.pop(index)
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.REMOVE, index])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.REMOVE,
+                index,
+            ])
 
             return item
 
@@ -94,8 +112,14 @@ class ListOverlay:
 
             for i in self._original_data:
                 if i == item:
-                    self._widget_data._changes.append(
-                        [self._key_path, OPERATION.REMOVE, index])
+                    self._widget_data._changes.append([
+                        monotonic_ns(),
+                        self._widget._id,
+                        PATCH_TYPE.WIDGET_DATA,
+                        self._key_path,
+                        OPERATION.REMOVE,
+                        index,
+                    ])
 
                 index += 1
 
@@ -114,8 +138,15 @@ class ListOverlay:
 
             self._original_data[name] = item
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.SET, name, item])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.SET,
+                name,
+                item,
+            ])
 
     def __getitem__(self, name):
         with self._widget.lock:
@@ -141,8 +172,14 @@ class ListOverlay:
         with self._widget.lock:
             del self._original_data[name]
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.REMOVE, name])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.REMOVE,
+                name,
+            ])
 
     def __str__(self, *args, **kwargs):
         with self._widget.lock:
@@ -172,8 +209,13 @@ class DictOverlay:
         with self._widget.lock:
             self._original_data.clear()
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.CLEAR])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.CLEAR,
+            ])
 
     def copy(self, *args, **kwargs):
         with self._widget.lock:
@@ -198,8 +240,14 @@ class DictOverlay:
         with self._widget.lock:
             item = self._original_data.pop(key)
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.REMOVE, key])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.REMOVE,
+                key,
+            ])
 
             return item
 
@@ -207,8 +255,14 @@ class DictOverlay:
         with self._widget.lock:
             key, value = self._original_data.popitem()
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.REMOVE, key])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.REMOVE,
+                key,
+            ])
 
             return key, value
 
@@ -220,8 +274,15 @@ class DictOverlay:
             for key, value in update_dict.items():
                 self._original_data[key] = value
 
-                self._widget_data._changes.append(
-                    [self._key_path, OPERATION.SET, key, value])
+                self._widget_data._changes.append([
+                    monotonic_ns(),
+                    self._widget._id,
+                    PATCH_TYPE.WIDGET_DATA,
+                    self._key_path,
+                    OPERATION.SET,
+                    key,
+                    value,
+                ])
 
     def values(self, *args, **kwargs):
         with self._widget.lock:
@@ -234,8 +295,15 @@ class DictOverlay:
 
             self._original_data[name] = item
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.SET, name, item])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.SET,
+                name,
+                item,
+            ])
 
     def __getitem__(self, name):
         with self._widget.lock:
@@ -261,8 +329,14 @@ class DictOverlay:
         with self._widget.lock:
             del self._original_data[name]
 
-            self._widget_data._changes.append(
-                [self._key_path, OPERATION.REMOVE, name])
+            self._widget_data._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                self._key_path,
+                OPERATION.REMOVE,
+                name,
+            ])
 
     def __str__(self, *args, **kwargs):
         with self._widget.lock:
@@ -332,9 +406,14 @@ class WidgetData:
         with self._widget.lock:
             self._data = value
 
-            self._changes.append(
-                [[], OPERATION.RESET, deepcopy(value)],
-            )
+            self._changes.append([
+                monotonic_ns(),
+                self._widget._id,
+                PATCH_TYPE.WIDGET_DATA,
+                [],
+                OPERATION.RESET,
+                deepcopy(value)
+            ])
 
             if isinstance(value, list):
                 self._overlay = ListOverlay(

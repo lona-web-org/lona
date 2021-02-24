@@ -1,7 +1,11 @@
-from lona.protocol import OPERATION
+from time import monotonic_ns
+
+from lona.protocol import OPERATION, PATCH_TYPE
 
 
 class AttributeDict:
+    PATCH_TYPE = PATCH_TYPE.ATTRIBUTES
+
     def __init__(self, node, *args, **kwargs):
         self._node = node
         self._attributes = dict(*args, **kwargs)
@@ -18,14 +22,25 @@ class AttributeDict:
 
     def pop(self, name):
         with self._node.document.lock:
-            self._changes.append([OPERATION.REMOVE, name])
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.REMOVE,
+                name,
+            ])
 
             return self._attributes.pop(name)
 
     def clear(self):
         with self._node.document.lock:
             self._attributes.clear()
-            self._changes.append([OPERATION.CLEAR])
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.CLEAR,
+            ])
 
     def get(self, *args, **kwargs):
         with self._node.document.lock:
@@ -48,12 +63,27 @@ class AttributeDict:
 
         with self._node.document.lock:
             self._attributes[name] = value
-            self._changes.append([OPERATION.SET, name, value])
+
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.SET,
+                name,
+                value,
+            ])
 
     def __delitem__(self, name):
         with self._node.document.lock:
             del self._attributes[name]
-            self._changes.append([OPERATION.REMOVE, name])
+
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.REMOVE,
+                name,
+            ])
 
     def __iter__(self):
         with self._node.document.lock:
@@ -81,7 +111,14 @@ class AttributeDict:
 
         with self._node.document.lock:
             self._attributes = value
-            self._changes.append([OPERATION.RESET, dict(value)])
+
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.RESET,
+                dict(value),
+            ])
 
     def _has_changes(self):
         return bool(self._changes)
@@ -116,3 +153,10 @@ class AttributeDict:
 
     def __repr__(self):
         return '<AttributeDict({})>'.format(repr(self._attributes))
+
+
+class StyleDict(AttributeDict):
+    PATCH_TYPE = PATCH_TYPE.STYLE
+
+    def __repr__(self):
+        return '<StyleDict({})>'.format(repr(self._attributes))

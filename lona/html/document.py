@@ -124,7 +124,7 @@ class Document:
 
             # changes
             if node._has_changes():
-                changes.append(node._get_changes())
+                changes.extend(node._get_changes())
 
             if hasattr(node, 'nodes'):
                 for sub_node in node.nodes:
@@ -135,6 +135,15 @@ class Document:
 
         add_changes(self.html)
 
+        # sort changes by timestamp
+        changes = sorted(changes, key=lambda x: x[0])
+
+        # remove timestamps
+        cleaned_changes = []
+
+        for change in changes:
+            cleaned_changes.append(change[1:])
+
         # clean list of changed widgets
         cleaned_changed_widgets = []
 
@@ -142,7 +151,7 @@ class Document:
             if widget_id not in cleaned_changed_widgets:
                 cleaned_changed_widgets.append(widget_id)
 
-        return [changes, cleaned_changed_widgets]
+        return [cleaned_changes, cleaned_changed_widgets]
 
     def serialize(self):
         if not self.html:
