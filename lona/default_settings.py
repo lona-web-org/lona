@@ -20,10 +20,6 @@ ERROR_500_TEMPLATE = 'lona/500.html'
 TEMPLATE_EXTRA_CONTEXT = {}
 
 # static files
-CORE_STATIC_DIRS = [
-    os.path.join(os.path.dirname(__file__), 'static'),
-]
-
 STATIC_DIRS = []
 STATIC_URL_PREFIX = '/static/'
 STATIC_FILES_STYLE_TAGS_TEMPLATE = 'lona/style_tags.html'
@@ -31,6 +27,8 @@ STATIC_FILES_SCRIPT_TAGS_TEMPLATE = 'lona/script_tags.html'
 STATIC_FILES_SYMBOLS_TEMPLATE = 'lona/lona-symbols.js'
 STATIC_FILES_ENABLED = []
 STATIC_FILES_DISABLED = []
+
+CLIENT_RECOMPILE = False
 
 # state
 SERVER_STATE_ATOMIC = True

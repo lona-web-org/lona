@@ -22,4 +22,23 @@ SOFTWARE.
 
 */
 
+var Lona = Object();
+
 Lona.symbols = JSON.parse('{{ symbols }}');
+Lona.widget_classes = {};
+
+Lona.register_widget_class = function(widget_name, javascript_class) {
+    this.widget_classes[widget_name] = javascript_class;
+};
+
+// job-queue.js
+{% include 'job-queue.js' %}
+
+// window-shim.js
+{% include 'window-shim.js' %}
+
+// window.js
+{% include 'window.js' %}
+
+// context.js
+{% include 'context.js' %}

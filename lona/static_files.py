@@ -1,11 +1,9 @@
-from tempfile import TemporaryDirectory
 from copy import copy
 import logging
 import os
 
 from lona.html.abstract_node import AbstractNode
 from lona.types import Symbol
-from lona.json import dumps
 
 logger = logging.getLogger('lona.static_files')
 
@@ -56,33 +54,11 @@ class StaticFileLoader:
     def __init__(self, server):
         self.server = server
 
-        self.tmp_dir = TemporaryDirectory()
-
-        self.static_dirs = (self.server.settings.STATIC_DIRS +
-                            [self.tmp_dir.name] +
-                            self.server.settings.CORE_STATIC_DIRS)
+        self.static_dirs = (self.server.settings.STATIC_DIRS)
 
         logger.debug('static dirs %s loaded', repr(self.static_dirs)[1:-1])
 
-        self.generate_symbols()
         self.discover()
-
-    def generate_symbols(self):
-        logger.debug('generating symbols')
-
-        javascript = self.server.templating_engine.render_template(
-            self.server.settings.STATIC_FILES_SYMBOLS_TEMPLATE,
-            {
-                'symbols': dumps(Symbol.dump_symbol_classes()),
-            },
-        )
-
-        os.makedirs(os.path.join(self.tmp_dir.name, 'lona'))
-
-        path = os.path.join(self.tmp_dir.name, 'lona/lona-symbols.js')
-
-        with open(path, 'w+') as f:
-            f.write(javascript)
 
     def discover_node_classes(self):
         self.node_classes = [AbstractNode]
@@ -240,6 +216,12 @@ class StaticFileLoader:
         logger.debug("resolving '%s'", path)
 
         rel_path = path
+
+        # javascript client
+        if path == 'lona/lona.js':
+            logger.debug('returning javascript client')
+
+            return self.server.client_pre_compiler.resolve()
 
         # searching in static dirs
         if rel_path.startswith('/'):

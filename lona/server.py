@@ -13,6 +13,7 @@ from aiohttp.web import (
 
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
+from lona.client_pre_compiler import ClientPreCompiler
 from lona.response_parser import ResponseParser
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
@@ -148,6 +149,8 @@ class LonaServer:
         self.view_runtime_controller = ViewRuntimeController(self)
 
         # setup static files
+        self.client_pre_compiler = ClientPreCompiler(self)
+
         # the static file loader has to be started last because it does
         # node class discovery which has to happen after all views are imported
         server_logger.debug('setup static file')
