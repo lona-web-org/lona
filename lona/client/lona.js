@@ -37,6 +37,9 @@ Lona.register_widget_class = function(widget_name, javascript_class) {
 // window-shim.js
 {% include 'window-shim.js' %}
 
+// input-events.js
+{% include 'input-events.js' %}
+
 // window.js
 {% include 'window.js' %}
 
