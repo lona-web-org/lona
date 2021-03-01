@@ -2,30 +2,38 @@ from lona.html import HTML, Div, H1
 
 
 def handle_request(request):
-    div = Div()
+    widget = HTML()
 
     html = HTML(
         H1('Interactive View'),
-        div,
+        widget,
     )
 
     while True:
-        div.clear()
+        widget.clear()
 
         for i in range(0, 5):
-            div.append(Div('Div {}'.format(i+1)))
+            widget.append(Div('Div {}'.format(i+1)))
             request.client.show(html)
 
             request.view.sleep(0.5)
 
         for i in range(0, 5):
-            div[i].insert(i+1, Div('Div {}.{}'.format(i+1, i+1)))
+            widget[i].insert(i+1, Div('Div {}.{}'.format(i+1, i+1)))
             request.client.show(html)
 
             request.view.sleep(0.5)
 
         for i in range(0, 5):
-            div[i].style = {'color': 'red'}
+            widget[i].style = {'color': 'red'}
+            request.client.show(html)
+
+            request.view.sleep(0.5)
+
+        moving_div = Div('Div 6', style={'color': 'blue'})
+
+        for i in range(0, 5):
+            widget[i].append(moving_div)
             request.client.show(html)
 
             request.view.sleep(0.5)
