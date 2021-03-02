@@ -14,7 +14,6 @@ class Node(AbstractNode):
     ID_LIST = []
     CLASS_LIST = []
     STYLE = {}
-    LONA_CLASS_LIST = []
 
     def __init__(self, *args, tag_name=None, single_tag=None, **kwargs):
         self._id = self.gen_id()
@@ -33,11 +32,6 @@ class Node(AbstractNode):
 
         else:
             self.single_tag = single_tag
-
-        # lona classes
-        for class_name in self.LONA_CLASS_LIST:
-            if class_name in ('clickable', 'changeable', 'ignore'):
-                setattr(self, class_name, True)
 
         # args (nodes)
         for arg in args:

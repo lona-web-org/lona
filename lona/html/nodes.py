@@ -156,7 +156,7 @@ class Label(Node):
 
 class Button(Node):
     TAG_NAME = 'button'
-    LONA_CLASS_LIST = ['clickable']
+    CLASS_LIST = ['lona-clickable']
 
 
 class InputNode(Node):
