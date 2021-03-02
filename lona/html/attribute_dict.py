@@ -22,6 +22,8 @@ class AttributeDict:
 
     def pop(self, name):
         with self._node.document.lock:
+            attribute = self._attributes.pop(name)
+
             self._changes.append([
                 monotonic_ns(),
                 self._node._id,
@@ -30,10 +32,13 @@ class AttributeDict:
                 name,
             ])
 
-            return self._attributes.pop(name)
+            return attribute
 
     def clear(self):
         with self._node.document.lock:
+            if not self._attributes:
+                return
+
             self._attributes.clear()
             self._changes.append([
                 monotonic_ns(),
@@ -70,6 +75,9 @@ class AttributeDict:
             )
 
         with self._node.document.lock:
+            if name in self._attributes and self._attributes[name] == value:
+                return
+
             self._attributes[name] = value
 
             self._changes.append([

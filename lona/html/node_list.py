@@ -69,9 +69,9 @@ class NodeList:
 
     def remove(self, node):
         with self._node.document.lock:
-            node.parent = None
-
             self._nodes.remove(node)
+
+            node.parent = None
 
             self._changes.append([
                 monotonic_ns(),
@@ -99,6 +99,9 @@ class NodeList:
 
     def clear(self):
         with self._node.document.lock:
+            if not self._nodes:
+                return
+
             for node in list(self._nodes):
                 node.parent = None
                 self._nodes.remove(node)

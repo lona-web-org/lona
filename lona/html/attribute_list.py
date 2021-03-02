@@ -17,32 +17,39 @@ class AttributeList:
             raise ValueError('unsupported type')
 
         with self._node.document.lock:
-            if attribute not in self._attributes:
-                self._attributes.append(attribute)
+            if attribute in self._attributes:
+                return
 
-                self._changes.append([
-                    monotonic_ns(),
-                    self._node._id,
-                    self.PATCH_TYPE,
-                    OPERATION.ADD,
-                    attribute,
-                ])
+            self._attributes.append(attribute)
+
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.ADD,
+                attribute,
+            ])
 
     def remove(self, attribute):
         with self._node.document.lock:
-            if attribute in self._attributes:
-                self._attributes.remove(attribute)
+            if attribute not in self._attributes:
+                return
 
-                self._changes.append([
-                    monotonic_ns(),
-                    self._node._id,
-                    self.PATCH_TYPE,
-                    OPERATION.REMOVE,
-                    attribute,
-                ])
+            self._attributes.remove(attribute)
+
+            self._changes.append([
+                monotonic_ns(),
+                self._node._id,
+                self.PATCH_TYPE,
+                OPERATION.REMOVE,
+                attribute,
+            ])
 
     def clear(self):
         with self._node.document.lock:
+            if not self._attributes:
+                return
+
             self._attributes.clear()
 
             self._changes.append([
