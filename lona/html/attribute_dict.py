@@ -46,6 +46,14 @@ class AttributeDict:
         with self._node.document.lock:
             return self._attributes.get(*args, **kwargs)
 
+    def update(self, value):
+        if not isinstance(value, dict):
+            raise ValueError('dict required')
+
+        with self._node.document.lock:
+            for key, value in value.items():
+                self[key] = value
+
     def __getitem__(self, name):
         with self._node.document.lock:
             return self._attributes[name]
