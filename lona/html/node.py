@@ -64,25 +64,25 @@ class Node(AbstractNode):
                 if not isinstance(value, list):
                     value = [value]
 
-                self._id_list._reset(value)
+                self._id_list.extend(value)
 
             elif name == 'class':
                 if not isinstance(value, list):
                     value = [value]
 
-                self._class_list._reset(value)
+                self._class_list.extend(value)
 
             elif name == 'style':
                 if not isinstance(value, dict):
                     raise ValueError('style has to be dict')
 
-                self._style._reset(value)
+                self._style.update(value)
 
             elif name == 'attributes':
                 if not isinstance(value, dict):
                     raise ValueError('attributes has to be dict')
 
-                self._attributes._reset(value)
+                self._attributes.update(value)
 
             elif name == 'nodes':
                 if not isinstance(value, list):
