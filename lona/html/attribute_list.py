@@ -70,6 +70,14 @@ class AttributeList:
     def append(self, attribute):
         return self.add(attribute)
 
+    def extend(self, attributes):
+        with self._node.document.lock:
+            for attribute in iter(attributes):
+                if attribute in self._attributes:
+                    continue
+
+                self.append(attribute)
+
     def __len__(self):
         with self._node.document.lock:
             return len(self._attributes)
