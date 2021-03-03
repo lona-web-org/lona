@@ -34,10 +34,10 @@ Lona.LonaWidgetDataUpdater = function(lona_context, lona_window) {
 
         // CLEAR
         } else if(operation == Lona.symbols.OPERATION.CLEAR) {
-            if(data instanceof Array) {
+            if(widget_data instanceof Array) {
                 var new_data = [];
 
-            } else if(data instanceof Object) {
+            } else if(widget_data instanceof Object) {
                 var new_data = {};
 
             };
