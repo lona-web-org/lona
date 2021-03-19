@@ -4,22 +4,14 @@ from functools import partial
 import asyncio
 import logging
 import signal
-import code
 import os
 
 from aiohttp.web import Application, run_app
 from jinja2 import Environment
+import rlpython
 
 from lona.logging import LogFormatter, LogFilter
 from lona.server import LonaServer
-
-try:
-    import IPython
-
-    IPYTHON = True
-
-except ImportError:
-    IPYTHON = False
 
 try:
     import aiomonitor  # NOQA
@@ -152,15 +144,11 @@ def run_server(args):
     if cli_args.shell:
         async def start_shell(server):
             def _start_shell():
-                if IPYTHON:
-                    IPython.embed(
-                        locals={'server': server},
-                    )
-
-                else:
-                    code.interact(
-                        local={'server': server},
-                    )
+                rlpython.embed(
+                    locals={
+                        'server': server,
+                    },
+                )
 
                 os.kill(os.getpid(), signal.SIGTERM)
 

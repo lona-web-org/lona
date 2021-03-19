@@ -18,6 +18,7 @@ setup(
         'aiohttp>=3,<4',
         'jinja2',
         'aiomonitor',
+        'rlpython==0.3',
     ],
     scripts=[
         'bin/lona',
