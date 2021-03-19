@@ -1,5 +1,4 @@
 -e ..
 -e django-project/
 aiohttp_wsgi
-ipython==5
 Django>=2.2,<3

@@ -32,7 +32,7 @@ clean:
 
 shell: env
 	. $(PYTHON_VENV)/bin/activate && \
-	ipython
+	rlpython
 
 server: env
 	. $(PYTHON_VENV)/bin/activate && \
