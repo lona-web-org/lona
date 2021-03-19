@@ -20,7 +20,7 @@ clean:
 
 shell: env
 	. $(PYTHON_VENV)/bin/activate && \
-	ipython
+	rlpython
 
 freeze: env
 	. $(PYTHON_VENV)/bin/activate && \
