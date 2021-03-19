@@ -1,7 +1,7 @@
 from copy import deepcopy, copy
 
 from lona.html.parsing import html_string_to_node_list
-from lona.html import Widget
+from lona.html import Widget, CHANGE
 
 
 class ValueDict:
@@ -117,12 +117,7 @@ class DjangoForm(Widget):
 
         if self.rerender_on_change:
             for field in self._form.fields.values():
-                class_string = field.widget.attrs.get('class', '')
-
-                class_string = ' '.join(
-                    [class_string, 'lona-changeable']).strip()
-
-                field.widget.attrs['class'] = class_string
+                field.widget.attrs['data-lona-events'] = CHANGE.serialize()
 
         if self.render_as:
             render_method = getattr(self._form, 'as_{}'.format(self.render_as))

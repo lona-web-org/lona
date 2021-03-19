@@ -1,7 +1,7 @@
 from copy import copy
 
-from lona.html.nodes import InputNode, TextAreaNode
-from lona.html import Widget
+from lona.html.nodes import TextAreaNode, InputNode, Widget
+from lona.html.node_events import CHANGE
 
 DEFAULT_INPUT_DELAY = 300
 
@@ -15,15 +15,16 @@ class TextInput(Widget):
 
     ATTRIBUTES = {
         'type': 'text',
-        'data-lona-input-delay': DEFAULT_INPUT_DELAY,
     }
 
-    def __init__(self, disabled=False, bubble_up=False, **input_kwargs):
+    def __init__(self, disabled=False, bubble_up=False,
+                 input_delay=DEFAULT_INPUT_DELAY, **input_kwargs):
+
         self.bubble_up = bubble_up
 
         self.input_node = self.gen_input_node(**input_kwargs)
 
-        self.input_node.changeable = True
+        self.input_node.events.add(CHANGE(input_delay))
 
         self.nodes = [
             self.input_node,
@@ -96,10 +97,6 @@ class TextInput(Widget):
 
 class TextArea(TextInput):
     NODE_CLASS = TextAreaNode
-
-    ATTRIBUTES = {
-        'data-lona-input-delay': DEFAULT_INPUT_DELAY,
-    }
 
 
 class CheckBox(TextInput):

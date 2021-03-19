@@ -1,3 +1,4 @@
+from lona.html.node_events import CLICK
 from lona.html.widget import Widget  # NOQA
 from lona.html.node import Node
 
@@ -156,7 +157,7 @@ class Label(Node):
 
 class Button(Node):
     TAG_NAME = 'button'
-    CLASS_LIST = ['lona-clickable']
+    EVENTS = [CLICK]
 
 
 class InputNode(Node):

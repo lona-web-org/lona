@@ -2,6 +2,7 @@ from textwrap import indent
 
 from lona.html.attribute_dict import AttributeDict, StyleDict
 from lona.html.attribute_list import IDList, ClassList
+from lona.html.node_event_list import NodeEventList
 from lona.html.abstract_node import AbstractNode
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
@@ -10,10 +11,11 @@ from lona.protocol import NODE_TYPE
 class Node(AbstractNode):
     TAG_NAME = 'html'
     SINGLE_TAG = False
-    ATTRIBUTES = {}
     ID_LIST = []
     CLASS_LIST = []
     STYLE = {}
+    ATTRIBUTES = {}
+    EVENTS = []
 
     def __init__(self, *args, tag_name=None, single_tag=None, **kwargs):
         self._id = self.gen_id()
@@ -23,6 +25,7 @@ class Node(AbstractNode):
         self._style = StyleDict(self, self.STYLE)
         self._attributes = AttributeDict(self, self.ATTRIBUTES)
         self._nodes = NodeList(self)
+        self._events = NodeEventList(self, self.EVENTS)
 
         # tag overrides
         self.tag_name = tag_name or self.TAG_NAME
@@ -50,7 +53,7 @@ class Node(AbstractNode):
                     name = name[1:]
 
             # lona classes
-            if name in ('clickable', 'changeable', 'ignore'):
+            if name in ('ignore'):
                 setattr(self, name, value)
 
             # change aware attributes
@@ -77,6 +80,12 @@ class Node(AbstractNode):
                     raise ValueError('attributes has to be dict')
 
                 self._attributes.update(value)
+
+            elif name == 'events':
+                if not isinstance(value, list):
+                    raise ValueError('events have to be list')
+
+                self._events.extend(value)
 
             elif name == 'nodes':
                 if not isinstance(value, list):
@@ -125,6 +134,15 @@ class Node(AbstractNode):
     def attributes(self, value):
         self._attributes._reset(value)
 
+    # events
+    @property
+    def events(self):
+        return self._events
+
+    @events.setter
+    def events(self, value):
+        self._events._reset(value)
+
     # nodes
     @property
     def nodes(self):
@@ -142,30 +160,6 @@ class Node(AbstractNode):
         return id_name in self._id_list
 
     # lona attributes #########################################################
-    @property
-    def clickable(self):
-        return 'lona-clickable' in self._class_list
-
-    @clickable.setter
-    def clickable(self, value):
-        if value:
-            self._class_list.add('lona-clickable')
-
-        else:
-            self._class_list.remove('lona-clickable')
-
-    @property
-    def changeable(self):
-        return 'lona-changeable' in self._class_list
-
-    @changeable.setter
-    def changeable(self, value):
-        if value:
-            self._class_list.add('lona-changeable')
-
-        else:
-            self._class_list.remove('lona-changeable')
-
     @property
     def ignore(self):
         return 'data-lona-ignore' in self._attributes

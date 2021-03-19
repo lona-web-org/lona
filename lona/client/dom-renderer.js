@@ -118,6 +118,11 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
             };
         };
 
+        // patch input events
+        node_list.forEach(function(node) {
+            _this.lona_window._input_event_handler.patch_input_events(node);
+        });
+
         return node_list;
     };
 
@@ -125,11 +130,17 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
         // TODO: get rid of this method and move functionality
         // into _render_node()
 
+        var _this = this;
         var node_list = [];
 
         for(var index in node_specs) {
             node_list = node_list.concat(this._render_node(node_specs[index]));
         };
+
+        // patch input events
+        node_list.forEach(function(node) {
+            _this.lona_window._input_event_handler.patch_input_events(node);
+        });
 
         return node_list;
     };

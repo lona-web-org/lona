@@ -175,8 +175,14 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
             // HTML
             if(message_type == Lona.symbols.DATA_TYPE.HTML) {
+                var selector = 'a,form,[data-lona-events]';
+
                 _this._root.innerHTML = data;
                 _this._clean_node_cache();
+
+                _this._root.querySelectorAll(selector).forEach(function(node) {
+                    _this._input_event_handler.patch_input_events(node);
+                });
 
             // HTML tree
             } else if(message_type == Lona.symbols.DATA_TYPE.HTML_TREE) {
@@ -210,9 +216,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 });
             };
 
-            _this._input_event_handler.patch_input_events();
             _this._run_widget_hooks();
-
         });
     };
 

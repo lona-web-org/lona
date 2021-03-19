@@ -489,6 +489,13 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
                 });
             };
         };
+
+        // lona events
+        if(patch_type == symbols.PATCH_TYPE.ATTRIBUTES &&
+           data[0] == 'data-lona-events') {
+
+            this.lona_window._input_event_handler.patch_input_events(node);
+        };
     };
 
     this._apply_patch_to_child_nodes = function(patch) {

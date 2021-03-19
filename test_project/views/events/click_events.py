@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import Div, H1, Pre
+from lona.html import Div, H1, Pre, CLICK
 
 
 def handle_request(request):
@@ -26,11 +26,11 @@ def handle_request(request):
         H1('Click Events'),
         Div(
             Div(
-                Div(style=style, clickable=True),
-                Div(style=style, clickable=True),
-                Div(style=style, clickable=True),
-                Div(style=style, clickable=True),
-                Div(style=style, clickable=True),
+                Div(style=style, events=[CLICK]),
+                Div(style=style, events=[CLICK]),
+                Div(style=style, events=[CLICK]),
+                Div(style=style, events=[CLICK]),
+                Div(style=style, events=[CLICK]),
 
                 style={
                     'float': 'left',

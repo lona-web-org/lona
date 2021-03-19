@@ -1,6 +1,7 @@
 from copy import copy
 
 from lona.html.nodes import SelectNode, OptionNode, Widget
+from lona.html.node_events import CHANGE
 
 
 class Select(Widget):
@@ -15,7 +16,7 @@ class Select(Widget):
         self.bubble_up = bubble_up
 
         self.select_node = SelectNode(**self.gen_node_args(**select_kwargs))
-        self.select_node.changeable = True
+        self.select_node.events.add(CHANGE)
 
         self.nodes = [
             self.select_node,
