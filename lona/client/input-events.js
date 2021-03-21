@@ -261,7 +261,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             lona_node_id = node.getAttribute('lona-node-id');
 
             if(lona_node_id) {
-                lona_node_id = lona_node_id.substr(1);
+                lona_node_id = parseInt(lona_node_id);
             };
 
             node_tag_name = node.tagName;

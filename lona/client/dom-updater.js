@@ -94,7 +94,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[lona-node-id=_' + node_id + ']';
+            var selector = '[lona-node-id="' + node_id + '"]';
 
             target_node = _this.lona_window._root.querySelector(selector);
         }
@@ -175,7 +175,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[lona-node-id=_' + target_node_id + ']';
+            var selector = '[lona-node-id="' + target_node_id + '"]';
             var target_node = _this.lona_window._root.querySelector(selector);
 
             if(!target_node) {
@@ -294,7 +294,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[lona-node-id=_' + node_id + ']';
+            var selector = '[lona-node-id="' + node_id + '"]';
 
             node = _this.lona_window._root.querySelector(selector);
 
@@ -335,7 +335,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[lona-node-id=_' + node_id + ']';
+            var selector = '[lona-node-id="' + node_id + '"]';
             var node = _this.lona_window._root.querySelector(selector);
 
             if(!node) {
@@ -357,7 +357,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
         var operation = patch[2];
         var data = patch.splice(3);
 
-        var selector = '[lona-node-id=_' + node_id + ']';
+        var selector = '[lona-node-id="' + node_id + '"]';
         var node = this.lona_window._root.querySelector(selector);
 
         if(!node) {

@@ -16,7 +16,7 @@ class AbstractNode:
 
     @classmethod
     def gen_id(cls):
-        return str(time.monotonic_ns())
+        return time.monotonic_ns()
 
     @property
     def parent(self):

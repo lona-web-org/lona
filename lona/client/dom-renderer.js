@@ -22,7 +22,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
             var node = document.createElement(node_tag_name);
 
             // lona node id
-            node.setAttribute('lona-node-id', '_' + node_id);
+            node.setAttribute('lona-node-id', node_id);
 
             // id list
             if(node_id_list.length > 0) {

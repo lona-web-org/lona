@@ -54,7 +54,6 @@ class Document:
         if isinstance(node_id, Node):
             node_id = node_id.id
 
-        node_id = str(node_id)
         value = [None, [], ]
         widget = [None]
         widget_path = []
