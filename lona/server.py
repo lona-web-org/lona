@@ -490,13 +490,13 @@ class LonaServer:
                 response = await response
 
             # render and return response
-            if isinstance(response, Response):
-                return response
+            if isinstance(response, dict):
+                return await self.run_function_async(
+                    self._render_response,
+                    response,
+                )
 
-            return await self.run_function_async(
-                self._render_response,
-                response,
-            )
+            return response
 
         # websocket requests
         if(http_request.method == 'GET' and
