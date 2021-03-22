@@ -168,15 +168,17 @@ class Node(AbstractNode):
 
     @property
     def ignore(self):
-        return 'lona-ignore' in self._class_list
+        return 'data-lona-ignore' in self._attributes
 
     @ignore.setter
     def ignore(self, value):
         if value:
-            self._class_list.add('lona-ignore')
+            self._attributes['data-lona-ignore'] = 'True'
 
         else:
-            self._class_list.remove('lona-ignore')
+            with self.lock:
+                if 'data-lona-ignore' in self._attributes:
+                    del self._attributes['data-lona-ignore']
 
     # serialisation ###########################################################
     def _has_changes(self):

@@ -29,7 +29,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         var root = this.lona_window._root;
 
         // links
-        var selector = 'a:not(.lona-clickable):not(.lona-ignore)';
+        var selector = 'a:not(.lona-clickable):not([data-lona-ignore])';
 
         root.querySelectorAll(selector).forEach(function(node) {
             node.onclick = function(event) {
@@ -51,7 +51,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         });
 
         // click events
-        var selector = '.lona-clickable:not(.lona-ignore)';
+        var selector = '.lona-clickable:not([data-lona-ignore])';
 
         root.querySelectorAll(selector).forEach(function(node) {
             node.onclick = function(event) {
@@ -89,7 +89,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         });
 
         // change events
-        var selector = '.lona-changeable:not(.lona-ignore)';
+        var selector = '.lona-changeable:not([data-lona-ignore])';
 
         root.querySelectorAll(selector).forEach(function(node) {
 
@@ -159,7 +159,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         });
 
         // forms
-        var selector = 'form:not(.lona-ignore)';
+        var selector = 'form:not([data-lona-ignore])';
 
         root.querySelectorAll(selector).forEach(function(node) {
             node.onsubmit = function(event) {

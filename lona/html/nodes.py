@@ -219,17 +219,11 @@ class A(Node):
 
     @property
     def interactive(self):
-        return 'lona-ignore' not in self.class_list
+        return self.ignore
 
     @interactive.setter
     def interactive(self, value):
-        value = bool(value)
-
-        if not value:
-            self.class_list.add('lona-ignore')
-
-        else:
-            self.class_list.remove('lona-ignore')
+        self.ignore = value
 
     def set_href(self, href):
         self.attributes['href'] = str(href)
