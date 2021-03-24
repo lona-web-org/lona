@@ -4,17 +4,12 @@ PYTHON_VENV=env
 DJANGO_PYTHON=python3
 DJANGO_PYTHON_VENV=django-env
 
-MONITOR_HOST=localhost
-MONITOR_PORT=50101
-MONITOR_CONSOLE_PORT=50102
+SHELL_SERVER_HOST=localhost
+SHELL_SERVER_PORT=50101
 
-LONA_DEFAULT_ARGS=--monitor \
-                  --monitor-host=$(MONITOR_HOST) \
-                  --monitor-port=$(MONITOR_PORT) \
-                  --monitor-console-port=$(MONITOR_CONSOLE_PORT)
-
-monitor:
-	rlwrap nc localhost $(MONITOR_PORT)
+LONA_DEFAULT_ARGS=--shell-server \
+                  --shell-server-host=$(SHELL_SERVER_HOST) \
+                  --shell-server-port=$(SHELL_SERVER_PORT) \
 
 # non Django environment ######################################################
 $(PYTHON_VENV)/.created: REQUIREMENTS.txt
@@ -37,6 +32,10 @@ shell: env
 server: env
 	. $(PYTHON_VENV)/bin/activate && \
 	lona $(LONA_DEFAULT_ARGS) -s settings.py $(args)
+
+server-shell:
+	. $(PYTHON_VENV)/bin/activate && \
+	rlpython $(SHELL_SERVER_PORT)
 
 # Django environment ##########################################################
 $(DJANGO_PYTHON_VENV)/.created: REQUIREMENTS.Django.txt

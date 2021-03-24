@@ -8,18 +8,10 @@ import os
 
 from aiohttp.web import Application, run_app
 from jinja2 import Environment
-import rlpython
 
+from lona.shell.shell import embed_shell, generate_shell_server
 from lona.logging import LogFormatter, LogFilter
 from lona.server import LonaServer
-
-try:
-    import aiomonitor  # NOQA
-
-    AIOMONITOR = True
-
-except ImportError:
-    AIOMONITOR = False
 
 
 def run_server(args):
@@ -37,10 +29,9 @@ def run_server(args):
     parser.add_argument('--project-root', type=str, default=os.getcwd())
     parser.add_argument('--shell', action='store_true')
     parser.add_argument('--loggers', type=str, nargs='+')
-    parser.add_argument('--monitor', action='store_true')
-    parser.add_argument('--monitor-host', type=str, default='localhost')
-    parser.add_argument('--monitor-port', type=int, default=50101)
-    parser.add_argument('--monitor-console-port', type=int, default=50102)
+    parser.add_argument('--shell-server', action='store_true')
+    parser.add_argument('--shell-server-host', type=str, default='localhost')
+    parser.add_argument('--shell-server-port', type=int, default=50101)
 
     parser.add_argument(
         '-l', '--log-level',
@@ -144,11 +135,17 @@ def run_server(args):
     if cli_args.shell:
         async def start_shell(server):
             def _start_shell():
-                rlpython.embed(
-                    locals={
+                embed_kwargs = {
+                    'locals': {
+                        'loop': loop,
                         'server': server,
+                        'cli_args': vars(cli_args),
+                        'log_formatter': log_formatter,
+                        'log_filter': log_filter,
                     },
-                )
+                }
+
+                embed_shell(server=server, **embed_kwargs)
 
                 os.kill(os.getpid(), signal.SIGTERM)
 
@@ -164,16 +161,14 @@ def run_server(args):
         shutdown_timeout=cli_args.shutdown_timeout,
     )
 
-    if cli_args.monitor:
-        if not AIOMONITOR:
-            exit('aiomonitor is not installed')
-
-        monitor_args = {
-            'loop': loop,
-            'host': cli_args.monitor_host,
-            'port': cli_args.monitor_port,
-            'console_port': cli_args.monitor_console_port,
+    if cli_args.shell_server:
+        embed_kwargs = {
+            'bind': '{}:{}'.format(
+                cli_args.shell_server_host,
+                cli_args.shell_server_port,
+            ),
             'locals': {
+                'loop': loop,
                 'server': server,
                 'cli_args': vars(cli_args),
                 'log_formatter': log_formatter,
@@ -181,9 +176,9 @@ def run_server(args):
             },
         }
 
-        monitor_class = server.acquire(server.settings.MONITOR_CLASS)
+        repl_server = generate_shell_server(server=server, **embed_kwargs)
 
-        with monitor_class(**monitor_args):
+        with repl_server:
             _run_app()
 
     else:

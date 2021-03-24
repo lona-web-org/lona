@@ -1,6 +1,5 @@
 import os
 
-MONITOR_CLASS = 'lona.monitor.LonaMonitor'
 MAX_WORKERS = 10
 
 # routing
@@ -56,3 +55,15 @@ MIDDLEWARES = []
 # hooks
 STARTUP_HOOKS = []
 SHUTDOWN_HOOKS = []
+
+# shell
+CORE_COMMANDS = [
+    'lona.shell.commands.lona_server_state.LonaServerStateCommand',
+    'lona.shell.commands.lona_connections.LonaConnectionsCommand',
+    'lona.shell.commands.lona_settings.LonaSettingsCommand',
+    'lona.shell.commands.lona_routes.LonaRoutesCommand',
+    'lona.shell.commands.lona_views.LonaViewsCommand',
+    'lona.shell.commands.lona_info.LonaInfoCommand',
+]
+
+COMMANDS = []
