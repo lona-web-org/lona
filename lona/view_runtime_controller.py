@@ -169,6 +169,12 @@ class ViewRuntimeController:
             if response_dict:
                 return
 
+            # check for 403 forbidden error
+            response_dict = view_runtime.run_user_enter(connection.user)
+
+            if response_dict:
+                return
+
             # reconnect or close previous started single user views
             # for this route
             user = connection.user

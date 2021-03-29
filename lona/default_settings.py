@@ -14,6 +14,7 @@ CORE_TEMPLATE_DIRS = [
 TEMPLATE_DIRS = []
 
 FRONTEND_TEMPLATE = 'lona/frontend.html'
+ERROR_403_TEMPLATE = 'lona/403.html'
 ERROR_404_TEMPLATE = 'lona/404.html'
 ERROR_500_TEMPLATE = 'lona/500.html'
 
@@ -37,8 +38,11 @@ SERVER_STATE_ATOMIC = True
 FRONTEND_VIEW = 'lona.views.FrontendView'
 
 # error views
+ERROR_403_VIEW = 'lona.views.Error403View'
 ERROR_404_VIEW = 'lona.views.Error404View'
 ERROR_500_VIEW = 'lona.views.Error500View'
+
+ERROR_403_FALLBACK_VIEW = 'lona.views.Error403View'
 ERROR_404_FALLBACK_VIEW = 'lona.views.Error404View'
 ERROR_500_FALLBACK_VIEW = 'lona.views.Error500View'
 

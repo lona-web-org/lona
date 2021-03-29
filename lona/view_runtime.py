@@ -168,6 +168,43 @@ class ViewRuntime:
                 )
             )
 
+    # permission checks #######################################################
+    def run_user_enter(self, user):
+        try:
+            if self.view.handle_user_enter(user):
+                return
+
+            self.send_view_start()
+
+            view = self.server.view_loader.load(
+                self.server.settings.ERROR_403_VIEW,
+            )
+
+            response_dict = self.handle_raw_response_dict(
+                view(self.request)
+            )
+
+            self.send_view_stop()
+
+            return response_dict
+
+        except Exception as exception:
+            logger.error(
+                'Exception raised while handle_user_enter',
+                exc_info=True,
+            )
+
+            view = self.server.view_loader.load(
+                self.server.settings.ERROR_500_VIEW,
+            )
+
+            return self.handle_raw_response_dict(
+                view(
+                    self.request,
+                    exception,
+                )
+            )
+
     # start and stop ##########################################################
     def start(self):
         try:

@@ -74,6 +74,24 @@ class ViewLoader:
 
         return view
 
+    def _run_error_403_view(self, request):
+        try:
+            view = self._error_403_view()
+
+            return view.handle_request(request)
+
+        except Exception:
+            logger.error(
+                'Exception occurred while running %s. Falling back to %s',
+                self._error_403_view,
+                self._error_403_fallback_view,
+                exc_info=True,
+            )
+
+        view = self._error_403_fallback_view()
+
+        return view.handle_request(request)
+
     def _run_error_404_view(self, request):
         try:
             view = self._error_404_view()
@@ -134,6 +152,18 @@ class ViewLoader:
 
         cache_key = self._gen_cache_key(self.server.settings.FRONTEND_VIEW)
         self._cache[cache_key] = frontend_view
+
+        # error 403 view
+        self._error_403_view = self._acquire(
+            self.server.settings.ERROR_403_VIEW,
+        )
+
+        self._error_403_fallback_view = self._acquire(
+            self.server.settings.ERROR_403_FALLBACK_VIEW,
+        )
+
+        cache_key = self._gen_cache_key(self.server.settings.ERROR_403_VIEW)
+        self._cache[cache_key] = self._run_error_403_view
 
         # error 404 view
         self._error_404_view = self._acquire(

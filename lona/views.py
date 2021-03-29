@@ -1,4 +1,7 @@
 class LonaView:
+    def handle_user_enter(self, user):
+        return True
+
     def handle_request(self, *args, **kwargs):
         return ''
 
@@ -13,6 +16,14 @@ class FrontendView(LonaView):
     def handle_request(self, request):
         return {
             'template': request.server.settings.FRONTEND_TEMPLATE,
+            'request': request,
+        }
+
+
+class Error403View(LonaView):
+    def handle_request(self, request):
+        return {
+            'template': request.server.settings.ERROR_403_TEMPLATE,
             'request': request,
         }
 
