@@ -4,6 +4,7 @@ from django import forms
 
 from lona.contrib.django.forms import DjangoForm
 from lona.html import HTML, H1, Div, Pre
+from lona import LonaView
 
 
 class TestForm(forms.Form):
@@ -30,38 +31,39 @@ class TestForm(forms.Form):
     )
 
 
-def handle_request(request):
-    form = DjangoForm(TestForm, render_as='ul', bubble_up=True)
+class DjangoDatabindingView(LonaView):
+    def handle_request(self, request):
+        form = DjangoForm(TestForm, render_as='ul', bubble_up=True)
 
-    pre = Pre(
-        style={
-            'background-color': 'lightgrey',
-        },
-    )
+        pre = Pre(
+            style={
+                'background-color': 'lightgrey',
+            },
+        )
 
-    html = HTML(
-        H1('Databinding'),
-        Div(
+        html = HTML(
+            H1('Databinding'),
             Div(
-                form,
+                Div(
+                    form,
 
-                style={
-                    'float': 'left',
-                    'width': '50%',
-                },
+                    style={
+                        'float': 'left',
+                        'width': '50%',
+                    },
+                ),
+                Div(
+                    pre,
+
+                    style={
+                        'float': 'left',
+                        'width': '50%',
+                    },
+                ),
             ),
-            Div(
-                pre,
+        )
 
-                style={
-                    'float': 'left',
-                    'width': '50%',
-                },
-            ),
-        ),
-    )
+        while True:
+            pre.set_text(pformat(form.values))
 
-    while True:
-        pre.set_text(pformat(form.values))
-
-        request.client.await_input_event(html=html)
+            request.client.await_input_event(html=html)

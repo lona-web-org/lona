@@ -27,30 +27,7 @@ class ViewRuntimeController:
         # }
 
     def start(self):
-        logger.debug('starting multi user views')
-
-        for route in self.server.router.routes:
-            view_runtime = ViewRuntime(
-                server=self.server,
-                url=None,
-                route=route,
-                match_info={},
-                post_data={},
-                frontend=False,
-                start_connection=None,
-            )
-
-            if view_runtime.view_spec.multi_user:
-                logger.debug('starting %s as multi user view',
-                             view_runtime.view)
-
-                self.running_multi_user_views[route] = view_runtime
-
-                self.server.run(
-                    view_runtime.start,
-                    sync=True,
-                    wait=False,
-                )
+        return
 
     def stop(self):
         # running views per user

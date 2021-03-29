@@ -1,67 +1,10 @@
 import asyncio
-import inspect
 import logging
+import inspect
+
+from lona.views import LonaView
 
 logger = logging.getLogger('lona.view_loader')
-
-
-class ViewSpec:
-    def __init__(self, view, route=None):
-        self.view = view
-        self.route = route
-
-        self.multi_user = getattr(self.view, 'multi_user', False)
-        self.is_class_based = False
-        self.has_input_event_root_handler = False
-        self.has_input_event_handler = False
-
-        if inspect.isclass(self.view):
-            self.is_class_based = True
-
-            self.has_input_event_root_handler = hasattr(
-                self.view, 'handle_input_event_root')
-
-            self.has_input_event_handler = hasattr(
-                self.view, 'handle_input_event')
-
-        # check callbacks
-        # handle_request
-        handle_request = None
-
-        if self.is_class_based:
-            if not hasattr(self.view, 'handle_request'):
-                logger.error("%s has no attribute 'handle_request'", self.view)
-
-            else:
-                handle_request = self.view.handle_request
-
-        else:
-            handle_request = self.view
-
-        if not self.route or not self.route.http_pass_through:
-            # if a view talks to the aiohttp directly through http pass
-            # through mode, coroutines have to be allowed
-
-            if asyncio.iscoroutinefunction(handle_request):
-                logger.error('%s is a coroutine function', handle_request)
-
-            # handle_input_event_root
-            if(self.has_input_event_root_handler and
-               asyncio.iscoroutinefunction(self.view.handle_input_event_root)):
-
-                logger.error(
-                    '%s is a coroutine function',
-                    self.view.handle_input_event_root,
-                )
-
-            # handle_input_event
-            if(self.has_input_event_handler and
-               asyncio.iscoroutinefunction(self.view.handle_input_event)):
-
-                logger.error(
-                    '%s is a coroutine function',
-                    self.view.handle_input_event,
-                )
 
 
 class ViewLoader:
@@ -78,6 +21,34 @@ class ViewLoader:
 
         except TypeError:
             return id(view)
+
+    def _run_checks(self, route, view):
+        # check if view is instance of lona.views.LonaView
+        if(not route.http_pass_through and
+           (not inspect.isclass(view) or not issubclass(view, LonaView))):
+
+            logger.error('%s is no lona view', route.view)
+
+            return
+
+        # check if lona specific hooks are coroutine functions
+        hook_names = [
+            'handle_request',
+            'handle_input_event_root',
+            'handle_input_event',
+        ]
+
+        for hook_name in hook_names:
+            hook = getattr(view, hook_name, None)
+
+            if(not route.http_pass_through and
+               asyncio.iscoroutinefunction(hook)):
+
+                logger.error(
+                    '%s.%s is a coroutine function',
+                    route.view,
+                    hook_name,
+                )
 
     def _generate_acquiring_error_view(self, exception):
         def view(request):
@@ -103,33 +74,41 @@ class ViewLoader:
 
         return view
 
-    def _handle_404(self, request):
+    def _run_error_404_view(self, request):
         try:
-            return self._error_404_handler(request)
+            view = self._error_404_view()
+
+            return view.handle_request(request)
 
         except Exception:
             logger.error(
                 'Exception occurred while running %s. Falling back to %s',
-                self._error_404_handler,
-                self._error_404_fallback_handler,
+                self._error_404_view,
+                self._error_404_fallback_view,
                 exc_info=True,
             )
 
-        return self._error_404_fallback_handler(request)
+        view = self._error_404_fallback_view()
 
-    def _handle_500(self, request, exception):
+        return view.handle_request(request)
+
+    def _run_error_500_view(self, request, exception):
         try:
-            return self._error_500_handler(request, exception)
+            view = self._error_500_view()
+
+            return view.handle_request(request, exception)
 
         except Exception:
             logger.error(
                 'Exception occurred while running %s. Falling back to %s',
-                self._error_500_handler,
-                self._error_500_fallback_handler,
+                self._error_500_view,
+                self._error_500_fallback_view,
                 exc_info=True,
             )
 
-        return self._error_500_fallback_handler(request, exception)
+        view = self._error_500_fallback_view()
+
+        return view.handle_request(request, exception)
 
     def setup(self):
         # views
@@ -139,54 +118,46 @@ class ViewLoader:
 
         for route in self.server.router.routes:
             view = self._acquire(route.view)
+
+            self._run_checks(route, view)
+
             cache_key = self._gen_cache_key(route.view)
-            view_spec = ViewSpec(view, route=route)
-            self._cache[cache_key] = (view_spec, view)
+            self._cache[cache_key] = view
 
             if route.frontend_view:
                 view = self._acquire(route.frontend_view)
                 cache_key = self._gen_cache_key(route.frontend_view)
-                view_spec = ViewSpec(view)
-                self._cache[cache_key] = (view_spec, view)
+                self._cache[cache_key] = view
 
         # frontend view
         frontend_view = self._acquire(self.server.settings.FRONTEND_VIEW)
-        frontend_view_spec = ViewSpec(frontend_view)
 
         cache_key = self._gen_cache_key(self.server.settings.FRONTEND_VIEW)
-        self._cache[cache_key] = (frontend_view_spec, frontend_view)
+        self._cache[cache_key] = frontend_view
 
-        # 404 handler
-        self._error_404_handler = self._acquire(
-            self.server.settings.ERROR_404_HANDLER,
+        # error 404 view
+        self._error_404_view = self._acquire(
+            self.server.settings.ERROR_404_VIEW,
         )
 
-        self._error_404_fallback_handler = self._acquire(
-            self.server.settings.ERROR_404_FALLBACK_HANDLER,
+        self._error_404_fallback_view = self._acquire(
+            self.server.settings.ERROR_404_FALLBACK_VIEW,
         )
 
-        cache_key = self._gen_cache_key(self.server.settings.ERROR_404_HANDLER)
-        view_spec = ViewSpec(self._error_404_handler)
-        self._cache[cache_key] = (view_spec, self._handle_404)
+        cache_key = self._gen_cache_key(self.server.settings.ERROR_404_VIEW)
+        self._cache[cache_key] = self._run_error_404_view
 
-        if view_spec.is_class_based:
-            logger.error('404 handler should be simple callback')
-
-        # 500 handler
-        self._error_500_handler = self._acquire(
-            self.server.settings.ERROR_500_HANDLER,
+        # error 500 view
+        self._error_500_view = self._acquire(
+            self.server.settings.ERROR_500_VIEW,
         )
 
-        self._error_500_fallback_handler = self._acquire(
-            self.server.settings.ERROR_500_FALLBACK_HANDLER,
+        self._error_500_fallback_view = self._acquire(
+            self.server.settings.ERROR_500_FALLBACK_VIEW,
         )
 
-        cache_key = self._gen_cache_key(self.server.settings.ERROR_500_HANDLER)
-        view_spec = ViewSpec(self._error_500_handler)
-        self._cache[cache_key] = (view_spec, self._handle_500)
-
-        if view_spec.is_class_based:
-            logger.error('500 handler should be simple callback')
+        cache_key = self._gen_cache_key(self.server.settings.ERROR_500_VIEW)
+        self._cache[cache_key] = self._run_error_500_view
 
     def load(self, view):
         cache_key = self._gen_cache_key(view)

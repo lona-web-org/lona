@@ -56,7 +56,7 @@ class ViewRuntime:
             self.view = route.view
 
         else:
-            self.view = self.server.settings.ERROR_404_HANDLER
+            self.view = self.server.settings.ERROR_404_VIEW
 
         if frontend:
             self.view = self.server.settings.FRONTEND_VIEW
@@ -64,11 +64,9 @@ class ViewRuntime:
             if route and route.frontend_view:
                 self.view = route.frontend_view
 
-        self.view_spec, self.view = self.server.view_loader.load(self.view)
-        self.name = repr(self.view)
-
-        if self.view_spec.is_class_based:
-            self.view = self.view()
+        self.view_class = self.server.view_loader.load(self.view)
+        self.name = repr(self.view_class)
+        self.view = self.view_class()
 
         # setup state
         self.connections = {}
@@ -159,8 +157,8 @@ class ViewRuntime:
                 exc_info=True,
             )
 
-            view_spec, view = self.server.view_loader.load(
-                self.server.settings.ERROR_500_HANDLER,
+            view = self.server.view_loader.load(
+                self.server.settings.ERROR_500_VIEW,
             )
 
             return self.handle_raw_response_dict(
@@ -181,17 +179,10 @@ class ViewRuntime:
             # start view
             self.send_view_start()
 
-            if self.view_spec.is_class_based:
-                raw_response_dict = self.view.handle_request(
-                    *self.view_args,
-                    **self.view_kwargs,
-                )
-
-            else:
-                raw_response_dict = self.view(
-                    *self.view_args,
-                    **self.view_kwargs,
-                )
+            raw_response_dict = self.view.handle_request(
+                *self.view_args,
+                **self.view_kwargs,
+            )
 
             # response dicts
             if raw_response_dict:
@@ -223,8 +214,8 @@ class ViewRuntime:
                 exc_info=True,
             )
 
-            view_spec, view = self.server.view_loader.load(
-                self.server.settings.ERROR_500_HANDLER,
+            view = self.server.view_loader.load(
+                self.server.settings.ERROR_500_VIEW,
             )
 
             return self.handle_raw_response_dict(
@@ -277,12 +268,12 @@ class ViewRuntime:
         # output of the 500 handle through
         self.stop(reason=exception, clean_up=False)
 
-        # run 500 handler
+        # run 500 view
         # this runs if the crash happened in an input event handler after
         # the view stopped
         if self.is_stopped:
-            view_spec, view = self.server.view_loader.load(
-                self.server.settings.ERROR_500_HANDLER,
+            view = self.server.view_loader.load(
+                self.server.settings.ERROR_500_VIEW,
             )
 
             self.handle_raw_response_dict(
@@ -340,10 +331,7 @@ class ViewRuntime:
 
         # if the last connection gets closed and the view should
         # not continue running in background, it gets stopped
-        if(not self.connections and
-           not self.is_daemon and
-           not self.view_spec.multi_user):
-
+        if not self.connections and not self.is_daemon:
             self.stop()
 
     # lona messages ###########################################################
@@ -464,14 +452,13 @@ class ViewRuntime:
                     self.send_data(data=data)
 
         try:
-            # input event root handler (class based views)
-            if self.view_spec.has_input_event_root_handler:
-                input_event = self.view.handle_input_event_root(input_event)
+            # input event root handler
+            input_event = self.view.handle_input_event_root(input_event)
 
-                if not input_event:
-                    send_html_update()
+            if not input_event:
+                send_html_update()
 
-                    return
+                return
 
             # widgets
             for widget in input_event.widgets[::-1]:
@@ -504,11 +491,10 @@ class ViewRuntime:
                     return
 
             # input event handler (class based views)
-            if self.view_spec.has_input_event_handler:
-                input_event = self.view.handle_input_event(input_event)
+            input_event = self.view.handle_input_event(input_event)
 
-                if not input_event:
-                    send_html_update()
+            if not input_event:
+                send_html_update()
 
         except(StopReason, CancelledError):
             pass

@@ -26,8 +26,8 @@ MIDDLEWARES = [
     'middlewares.py::CrashingMiddleware',
 ]
 
-ERROR_404_HANDLER = 'views/handle_404.py::handle_404'
-ERROR_500_HANDLER = 'views/handle_500.py::handle_500'
+ERROR_404_VIEW = 'views/error_404.py::Error404View'
+ERROR_500_VIEW = 'views/error_500.py::Error500View'
 
 if os.environ.get('DJANGO', '0') == '1':
     MIDDLEWARES += [
@@ -35,4 +35,4 @@ if os.environ.get('DJANGO', '0') == '1':
         'middlewares.py::RateLimitMiddleware',
     ]
 
-    ERROR_500_HANDLER = 'views/django/handle_500.py::handle_500'
+    ERROR_500_VIEW = 'views/django/error_500.py::Error500View'

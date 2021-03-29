@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import inspect
 import os
 
 from aiohttp import WSMsgType
@@ -470,19 +471,18 @@ class LonaServer:
             http_logger.debug('http_pass_through mode')
 
             # load view
-            if isinstance(route.view, str):
-                view_spec, view = self.view_loader.load(route.view)
+            view = self.view_loader.load(route.view)
 
-            else:
-                view = route.view
+            if inspect.isclass(view):
+                view = view()
 
             # run view
-            if asyncio.iscoroutinefunction(view):
-                response = await view(http_request)
+            if asyncio.iscoroutinefunction(view.handle_request):
+                response = await view.handle_request(http_request)
 
             else:
                 response = await self.run_function_async(
-                    view,
+                    view.handle_request,
                     http_request,
                 )
 

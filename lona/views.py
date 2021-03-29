@@ -1,20 +1,34 @@
-def frontend(request):
-    return {
-        'template': request.server.settings.FRONTEND_TEMPLATE,
-        'request': request,
-    }
+class LonaView:
+    def handle_request(self, *args, **kwargs):
+        return ''
+
+    def handle_input_event_root(self, input_event):
+        return input_event
+
+    def handle_input_event(self, input_event):
+        return input_event
 
 
-def handle_404(request):
-    return {
-        'template': request.server.settings.ERROR_404_TEMPLATE,
-        'request': request,
-    }
+class FrontendView(LonaView):
+    def handle_request(self, request):
+        return {
+            'template': request.server.settings.FRONTEND_TEMPLATE,
+            'request': request,
+        }
 
 
-def handle_500(request, exception):
-    return {
-        'template': request.server.settings.ERROR_500_TEMPLATE,
-        'request': request,
-        'exception': exception,
-    }
+class Error404View(LonaView):
+    def handle_request(self, request):
+        return {
+            'template': request.server.settings.ERROR_404_TEMPLATE,
+            'request': request,
+        }
+
+
+class Error500View(LonaView):
+    def handle_request(self, request, exception):
+        return {
+            'template': request.server.settings.ERROR_500_TEMPLATE,
+            'request': request,
+            'exception': exception,
+        }

@@ -1,6 +1,7 @@
 import asyncio
 
 from lona.html import HTML, Br, H1, Div, Button, A
+from lona import LonaView
 
 
 async def short_running_coroutine():
@@ -18,7 +19,7 @@ async def show_html(request):
     request.client.show("Error: You shouldn't see this!")
 
 
-class AsyncView:
+class AsyncView(LonaView):
     def handle_request(self, request):
         try:
             html = HTML(

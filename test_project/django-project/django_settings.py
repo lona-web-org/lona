@@ -1,1 +1,1 @@
-FRONTEND_VIEW = 'views/django/frontend.py::frontend'
+FRONTEND_VIEW = 'views/django/frontend.py::FrontendView'

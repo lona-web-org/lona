@@ -13,11 +13,6 @@ class Client:
             raise RuntimeError(
                 'this function is not supposed to run in the main thread')
 
-    def _assert_single_user_request(self):
-        if self.request._view_runtime.view_spec.multi_user:
-            raise RuntimeError(
-                'operation is not supported in multi user requests')
-
     def _assert_view_is_interactive(self):
         if not self.request._view_runtime.route.interactive:
             raise RuntimeError(
@@ -33,7 +28,6 @@ class Client:
 
         try:
             self._assert_not_main_thread()
-            self._assert_single_user_request()
             self._assert_view_is_interactive()
             self._assert_view_is_running()
 
@@ -149,14 +143,8 @@ class View:
     def __init__(self, request):
         self.request = request
 
-    def _assert_single_user_request(self):
-        if self.request._view_runtime.view_spec.multi_user:
-            raise RuntimeError(
-                'operation is not supported in multi user requests')
-
     def daemonize(self):
         self.request.client._assert_view_is_interactive()
-        self.request.client._assert_single_user_request()
 
         self.request._view_runtime.is_daemon = True
 
@@ -235,14 +223,6 @@ class Request:
 
     @property
     def user(self):
-        if self._view_runtime.view_spec.multi_user:
-            user = []
-
-            for connection in self._view_runtime.connections.keys():
-                user.append(connection.user)
-
-            return user
-
         return getattr(self.connection, 'user', None)
 
     @property

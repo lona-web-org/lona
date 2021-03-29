@@ -1,6 +1,5 @@
 import os
 
-from aiohttp.web import Response
 from lona.routing import Route, MATCH_ALL
 
 DJANGO = False
@@ -13,40 +12,24 @@ if os.environ.get('DJANGO', '0') == '1':
     wsgi_handler = WSGIHandler(application)
 
 
-def routing__callback_view(request):
-    return """
-        <h1>Callback View</h1>
-    """
-
-
-def routing__http_pass_through_callback_view(request):
-    return Response(
-        body='<h1>Pass Through Callback View</h1>',
-        content_type='text/html',
-    )
-
-
 routes = [
     # view types
     Route('/view-types/interactive-view/',
-          'views/view_types/interactive_view.py::handle_request'),
+          'views/view_types/interactive_view.py::InteractiveView'),
 
     Route('/view-types/non-interactive-view/',
-          'views/view_types/non_interactive_view.py::handle_request',
+          'views/view_types/non_interactive_view.py::NonInteractiveView',
           interactive=False),
 
     Route('/view-types/http-pass-through/',
-          'views/view_types/http_pass_through_view.py::handle_request',
+          'views/view_types/http_pass_through_view.py::HTTPPassThroughView',
           http_pass_through=True),
 
-    Route('/view-types/multi-user-view/',
-          'views/view_types/multi_user_view.py::handle_request'),
-
     Route('/view-types/daemonized-view/<name>/',
-          'views/view_types/daemonized_view.py::handle_request'),
+          'views/view_types/daemonized_view.py::DaemonizedView'),
 
     Route('/view-types/daemonized-view/',
-          'views/view_types/daemonized_view.py::handle_request'),
+          'views/view_types/daemonized_view.py::DaemonizedView'),
 
     Route('/view-types/class-based-view/',
           'views/view_types/class_based_view.py::ClassBasedView'),
@@ -56,82 +39,76 @@ routes = [
 
     # response types
     Route('/response-types/template-response/',
-          'views/response_types/template_response.py::handle_request'),
+          'views/response_types/template_response.py::TemplateResponseView'),
 
     Route('/response-types/file-response/',
-          'views/response_types/file_response.py::handle_request',
+          'views/response_types/file_response.py::FileResponseView',
           interactive=False),
 
     Route('/response-types/json-response/',
-          'views/response_types/json_response.py::handle_request',
+          'views/response_types/json_response.py::JSONResponseView',
           interactive=False),
 
     Route('/response-types/redirect/',
-          'views/response_types/redirect.py::handle_request'),
+          'views/response_types/redirect.py::RedirectView'),
 
     Route('/response-types/http-redirect/',
-          'views/response_types/http_redirect.py::handle_request'),
+          'views/response_types/http_redirect.py::HTTPRedirectView'),
 
     # error types
     Route('/error-types/interactive-500/',
-          'views/error_types/interactive_500.py::handle_request'),
+          'views/error_types/interactive_500.py::InteractiveErrorView'),
 
     Route('/error-types/non-interactive-500/',
-          'views/error_types/non_interactive_500.py::handle_request',
+          'views/error_types/non_interactive_500.py::NonInteractiveErrorView',
           interactive=False),
 
     Route(
         '/error-types/non-interactive-feature-error/',
-        'views/error_types/non_interactive_feature_error.py::handle_request',
+        'views/error_types/non_interactive_feature_error.py::NonInteractiveFeatureErrorView',  # NOQA
     ),
 
     # crashes
     Route('/crashes/process-connection/',
-          'views/crashes/middlewares.py::handle_request'),
+          'views/crashes/middlewares.py::UnreachableView'),
 
     Route('/crashes/process-request/',
-          'views/crashes/middlewares.py::handle_request'),
+          'views/crashes/middlewares.py::UnreachableView'),
 
     Route('/crashes/response-dict/',
-          'views/crashes/response_dict.py::handle_request'),
+          'views/crashes/response_dict.py::ResponseDictView'),
 
     Route('/crashes/input-events/',
           'views/crashes/input_events.py::CrashingEventHandler'),
 
     Route('/crashes/handle-500/',
-          'views/crashes/handle_500.py::handle_request'),
+          'views/crashes/handle_500.py::CrashingView'),
 
     # routing
     Route('/routing/url-args/<a:[^/]+>/<b:[^/]+>/<c:[^/]+>/',
-          'views/routing/url_args.py::handle_request'),
-
-    Route('/routing/callback-view/', routing__callback_view),
-
-    Route('/routing/http-pass-through-callback-view/',
-          routing__http_pass_through_callback_view,
-          http_pass_through=True),
+          'views/routing/url_args.py::URLArgsView'),
 
     # events
     Route('/events/click-events/',
-          'views/events/click_events.py::handle_request'),
+          'views/events/click_events.py::ClickEventView'),
 
     Route('/events/change-events/',
-          'views/events/change_events.py::handle_request'),
+          'views/events/change_events.py::ChangeEventsView'),
 
     Route('/events/non-node-events/',
-          'views/events/non_node_events.py::handle_request'),
+          'views/events/non_node_events.py::NonNodeEventView'),
 
     Route('/events/widget-event-handler/',
-          'views/events/widget_event_handler.py::handle_request'),
+          'views/events/widget_event_handler.py::WidgetEventHandlerView'),
 
     Route('/events/class-based-view/',
           'views/events/class_based_view.py::ClassBasedView'),
 
     Route('/events/event-bubbling/',
-          'views/events/event_bubbling.py::View'),
+          'views/events/event_bubbling.py::EventBubblingView'),
 
     Route('/events/data-binding/',
-          'views/events/data_binding.py::handle_request'),
+          'views/events/data_binding.py::DataBindingView'),
 
     # locking
     Route('/locking/html-tree/',
@@ -142,40 +119,40 @@ routes = [
 
     # window actions
     Route('/window-actions/set-title/',
-          'views/window_actions/set_title.py::handle_request'),
+          'views/window_actions/set_title.py::WindowTitleView'),
 
     # frontend
     Route('/frontend/widget-data/',
-          'views/frontend/widget_data.py::handle_request'),
+          'views/frontend/widget_data.py::WidgetDataView'),
 
     Route('/frontend/custom-event/',
-          'views/frontend/custom_event.py::handle_request'),
+          'views/frontend/custom_event.py::CustomEventView'),
 
     Route('/frontend/custom-messages/',
-          'views/frontend/custom_messages.py::handle_request'),
+          'views/frontend/custom_messages.py::CustomMessagesView'),
 
     # contrib
     Route('/contrib/chart-js/',
-          'views/contrib/chartjs.py::handle_request'),
+          'views/contrib/chartjs.py::ChartJSView'),
 
     # home
-    Route('/', 'views/home.py::home'),
+    Route('/', 'views/home.py::HomeView'),
 ]
 
 
 if DJANGO:
     routes += [
         Route('/django/login-required/',
-              'views/django/permission_views.py::django_login_required'),
+              'views/django/permission_views.py::DjangLoginView'),
 
         Route('/django/template-based-form/',
-              'views/django/template_based_form.py::handle_request'),
+              'views/django/template_based_form.py::DjangoTemplateView'),
 
         Route('/django/node-based-form/',
-              'views/django/node_based_form.py::handle_request'),
+              'views/django/node_based_form.py::DjangoNodeBasedView'),
 
         Route('/django/data-binding-form/',
-              'views/django/data_binding_form.py::handle_request'),
+              'views/django/data_binding_form.py::DjangoDatabindingView'),
 
         Route(MATCH_ALL, wsgi_handler, http_pass_through=True),
     ]

@@ -2,6 +2,7 @@ from pprint import pformat
 
 from lona.html import HTML, Div, H1, Widget, Button, Pre, A
 from lona.static_files import Script
+from lona import LonaView
 
 
 class CustomEventWidget(Widget):
@@ -51,13 +52,14 @@ class CustomEventWidget(Widget):
         self.pre.set_text(pformat(data))
 
 
-def handle_request(request):
-    widget = CustomEventWidget()
+class CustomEventView(LonaView):
+    def handle_request(self, request):
+        widget = CustomEventWidget()
 
-    html = HTML(
-        H1('Custom Event'),
-        A('Home', href='/'),
-        widget,
-    )
+        html = HTML(
+            H1('Custom Event'),
+            A('Home', href='/'),
+            widget,
+        )
 
-    request.client.show(html)
+        request.client.show(html)

@@ -1,7 +1,8 @@
 from lona.html import HTML, Button, Div, Br, H1
+from lona import LonaView
 
 
-class ClassBasedView:
+class ClassBasedView(LonaView):
     def handle_request(self, request):
         self.message = Div('Nothing clicked yet')
 

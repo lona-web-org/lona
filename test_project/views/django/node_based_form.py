@@ -2,6 +2,7 @@ from pprint import pformat
 
 from lona.html import HTML, H1, Submit, Form, Div, Pre
 from lona.contrib.django.forms import DjangoForm
+from lona import LonaView
 
 from django import forms
 
@@ -30,64 +31,65 @@ class TestForm(forms.Form):
     )
 
 
-def handle_request(request):
-    data = {
-        'method': str(request.method),
-        'is_valid': None,
-        'values': None,
-    }
+class DjangoNodeBasedView(LonaView):
+    def handle_request(self, request):
+        data = {
+            'method': str(request.method),
+            'is_valid': None,
+            'values': None,
+        }
 
-    pre = Pre(
-        style={
-            'background-color': 'lightgrey',
-        },
-    )
-
-    if request.method == 'POST':
-        form = DjangoForm(
-            TestForm,
-            request.POST,
-            render_as='ul',
-            rerender_on_change=False,
+        pre = Pre(
+            style={
+                'background-color': 'lightgrey',
+            },
         )
 
-        if form.is_valid():
-            data['is_valid'] = True
-            data['values'] = form.values
+        if request.method == 'POST':
+            form = DjangoForm(
+                TestForm,
+                request.POST,
+                render_as='ul',
+                rerender_on_change=False,
+            )
+
+            if form.is_valid():
+                data['is_valid'] = True
+                data['values'] = form.values
+
+            else:
+                data['is_valid'] = False
 
         else:
-            data['is_valid'] = False
+            form = DjangoForm(
+                TestForm,
+                render_as='ul',
+                rerender_on_change=False,
+            )
 
-    else:
-        form = DjangoForm(
-            TestForm,
-            render_as='ul',
-            rerender_on_change=False,
-        )
+        pre.set_text(pformat(data))
 
-    pre.set_text(pformat(data))
+        return HTML(
+            H1('Node based django form'),
+            Div(
+                Form(
+                    form,
+                    Submit(),
+                    action='.',
+                    method='post',
+                ),
 
-    return HTML(
-        H1('Node based django form'),
-        Div(
-            Form(
-                form,
-                Submit(),
-                action='.',
-                method='post',
+                style={
+                    'float': 'left',
+                    'width': '50%',
+                },
             ),
+            Div(
+                pre,
 
-            style={
-                'float': 'left',
-                'width': '50%',
-            },
-        ),
-        Div(
-            pre,
-
-            style={
-                'float': 'left',
-                'width': '50%',
-            },
-        ),
-    )
+                style={
+                    'float': 'left',
+                    'width': '50%',
+                },
+            ),
+        )

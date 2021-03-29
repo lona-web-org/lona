@@ -1,3 +1,5 @@
+from lona import LonaView
+
 from lona.html import (
     SelectNode,
     OptionNode,
@@ -43,7 +45,7 @@ class BubblingWidget(Widget):
             return input_event
 
 
-class View:
+class EventBubblingView(LonaView):
     def handle_request(self, request):
         self.stop_at = None
 

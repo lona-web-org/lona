@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from lona.html import Widget, Button, HTML, Div, Br, H1
+from lona import LonaView
 
 
 class CrashWidget(Widget):
@@ -13,7 +14,7 @@ class CrashWidget(Widget):
         raise ValueError('Success! Crash in widget')
 
 
-class CrashingEventHandler:
+class CrashingEventHandler(LonaView):
     def handle_request(self, request):
 
         handle_request_button = Button(
