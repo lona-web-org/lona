@@ -9,6 +9,8 @@ from rlpython.utils.attribute_table import write_attribute_table
 from rlpython.utils.argument_parser import ReplArgumentParser
 from rlpython.utils.table import write_table
 
+from lona.symbols import VIEW_RUNTIME_STATE
+
 
 class LonaViewsCommand:
     NAME = 'lona_views'
@@ -235,7 +237,7 @@ class LonaViewsCommand:
         self.repl.write('\n')
 
         # crash report
-        if view_runtime.state == view_runtime.STATE.CRASHED:
+        if view_runtime.state == VIEW_RUNTIME_STATE.CRASHED:
             self.repl.write('Crash Report\n')
             self.repl.write('============\n')
 

@@ -1,6 +1,7 @@
 import threading
 import asyncio
 
+from lona.symbols import VIEW_RUNTIME_STATE
 from lona.types import Symbol
 
 
@@ -23,8 +24,7 @@ class Client:
             raise self.request._view_runtime.stop_reason
 
     def _await_specific_input_event(self, *nodes, event_type='', **kwargs):
-        self.request._view_runtime.state = \
-            self.request._view_runtime.STATE.WAITING_FOR_INPUT
+        self.request._view_runtime.state = VIEW_RUNTIME_STATE.WAITING_FOR_INPUT
 
         try:
             self._assert_not_main_thread()
@@ -46,8 +46,7 @@ class Client:
             )
 
         finally:
-            self.request._view_runtime.state = \
-                self.request._view_runtime.STATE.RUNNING
+            self.request._view_runtime.state = VIEW_RUNTIME_STATE.RUNNING
 
     def ping(self):
         self._assert_view_is_interactive()
@@ -176,25 +175,22 @@ class View:
 
     def await_sync(self, *args, **kwargs):
         self.request._view_runtime.state = \
-            self.request._view_runtime.STATE.WAITING_FOR_IOLOOP
+            VIEW_RUNTIME_STATE.WAITING_FOR_IOLOOP
 
         try:
             return self._await_sync(*args, **kwargs)
 
         finally:
-            self.request._view_runtime.state = \
-                self.request._view_runtime.STATE.RUNNING
+            self.request._view_runtime.state = VIEW_RUNTIME_STATE.RUNNING
 
     def sleep(self, *args, **kwargs):
-        self.request._view_runtime.state = \
-            self.request._view_runtime.STATE.SLEEPING
+        self.request._view_runtime.state = VIEW_RUNTIME_STATE.SLEEPING
 
         try:
             return self._await_sync(asyncio.sleep(*args, **kwargs))
 
         finally:
-            self.request._view_runtime.state = \
-                self.request._view_runtime.STATE.RUNNING
+            self.request._view_runtime.state = VIEW_RUNTIME_STATE.RUNNING
 
 
 class Request:
