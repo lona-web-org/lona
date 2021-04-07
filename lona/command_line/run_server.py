@@ -1,8 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor
-from functools import partial
 import asyncio
 import logging
 import signal
+import socket
 import os
 
 from aiohttp.web import Application, run_app
@@ -10,6 +10,8 @@ from aiohttp.web import Application, run_app
 from lona.shell.shell import embed_shell, generate_shell_server
 from lona.logging import LogFormatter, LogFilter
 from lona.server import LonaServer
+
+logger = logging.getLogger('lona')
 
 
 def run_server(args):
@@ -90,13 +92,26 @@ def run_server(args):
 
         loop.create_task(start_shell(server))
 
-    _run_app = partial(
-        run_app,
-        app=app,
-        host=args.host,
-        port=args.port,
-        shutdown_timeout=args.shutdown_timeout,
-    )
+    def _run_app():
+        try:
+            run_app(
+                app=app,
+                host=args.host,
+                port=args.port,
+                shutdown_timeout=args.shutdown_timeout,
+            )
+
+        except socket.gaierror as exception:
+            if exception.errno not in (-2, ):
+                raise
+
+            logger.error('socket.gaierror: ' + exception.args[1])
+
+        except OSError as exception:
+            if exception.errno not in (13, 98):
+                raise
+
+            logger.error('OSError: ' + exception.args[1])
 
     if args.shell_server:
         embed_kwargs = {

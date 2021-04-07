@@ -3,6 +3,7 @@ from textwrap import indent
 import threading
 import datetime
 import logging
+import socket
 
 
 class LogFilter(logging.Filter):
@@ -19,6 +20,22 @@ class LogFilter(logging.Filter):
         self.excluded.append(logger_name)
 
     def filter(self, record):
+        # filter exceptions that lona.command_line.run_server.run_server
+        # handles it self
+        if record.exc_info:
+
+            # OSErrors
+            if(isinstance(record.exc_info[1], OSError) and
+               record.exc_info[1].errno in (13, 98)):
+
+                return False
+
+            # socket.gaierror
+            if(isinstance(record.exc_info[1], socket.gaierror) and
+               record.exc_info[1].errno in (-2, )):
+
+                return False
+
         if record.name in self.excluded:
             return False
 
