@@ -31,7 +31,7 @@ shell: env
 
 server: env
 	. $(PYTHON_VENV)/bin/activate && \
-	lona $(LONA_DEFAULT_ARGS) -s settings.py $(args)
+	lona run-server $(LONA_DEFAULT_ARGS) $(args) -s settings.py
 
 server-shell:
 	. $(PYTHON_VENV)/bin/activate && \
@@ -65,7 +65,7 @@ django-shell: django-env django-db
 
 django-server: django-env django-db
 	. $(DJANGO_PYTHON_VENV)/bin/activate && \
-	DJANGO=1 lona \
+	DJANGO=1 lona run-server \
 		$(LONA_DEFAULT_ARGS) \
 		--project-root=./ \
 		-s settings.py \
