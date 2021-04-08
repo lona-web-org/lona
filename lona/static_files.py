@@ -217,16 +217,21 @@ class StaticFileLoader:
 
         rel_path = path
 
+        if rel_path.startswith('/'):
+            rel_path = rel_path[1:]
+
         # javascript client
-        if path == 'lona/lona.js':
+        client_url = self.server.settings.STATIC_FILES_CLIENT_URL
+
+        if client_url.startswith('/'):
+            client_url = client_url[1:]
+
+        if rel_path == client_url:
             logger.debug('returning javascript client')
 
             return self.server.client_pre_compiler.resolve()
 
         # searching in static dirs
-        if rel_path.startswith('/'):
-            rel_path = rel_path[1:]
-
         for static_dir in self.static_dirs[::-1]:
             abs_path = os.path.join(static_dir, rel_path)
 
