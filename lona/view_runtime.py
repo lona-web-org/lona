@@ -9,9 +9,9 @@ from yarl import URL
 
 from lona.exceptions import StopReason, ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
+from lona.events.input_event import InputEvent
 from lona.symbols import VIEW_RUNTIME_STATE
 from lona.html.document import Document
-from lona.input_event import InputEvent
 from lona.request import Request
 
 from lona.protocol import (
