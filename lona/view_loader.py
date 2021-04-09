@@ -2,7 +2,7 @@ import asyncio
 import logging
 import inspect
 
-from lona.views import LonaView
+from lona.view import LonaView
 
 logger = logging.getLogger('lona.view_loader')
 
