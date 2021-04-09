@@ -1,6 +1,6 @@
 import logging
 
-from lona.views import FrontendView as _FrontendView
+from lona.default_views import FrontendView as _FrontendView
 
 logger = logging.getLogger('test_project')
 

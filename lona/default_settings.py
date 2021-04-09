@@ -35,16 +35,16 @@ CLIENT_RECOMPILE = False
 SERVER_STATE_ATOMIC = True
 
 # views
-FRONTEND_VIEW = 'lona.views.FrontendView'
+FRONTEND_VIEW = 'lona.default_views.FrontendView'
 
 # error views
-ERROR_403_VIEW = 'lona.views.Error403View'
-ERROR_404_VIEW = 'lona.views.Error404View'
-ERROR_500_VIEW = 'lona.views.Error500View'
+ERROR_403_VIEW = 'lona.default_views.Error403View'
+ERROR_404_VIEW = 'lona.default_views.Error404View'
+ERROR_500_VIEW = 'lona.default_views.Error500View'
 
-ERROR_403_FALLBACK_VIEW = 'lona.views.Error403View'
-ERROR_404_FALLBACK_VIEW = 'lona.views.Error404View'
-ERROR_500_FALLBACK_VIEW = 'lona.views.Error500View'
+ERROR_403_FALLBACK_VIEW = 'lona.default_views.Error403View'
+ERROR_404_FALLBACK_VIEW = 'lona.default_views.Error404View'
+ERROR_500_FALLBACK_VIEW = 'lona.default_views.Error500View'
 
 # middlewares
 CORE_MIDDLEWARES = [

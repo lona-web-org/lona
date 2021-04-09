@@ -1,6 +1,6 @@
 import traceback
 
-from lona.views import Error500View as _Error500View
+from lona.default_views import Error500View as _Error500View
 
 
 class Error500View(_Error500View):

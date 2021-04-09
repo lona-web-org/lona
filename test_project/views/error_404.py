@@ -1,4 +1,4 @@
-from lona.views import Error404View as _Error404View
+from lona.default_views import Error404View as _Error404View
 
 
 class Error404View(_Error404View):
