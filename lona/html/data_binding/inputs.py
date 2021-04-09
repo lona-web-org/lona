@@ -1,7 +1,7 @@
 from copy import copy
 
 from lona.html.nodes import TextAreaNode, InputNode, Widget
-from lona.html.node_events import CHANGE
+from lona.events.event_types import CHANGE
 
 DEFAULT_INPUT_DELAY = 300
 

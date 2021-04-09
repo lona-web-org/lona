@@ -1,6 +1,7 @@
 from pprint import pformat
 
-from lona.html import TextInputNode, CheckboxNode, Div, H1, Pre, CHANGE
+from lona.html import TextInputNode, CheckboxNode, Div, H1, Pre
+from lona.events import CHANGE
 from lona.view import LonaView
 
 

@@ -1,7 +1,8 @@
 from pprint import pformat
 
-from lona.html import Div, H1, Pre, CLICK
+from lona.html import Div, H1, Pre
 from lona.view import LonaView
+from lona.events import CLICK
 
 
 class ClickEventView(LonaView):

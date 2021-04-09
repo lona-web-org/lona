@@ -1,4 +1,4 @@
-from lona.html.node_events import CLICK
+from lona.events.event_types import CLICK
 from lona.html.widget import Widget  # NOQA
 from lona.html.node import Node
 
