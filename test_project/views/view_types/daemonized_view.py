@@ -1,5 +1,5 @@
 from lona.html import Div, H1, Button
-from lona import LonaView
+from lona.view import LonaView
 
 
 class DaemonizedView(LonaView):

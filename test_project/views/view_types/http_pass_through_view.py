@@ -1,4 +1,4 @@
-from lona import LonaView
+from lona.view import LonaView
 
 from aiohttp.web import Response
 

@@ -1,6 +1,6 @@
 from django import forms
 
-from lona import LonaView
+from lona.views import LonaView
 
 
 class NameForm(forms.Form):

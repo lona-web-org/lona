@@ -1,7 +1,7 @@
 import asyncio
 
 from lona.html import HTML, Br, H1, Div, Button, A
-from lona import LonaView
+from lona.view import LonaView
 
 
 async def short_running_coroutine():

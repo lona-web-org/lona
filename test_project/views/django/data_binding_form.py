@@ -4,7 +4,7 @@ from django import forms
 
 from lona.contrib.django.forms import DjangoForm
 from lona.html import HTML, H1, Div, Pre
-from lona import LonaView
+from lona.view import LonaView
 
 
 class TestForm(forms.Form):

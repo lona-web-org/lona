@@ -2,7 +2,7 @@ from pprint import pformat
 
 from lona.html import HTML, Div, H1, Widget, Button, Pre, A
 from lona.static_files import Script
-from lona import LonaView
+from lona.view import LonaView
 
 
 class CustomEventWidget(Widget):

@@ -3,7 +3,7 @@ from random import randint
 
 from lona.html import HTML, Button, Div, H1
 from lona.contrib.chartjs import Chart
-from lona import LonaView
+from lona.view import LonaView
 
 
 class ChartJSView(LonaView):

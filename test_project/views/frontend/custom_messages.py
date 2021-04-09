@@ -2,8 +2,8 @@ from datetime import datetime
 from time import sleep
 
 from lona.html import HTML, H1
+from lona.view import LonaView
 from lona.json import dumps
-from lona import LonaView
 
 
 class CustomMessagesView(LonaView):

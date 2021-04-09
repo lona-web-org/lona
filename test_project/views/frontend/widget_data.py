@@ -1,7 +1,7 @@
 from lona.html import HTML, Div, H1, Br, Widget, A
 from lona.static_files import Script
+from lona.view import LonaView
 from lona.json import dumps
-from lona import LonaView
 
 
 class TestWidget(Widget):

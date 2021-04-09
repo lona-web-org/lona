@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona import LonaView
+from lona.view import LonaView
 
 from lona.html import (
     TextInput,

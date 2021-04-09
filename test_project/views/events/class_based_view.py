@@ -1,5 +1,5 @@
 from lona.html import HTML, Button, Div, Br, H1
-from lona import LonaView
+from lona.view import LonaView
 
 
 class ClassBasedView(LonaView):

@@ -1,4 +1,4 @@
-from lona import LonaView
+from lona.views import LonaView
 
 
 class DjangLoginView(LonaView):

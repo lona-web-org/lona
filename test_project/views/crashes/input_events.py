@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from lona.html import Widget, Button, HTML, Div, Br, H1
-from lona import LonaView
+from lona.view import LonaView
 
 
 class CrashWidget(Widget):

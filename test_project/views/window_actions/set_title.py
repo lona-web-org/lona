@@ -1,5 +1,5 @@
 from lona.html import HTML, Div, H1, A
-from lona import LonaView
+from lona.view import LonaView
 
 
 class WindowTitleView(LonaView):

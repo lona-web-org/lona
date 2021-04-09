@@ -2,7 +2,7 @@ from pprint import pformat
 
 from lona.html import HTML, H1, Submit, Form, Div, Pre
 from lona.contrib.django.forms import DjangoForm
-from lona import LonaView
+from lona.views import LonaView
 
 from django import forms
 
