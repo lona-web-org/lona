@@ -1,1 +1,2 @@
-flamingo[live-server,pygments]==1.3
+flamingo[live-server,pygments,thumbnails]==1.6
+sphinx_rtd_theme

@@ -27,6 +27,9 @@ shell: env
 	. $(PYTHON_VENV)/bin/activate && \
 	flamingo shell $(FLAMINGO_ARGS) $(args)
 
-rollout: env
+_release: env
+	rm -rf output/ && \
 	. $(PYTHON_VENV)/bin/activate && \
-	flamingo build $(FLAMINGO_ARGS) rollout_settings.py
+	flamingo build $(FLAMINGO_ARGS) $(args) && \
+	rsync -avh --recursive --delete \
+		output/* lona-web.org:/var/www/virtual/fscherf/lona-web.org 
