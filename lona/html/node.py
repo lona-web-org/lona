@@ -58,14 +58,20 @@ class Node(AbstractNode):
 
             # change aware attributes
             elif name == 'id':
-                if not isinstance(value, list):
-                    value = [value]
+                if not isinstance(value, (str, list)):
+                    raise ValueError('id has to be string or list of srings')  # NOQA
+
+                if isinstance(value, str):
+                    value = value.split(' ')
 
                 self._id_list.extend(value)
 
             elif name == 'class':
-                if not isinstance(value, list):
-                    value = [value]
+                if not isinstance(value, (str, list)):
+                    raise ValueError('class has to be string or list of srings')  # NOQA
+
+                if isinstance(value, str):
+                    value = value.split(' ')
 
                 self._class_list.extend(value)
 
