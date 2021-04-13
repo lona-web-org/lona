@@ -94,6 +94,8 @@ class TextInput(Widget):
         if self.bubble_up:
             return input_event
 
+    # properties ##############################################################
+    # value
     @property
     def value(self):
         return self.input_node.attributes.get('value', '')
@@ -102,6 +104,7 @@ class TextInput(Widget):
     def value(self, new_value):
         self.input_node.attributes['value'] = new_value
 
+    # disabled
     @property
     def disabled(self):
         return self.input_nodes.attributes.get('disabled', '')
@@ -114,6 +117,70 @@ class TextInput(Widget):
 
             elif 'disabled' in self.input_node.attributes:
                 self.input_node.attributes.pop('disabled')
+
+    # input node properties
+    # id
+    @property
+    def id_list(self):
+        return self.input_node.id_list
+
+    @id_list.setter
+    def id_list(self, new_value):
+        self.input_node.id_list = new_value
+
+    # class
+    @property
+    def class_list(self):
+        return self.input_node.class_list
+
+    @class_list.setter
+    def class_list(self, new_value):
+        self.input_node.class_list = new_value
+
+    # style
+    @property
+    def style(self):
+        return self.input_node.style
+
+    @style.setter
+    def style(self, new_value):
+        self.input_node.style = new_value
+
+    # attributes
+    @property
+    def attributes(self):
+        return self.input_node.attributes
+
+    @attributes.setter
+    def attributes(self, new_value):
+        self.input_node.attributes = new_value
+
+    # ignore
+    @property
+    def ignore(self):
+        return self.input_node.ignore
+
+    @ignore.setter
+    def ignore(self, new_value):
+        self.input_node.ignore = new_value
+
+    # events
+    @property
+    def events(self):
+        return self.input_node.events
+
+    @events.setter
+    def events(self, new_value):
+        self.input_node.events = new_value
+
+    # helper
+    @property
+    def has_id(self):
+        return self.input_node.has_id
+
+    @property
+    def has_class(self):
+        return self.input_node.has_class
 
 
 class TextArea(TextInput):
