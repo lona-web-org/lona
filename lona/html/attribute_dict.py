@@ -149,11 +149,14 @@ class AttributeDict:
         return dict(self._attributes)
 
     # string representation ###################################################
-    def to_attribute_string(self):
+    def to_attribute_string(self, skip_value=False):
         with self._node.document.lock:
             string = []
 
             for key, value in self._attributes.items():
+                if skip_value and key == 'value':
+                    continue
+
                 string.append('{}="{}"'.format(key, value))
 
             return ' '.join(string)

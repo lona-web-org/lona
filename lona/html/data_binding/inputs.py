@@ -17,7 +17,7 @@ class TextInput(Widget):
         'type': 'text',
     }
 
-    def __init__(self, disabled=False, bubble_up=False,
+    def __init__(self, value=None, disabled=False, bubble_up=False,
                  input_delay=DEFAULT_INPUT_DELAY, **input_kwargs):
 
         self.bubble_up = bubble_up
@@ -31,6 +31,9 @@ class TextInput(Widget):
         ]
 
         self.disabled = disabled
+
+        if value is not None:
+            self.value = value
 
     def gen_node_args(self, **kwargs):
         id_list = copy(self.ID_LIST)

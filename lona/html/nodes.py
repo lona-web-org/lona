@@ -194,6 +194,12 @@ class CheckboxNode(InputNode):
 class TextAreaNode(Node):
     TAG_NAME = 'textarea'
 
+    def __repr__(self):
+        return self.__str__(
+            skip_value=True,
+            node_string=self.attributes.get('value', ''),
+        )
+
 
 class SelectNode(Node):
     TAG_NAME = 'select'

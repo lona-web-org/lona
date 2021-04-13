@@ -258,7 +258,7 @@ class Node(AbstractNode):
         return True
 
     # string representation ###################################################
-    def __str__(self):
+    def __str__(self, node_string=None, skip_value=False):
         with self.document.lock:
             # opening tag
             string = '<{} data-lona-node-id="{}"'.format(
@@ -278,7 +278,10 @@ class Node(AbstractNode):
 
             if self.attributes:
                 string += ' '
-                string += self.attributes.to_attribute_string()
+
+                string += self.attributes.to_attribute_string(
+                    skip_value=skip_value,
+                )
 
             if self.single_tag:
                 string += ' />'
@@ -287,7 +290,12 @@ class Node(AbstractNode):
                 string += '>'
 
             # nodes
-            if self.nodes:
+            if node_string:
+                string += '\n{}\n'.format(
+                    indent(node_string, '  '),
+                )
+
+            elif self.nodes:
                 string += '\n'
                 string += indent(str(self.nodes), '  ')
                 string += '\n'
