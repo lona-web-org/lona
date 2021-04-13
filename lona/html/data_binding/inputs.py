@@ -37,31 +37,52 @@ class TextInput(Widget):
         class_list = copy(self.CLASS_LIST)
         style = copy(self.STYLE)
         attributes = copy(self.ATTRIBUTES)
+        misc_kwargs = {}
 
-        if '_id' in kwargs:
-            id_list.extend(kwargs.pop('_id'))
+        for name, value in kwargs.copy().items():
 
-        if '_class' in kwargs:
-            id_list.extend(kwargs.pop('_class'))
+            # remove underscores from attributes
+            # this makes kwargs like '_class' possible to prevent clashes
+            # with python grammar
+            clean_name = name
 
-        if 'style' in kwargs:
-            style.update(kwargs.pop('style'))
+            if '_' in clean_name:
+                clean_name = clean_name.replace('_', '-')
 
-        elif '_style' in kwargs:
-            style.update(kwargs.pop('_style'))
+                if clean_name.startswith('-'):
+                    clean_name = clean_name[1:]
 
-        if 'attributes' in kwargs:
-            attributes.update(kwargs.pop('attributes'))
+            if clean_name == 'id':
+                value = kwargs.pop(name)
 
-        elif '_attributes' in kwargs:
-            attributes.update(kwargs.pop('_attributes'))
+                if isinstance(value, str):
+                    value = value.split(' ')
+
+                id_list.extend(value)
+
+            elif clean_name == 'class':
+                value = kwargs.pop(name)
+
+                if isinstance(value, str):
+                    value = value.split(' ')
+
+                class_list.extend(value)
+
+            elif clean_name == 'style':
+                style.update(kwargs.pop(name))
+
+            elif clean_name == 'attributes':
+                attributes.update(kwargs.pop(name))
+
+            else:
+                misc_kwargs[name] = value
 
         return {
             'id': id_list,
             'class': class_list,
             'style': style,
             **attributes,
-            **kwargs,
+            **misc_kwargs,
         }
 
     def gen_input_node(self, **kwargs):
