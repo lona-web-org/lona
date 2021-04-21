@@ -43,10 +43,10 @@ class ViewRuntime:
             self.view = route.view
 
         else:
-            self.view = self.server.settings.ERROR_404_VIEW
+            self.view = self.server.settings.CORE_ERROR_404_VIEW
 
         if frontend:
-            self.view = self.server.settings.FRONTEND_VIEW
+            self.view = self.server.settings.CORE_FRONTEND_VIEW
 
             if route and route.frontend_view:
                 self.view = route.frontend_view
@@ -144,14 +144,16 @@ class ViewRuntime:
                 exc_info=True,
             )
 
-            view = self.server.view_loader.load(
-                self.server.settings.ERROR_500_VIEW,
+            view_class = self.server.view_loader.load(
+                self.server.settings.CORE_ERROR_500_VIEW,
             )
 
+            view = view_class()
+
             return self.handle_raw_response_dict(
-                view(
+                view.handle_request(
                     self.request,
-                    exception,
+                    exception=exception,
                 )
             )
 
@@ -163,12 +165,14 @@ class ViewRuntime:
 
             self.send_view_start()
 
-            view = self.server.view_loader.load(
-                self.server.settings.ERROR_403_VIEW,
+            view_class = self.server.view_loader.load(
+                self.server.settings.CORE_ERROR_403_VIEW,
             )
 
+            view = view_class()
+
             response_dict = self.handle_raw_response_dict(
-                view(self.request)
+                view.handle_request(self.request)
             )
 
             self.send_view_stop()
@@ -181,12 +185,14 @@ class ViewRuntime:
                 exc_info=True,
             )
 
-            view = self.server.view_loader.load(
+            view_class = self.server.view_loader.load(
                 self.server.settings.ERROR_500_VIEW,
             )
 
+            view = view_class()
+
             return self.handle_raw_response_dict(
-                view(
+                view.handle_request(
                     self.request,
                     exception,
                 )
@@ -238,14 +244,16 @@ class ViewRuntime:
                 exc_info=True,
             )
 
-            view = self.server.view_loader.load(
-                self.server.settings.ERROR_500_VIEW,
+            view_class = self.server.view_loader.load(
+                self.server.settings.CORE_ERROR_500_VIEW,
             )
 
+            view = view_class()
+
             return self.handle_raw_response_dict(
-                view(
+                view.handle_request(
                     self.request,
-                    exception,
+                    exception=exception,
                 )
             )
 
@@ -296,14 +304,16 @@ class ViewRuntime:
         # this runs if the crash happened in an input event handler after
         # the view stopped
         if self.is_stopped:
-            view = self.server.view_loader.load(
-                self.server.settings.ERROR_500_VIEW,
+            view_class = self.server.view_loader.load(
+                self.server.settings.CORE_ERROR_500_VIEW,
             )
 
+            view = view_class()
+
             self.handle_raw_response_dict(
-                view(
+                view.handle_request(
                     self.request,
-                    exception,
+                    exception=exception,
                 )
             )
 

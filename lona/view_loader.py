@@ -33,6 +33,7 @@ class ViewLoader:
 
         # check if lona specific hooks are coroutine functions
         hook_names = [
+            'handle_user_enter',
             'handle_request',
             'handle_input_event_root',
             'handle_input_event',
@@ -74,60 +75,6 @@ class ViewLoader:
 
         return view
 
-    def _run_error_403_view(self, request):
-        try:
-            view = self._error_403_view()
-
-            return view.handle_request(request)
-
-        except Exception:
-            logger.error(
-                'Exception occurred while running %s. Falling back to %s',
-                self._error_403_view,
-                self._error_403_fallback_view,
-                exc_info=True,
-            )
-
-        view = self._error_403_fallback_view()
-
-        return view.handle_request(request)
-
-    def _run_error_404_view(self, request):
-        try:
-            view = self._error_404_view()
-
-            return view.handle_request(request)
-
-        except Exception:
-            logger.error(
-                'Exception occurred while running %s. Falling back to %s',
-                self._error_404_view,
-                self._error_404_fallback_view,
-                exc_info=True,
-            )
-
-        view = self._error_404_fallback_view()
-
-        return view.handle_request(request)
-
-    def _run_error_500_view(self, request, exception):
-        try:
-            view = self._error_500_view()
-
-            return view.handle_request(request, exception)
-
-        except Exception:
-            logger.error(
-                'Exception occurred while running %s. Falling back to %s',
-                self._error_500_view,
-                self._error_500_fallback_view,
-                exc_info=True,
-            )
-
-        view = self._error_500_fallback_view()
-
-        return view.handle_request(request, exception)
-
     def setup(self):
         # views
         logger.debug('loading views from routes')
@@ -147,47 +94,34 @@ class ViewLoader:
                 cache_key = self._gen_cache_key(route.frontend_view)
                 self._cache[cache_key] = view
 
-        # frontend view
-        frontend_view = self._acquire(self.server.settings.FRONTEND_VIEW)
+        # special views
+        import_strings = [
+            # frontend
+            self.server.settings.CORE_FRONTEND_VIEW,
+            self.server.settings.FRONTEND_VIEW,
 
-        cache_key = self._gen_cache_key(self.server.settings.FRONTEND_VIEW)
-        self._cache[cache_key] = frontend_view
-
-        # error 403 view
-        self._error_403_view = self._acquire(
+            # erorr 403
+            self.server.settings.CORE_ERROR_403_VIEW,
             self.server.settings.ERROR_403_VIEW,
-        )
 
-        self._error_403_fallback_view = self._acquire(
-            self.server.settings.ERROR_403_FALLBACK_VIEW,
-        )
-
-        cache_key = self._gen_cache_key(self.server.settings.ERROR_403_VIEW)
-        self._cache[cache_key] = self._run_error_403_view
-
-        # error 404 view
-        self._error_404_view = self._acquire(
+            # erorr 404
+            self.server.settings.CORE_ERROR_404_VIEW,
             self.server.settings.ERROR_404_VIEW,
-        )
 
-        self._error_404_fallback_view = self._acquire(
-            self.server.settings.ERROR_404_FALLBACK_VIEW,
-        )
-
-        cache_key = self._gen_cache_key(self.server.settings.ERROR_404_VIEW)
-        self._cache[cache_key] = self._run_error_404_view
-
-        # error 500 view
-        self._error_500_view = self._acquire(
+            # erorr 500
+            self.server.settings.CORE_ERROR_500_VIEW,
             self.server.settings.ERROR_500_VIEW,
-        )
+        ]
 
-        self._error_500_fallback_view = self._acquire(
-            self.server.settings.ERROR_500_FALLBACK_VIEW,
-        )
+        for import_string in import_strings:
+            if not import_string:
+                continue
 
-        cache_key = self._gen_cache_key(self.server.settings.ERROR_500_VIEW)
-        self._cache[cache_key] = self._run_error_500_view
+            # FIXME: run self._run_checks
+
+            view = self._acquire(import_string)
+            cache_key = self._gen_cache_key(import_string)
+            self._cache[cache_key] = view
 
     def load(self, view):
         cache_key = self._gen_cache_key(view)

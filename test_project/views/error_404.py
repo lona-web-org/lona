@@ -6,4 +6,4 @@ class Error404View(_Error404View):
         if request.url.path == '/crashes/handle-404/':
             raise ValueError('Success! This should crash!')
 
-        return super().handle_request(request)
+        return self.render_default_template(request)
