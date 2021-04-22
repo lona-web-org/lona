@@ -12,6 +12,7 @@ from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
 from lona.symbols import VIEW_RUNTIME_STATE
 from lona.html.document import Document
+from lona.errors import ForbiddenError
 from lona.request import Request
 
 from lona.protocol import (
@@ -158,30 +159,34 @@ class ViewRuntime:
             )
 
     # permission checks #######################################################
-    def run_user_enter(self, user):
+    def run_user_enter(self):
         try:
-            if self.view.handle_user_enter(user):
-                return
+            try:
+                self.view.handle_user_enter(self.request)
 
-            self.send_view_start()
+            except ForbiddenError as exception:
+                self.send_view_start()
 
-            view_class = self.server.view_loader.load(
-                self.server.settings.CORE_ERROR_403_VIEW,
-            )
+                view_class = self.server.view_loader.load(
+                    self.server.settings.CORE_ERROR_403_VIEW,
+                )
 
-            view = view_class()
+                view = view_class()
 
-            response_dict = self.handle_raw_response_dict(
-                view.handle_request(self.request)
-            )
+                response_dict = self.handle_raw_response_dict(
+                    view.handle_request(
+                        self.request,
+                        exception=exception,
+                    ),
+                )
 
-            self.send_view_stop()
+                self.send_view_stop()
 
-            return response_dict
+                return response_dict
 
         except Exception as exception:
             logger.error(
-                'Exception raised while handle_user_enter',
+                'Exception raised while running handle_user_enter',
                 exc_info=True,
             )
 
@@ -194,7 +199,7 @@ class ViewRuntime:
             return self.handle_raw_response_dict(
                 view.handle_request(
                     self.request,
-                    exception,
+                    exception=exception,
                 )
             )
 
@@ -235,6 +240,22 @@ class ViewRuntime:
         except(StopReason, CancelledError):
             pass
 
+        # 403 Forbidden
+        except ForbiddenError as exception:
+            view_class = self.server.view_loader.load(
+                self.server.settings.CORE_ERROR_403_VIEW,
+            )
+
+            view = view_class()
+
+            return self.handle_raw_response_dict(
+                view.handle_request(
+                    self.request,
+                    exception=exception,
+                )
+            )
+
+        # 500 Internal Error
         except Exception as exception:
             self.stop_reason = exception
 

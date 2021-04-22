@@ -1,6 +1,6 @@
 class LonaView:
-    def handle_user_enter(self, user):
-        return True
+    def handle_user_enter(self, request):
+        pass
 
     def handle_request(self, *args, **kwargs):
         return ''

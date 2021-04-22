@@ -40,6 +40,12 @@ class HomeView(LonaView):
                 <li><a href="/response-types/http-redirect/">HTTP Redirect</a></li>
             </ul>
 
+            <h2>Permissions</h2>
+            <ul>
+                <li><a href="/permissions/access-denied-in-handle-user-enter/">Access denied in handle_user_enter()</a></li>
+                <li><a href="/permissions/access-denied-in-handle-request/">Access denied in handle_request()</a></li>
+            </ul>
+
             <h2>Error Types</h2>
             <ul>
                 <li><a href="/error-types/404/">Interactive 404</a></li>

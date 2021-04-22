@@ -170,7 +170,7 @@ class ViewRuntimeController:
                 return
 
             # check for 403 forbidden error
-            response_dict = view_runtime.run_user_enter(connection.user)
+            response_dict = view_runtime.run_user_enter()
 
             if response_dict:
                 return

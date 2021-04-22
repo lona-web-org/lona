@@ -55,6 +55,13 @@ routes = [
     Route('/response-types/http-redirect/',
           'views/response_types/http_redirect.py::HTTPRedirectView'),
 
+    # permissions
+    Route('/permissions/access-denied-in-handle-user-enter/',
+          'views/permissions/denied_in_handle_user_enter.py::DenyAccess'),
+
+    Route('/permissions/access-denied-in-handle-request/',
+          'views/permissions/denied_in_handle_request.py::DenyAccess'),
+
     # error types
     Route('/error-types/interactive-500/',
           'views/error_types/interactive_500.py::InteractiveErrorView'),
