@@ -145,6 +145,8 @@ class ViewRuntime:
                 exc_info=True,
             )
 
+            self.send_view_start()
+
             view_class = self.server.view_loader.load(
                 self.server.settings.CORE_ERROR_500_VIEW,
             )
@@ -189,6 +191,8 @@ class ViewRuntime:
                 'Exception raised while running handle_user_enter',
                 exc_info=True,
             )
+
+            self.send_view_start()
 
             view_class = self.server.view_loader.load(
                 self.server.settings.ERROR_500_VIEW,
