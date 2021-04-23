@@ -9,7 +9,7 @@ class Error500View(_Error500View):
             raise ValueError('Success! This should crash!')
 
         if not request.user.is_authenticated:
-            return super().handle_request(request, exception)
+            return self.render_default_template(request, exception=exception)
 
         exception_string = ''.join(
             traceback.format_exception(

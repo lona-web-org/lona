@@ -9,4 +9,4 @@ class FrontendView(_FrontendView):
     def handle_request(self, request):
         logger.info('running frontend as %s', request.user)
 
-        return super().handle_request(request)
+        return self.render_default_template(request)
