@@ -2,6 +2,7 @@ import inspect
 import time
 
 from lona.html.document import Document
+from lona.html.selector import Selector
 
 _default_document = Document(default_document=True)
 
@@ -59,3 +60,33 @@ class AbstractNode:
 
     def __deepcopy__(self, memo):
         raise RuntimeError('deepcopy is not supported')
+
+    # queries #################################################################
+    def iter_nodes(self, node=None):
+        node = node or self
+
+        if hasattr(node, 'nodes'):
+            for child in node.nodes:
+                yield child
+
+                for sub_child in self.iter_nodes(child):
+                    yield sub_child
+
+    def query_selector(self, raw_selector_string):
+        selector = Selector(raw_selector_string)
+
+        with self.lock:
+            for node in self.iter_nodes():
+                if selector.match(node):
+                    return node
+
+    def query_selector_all(self, raw_selector_string):
+        selector = Selector(raw_selector_string)
+        nodes = []
+
+        with self.lock:
+            for node in self.iter_nodes():
+                if selector.match(node):
+                    nodes.append(node)
+
+            return nodes
