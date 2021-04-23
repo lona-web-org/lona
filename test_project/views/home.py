@@ -49,15 +49,15 @@ class HomeView(LonaView):
             <h2>Error Types</h2>
             <ul>
                 <li><a href="/error-types/404/">Interactive 404</a></li>
-                <li><a href="/error-types/404/" class="lona-ignore">Non Interactive 404</a></li>
+                <li><a href="/error-types/404/" data-lona-ignore="True">Non Interactive 404</a></li>
                 <li><a href="/error-types/interactive-500/">Interactive 500</a></li>
-                <li><a href="/error-types/non-interactive-500/" class="lona-ignore">Non Interactive 500</a></li>
+                <li><a href="/error-types/non-interactive-500/" data-lona-ignore="True">Non Interactive 500</a></li>
                 <li><a href="/error-types/non-interactive-feature-error/">Non Interactive Feature Error</a></li>
             </ul>
 
             <h2>Crashes</h2>
             <ul>
-                <li><a class="lona-ignore" href="/crashes/process-connection/">Middleware.process_connection()</a></li>
+                <li><a data-lona-ignore="True" href="/crashes/process-connection/">Middleware.process_connection()</a></li>
                 <li><a href="/crashes/process-request/">Middleware.process_middleware()</a></li>
                 <li><a href="/crashes/response-dict/">Response Dict</a></li>
                 <li><a href="/crashes/input-events/">Input Events</a></li>
