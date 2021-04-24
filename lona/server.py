@@ -467,6 +467,7 @@ class LonaServer:
             http_logger.debug('no route matched')
 
         # http pass through
+        # FIXME: add support for handle_user_enter
         if match and route.http_pass_through:
             http_logger.debug('http_pass_through mode')
 
@@ -474,15 +475,15 @@ class LonaServer:
             view = self.view_loader.load(route.view)
 
             if inspect.isclass(view):
-                view = view()
+                view = view().handle_request
 
             # run view
-            if asyncio.iscoroutinefunction(view.handle_request):
-                response = await view.handle_request(http_request)
+            if asyncio.iscoroutinefunction(view):
+                response = await view(http_request)
 
             else:
                 response = await self.run_function_async(
-                    view.handle_request,
+                    view,
                     http_request,
                 )
 
