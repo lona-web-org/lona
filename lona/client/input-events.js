@@ -92,7 +92,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         var input_event_handler = this;
         var lona_window = this.lona_window;
 
-        var input_delay = event_type[1];
+        var input_delay = event_type[0];
 
         // oninput (input delay)
         if(node.type == 'text' || node.type == 'textarea') {
@@ -236,6 +236,26 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
+    this._parse_data_lona_events = function(node) {
+        var event_types = {};
+
+        if(!node.hasAttribute('data-lona-events')) {
+            return event_types;
+        };
+
+        var _event_types = node.getAttribute('data-lona-events');
+        _event_types = _event_types.split(';').filter(Boolean);
+
+        _event_types.forEach(function(event_type, index) {
+            var raw_event_type = event_type.replace(':', ',')
+            var event_type = raw_event_type.split(',').filter(Boolean);
+
+            event_types[event_type[0]] = event_type.splice(1);
+        });
+
+        return event_types;
+    };
+
     this.patch_input_events = function(node) {
         var _this = this;
 
@@ -248,8 +268,12 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             return;
         };
 
+        var event_types = this._parse_data_lona_events(node);
+
         // links
-        if(node.tagName == 'A') {
+        if(node.tagName == 'A' && 
+           !Lona.symbols.INPUT_EVENT_TYPE.CLICK in event_types ) {
+
             return this._patch_link(node);
 
         // forms
@@ -259,36 +283,19 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
 
         // data-lona-input-events attribute
-        this._clear_input_events(node);
-
-        if(!node.hasAttribute('data-lona-events')) {
-            return;
-        };
-
-        // parse event listeners
-        var event_types = node.getAttribute('data-lona-events');
-
-        event_types = event_types.split(';').filter(Boolean);
-
-        event_types.forEach(function(event_type, index) {
-            event_type = event_type.replace(':', ',');
-            event_types[index] = event_type.split(',').filter(Boolean);
-        });
-
-        // patch events
-        event_types.forEach(function(event_type) {
-            var type = event_type[0];
+        Object.keys(event_types).forEach(function(key) {
+            var event_type = event_types[key];
 
             // onclick
-            if(type == Lona.symbols.INPUT_EVENT_TYPE.CLICK) {
+            if(key == Lona.symbols.INPUT_EVENT_TYPE.CLICK) {
                 _this._patch_onclick(node, event_type);
 
             // onchange / oninput
-            } else if(type == Lona.symbols.INPUT_EVENT_TYPE.CHANGE) {
+            } else if(key == Lona.symbols.INPUT_EVENT_TYPE.CHANGE) {
                 _this._patch_onchange(node, event_type);
 
             // onsubmit
-            } else if(type == Lona.symbols.INPUT_EVENT_TYPE.SUBMIT) {
+            } else if(key == Lona.symbols.INPUT_EVENT_TYPE.SUBMIT) {
                 _this._patch_onsubmit(node, event_type);
 
             };
