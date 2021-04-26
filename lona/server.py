@@ -360,6 +360,19 @@ class LonaServer:
 
     # handle http requests ####################################################
     async def _handle_static_file_request(self, request):
+        def _404():
+            return Response(
+                status=404,
+                text='404: Not found',
+            )
+
+        if not self.settings.STATIC_FILES_SERVE:
+            server_logger.warning(
+                'Reverse proxy seems to be misconfigured: a static file request was received but STATIC_FILES_SERVE is disabled',  # NOQA
+            )
+
+            return _404()
+
         rel_path = request.match_info['path']
 
         abs_path = await self.run_function_async(
@@ -368,10 +381,7 @@ class LonaServer:
         )
 
         if not abs_path:
-            return Response(
-                status=404,
-                text='404: Not found',
-            )
+            return _404()
 
         return FileResponse(abs_path)
 
