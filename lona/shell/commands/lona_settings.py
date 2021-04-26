@@ -5,6 +5,10 @@ from rlpython.utils.table import write_table
 
 
 class LonaSettingsCommand:
+    """
+    List currently loaded Lona settings
+    """
+
     NAME = 'lona_settings'
 
     def __init__(self, repl):

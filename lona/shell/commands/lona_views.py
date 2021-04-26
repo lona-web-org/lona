@@ -13,6 +13,10 @@ from lona.symbols import VIEW_RUNTIME_STATE
 
 
 class LonaViewsCommand:
+    """
+    List currently running Lona views
+    """
+
     NAME = 'lona_views'
 
     def __init__(self, repl):

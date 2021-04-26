@@ -7,6 +7,10 @@ from lona import VERSION_STRING
 
 
 class LonaInfoCommand:
+    """
+    Show Lona info
+    """
+
     NAME = 'lona_info'
 
     def __init__(self, repl):

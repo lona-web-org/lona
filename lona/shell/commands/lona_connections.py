@@ -3,6 +3,10 @@ from rlpython.utils.table import write_table
 
 
 class LonaConnectionsCommand:
+    """
+    List all current connections to Lona
+    """
+
     NAME = 'lona_connections'
 
     def __init__(self, repl):

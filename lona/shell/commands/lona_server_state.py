@@ -5,6 +5,10 @@ from rlpython.utils.table import write_table
 
 
 class LonaServerStateCommand:
+    """
+    Show current server.state
+    """
+
     NAME = 'lona_server_state'
 
     def __init__(self, repl):

@@ -4,6 +4,10 @@ from rlpython.utils.attribute_table import write_attribute_table
 
 
 class LonaRoutesCommand:
+    """
+    List and test Lona routes
+    """
+
     NAME = 'lona_routes'
 
     def __init__(self, repl):
