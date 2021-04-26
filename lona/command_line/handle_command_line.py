@@ -71,20 +71,9 @@ def handle_command_line(argv):
     )
 
     parser_run_server.add_argument(
-        '--shell-server',
-        action='store_true',
-    )
-
-    parser_run_server.add_argument(
-        '--shell-server-host',
+        '--shell-server-url',
         type=str,
-        default='localhost',
-    )
-
-    parser_run_server.add_argument(
-        '--shell-server-port',
-        type=int,
-        default=50101,
+        default='',
     )
 
     # settings

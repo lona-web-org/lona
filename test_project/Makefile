@@ -4,12 +4,8 @@ PYTHON_VENV=env
 DJANGO_PYTHON=python3
 DJANGO_PYTHON_VENV=django-env
 
-SHELL_SERVER_HOST=localhost
-SHELL_SERVER_PORT=50101
-
-LONA_DEFAULT_ARGS=--shell-server \
-                  --shell-server-host=$(SHELL_SERVER_HOST) \
-                  --shell-server-port=$(SHELL_SERVER_PORT) \
+LONA_SHELL_SERVER_URL=file://socket
+LONA_DEFAULT_ARGS=--shell-server-url=$(LONA_SHELL_SERVER_URL)
 
 # non Django environment ######################################################
 $(PYTHON_VENV)/.created: REQUIREMENTS.txt
@@ -35,7 +31,7 @@ server: env
 
 server-shell:
 	. $(PYTHON_VENV)/bin/activate && \
-	rlpython $(SHELL_SERVER_PORT)
+	rlpython $(LONA_SHELL_SERVER_URL)
 
 # Django environment ##########################################################
 $(DJANGO_PYTHON_VENV)/.created: REQUIREMENTS.Django.txt

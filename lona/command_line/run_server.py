@@ -113,12 +113,9 @@ def run_server(args):
 
             logger.error('OSError: ' + exception.args[1])
 
-    if args.shell_server:
+    if args.shell_server_url:
         embed_kwargs = {
-            'bind': '{}:{}'.format(
-                args.shell_server_host,
-                args.shell_server_port,
-            ),
+            'bind': args.shell_server_url,
             'locals': {
                 'loop': loop,
                 'server': server,
