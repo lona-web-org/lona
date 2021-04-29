@@ -552,8 +552,7 @@ class ViewRuntime:
             # input event handler (class based views)
             input_event = self.view.handle_input_event(input_event)
 
-            if not input_event:
-                send_html_update()
+            send_html_update()
 
         except(StopReason, CancelledError):
             pass
