@@ -52,10 +52,11 @@ class ViewLoader:
                 )
 
     def _generate_acquiring_error_view(self, exception):
-        def view(request):
-            raise exception
+        class AcquiringErrorView(LonaView):
+            def handle_request(self, request):
+                raise exception
 
-        return view
+        return AcquiringErrorView
 
     def _acquire(self, view):
         logger.debug('loading %s', view)
