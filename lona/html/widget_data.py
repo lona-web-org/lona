@@ -34,7 +34,7 @@ class ListOverlay:
         with self._widget.lock:
             self._original_data.append(item)
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -48,7 +48,7 @@ class ListOverlay:
         with self._widget.lock:
             self._original_data.clear()
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -81,7 +81,7 @@ class ListOverlay:
         with self._widget.lock:
             self._original_data.insert(index, item)
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -95,7 +95,7 @@ class ListOverlay:
         with self._widget.lock:
             item = self._original_data.pop(index)
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -112,7 +112,7 @@ class ListOverlay:
 
             for i in self._original_data:
                 if i == item:
-                    self._widget_data._changes.append([
+                    self._widget_data._patches.append([
                         monotonic_ns(),
                         self._widget.id,
                         PATCH_TYPE.WIDGET_DATA,
@@ -138,7 +138,7 @@ class ListOverlay:
 
             self._original_data[name] = item
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -172,7 +172,7 @@ class ListOverlay:
         with self._widget.lock:
             del self._original_data[name]
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -209,7 +209,7 @@ class DictOverlay:
         with self._widget.lock:
             self._original_data.clear()
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -240,7 +240,7 @@ class DictOverlay:
         with self._widget.lock:
             item = self._original_data.pop(key)
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -255,7 +255,7 @@ class DictOverlay:
         with self._widget.lock:
             key, value = self._original_data.popitem()
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -274,7 +274,7 @@ class DictOverlay:
             for key, value in update_dict.items():
                 self._original_data[key] = value
 
-                self._widget_data._changes.append([
+                self._widget_data._patches.append([
                     monotonic_ns(),
                     self._widget.id,
                     PATCH_TYPE.WIDGET_DATA,
@@ -295,7 +295,7 @@ class DictOverlay:
 
             self._original_data[name] = item
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -329,7 +329,7 @@ class DictOverlay:
         with self._widget.lock:
             del self._original_data[name]
 
-            self._widget_data._changes.append([
+            self._widget_data._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -360,7 +360,7 @@ class WidgetData:
 
     def __init__(self, widget):
         self._widget = widget
-        self._changes = []
+        self._patches = []
 
         self._reset({})
 
@@ -406,7 +406,7 @@ class WidgetData:
         with self._widget.lock:
             self._data = value
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
@@ -429,14 +429,14 @@ class WidgetData:
                     original_data=self._data
                 )
 
-    def _has_changes(self):
-        return bool(self._changes)
+    def _has_patches(self):
+        return bool(self._patches)
 
-    def _get_changes(self):
-        return self._changes.copy()
+    def _get_patches(self):
+        return self._patches.copy()
 
-    def _clear_changes(self):
-        self._changes = []
+    def _clear_patches(self):
+        self._patches = []
 
     def _serialize(self):
         return deepcopy(self._data)

@@ -54,7 +54,7 @@ class Node(AbstractNode):
             if name in ('ignore'):
                 setattr(self, name, value)
 
-            # change aware attributes
+            # patchable attributes
             elif name == 'id':
                 if not isinstance(value, (str, list)):
                     raise ValueError('id has to be string or list of srings')  # NOQA
@@ -179,30 +179,30 @@ class Node(AbstractNode):
                     del self._attributes['data-lona-ignore']
 
     # serialisation ###########################################################
-    def _has_changes(self):
+    def _has_patches(self):
         return any([
-            self._id_list._has_changes(),
-            self._class_list._has_changes(),
-            self._style._has_changes(),
-            self._attributes._has_changes(),
-            self._nodes._has_changes(),
+            self._id_list._has_patches(),
+            self._class_list._has_patches(),
+            self._style._has_patches(),
+            self._attributes._has_patches(),
+            self._nodes._has_patches(),
         ])
 
-    def _get_changes(self):
+    def _get_patches(self):
         return [
-            *self._id_list._get_changes(),
-            *self._class_list._get_changes(),
-            *self._style._get_changes(),
-            *self._attributes._get_changes(),
-            *self._nodes._get_changes(),
+            *self._id_list._get_patches(),
+            *self._class_list._get_patches(),
+            *self._style._get_patches(),
+            *self._attributes._get_patches(),
+            *self._nodes._get_patches(),
         ]
 
-    def _clear_changes(self):
-        self._id_list._clear_changes()
-        self._class_list._clear_changes()
-        self._style._clear_changes()
-        self._attributes._clear_changes()
-        self._nodes._clear_changes()
+    def _clear_patches(self):
+        self._id_list._clear_patches()
+        self._class_list._clear_patches()
+        self._style._clear_patches()
+        self._attributes._clear_patches()
+        self._nodes._clear_patches()
 
     def _serialize(self):
         return [

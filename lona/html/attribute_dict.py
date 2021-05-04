@@ -9,7 +9,7 @@ class AttributeDict:
     def __init__(self, node, *args, **kwargs):
         self._node = node
         self._attributes = dict(*args, **kwargs)
-        self._changes = []
+        self._patches = []
 
     # dict helper #############################################################
     def keys(self):
@@ -24,7 +24,7 @@ class AttributeDict:
         with self._node.lock:
             attribute = self._attributes.pop(name)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -40,7 +40,7 @@ class AttributeDict:
                 return
 
             self._attributes.clear()
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -80,7 +80,7 @@ class AttributeDict:
 
             self._attributes[name] = value
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -93,7 +93,7 @@ class AttributeDict:
         with self._node.lock:
             del self._attributes[name]
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -128,7 +128,7 @@ class AttributeDict:
         with self._node.lock:
             self._attributes = value
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -136,14 +136,14 @@ class AttributeDict:
                 dict(value),
             ])
 
-    def _has_changes(self):
-        return bool(self._changes)
+    def _has_patches(self):
+        return bool(self._patches)
 
-    def _get_changes(self):
-        return list(self._changes)
+    def _get_patches(self):
+        return list(self._patches)
 
-    def _clear_changes(self):
-        return self._changes.clear()
+    def _clear_patches(self):
+        return self._patches.clear()
 
     def _serialize(self):
         return dict(self._attributes)

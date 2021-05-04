@@ -9,7 +9,7 @@ class NodeList:
     def __init__(self, node):
         self._node = node
         self._nodes = []
-        self._changes = []
+        self._patches = []
 
     # list helper #############################################################
     def _check_node(self, node):
@@ -29,7 +29,7 @@ class NodeList:
             raise RuntimeError('loop detected')
 
         node._set_parent(self._node)
-        node._clear_changes()
+        node._clear_patches()
 
     def insert(self, index, node):
         node = self._check_node(node)
@@ -40,7 +40,7 @@ class NodeList:
 
             index = self._nodes.index(node)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 PATCH_TYPE.NODES,
@@ -58,7 +58,7 @@ class NodeList:
 
             index = self._nodes.index(node)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 PATCH_TYPE.NODES,
@@ -73,7 +73,7 @@ class NodeList:
 
             node._set_parent(None)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 PATCH_TYPE.NODES,
@@ -87,7 +87,7 @@ class NodeList:
 
             node._set_parent(None)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 PATCH_TYPE.NODES,
@@ -106,7 +106,7 @@ class NodeList:
                 node._set_parent(None)
                 self._nodes.remove(node)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 PATCH_TYPE.NODES,
@@ -124,7 +124,7 @@ class NodeList:
             self._prepare_node(node)
             self._nodes[index] = node
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 PATCH_TYPE.NODES,
@@ -158,7 +158,7 @@ class NodeList:
                 self._prepare_node(node)
                 self._nodes.append(node)
 
-                self._changes.append([
+                self._patches.append([
                     monotonic_ns(),
                     self._node.id,
                     PATCH_TYPE.NODES,
@@ -166,17 +166,17 @@ class NodeList:
                     [i._serialize() for i in self._nodes]
                 ])
 
-    def _has_changes(self):
-        return bool(self._changes)
+    def _has_patches(self):
+        return bool(self._patches)
 
-    def _get_changes(self):
-        return list(self._changes)
+    def _get_patches(self):
+        return list(self._patches)
 
-    def _clear_changes(self):
+    def _clear_patches(self):
         for node in self._nodes:
-            node._clear_changes()
+            node._clear_patches()
 
-        self._changes.clear()
+        self._patches.clear()
 
     def _serialize(self):
         return [i._serialize() for i in self._nodes]

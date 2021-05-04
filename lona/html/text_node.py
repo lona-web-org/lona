@@ -59,13 +59,13 @@ class TextNode(AbstractNode):
         return '<TextNode({})>'.format(repr(self._string))
 
     # serialisation ###########################################################
-    def _has_changes(self):
+    def _has_patches(self):
         return False
 
-    def _get_changes(self):
+    def _get_patches(self):
         return []
 
-    def _clear_changes(self):
+    def _clear_patches(self):
         pass
 
     def _serialize(self):

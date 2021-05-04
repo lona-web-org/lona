@@ -9,7 +9,7 @@ class AttributeList:
     def __init__(self, node, *args, **kwargs):
         self._node = node
         self._attributes = list(*args, **kwargs)
-        self._changes = []
+        self._patches = []
 
     # list helper #############################################################
     def add(self, attribute):
@@ -22,7 +22,7 @@ class AttributeList:
 
             self._attributes.append(attribute)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -37,7 +37,7 @@ class AttributeList:
 
             self._attributes.remove(attribute)
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -52,7 +52,7 @@ class AttributeList:
 
             self._attributes.clear()
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -102,7 +102,7 @@ class AttributeList:
         with self._node.lock:
             self._attributes = value
 
-            self._changes.append([
+            self._patches.append([
                 monotonic_ns(),
                 self._node.id,
                 self.PATCH_TYPE,
@@ -110,14 +110,14 @@ class AttributeList:
                 list(value),
             ])
 
-    def _has_changes(self):
-        return bool(self._changes)
+    def _has_patches(self):
+        return bool(self._patches)
 
-    def _get_changes(self):
-        return list(self._changes)
+    def _get_patches(self):
+        return list(self._patches)
 
-    def _clear_changes(self):
-        return self._changes.clear()
+    def _clear_patches(self):
+        return self._patches.clear()
 
     def _serialize(self):
         return list(self._attributes)

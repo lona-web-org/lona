@@ -53,70 +53,70 @@ class Document:
 
         return tuple(value)
 
-    def _has_changes(self):
-        def has_changes(node):
-            if node._has_changes():
+    def _has_patches(self):
+        def has_patches(node):
+            if node._has_patches():
                 return True
 
             if hasattr(node, 'nodes'):
                 for sub_node in node.nodes:
-                    if has_changes(sub_node):
+                    if has_patches(sub_node):
                         return True
 
             return False
 
-        return has_changes(self.html)
+        return has_patches(self.html)
 
-    def _collect_changes(self):
-        changes = []
-        changed_widgets = []
+    def _collect_patches(self):
+        patches = []
+        patched_widgets = []
         widget_path = []
 
-        # find changes and changed widgets
-        def add_changes(node):
+        # find patches and patched widgets
+        def add_patches(node):
             node_is_widget = isinstance(node, Widget)
 
             if node_is_widget:
                 widget_path.append(node.id)
 
-            # changed widgets
+            # patched widgets
             if node_is_widget:
-                if node.nodes._has_changes():
-                    changed_widgets.extend(widget_path)
+                if node.nodes._has_patches():
+                    patched_widgets.extend(widget_path)
 
-            elif node._has_changes():
-                changed_widgets.extend(widget_path)
+            elif node._has_patches():
+                patched_widgets.extend(widget_path)
 
-            # changes
-            if node._has_changes():
-                changes.extend(node._get_changes())
+            # patches
+            if node._has_patches():
+                patches.extend(node._get_patches())
 
             if hasattr(node, 'nodes'):
                 for sub_node in node.nodes:
-                    add_changes(sub_node)
+                    add_patches(sub_node)
 
             if node_is_widget:
                 widget_path.remove(node.id)
 
-        add_changes(self.html)
+        add_patches(self.html)
 
-        # sort changes by timestamp
-        changes = sorted(changes, key=lambda x: x[0])
+        # sort patches by timestamp
+        patches = sorted(patches, key=lambda x: x[0])
 
         # remove timestamps
-        cleaned_changes = []
+        cleaned_patches = []
 
-        for change in changes:
-            cleaned_changes.append(change[1:])
+        for patch in patches:
+            cleaned_patches.append(patch[1:])
 
-        # clean list of changed widgets
-        cleaned_changed_widgets = []
+        # clean list of patched widgets
+        cleaned_patched_widgets = []
 
-        for widget_id in changed_widgets[::-1]:
-            if widget_id not in cleaned_changed_widgets:
-                cleaned_changed_widgets.append(widget_id)
+        for widget_id in patched_widgets[::-1]:
+            if widget_id not in cleaned_patched_widgets:
+                cleaned_patched_widgets.append(widget_id)
 
-        return [cleaned_changes, cleaned_changed_widgets]
+        return [cleaned_patches, cleaned_patched_widgets]
 
     def serialize(self):
         if not self.html:
@@ -130,13 +130,13 @@ class Document:
 
         # HTML update
         elif html is self.html:
-            if not self._has_changes():
+            if not self._has_patches():
                 return
 
-            changes = self._collect_changes()
-            self.html._clear_changes()
+            patches = self._collect_patches()
+            self.html._clear_patches()
 
-            return DATA_TYPE.HTML_UPDATE, changes
+            return DATA_TYPE.HTML_UPDATE, patches
 
         # HTML
         else:
@@ -148,7 +148,7 @@ class Document:
                 self.html = html
 
                 self.html._set_document(self)
-                self.html._clear_changes()
+                self.html._clear_patches()
 
                 return self.serialize()
 
