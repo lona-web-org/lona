@@ -38,3 +38,10 @@ def acquire(import_string, ignore_import_cache=False):
         raise TypeError('invalid import string')
 
     return attribute
+
+
+def get_file(obj):
+    if obj.__module__.endswith('.py'):
+        return obj.__module__
+
+    return inspect.getfile(obj)

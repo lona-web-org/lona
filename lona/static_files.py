@@ -3,6 +3,7 @@ import logging
 import os
 
 from lona.html.abstract_node import AbstractNode
+from lona.imports import get_file
 from lona.types import Symbol
 
 logger = logging.getLogger('lona.static_files')
@@ -91,7 +92,7 @@ class StaticFileLoader:
                 if static_file.name in discovered_names:
                     continue
 
-                node_class_path = node_class.get_path()
+                node_class_path = get_file(node_class)
                 node_class_dirname = os.path.dirname(node_class_path)
 
                 # check static file

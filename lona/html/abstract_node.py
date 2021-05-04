@@ -1,4 +1,3 @@
-import inspect
 import time
 
 from lona.html.selector import Selector
@@ -13,13 +12,6 @@ class DummyLock:
 
 
 class AbstractNode:
-    @classmethod
-    def get_path(cls):
-        if cls.__module__.endswith('.py'):
-            return cls.__module__
-
-        return inspect.getfile(cls)
-
     @classmethod
     def gen_id(cls):
         return time.monotonic_ns()
