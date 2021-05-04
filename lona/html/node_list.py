@@ -28,7 +28,7 @@ class NodeList:
         elif node == self._node.root:
             raise RuntimeError('loop detected')
 
-        node.parent = self._node
+        node._set_parent(self._node)
         node._clear_changes()
 
     def insert(self, index, node):
@@ -71,7 +71,7 @@ class NodeList:
         with self._node.lock:
             self._nodes.remove(node)
 
-            node.parent = None
+            node._set_parent(None)
 
             self._changes.append([
                 monotonic_ns(),
@@ -85,7 +85,7 @@ class NodeList:
         with self._node.lock:
             node = self._nodes.pop(index)
 
-            node.parent = None
+            node._set_parent(None)
 
             self._changes.append([
                 monotonic_ns(),
@@ -103,7 +103,7 @@ class NodeList:
                 return
 
             for node in list(self._nodes):
-                node.parent = None
+                node._set_parent(None)
                 self._nodes.remove(node)
 
             self._changes.append([

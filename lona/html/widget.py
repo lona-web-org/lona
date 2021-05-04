@@ -40,10 +40,10 @@ class Widget(AbstractNode):
 
     # node helper #############################################################
     def remove(self):
-        if not self._parent:
+        if not self.parent:
             raise RuntimeError('node has no parent node')
 
-        self._parent.remove(self)
+        self.parent.remove(self)
 
     # serialisation ###########################################################
     def _has_changes(self):

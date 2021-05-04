@@ -12,6 +12,13 @@ class DummyLock:
 
 
 class AbstractNode:
+    def __copy__(self, *args, **kwargs):
+        raise RuntimeError('copy is not supported')
+
+    def __deepcopy__(self, memo):
+        raise RuntimeError('deepcopy is not supported')
+
+    # id ######################################################################
     @property
     def id(self):
         if not hasattr(self, '_id'):
@@ -19,6 +26,7 @@ class AbstractNode:
 
         return self._id
 
+    # parent ##################################################################
     @property
     def parent(self):
         if not hasattr(self, '_parent'):
@@ -26,10 +34,10 @@ class AbstractNode:
 
         return self._parent
 
-    @parent.setter
-    def parent(self, value):
-        self._parent = value
+    def _set_parent(self, parent):
+        self._parent = parent
 
+    # root ####################################################################
     @property
     def root(self):
         node = self
@@ -42,7 +50,9 @@ class AbstractNode:
 
         return node
 
-    def _get_document(self):
+    # document ################################################################
+    @property
+    def document(self):
         return getattr(self.root, '_document', None)
 
     def _set_document(self, document):
@@ -51,20 +61,15 @@ class AbstractNode:
 
         self._document = document
 
+    # locking #################################################################
     @property
     def lock(self):
-        document = self._get_document()
+        document = self.document
 
         if not document:
             return DummyLock()
 
         return document.lock
-
-    def __copy__(self, *args, **kwargs):
-        raise RuntimeError('copy is not supported')
-
-    def __deepcopy__(self, memo):
-        raise RuntimeError('deepcopy is not supported')
 
     # queries #################################################################
     def iter_nodes(self, node=None):
