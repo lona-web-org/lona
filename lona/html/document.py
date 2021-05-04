@@ -1,53 +1,19 @@
 from threading import RLock
-import logging
 
+from lona.html.abstract_node import AbstractNode
+from lona.html.widget import Widget
 from lona.protocol import DATA_TYPE
-from lona.imports import acquire
-
-AbstractNode = None
-Widget = None
-Node = None
-
-_node_classes_setup = False
-
-logger = logging.getLogger('lona.html.document')
-
-
-def _setup_node_classes():
-    # this is necessary to prevent import loops between the Document
-    # class and the AbstractNode class and its subclasses
-
-    global AbstractNode, TextNode, Widget, Node, _node_classes_setup
-
-    if _node_classes_setup:
-        return
-
-    AbstractNode = acquire('lona.html.abstract_node.AbstractNode')
-    Widget = acquire('lona.html.widget.Widget')
-    Node = acquire('lona.html.node.Node')
-
-    _node_classes_setup = True
+from lona.html.node import Node
 
 
 class Document:
-    def __init__(self, default_document=False):
-        self.is_default_document = default_document
-
+    def __init__(self):
         self._lock = RLock()
         self.html = None
-
-        if not self.is_default_document:
-            _setup_node_classes()
 
     @property
     def lock(self):
         return self._lock
-
-    def __repr__(self):
-        if self.is_default_document:
-            return '<DefaultDocument>'
-
-        return '<Document>'
 
     # html ####################################################################
     def get_node(self, node_id, widget_id=None):
@@ -174,14 +140,14 @@ class Document:
 
         # HTML
         else:
-            if hasattr(self.html, 'document'):
-                self.html.document = None
+            if isinstance(self.html, AbstractNode):
+                self.html._set_document(None)
 
             # node tree
             if isinstance(html, AbstractNode):
                 self.html = html
 
-                self.html.document = self
+                self.html._set_document(self)
                 self.html._clear_changes()
 
                 return self.serialize()

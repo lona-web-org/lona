@@ -1,10 +1,15 @@
 import inspect
 import time
 
-from lona.html.document import Document
 from lona.html.selector import Selector
 
-_default_document = Document(default_document=True)
+
+class DummyLock:
+    def __enter__(self, *args, **kwargs):
+        pass
+
+    def __exit__(self, *args, **kwargs):
+        pass
 
 
 class AbstractNode:
@@ -42,18 +47,23 @@ class AbstractNode:
 
         return node
 
-    @property
-    def document(self):
-        return getattr(
-            self.root, '_document', _default_document) or _default_document
+    def _get_document(self):
+        return getattr(self.root, '_document', None)
 
-    @document.setter
-    def document(self, value):
-        self._document = value
+    def _set_document(self, document):
+        if self.parent:
+            raise RuntimeError('node is no rooot node')
+
+        self._document = document
 
     @property
     def lock(self):
-        return self.document.lock
+        document = self._get_document()
+
+        if not document:
+            return DummyLock()
+
+        return document.lock
 
     def __copy__(self, *args, **kwargs):
         raise RuntimeError('copy is not supported')

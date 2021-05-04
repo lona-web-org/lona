@@ -13,15 +13,15 @@ class AttributeDict:
 
     # dict helper #############################################################
     def keys(self):
-        with self._node.document.lock:
+        with self._node.lock:
             return self._attributes.keys()
 
     def items(self):
-        with self._node.document.lock:
+        with self._node.lock:
             return self._attributes.items()
 
     def pop(self, name):
-        with self._node.document.lock:
+        with self._node.lock:
             attribute = self._attributes.pop(name)
 
             self._changes.append([
@@ -35,7 +35,7 @@ class AttributeDict:
             return attribute
 
     def clear(self):
-        with self._node.document.lock:
+        with self._node.lock:
             if not self._attributes:
                 return
 
@@ -48,19 +48,19 @@ class AttributeDict:
             ])
 
     def get(self, *args, **kwargs):
-        with self._node.document.lock:
+        with self._node.lock:
             return self._attributes.get(*args, **kwargs)
 
     def update(self, value):
         if not isinstance(value, dict):
             raise ValueError('dict required')
 
-        with self._node.document.lock:
+        with self._node.lock:
             for key, value in value.items():
                 self[key] = value
 
     def __getitem__(self, name):
-        with self._node.document.lock:
+        with self._node.lock:
             return self._attributes[name]
 
     def __setitem__(self, name, value):
@@ -74,7 +74,7 @@ class AttributeDict:
                     name, name, '_list' if name != 'style' else '')
             )
 
-        with self._node.document.lock:
+        with self._node.lock:
             if name in self._attributes and self._attributes[name] == value:
                 return
 
@@ -90,7 +90,7 @@ class AttributeDict:
             ])
 
     def __delitem__(self, name):
-        with self._node.document.lock:
+        with self._node.lock:
             del self._attributes[name]
 
             self._changes.append([
@@ -102,11 +102,11 @@ class AttributeDict:
             ])
 
     def __iter__(self):
-        with self._node.document.lock:
+        with self._node.lock:
             return self._attributes.__iter__()
 
     def __bool__(self):
-        with self._node.document.lock:
+        with self._node.lock:
             return bool(self._attributes)
 
     # serialisation ###########################################################
@@ -125,7 +125,7 @@ class AttributeDict:
                         k, k, 'list' if k != 'style' else '')
                 )
 
-        with self._node.document.lock:
+        with self._node.lock:
             self._attributes = value
 
             self._changes.append([
@@ -150,7 +150,7 @@ class AttributeDict:
 
     # string representation ###################################################
     def to_attribute_string(self, skip_value=False):
-        with self._node.document.lock:
+        with self._node.lock:
             string = []
 
             for key, value in self._attributes.items():
@@ -162,7 +162,7 @@ class AttributeDict:
             return ' '.join(string)
 
     def to_sub_attribute_string(self):
-        with self._node.document.lock:
+        with self._node.lock:
             string = []
 
             for key, value in self._attributes.items():

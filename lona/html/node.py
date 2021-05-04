@@ -259,7 +259,7 @@ class Node(AbstractNode):
 
     # string representation ###################################################
     def __str__(self, node_string=None, skip_value=False):
-        with self.document.lock:
+        with self.lock:
             # opening tag
             string = '<{} data-lona-node-id="{}"'.format(
                 self.tag_name,
