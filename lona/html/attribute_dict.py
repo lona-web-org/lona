@@ -26,7 +26,7 @@ class AttributeDict:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.REMOVE,
                 name,
@@ -42,7 +42,7 @@ class AttributeDict:
             self._attributes.clear()
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.CLEAR,
             ])
@@ -82,7 +82,7 @@ class AttributeDict:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.SET,
                 name,
@@ -95,7 +95,7 @@ class AttributeDict:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.REMOVE,
                 name,
@@ -130,7 +130,7 @@ class AttributeDict:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.RESET,
                 dict(value),

@@ -12,9 +12,12 @@ class DummyLock:
 
 
 class AbstractNode:
-    @classmethod
-    def gen_id(cls):
-        return time.monotonic_ns()
+    @property
+    def id(self):
+        if not hasattr(self, '_id'):
+            self._id = time.monotonic_ns()
+
+        return self._id
 
     @property
     def parent(self):

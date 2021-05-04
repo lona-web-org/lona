@@ -42,7 +42,7 @@ class NodeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.INSERT,
                 index,
@@ -60,7 +60,7 @@ class NodeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.INSERT,
                 index,
@@ -75,10 +75,10 @@ class NodeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.REMOVE,
-                node._id,
+                node.id,
             ])
 
     def pop(self, index):
@@ -89,10 +89,10 @@ class NodeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.REMOVE,
-                node._id,
+                node.id,
             ])
 
             return node
@@ -108,7 +108,7 @@ class NodeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.CLEAR,
             ])
@@ -126,7 +126,7 @@ class NodeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.SET,
                 index,
@@ -160,7 +160,7 @@ class NodeList:
 
                 self._changes.append([
                     monotonic_ns(),
-                    self._node._id,
+                    self._node.id,
                     PATCH_TYPE.NODES,
                     OPERATION.RESET,
                     [i._serialize() for i in self._nodes]

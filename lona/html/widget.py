@@ -8,13 +8,6 @@ class Widget(AbstractNode):
     FRONTEND_WIDGET_CLASS = ''
 
     @property
-    def _id(self):
-        if not hasattr(self, '_id_'):
-            self._id_ = self.gen_id()
-
-        return self._id_
-
-    @property
     def nodes(self):
         if not hasattr(self, '_nodes'):
             self._nodes = NodeList(self)
@@ -69,7 +62,7 @@ class Widget(AbstractNode):
     def _serialize(self):
         return [
             NODE_TYPE.WIDGET,
-            self._id,
+            self.id,
             self.FRONTEND_WIDGET_CLASS,
             self.nodes._serialize(),
             self.data._serialize(),
@@ -100,9 +93,9 @@ class Widget(AbstractNode):
     # string representation ###################################################
     def __str__(self):
         return '<!--lona-widget:{}-->\n{}\n<!--end-lona-widget:{}-->'.format(
-            self._id,
+            self.id,
             str(self.nodes),
-            self._id,
+            self.id,
         )
 
     def __repr__(self):

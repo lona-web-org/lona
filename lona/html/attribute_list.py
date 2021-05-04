@@ -24,7 +24,7 @@ class AttributeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.ADD,
                 attribute,
@@ -39,7 +39,7 @@ class AttributeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.REMOVE,
                 attribute,
@@ -54,7 +54,7 @@ class AttributeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.CLEAR,
             ])
@@ -104,7 +104,7 @@ class AttributeList:
 
             self._changes.append([
                 monotonic_ns(),
-                self._node._id,
+                self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.RESET,
                 list(value),

@@ -28,11 +28,11 @@ class Document:
             if isinstance(node, Widget):
                 widget_path.append(node)
 
-                if widget_id and node._id == widget_id:
+                if widget_id and node.id == widget_id:
                     widget[0] = node
 
             if isinstance(node, (Node, Widget)):
-                if node._id == node_id:
+                if node.id == node_id:
                     value[0] = node
                     value[1].extend(widget_path)
 
@@ -77,7 +77,7 @@ class Document:
             node_is_widget = isinstance(node, Widget)
 
             if node_is_widget:
-                widget_path.append(node._id)
+                widget_path.append(node.id)
 
             # changed widgets
             if node_is_widget:
@@ -96,7 +96,7 @@ class Document:
                     add_changes(sub_node)
 
             if node_is_widget:
-                widget_path.remove(node._id)
+                widget_path.remove(node.id)
 
         add_changes(self.html)
 

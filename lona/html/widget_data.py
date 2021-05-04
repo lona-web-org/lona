@@ -36,7 +36,7 @@ class ListOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.INSERT,
@@ -50,7 +50,7 @@ class ListOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.CLEAR,
@@ -83,7 +83,7 @@ class ListOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.INSERT,
@@ -97,7 +97,7 @@ class ListOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.REMOVE,
@@ -114,7 +114,7 @@ class ListOverlay:
                 if i == item:
                     self._widget_data._changes.append([
                         monotonic_ns(),
-                        self._widget._id,
+                        self._widget.id,
                         PATCH_TYPE.WIDGET_DATA,
                         self._key_path,
                         OPERATION.REMOVE,
@@ -140,7 +140,7 @@ class ListOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.SET,
@@ -174,7 +174,7 @@ class ListOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.REMOVE,
@@ -211,7 +211,7 @@ class DictOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.CLEAR,
@@ -242,7 +242,7 @@ class DictOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.REMOVE,
@@ -257,7 +257,7 @@ class DictOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.REMOVE,
@@ -276,7 +276,7 @@ class DictOverlay:
 
                 self._widget_data._changes.append([
                     monotonic_ns(),
-                    self._widget._id,
+                    self._widget.id,
                     PATCH_TYPE.WIDGET_DATA,
                     self._key_path,
                     OPERATION.SET,
@@ -297,7 +297,7 @@ class DictOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.SET,
@@ -331,7 +331,7 @@ class DictOverlay:
 
             self._widget_data._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
                 OPERATION.REMOVE,
@@ -408,7 +408,7 @@ class WidgetData:
 
             self._changes.append([
                 monotonic_ns(),
-                self._widget._id,
+                self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 [],
                 OPERATION.RESET,

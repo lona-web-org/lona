@@ -4,7 +4,6 @@ from lona.protocol import NODE_TYPE
 
 class TextNode(AbstractNode):
     def __init__(self, string):
-        self._id = self.gen_id()
         self._string = str(string)
 
     def wrap_method(self, method):
@@ -19,7 +18,7 @@ class TextNode(AbstractNode):
         return wrapper
 
     def __getattribute__(self, name):
-        if name in ('_id', '_string'):
+        if name in ('id', '_string'):
             return super().__getattribute__(name)
 
         if hasattr(self, '_string') and hasattr(self._string, name):
@@ -70,7 +69,7 @@ class TextNode(AbstractNode):
         pass
 
     def _serialize(self):
-        return [NODE_TYPE.TEXT_NODE, self._id, self._string]
+        return [NODE_TYPE.TEXT_NODE, self.id, self._string]
 
     # node helper #############################################################
     def remove(self):

@@ -18,8 +18,6 @@ class Node(AbstractNode):
     EVENTS = []
 
     def __init__(self, *args, tag_name=None, single_tag=None, **kwargs):
-        self._id = self.gen_id()
-
         self._id_list = IDList(self, self.ID_LIST)
         self._class_list = ClassList(self, self.CLASS_LIST)
         self._style = StyleDict(self, self.STYLE)
@@ -209,7 +207,7 @@ class Node(AbstractNode):
     def _serialize(self):
         return [
             NODE_TYPE.NODE,
-            self._id,
+            self.id,
             self.tag_name,
             self._id_list._serialize(),
             self._class_list._serialize(),
@@ -263,7 +261,7 @@ class Node(AbstractNode):
             # opening tag
             string = '<{} data-lona-node-id="{}"'.format(
                 self.tag_name,
-                self._id,
+                self.id,
             )
 
             if self.id_list:
