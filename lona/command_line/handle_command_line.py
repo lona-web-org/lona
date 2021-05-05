@@ -34,7 +34,7 @@ def handle_command_line(argv):
         'run-server',
     )
 
-    parser.add_argument(
+    parser_run_server.add_argument(
         '-l',
         '--log-level',
         choices=['debug', 'info', 'warn', 'error', 'critical'],
