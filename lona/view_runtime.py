@@ -503,7 +503,7 @@ class ViewRuntime:
             document=self.document,
         )
 
-        def send_html_update():
+        def send_html_patches():
             with self.document.lock:
                 data = self.document.apply(self.document.html)
 
@@ -515,7 +515,7 @@ class ViewRuntime:
             input_event = self.view.handle_input_event_root(input_event)
 
             if not input_event:
-                send_html_update()
+                send_html_patches()
 
                 return
 
@@ -524,7 +524,7 @@ class ViewRuntime:
                 input_event = widget.handle_input_event(input_event)
 
                 if not input_event:
-                    send_html_update()
+                    send_html_patches()
 
                     return
 
@@ -552,7 +552,7 @@ class ViewRuntime:
             # input event handler (class based views)
             input_event = self.view.handle_input_event(input_event)
 
-            send_html_update()
+            send_html_patches()
 
         except(StopReason, CancelledError):
             pass
