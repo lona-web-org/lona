@@ -29,31 +29,52 @@ class Select(Widget):
         class_list = copy(self.CLASS_LIST)
         style = copy(self.STYLE)
         attributes = copy(self.ATTRIBUTES)
+        misc_kwargs = {}
 
-        if '_id' in kwargs:
-            id_list.extend(kwargs.pop('_id'))
+        for name, value in kwargs.copy().items():
 
-        if '_class' in kwargs:
-            id_list.extend(kwargs.pop('_class'))
+            # remove underscores from attributes
+            # this makes kwargs like '_class' possible to prevent clashes
+            # with python grammar
+            clean_name = name
 
-        if 'style' in kwargs:
-            style.update(kwargs.pop('style'))
+            if '_' in clean_name:
+                clean_name = clean_name.replace('_', '-')
 
-        elif '_style' in kwargs:
-            style.update(kwargs.pop('_style'))
+                if clean_name.startswith('-'):
+                    clean_name = clean_name[1:]
 
-        if 'attributes' in kwargs:
-            attributes.update(kwargs.pop('attributes'))
+            if clean_name == 'id':
+                value = kwargs.pop(name)
 
-        elif '_attributes' in kwargs:
-            attributes.update(kwargs.pop('_attributes'))
+                if isinstance(value, str):
+                    value = value.split(' ')
+
+                id_list.extend(value)
+
+            elif clean_name == 'class':
+                value = kwargs.pop(name)
+
+                if isinstance(value, str):
+                    value = value.split(' ')
+
+                class_list.extend(value)
+
+            elif clean_name == 'style':
+                style.update(kwargs.pop(name))
+
+            elif clean_name == 'attributes':
+                attributes.update(kwargs.pop(name))
+
+            else:
+                misc_kwargs[name] = value
 
         return {
             'id': id_list,
             'class': class_list,
             'style': style,
             **attributes,
-            **kwargs,
+            **misc_kwargs,
         }
 
     def handle_input_event(self, input_event):
@@ -65,16 +86,16 @@ class Select(Widget):
 
     @property
     def disabled(self):
-        return self.input_nodes.attributes.get('disabled', '')
+        return self.select_nodes.attributes.get('disabled', '')
 
     @disabled.setter
     def disabled(self, new_value):
         with self.lock:
             if new_value:
-                self.input_node.attributes['disabled'] = True
+                self.select_node.attributes['disabled'] = True
 
-            elif 'disabled' in self.input_node.attributes:
-                self.input_node.attributes.pop('disabled')
+            elif 'disabled' in self.select_node.attributes:
+                self.select_node.attributes.pop('disabled')
 
     @property
     def values(self):
@@ -109,10 +130,13 @@ class Select(Widget):
                 if 'selected' in option.attributes:
                     value.append(option.attributes['value'])
 
-            if not value:
+            if not value and self.select_node.nodes:
                 option = self.select_node.nodes[0]
 
                 value.append(option.attributes['value'])
+
+            if not value:
+                return None
 
             if 'multiple' not in self.select_node.attributes:
                 value = value.pop()
@@ -133,3 +157,67 @@ class Select(Widget):
                 else:
                     if 'selected' in option.attributes:
                         option.attributes.pop('selected')
+
+    # input node properties
+    # id
+    @property
+    def id_list(self):
+        return self.select_node.id_list
+
+    @id_list.setter
+    def id_list(self, new_value):
+        self.select_node.id_list = new_value
+
+    # class
+    @property
+    def class_list(self):
+        return self.select_node.class_list
+
+    @class_list.setter
+    def class_list(self, new_value):
+        self.select_node.class_list = new_value
+
+    # style
+    @property
+    def style(self):
+        return self.select_node.style
+
+    @style.setter
+    def style(self, new_value):
+        self.select_node.style = new_value
+
+    # attributes
+    @property
+    def attributes(self):
+        return self.select_node.attributes
+
+    @attributes.setter
+    def attributes(self, new_value):
+        self.select_node.attributes = new_value
+
+    # ignore
+    @property
+    def ignore(self):
+        return self.select_node.ignore
+
+    @ignore.setter
+    def ignore(self, new_value):
+        self.select_node.ignore = new_value
+
+    # events
+    @property
+    def events(self):
+        return self.select_node.events
+
+    @events.setter
+    def events(self, new_value):
+        self.select_node.events = new_value
+
+    # helper
+    @property
+    def has_id(self):
+        return self.select_node.has_id
+
+    @property
+    def has_class(self):
+        return self.select_node.has_class
