@@ -29,11 +29,12 @@ def handle_command_line(argv):
         required=True,
     )
 
-    # run-server
+    # run-server ##############################################################
     parser_run_server = sub_parsers.add_parser(
         'run-server',
     )
 
+    # logging
     parser_run_server.add_argument(
         '-l',
         '--log-level',
@@ -41,6 +42,41 @@ def handle_command_line(argv):
         default='warn',
     )
 
+    parser_run_server.add_argument(
+        '--loggers',
+        type=str,
+        nargs='+',
+    )
+
+    # settings
+    parser_run_server.add_argument(
+        '--project-root',
+        type=str,
+        default=os.getcwd(),
+    )
+
+    parser_run_server.add_argument(
+        '-s',
+        '--settings',
+        nargs='+',
+        default=[],
+    )
+
+    parser_run_server.add_argument(
+        '-o',
+        '--settings-pre-overrides',
+        nargs='+',
+        default=[],
+    )
+
+    parser_run_server.add_argument(
+        '-O',
+        '--settings-post-overrides',
+        nargs='+',
+        default=[],
+    )
+
+    # custom
     parser_run_server.add_argument(
         '--host',
         type=str,
@@ -65,50 +101,59 @@ def handle_command_line(argv):
     )
 
     parser_run_server.add_argument(
-        '--loggers',
-        type=str,
-        nargs='+',
-    )
-
-    parser_run_server.add_argument(
         '--shell-server-url',
         type=str,
         default='',
     )
 
+    # collect-static ##########################################################
+    parser_collect_static = sub_parsers.add_parser(
+        'collect-static',
+    )
+
+    # logging
+    parser_collect_static.add_argument(
+        '-l',
+        '--log-level',
+        choices=['debug', 'info', 'warn', 'error', 'critical'],
+        default='warn',
+    )
+
+    parser_collect_static.add_argument(
+        '--loggers',
+        type=str,
+        nargs='+',
+    )
+
     # settings
-    parser_run_server.add_argument(
+    parser_collect_static.add_argument(
         '--project-root',
         type=str,
         default=os.getcwd(),
     )
 
-    parser_run_server.add_argument(
+    parser_collect_static.add_argument(
         '-s',
         '--settings',
         nargs='+',
         default=[],
     )
 
-    parser_run_server.add_argument(
+    parser_collect_static.add_argument(
         '-o',
         '--settings-pre-overrides',
         nargs='+',
         default=[],
     )
 
-    parser_run_server.add_argument(
+    parser_collect_static.add_argument(
         '-O',
         '--settings-post-overrides',
         nargs='+',
         default=[],
     )
 
-    # collect-static
-    parser_collect_static = sub_parsers.add_parser(
-        'collect-static',
-    )
-
+    # custom
     parser_collect_static.add_argument(
         'destination',
     )
@@ -129,34 +174,6 @@ def handle_command_line(argv):
         '--dry-run',
         action='store_true',
         default=False,
-    )
-
-    # settings
-    parser_collect_static.add_argument(
-        '--project-root',
-        type=str,
-        default=os.getcwd(),
-    )
-
-    parser_collect_static.add_argument(
-        '-s',
-        '--settings',
-        nargs='+',
-        default=[],
-    )
-
-    parser_collect_static.add_argument(
-        '-o',
-        '--settings-pre-overrides',
-        nargs='+',
-        default=[],
-    )
-
-    parser_collect_static.add_argument(
-        '-O',
-        '--settings-post-overrides',
-        nargs='+',
-        default=[],
     )
 
     # parse argv

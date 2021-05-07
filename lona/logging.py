@@ -121,3 +121,33 @@ class LogFormatter(logging.Formatter):
             background,
             record_string,
         )
+
+
+def setup_logging(args):
+    logging.basicConfig(level={
+        'debug': logging.DEBUG,
+        'info': logging.INFO,
+        'warn': logging.WARN,
+        'error': logging.ERROR,
+        'critical': logging.CRITICAL,
+    }[args.log_level.lower()])
+
+    log_formatter = LogFormatter()
+    log_filter = LogFilter()
+
+    for handler in logging.getLogger().root.handlers:
+        handler.setFormatter(log_formatter)
+        handler.addFilter(log_filter)
+
+    if args.loggers:
+        for logger_name in args.loggers:
+            if logger_name.startswith('_'):
+                log_filter.exclude(logger_name[1:])
+
+            else:
+                if logger_name.startswith('+'):
+                    logger_name = logger_name[1:]
+
+                log_filter.include(logger_name)
+
+    return log_formatter, log_filter

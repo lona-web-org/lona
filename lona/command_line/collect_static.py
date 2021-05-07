@@ -3,6 +3,7 @@ import os
 
 from aiohttp.web import Application
 
+from lona.logging import setup_logging
 from lona.server import LonaServer
 
 
@@ -44,6 +45,9 @@ def collect_static(args):
             return
 
         shutil.copy(source, destination)
+
+    # setup logging
+    setup_logging(args)
 
     # setup server
     server = LonaServer(

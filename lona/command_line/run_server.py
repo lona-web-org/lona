@@ -8,7 +8,7 @@ import os
 from aiohttp.web import Application, run_app
 
 from lona.shell.shell import embed_shell, generate_shell_server
-from lona.logging import LogFormatter, LogFilter
+from lona.logging import setup_logging
 from lona.server import LonaServer
 
 logger = logging.getLogger('lona')
@@ -18,31 +18,7 @@ def run_server(args):
     loop = asyncio.get_event_loop()
 
     # setup logging
-    logging.basicConfig(level={
-        'debug': logging.DEBUG,
-        'info': logging.INFO,
-        'warn': logging.WARN,
-        'error': logging.ERROR,
-        'critical': logging.CRITICAL,
-    }[args.log_level.lower()])
-
-    log_formatter = LogFormatter()
-    log_filter = LogFilter()
-
-    for handler in logging.getLogger().root.handlers:
-        handler.setFormatter(log_formatter)
-        handler.addFilter(log_filter)
-
-    if args.loggers:
-        for logger_name in args.loggers:
-            if logger_name.startswith('_'):
-                log_filter.exclude(logger_name[1:])
-
-            else:
-                if logger_name.startswith('+'):
-                    logger_name = logger_name[1:]
-
-                log_filter.include(logger_name)
+    log_formatter, log_filter = setup_logging(args)
 
     # setup lona server
     app = Application()
