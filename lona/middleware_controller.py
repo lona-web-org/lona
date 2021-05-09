@@ -24,6 +24,8 @@ class MiddlewareController:
         'process_connection',
         'process_websocket_message',
         'process_request',
+        'process_message_bus_connection',
+        'process_bus_message',
     ]
 
     def __init__(self, server):
@@ -177,3 +179,23 @@ class MiddlewareController:
         )
 
         return self._run_middlewares('process_request', data)
+
+    async def process_message_bus_connection(self, connection):
+        data = MiddlewareData(
+            connection=connection,
+        )
+
+        return await self.server.run_function_async(
+            self._run_middlewares,
+            'process_message_bus_connection',
+            data,
+        )
+
+    def process_bus_message(self, issuer, topic, params):
+        data = MiddlewareData(
+            issuer=issuer,
+            topic=topic,
+            params=params,
+        )
+
+        return self._run_middlewares('process_bus_message', data)

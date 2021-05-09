@@ -15,6 +15,8 @@ from aiohttp.web import (
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
 from lona.client_pre_compiler import ClientPreCompiler
+from lona.message_bus.broker import MessageBusBroker
+from lona.message_bus.client import MessageBusClient
 from lona.response_parser import ResponseParser
 from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
@@ -39,15 +41,25 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 class LonaServer:
     def __init__(self, app, project_root, settings_paths=[],
-                 settings_pre_overrides={}, settings_post_overrides={}):
-
-        server_logger.debug("starting server in '%s'", project_root)
+                 settings_pre_overrides={}, settings_post_overrides={},
+                 message_broker_mode=False,
+                 host='', port=None):
 
         self.project_root = os.path.abspath(project_root)
+        self.message_broker_mode = message_broker_mode
+        self.host = host
+        self.port = port
+
         self.websocket_connections = []
         self.user = Mapping()
         self._loop = None
         self._executor = None
+        self.hostname = os.uname().nodename
+
+        server_logger.debug("starting server in '%s'", project_root)
+
+        if self.message_broker_mode:
+            server_logger.debug('running in message broker mode')
 
         # setup aiohttp app
         self._app = app
@@ -87,6 +99,17 @@ class LonaServer:
 
             self.settings.update(settings_post_overrides)
 
+        # setup templating
+        server_logger.debug('setup templating')
+
+        self.templating_engine = TemplatingEngine(self)
+
+        # setup message bus
+        server_logger.debug('setup message bus')
+
+        self.message_bus_broker = MessageBusBroker(server=self)
+        self.message_bus_client = MessageBusClient(server=self)
+
         # setup server state
         server_logger.debug('setup server state')
 
@@ -111,11 +134,6 @@ class LonaServer:
         else:
             server_logger.warning('routing table is empty')
 
-        # setup templating
-        server_logger.debug('setup templating')
-
-        self.templating_engine = TemplatingEngine(self)
-
         # setup websocket middleware controller
         server_logger.debug('setup middleware controller')
 
@@ -124,15 +142,23 @@ class LonaServer:
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')
 
-        static_url = self.settings.STATIC_URL_PREFIX + '{path:.*}'
+        if self.message_broker_mode or self.settings.MESSAGE_BROKER:
+            self._app.router.add_route(
+                '*',
+                self.settings.MESSAGE_BROKER_URL,
+                self.message_bus_broker.handle_http_request,
+            )
 
-        server_logger.debug('static url set to %s', repr(static_url))
+        if not self.message_broker_mode:
+            static_url = self.settings.STATIC_URL_PREFIX + '{path:.*}'
 
-        self._app.router.add_route(
-            '*', static_url, self._handle_static_file_request)
+            server_logger.debug('static url set to %s', repr(static_url))
 
-        self._app.router.add_route(
-            '*', '/{path_info:.*}', self._handle_http_request)
+            self._app.router.add_route(
+                '*', static_url, self._handle_static_file_request)
+
+            self._app.router.add_route(
+                '*', '/{path_info:.*}', self._handle_http_request)
 
         # setup view loader
         server_logger.debug('setup view loader')
@@ -223,11 +249,14 @@ class LonaServer:
             raise RuntimeError('executor is not set')
 
         self.view_runtime_controller.start()
+        await self.message_bus_client.start()
 
     async def stop(self, *args, **kwargs):
         server_logger.debug('stop')
 
         await self.run_function_async(self.view_runtime_controller.stop)
+        await self.message_bus_broker.stop()
+        await self.message_bus_client.stop()
 
         for connection in self.websocket_connections.copy():
             try:

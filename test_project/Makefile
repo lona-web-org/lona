@@ -29,6 +29,10 @@ server: env
 	. $(PYTHON_VENV)/bin/activate && \
 	lona run-server $(LONA_DEFAULT_ARGS) $(args) -s settings.py
 
+message-broker: env
+	. $(PYTHON_VENV)/bin/activate && \
+	lona run-message-broker $(LONA_DEFAULT_ARGS) $(args) -s settings.py
+
 server-shell:
 	. $(PYTHON_VENV)/bin/activate && \
 	rlpython $(LONA_SHELL_SERVER_URL)
