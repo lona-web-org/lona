@@ -24,14 +24,18 @@ class FallbackView(LonaView):
         if view_setting:
             try:
                 view_class = request.server.view_loader.load(view_setting)
-                view = view_class()
+
+                view = view_class(
+                    server=self.server,
+                    view_runtime=self.view_runtime,
+                )
 
                 return view.handle_request(request, **extra_contenxt)
 
             except Exception:
                 logger.error(
                     "exception raised while running '%s'. running fallback view",  # NOQA
-                    view,
+                    view_setting,
                     exc_info=True,
                 )
 

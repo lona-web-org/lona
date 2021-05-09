@@ -1,4 +1,8 @@
 class LonaView:
+    def __init__(self, server, view_runtime):
+        self.server = server
+        self.view_runtime = view_runtime
+
     def handle_user_enter(self, request):
         pass
 

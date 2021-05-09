@@ -54,7 +54,11 @@ class ViewRuntime:
 
         self.view_class = self.server.view_loader.load(self.view)
         self.name = repr(self.view_class)
-        self.view = self.view_class()
+
+        self.view = self.view_class(
+            server=self.server,
+            view_runtime=self,
+        )
 
         # setup state
         self.connections = {}
@@ -151,7 +155,10 @@ class ViewRuntime:
                 self.server.settings.CORE_ERROR_500_VIEW,
             )
 
-            view = view_class()
+            view = view_class(
+                server=self.server,
+                view_runtime=self,
+            )
 
             return self.handle_raw_response_dict(
                 view.handle_request(
@@ -173,7 +180,10 @@ class ViewRuntime:
                     self.server.settings.CORE_ERROR_403_VIEW,
                 )
 
-                view = view_class()
+                view = view_class(
+                    server=self.server,
+                    view_runtime=self,
+                )
 
                 response_dict = self.handle_raw_response_dict(
                     view.handle_request(
@@ -198,7 +208,10 @@ class ViewRuntime:
                 self.server.settings.ERROR_500_VIEW,
             )
 
-            view = view_class()
+            view = view_class(
+                server=self.server,
+                view_runtime=self,
+            )
 
             return self.handle_raw_response_dict(
                 view.handle_request(
@@ -250,7 +263,10 @@ class ViewRuntime:
                 self.server.settings.CORE_ERROR_403_VIEW,
             )
 
-            view = view_class()
+            view = view_class(
+                server=self.server,
+                view_runtime=self,
+            )
 
             return self.handle_raw_response_dict(
                 view.handle_request(
@@ -273,7 +289,10 @@ class ViewRuntime:
                 self.server.settings.CORE_ERROR_500_VIEW,
             )
 
-            view = view_class()
+            view = view_class(
+                server=self.server,
+                view_runtime=self,
+            )
 
             return self.handle_raw_response_dict(
                 view.handle_request(
@@ -333,7 +352,10 @@ class ViewRuntime:
                 self.server.settings.CORE_ERROR_500_VIEW,
             )
 
-            view = view_class()
+            view = view_class(
+                server=self.server,
+                view_runtime=self,
+            )
 
             self.handle_raw_response_dict(
                 view.handle_request(

@@ -514,7 +514,10 @@ class LonaServer:
             view = self.view_loader.load(route.view)
 
             if inspect.isclass(view):
-                view = view().handle_request
+                view = view(
+                    server=self,
+                    view_runtime=None,
+                ).handle_request
 
             # run view
             if asyncio.iscoroutinefunction(view):
