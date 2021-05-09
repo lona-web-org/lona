@@ -35,3 +35,9 @@ class Connection:
             # can be ignored
 
             pass
+
+    async def close(self):
+        if not self.is_interactive:
+            raise NotInteractiveError
+
+        await self.websocket.close()
