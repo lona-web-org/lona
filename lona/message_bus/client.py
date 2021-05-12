@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from aiohttp import ClientSession, WSMsgType
+from aiohttp import ClientConnectorError, ClientSession, WSMsgType
 
 from lona.message_bus.protocol import decode_message, encode_message
 
@@ -71,6 +71,14 @@ class MessageBusClient:
 
                     elif message.type in (WSMsgType.CLOSED, WSMsgType.ERROR):
                         await self.websocket.close()
+
+            except asyncio.CancelledError:
+                logger.debug('CancelledError')
+
+                return
+
+            except ClientConnectorError:
+                logger.error('ConnectionRefusedError: {}'.format(self.url))
 
             except Exception:
                 logger.error(
