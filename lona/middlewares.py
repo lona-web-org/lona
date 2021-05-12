@@ -14,13 +14,13 @@ class AnonymousUser:
 
 
 class LonaMessageMiddleware:
-    def process_connection(self, data):
+    def handle_connection(self, data):
         if data.connection.user is None:
             data.connection.user = AnonymousUser()
 
         return data
 
-    def process_websocket_message(self, data):
+    def handle_websocket_message(self, data):
         if not data.message.startswith(PROTOCOL.MESSAGE_PREFIX.value):
             return data
 

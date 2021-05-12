@@ -1,16 +1,16 @@
 class CrashingMiddleware:
-    def process_connection(self, data):
+    def handle_connection(self, data):
         request = data.request
 
-        if request.path == '/crashes/process-connection/':
+        if request.path == '/crashes/handle-connection/':
             raise ValueError('It worked! This should crash!')
 
         return data
 
-    def process_request(self, data):
+    def handle_request(self, data):
         request = data.request
 
-        if request.url.path == '/crashes/process-request/':
+        if request.url.path == '/crashes/handle-request/':
             raise ValueError('It worked! This should crash!')
 
         return data
@@ -19,7 +19,7 @@ class CrashingMiddleware:
 class RateLimitMiddleware:
     VIEW_MAX = 2
 
-    def process_request(self, data):
+    def handle_request(self, data):
         request = data.request
         user = request.user
 

@@ -55,8 +55,8 @@ class HomeView(LonaView):
 
             <h2>Crashes</h2>
             <ul>
-                <li><a data-lona-ignore="True" href="/crashes/process-connection/">Middleware.process_connection()</a></li>
-                <li><a href="/crashes/process-request/">Middleware.process_middleware()</a></li>
+                <li><a data-lona-ignore="True" href="/crashes/handle-connection/">Middleware.handle_connection()</a></li>
+                <li><a href="/crashes/handle-request/">Middleware.handle_middleware()</a></li>
                 <li><a href="/crashes/response-dict/">Response Dict</a></li>
                 <li><a href="/crashes/input-events/">Input Events</a></li>
                 <li><a href="/crashes/handle-404/">404 Handler</a></li>

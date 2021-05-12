@@ -73,10 +73,10 @@ routes = [
     ),
 
     # crashes
-    Route('/crashes/process-connection/',
+    Route('/crashes/handle-connection/',
           'views/crashes/middlewares.py::UnreachableView'),
 
-    Route('/crashes/process-request/',
+    Route('/crashes/handle-request/',
           'views/crashes/middlewares.py::UnreachableView'),
 
     Route('/crashes/response-dict/',

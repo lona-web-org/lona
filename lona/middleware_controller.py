@@ -21,11 +21,11 @@ class MiddlewareData:
 
 class MiddlewareController:
     HOOK_NAMES = [
-        'process_connection',
-        'process_websocket_message',
-        'process_request',
-        'process_message_bus_connection',
-        'process_bus_message',
+        'handle_connection',
+        'handle_websocket_message',
+        'handle_request',
+        'handle_message_bus_connection',
+        'handle_bus_message',
     ]
 
     def __init__(self, server):
@@ -144,7 +144,7 @@ class MiddlewareController:
 
         return False, data, None
 
-    async def process_connection(self, connection):
+    async def handle_connection(self, connection):
         data = MiddlewareData(
             server=self.server,
             connection=connection,
@@ -153,11 +153,11 @@ class MiddlewareController:
 
         return await self.server.run_function_async(
             self._run_middlewares,
-            'process_connection',
+            'handle_connection',
             data,
         )
 
-    async def process_websocket_message(self, connection, message):
+    async def handle_websocket_message(self, connection, message):
         data = MiddlewareData(
             server=self.server,
             connection=connection,
@@ -166,11 +166,11 @@ class MiddlewareController:
 
         return await self.server.run_function_async(
             self._run_middlewares,
-            'process_websocket_message',
+            'handle_websocket_message',
             data,
         )
 
-    def process_request(self, request, view):
+    def handle_request(self, request, view):
         data = MiddlewareData(
             server=self.server,
             connection=request.connection,
@@ -178,24 +178,24 @@ class MiddlewareController:
             view=view,
         )
 
-        return self._run_middlewares('process_request', data)
+        return self._run_middlewares('handle_request', data)
 
-    async def process_message_bus_connection(self, connection):
+    async def handle_message_bus_connection(self, connection):
         data = MiddlewareData(
             connection=connection,
         )
 
         return await self.server.run_function_async(
             self._run_middlewares,
-            'process_message_bus_connection',
+            'handle_message_bus_connection',
             data,
         )
 
-    def process_bus_message(self, issuer, topic, params):
+    def handle_bus_message(self, issuer, topic, params):
         data = MiddlewareData(
             issuer=issuer,
             topic=topic,
             params=params,
         )
 
-        return self._run_middlewares('process_bus_message', data)
+        return self._run_middlewares('handle_bus_message', data)

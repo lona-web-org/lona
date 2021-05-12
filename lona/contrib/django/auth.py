@@ -7,7 +7,7 @@ logger = logging.getLogger('lona.contrib.django.auth')
 
 
 class DjangoSessionMiddleware:
-    def process_connection(self, data):
+    def handle_connection(self, data):
         # find user
         logger.debug('searching for django user')
 

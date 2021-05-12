@@ -347,7 +347,7 @@ class LonaServer:
         connection = Connection(self, http_request, websocket)
 
         handled, data, middleware = \
-            await self.middleware_controller.process_connection(
+            await self.middleware_controller.handle_connection(
                 connection,
             )
 
@@ -424,7 +424,7 @@ class LonaServer:
             '%s message received %s', connection, message.data)
 
         handled, data, middleware = \
-            await self.middleware_controller.process_websocket_message(
+            await self.middleware_controller.handle_websocket_message(
                 connection,
                 message.data,
             )
@@ -461,7 +461,7 @@ class LonaServer:
         if handled:
             if data:
                 if not isinstance(data, str):
-                    raise RuntimeError('%s.process_connection returned non string data'.format(middleware))  # NOQA
+                    raise RuntimeError('%s.handle_connection returned non string data'.format(middleware))  # NOQA
 
                 await connection.send_str(data, sync=False)
 

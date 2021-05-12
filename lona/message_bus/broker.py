@@ -78,7 +78,7 @@ class MessageBusBroker:
         middleware_controller = self.server.middleware_controller
 
         handled, message, middleware = \
-            await middleware_controller.process_message_bus_connection(
+            await middleware_controller.handle_message_bus_connection(
                 connection=connection,
             )
 

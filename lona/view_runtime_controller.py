@@ -119,7 +119,7 @@ class ViewRuntimeController:
 
         """
         this method gets called by the
-        lona.middlewares.LonaMessageMiddleware.process_websocket_message
+        lona.middlewares.LonaMessageMiddleware.handle_websocket_message
 
         """
 

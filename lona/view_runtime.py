@@ -125,7 +125,7 @@ class ViewRuntime:
     def run_middlewares(self):
         try:
             handled, raw_response_dict, middleware = \
-                self.server.middleware_controller.process_request(
+                self.server.middleware_controller.handle_request(
                     view=self.view,
                     request=self.request,
                 )

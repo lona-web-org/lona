@@ -42,7 +42,7 @@ class MessageBusClient:
 
             return
 
-        self.server.middleware_controller.process_bus_message(
+        self.server.middleware_controller.handle_bus_message(
             issuer=message[0],
             topic=message[1],
             params=message[2],
