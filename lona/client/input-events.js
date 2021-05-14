@@ -272,7 +272,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
 
         // links
         if(node.tagName == 'A' && 
-           !Lona.symbols.INPUT_EVENT_TYPE.CLICK in event_types ) {
+           !(Lona.symbols.INPUT_EVENT_TYPE.CLICK in event_types)) {
 
             return this._patch_link(node);
 

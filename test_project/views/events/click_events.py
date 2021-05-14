@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import Div, H2, Pre
+from lona.html import Div, H2, Pre, Br, A
 from lona.view import LonaView
 from lona.events import CLICK
 
@@ -29,6 +29,12 @@ class ClickEventView(LonaView):
             H2('Click Events'),
             Div(
                 Div(
+                    Div(
+                        A('Link', href='/', events=[CLICK]),
+                        Br(),
+                        Br(),
+                    ),
+
                     Div(style=style, events=[CLICK]),
                     Div(style=style, events=[CLICK]),
                     Div(style=style, events=[CLICK]),
@@ -56,13 +62,14 @@ class ClickEventView(LonaView):
 
             data = {
                 'node': input_event.node._id,
+                'tag_name': input_event.node.tag_name,
                 'event_data': input_event.data
-
             }
 
             pre.set_text(pformat(data))
 
-            next_color = colors[
-                colors.index(input_event.node.style['background-color'])-1]
+            if input_event.node.tag_name == 'div':
+                next_color = colors[
+                    colors.index(input_event.node.style['background-color'])-1]
 
-            input_event.node.style['background-color'] = next_color
+                input_event.node.style['background-color'] = next_color
