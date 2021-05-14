@@ -29,7 +29,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._crashed = false;
     this._view_stopped = undefined;
     this._view_runtime_id = undefined;
-    this._text_nodes = {};
+    this._nodes = {};
     this._widget_marker = {};
     this._widget_data = {};
     this._widgets = {};
@@ -63,7 +63,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     this._clear_node_cache = function() {
-        this._text_nodes = {};
+        this._nodes = {};
         this._widget_marker = {};
         this._widget_data = {};
         this._widgets_to_setup = [];
@@ -74,12 +74,12 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._clean_node_cache = function() {
         var _this = this;
 
-        // text nodes
-        Object.keys(_this._text_nodes).forEach(function(key) {
-            var node = _this._text_nodes[key];
+        // nodes
+        Object.keys(_this._nodes).forEach(function(key) {
+            var node = _this._nodes[key];
 
             if(!_this._root.contains(node)) {
-                delete _this._text_nodes[key];
+                delete _this._nodes[key];
             };
         });
 

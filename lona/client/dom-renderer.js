@@ -69,6 +69,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
                 );
             });
 
+            _this.lona_window._nodes[node_id] = node;
             node_list.push(node);
 
         // TextNode
@@ -78,7 +79,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
 
             var node = document.createTextNode(node_content);
 
-            _this.lona_window._text_nodes[node_id] = node;
+            _this.lona_window._nodes[node_id] = node;
             node_list.push(node);
 
         // Widget

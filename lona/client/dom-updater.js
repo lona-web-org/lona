@@ -94,9 +94,8 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[data-lona-node-id="' + node_id + '"]';
+            target_node = _this.lona_window._nodes[node_id];
 
-            target_node = _this.lona_window._root.querySelector(selector);
         }
 
         // find start index
@@ -175,8 +174,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[data-lona-node-id="' + target_node_id + '"]';
-            var target_node = _this.lona_window._root.querySelector(selector);
+            target_node = _this.lona_window._nodes[node_id];
 
             if(!target_node) {
                 return;
@@ -256,10 +254,10 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
         var _this = this;
 
         // TextNode
-        if(node_id in _this.lona_window._text_nodes) {
-            _this.lona_window._text_nodes[node_id].remove();
+        if(node_id in _this.lona_window._nodes) {
+            _this.lona_window._nodes[node_id].remove();
 
-            delete _this.lona_window._text_nodes[node_id];
+            delete _this.lona_window._nodes[node_id];
 
         // Widget
         } else if(node_id in _this.lona_window._widget_marker) {
@@ -294,9 +292,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[data-lona-node-id="' + node_id + '"]';
-
-            node = _this.lona_window._root.querySelector(selector);
+            node = _this.lona_window._nodes[node_id];
 
             if(node) {
                 node.remove();
@@ -335,8 +331,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            var selector = '[data-lona-node-id="' + node_id + '"]';
-            var node = _this.lona_window._root.querySelector(selector);
+            var node = _this.lona_window._nodes[node_id];
 
             if(!node) {
                 return;
@@ -356,9 +351,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
         var patch_type = patch[1];
         var operation = patch[2];
         var data = patch.splice(3);
-
-        var selector = '[data-lona-node-id="' + node_id + '"]';
-        var node = this.lona_window._root.querySelector(selector);
+        var node = this.lona_window._nodes[node_id];
 
         if(!node) {
             return;  // FIXME: this should throw an error
