@@ -1,4 +1,4 @@
-from lona.html import Div, H1, Button
+from lona.html import Div, H2, Button
 from lona.view import LonaView
 
 
@@ -10,7 +10,7 @@ class DaemonizedView(LonaView):
         start_daemonized = Button('Start daemonized')
 
         html = Div(
-            H1('Daemonized View (name={})'.format(name)),
+            H2('Daemonized View (name={})'.format(name)),
             message,
             log,
             start,

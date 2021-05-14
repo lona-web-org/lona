@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from lona.html import Widget, Button, HTML, Div, Br, H1
+from lona.html import Widget, Button, HTML, Div, Br, H2
 from lona.view import LonaView
 
 
@@ -30,7 +30,7 @@ class CrashingEventHandler(LonaView):
         handle_input_event_button.hide()
 
         html = HTML(
-            H1('Crashing Event Handler'),
+            H2('Crashing Event Handler'),
             Div(),
             Button('Start refresh loop', _id='refresh-loop'),
             Button('Stop view', _id='stop-view'),

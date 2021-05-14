@@ -5,8 +5,7 @@ from lona.view import LonaView
 
 class HomeView(LonaView):
     def handle_request(self, request):
-        body = """
-            <h1>Lona Test Project</h1>"""
+        body = ''
 
         if os.environ.get('DJANGO', '0') == '1':
             body += """

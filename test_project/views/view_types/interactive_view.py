@@ -1,4 +1,4 @@
-from lona.html import HTML, Div, H1
+from lona.html import HTML, Div, H2
 from lona.view import LonaView
 
 
@@ -7,7 +7,7 @@ class InteractiveView(LonaView):
         widget = HTML()
 
         html = HTML(
-            H1('Interactive View'),
+            H2('Interactive View'),
             widget,
         )
 

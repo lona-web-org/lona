@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import Div, H1, Pre
+from lona.html import Div, H2, Pre
 from lona.view import LonaView
 from lona.events import CLICK
 
@@ -26,7 +26,7 @@ class ClickEventView(LonaView):
         )
 
         html = Div(
-            H1('Click Events'),
+            H2('Click Events'),
             Div(
                 Div(
                     Div(style=style, events=[CLICK]),

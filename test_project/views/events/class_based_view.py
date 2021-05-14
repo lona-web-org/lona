@@ -1,4 +1,4 @@
-from lona.html import HTML, Button, Div, Br, H1
+from lona.html import HTML, Button, Div, Br, H2
 from lona.view import LonaView
 
 
@@ -7,7 +7,7 @@ class ClassBasedView(LonaView):
         self.message = Div('Nothing clicked yet')
 
         self.html = HTML(
-            H1('Class Based View'),
+            H2('Class Based View'),
             self.message,
             Br(),
             Button('handle_input_event_root()', _id='handle_input_event_root'),

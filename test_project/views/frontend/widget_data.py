@@ -1,4 +1,4 @@
-from lona.html import HTML, Div, H1, Br, Widget, A
+from lona.html import HTML, Div, H2, Br, Widget, A
 from lona.static_files import Script
 from lona.view import LonaView
 from lona.json import dumps
@@ -28,7 +28,7 @@ class WidgetDataView(LonaView):
         widget = TestWidget()
 
         html = HTML(
-            H1('Widget Data'),
+            H2('Widget Data'),
             A('Home', href='/'),
             Br(),
             Br(),

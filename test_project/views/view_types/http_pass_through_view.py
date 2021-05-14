@@ -6,6 +6,6 @@ from aiohttp.web import Response
 class HTTPPassThroughView(LonaView):
     def handle_request(self, request):
         return Response(
-            body='<h1>Pass Through View</h1>',
+            body='<h2>Pass Through View</h2>',
             content_type='text/html',
         )

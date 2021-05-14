@@ -9,7 +9,7 @@ from lona.html import (
     Select,
     HTML,
     Div,
-    H1,
+    H2,
     Pre,
 )
 
@@ -48,7 +48,7 @@ class DataBindingView(LonaView):
         )
 
         html = HTML(
-            H1('Databinding'),
+            H2('Databinding'),
             Div(
                 Div(
                     Div(check_box),

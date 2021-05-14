@@ -8,4 +8,4 @@ class DjangLoginView(LonaView):
             raise ForbiddenError
 
     def handle_request(self, request):
-        return '<h1>Hello {}!</h1>'.format(request.user)
+        return '<h2>Hello {}!</h2>'.format(request.user)

@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import sleep
 
-from lona.html import HTML, H1
+from lona.html import HTML, H2
 from lona.view import LonaView
 from lona.json import dumps
 
@@ -9,7 +9,7 @@ from lona.json import dumps
 class CustomMessagesView(LonaView):
     def handle_request(self, request):
         html = HTML(
-            H1('Messages'),
+            H2('Messages'),
         )
 
         request.client.show(html)

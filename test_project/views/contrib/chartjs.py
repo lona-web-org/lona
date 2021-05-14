@@ -1,7 +1,7 @@
 from copy import deepcopy
 from random import randint
 
-from lona.html import HTML, Button, Div, H1
+from lona.html import HTML, Button, Div, H2
 from lona.contrib.chartjs import Chart
 from lona.view import LonaView
 
@@ -37,7 +37,7 @@ class ChartJSView(LonaView):
         )
 
         html = HTML(
-            H1('Chart.js'),
+            H2('Chart.js'),
 
             Button('Update', id='update'),
             Button('Daemonize', id='daemonize'),

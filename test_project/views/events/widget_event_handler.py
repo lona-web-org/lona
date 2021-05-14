@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from lona.html import HTML, Button, Widget, Div, Br, H1
+from lona.html import HTML, Button, Widget, Div, Br, H2
 from lona.view import LonaView
 
 
@@ -21,7 +21,7 @@ class WidgetEventHandlerView(LonaView):
         message = Div('Button not clicked yet')
 
         html = HTML(
-            H1('Widget Event Handler'),
+            H2('Widget Event Handler'),
             message,
             Br(),
             Counter(),

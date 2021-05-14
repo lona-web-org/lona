@@ -1,0 +1,183 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    {{ Lona.load_stylesheets() }}
+
+    <style>
+      #lona-messages {
+        position: absolute;
+        top: 1em;
+        right: 1em;
+      }
+
+      .lona-message {
+        background: rgba(0, 0, 0, 0.75);
+        font-weight: bold;
+      }
+      
+      a,
+      a:hover,
+      a:visited {
+        color: blue;
+        text-decoration: none;
+      }
+
+      a:active {
+        color: red;
+        text-decoration: none;
+      }
+
+      table.statistics th {
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="lona-messages"></div>
+
+    <h1> Lona Test Project</h1>
+
+    <table class="statistics">
+      <tr>
+        <th>Application Started:</th>
+        <td id="application-started">-</td>
+      </tr>
+      <tr>
+        <th>Pending Rendering Jobs:</th>
+        <td id="pending-rendering-jobs">-</td>
+      </tr>
+      <tr>
+        <th>Loaded Nodes:</th>
+        <td id="loaded-nodes">-</td>
+      </tr>
+      <tr>
+        <th>Loaded Widgets:</th>
+        <td id="loaded-widgets">-</td>
+      </tr>
+    </table>
+
+    <br />
+
+    <div id="lona-links">
+      <a href="/">Home</a> |
+      <a href="/" data-lona-ignore="True">Reload Application</a> |
+      <a href="#" data-lona-ignore="True" id="enable-rendering-statistics">Enable Rendering Statistics</a>
+    </div>
+
+    <hr />
+
+    <div id="lona"></div>
+
+    {{ Lona.load_scripts() }}
+    <script>
+      var disconnected = false;
+
+      var lona_context = new Lona.LonaContext({
+        target: '#lona',
+        title: 'Lona',
+        update_address_bar: true,
+        update_title: true,
+        follow_redirects: true,
+        follow_http_redirects: true,
+      });
+
+      // messages -------------------------------------------------------------
+      function show_message(message, color, timeout) {
+        if(timeout === undefined) {
+          timeout = 3000;
+
+        };
+
+        if(color === undefined) {
+          color = 'white';
+
+        };
+
+        var node = document.createElement('div');
+        var text_node = document.createElement('span');
+
+        node.appendChild(text_node);
+
+        text_node.classList.add('lona-message');
+        text_node.innerHTML = message;
+        text_node.style.color = color;
+
+        document.querySelector('#lona-messages').appendChild(node);
+
+        setTimeout(function() {
+          node.remove();
+        }, timeout);
+
+      };
+
+      lona_context.add_message_handler(function(lona_context, raw_message) {
+        try {
+          var message = JSON.parse(raw_message);
+
+        } catch {
+          return raw_message;
+
+        };
+
+        if(!message.notification) {
+          return raw_message;
+        };
+
+        show_message(
+          message.notification.message,
+          message.notification.color,
+          message.notification.timeout,
+        );
+
+      });
+
+      // recconnecting --------------------------------------------------------
+      lona_context.add_connect_hook(function(lona_context, event) {
+        if(disconnected) {
+          show_message('Connected', 'lime');
+          disconnected = false;
+        };
+
+        lona_context.patch_input_events('#lona-links');
+      });
+
+      lona_context.add_disconnect_hook(function(lona_context, event) {
+        show_message('Connection Lost', 'red');
+        disconnected = true;
+
+        setTimeout(function() {
+          show_message('Trying to reconnect... ', 'red');
+          lona_context.reconnect();
+
+        }, 1000);
+      });
+
+      // rendering statistics -------------------------------------------------
+      document.querySelector('#enable-rendering-statistics').onclick = function(event) {
+        event.preventDefault();
+
+        var pending_rendering_jobs = document.querySelector('#pending-rendering-jobs');
+        var loaded_nodes = document.querySelector('#loaded-nodes');
+        var loaded_widgets = document.querySelector('#loaded-widgets');
+
+        pending_rendering_jobs.innerHTML = '';
+        loaded_nodes.innerHTML = '';
+        loaded_widgets.innerHTML = '';
+
+        lona_context.add_rendering_hook(function(lona_window) {
+          pending_rendering_jobs.innerHTML = lona_context._windows[1]._job_queue._promises.length - 1;
+          loaded_nodes.innerHTML = Object.keys(lona_context._windows[1]._nodes).length;
+          loaded_widgets.innerHTML = Object.keys(lona_context._windows[1]._widget_marker).length;
+        });
+
+        return false;
+      };
+
+      lona_context.setup();
+
+      // application started --------------------------------------------------
+      document.querySelector('#application-started').innerHTML = new Date();
+
+    </script>
+  </body>
+</html>

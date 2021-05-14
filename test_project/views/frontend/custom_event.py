@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import HTML, Div, H1, Widget, Button, Pre, A
+from lona.html import HTML, Div, H2, Widget, Button, Pre, A
 from lona.static_files import Script
 from lona.view import LonaView
 
@@ -57,7 +57,7 @@ class CustomEventView(LonaView):
         widget = CustomEventWidget()
 
         html = HTML(
-            H1('Custom Event'),
+            H2('Custom Event'),
             A('Home', href='/'),
             widget,
         )

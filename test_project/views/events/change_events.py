@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import TextInputNode, CheckboxNode, Div, H1, Pre
+from lona.html import TextInputNode, CheckboxNode, Div, H2, Pre
 from lona.events import CHANGE
 from lona.view import LonaView
 
@@ -15,7 +15,7 @@ class ChangeEventsView(LonaView):
         )
 
         html = Div(
-            H1('Change Events'),
+            H2('Change Events'),
             Div(
                 Div(
                     Div(CheckboxNode(events=[CHANGE])),

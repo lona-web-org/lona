@@ -1,6 +1,6 @@
 import asyncio
 
-from lona.html import HTML, Br, H1, Div, Button, A
+from lona.html import HTML, Br, H2, Div, Button, A
 from lona.view import LonaView
 
 
@@ -23,7 +23,7 @@ class AsyncView(LonaView):
     def handle_request(self, request):
         try:
             html = HTML(
-                H1('Async View'),
+                H2('Async View'),
                 A('Home', href='/'),
                 Div(),
 

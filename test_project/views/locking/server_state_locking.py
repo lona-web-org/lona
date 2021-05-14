@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from lona.html import Strong, Button, Span, Div, H1, Br
+from lona.html import Strong, Button, Span, Div, H2, Br
 from lona.view import LonaView
 
 
@@ -11,7 +11,7 @@ class LockingView(LonaView):
         self.button = Button('Button')
 
         self.html = Div(
-            H1('Server State Locking View'),
+            H2('Server State Locking View'),
             Div(Strong('Now: '), now),
             Br(),
             self.message,

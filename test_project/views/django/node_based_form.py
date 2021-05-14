@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import HTML, H1, Submit, Form, Div, Pre
+from lona.html import HTML, H2, Submit, Form, Div, Pre
 from lona.contrib.django.forms import DjangoForm
 from lona.view import LonaView
 
@@ -70,7 +70,7 @@ class DjangoNodeBasedView(LonaView):
         pre.set_text(pformat(data))
 
         return HTML(
-            H1('Node based django form'),
+            H2('Node based django form'),
             Div(
                 Form(
                     form,

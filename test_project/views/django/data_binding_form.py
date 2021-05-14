@@ -3,7 +3,7 @@ from pprint import pformat
 from django import forms
 
 from lona.contrib.django.forms import DjangoForm
-from lona.html import HTML, H1, Div, Pre
+from lona.html import HTML, H2, Div, Pre
 from lona.view import LonaView
 
 
@@ -42,7 +42,7 @@ class DjangoDatabindingView(LonaView):
         )
 
         html = HTML(
-            H1('Databinding'),
+            H2('Databinding'),
             Div(
                 Div(
                     form,

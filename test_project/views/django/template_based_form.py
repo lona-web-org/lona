@@ -10,7 +10,7 @@ class NameForm(forms.Form):
 class DjangoTemplateView(LonaView):
     def handle_request(self, request):
         template_string = """
-            <h1>Django Forms</h1>
+            <h2>Django Forms</h2>
 
             {% if name %}
                 Hello {{ name }}

@@ -1,4 +1,4 @@
-from lona.html import HTML, Div, H1, A
+from lona.html import HTML, Div, H2, A
 from lona.view import LonaView
 
 
@@ -7,7 +7,7 @@ class WindowTitleView(LonaView):
         div = Div()
 
         html = HTML(
-            H1('Set Title'),
+            H2('Set Title'),
             A('Back', href='/'),
             div,
         )

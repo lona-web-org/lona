@@ -8,7 +8,7 @@ from lona.html import (
     HTML,
     Div,
     Pre,
-    H1,
+    H2,
     P,
 )
 
@@ -56,7 +56,7 @@ class EventBubblingView(LonaView):
         )
 
         html = HTML(
-            H1('Event Bubbling'),
+            H2('Event Bubbling'),
             Div(
                 'Stop Event at ',
                 SelectNode(

@@ -1,4 +1,4 @@
-from lona.html import Div, H1, P, Strong
+from lona.html import Div, H2, P, Strong
 from lona.view import LonaView
 
 
@@ -7,7 +7,7 @@ class RedirectView(LonaView):
         s = Strong()
 
         html = Div(
-            H1('Redirect'),
+            H2('Redirect'),
             P('You will be redirected in ', s, ' seconds'),
         )
 

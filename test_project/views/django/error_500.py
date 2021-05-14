@@ -20,7 +20,7 @@ class Error500View(_Error500View):
         )
 
         return """
-            <h1>500</h1>
+            <h2>500</h2>
             <pre>{}</pre>
         """.format(
             exception_string,

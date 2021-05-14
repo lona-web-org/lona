@@ -4,7 +4,7 @@ from lona.view import LonaView
 class NonNodeEventView(LonaView):
     def handle_request(self, request):
         template = """
-            <h1>Non-Node Events</h1>
+            <h2>Non-Node Events</h2>
             <div>{}</div>
             <button id="red-button" data-lona-events="301" style="color: white; background-color: red;">Red Button</button>
             <button id="green-button" data-lona-events="301" style="color: white; background-color: green;">Green Button</button>
