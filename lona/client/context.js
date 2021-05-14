@@ -24,6 +24,7 @@ Lona.LonaContext = function(settings) {
     this._windows = {};
     this._connect_hooks = [];
     this._disconnect_hooks = [];
+    this._rendering_hooks = [];
     this._message_handler = [];
 
     // window -----------------------------------------------------------------
@@ -71,6 +72,10 @@ Lona.LonaContext = function(settings) {
         this._disconnect_hooks.push(hook);
     };
 
+    this.add_rendering_hook = function(hook) {
+        this._rendering_hooks.push(hook);
+    };
+
     this.add_message_handler = function(handler) {
         this._message_handler.push(handler);
     };
@@ -86,6 +91,14 @@ Lona.LonaContext = function(settings) {
     this._run_disconnect_hooks = function(event) {
         for(var i in this._disconnect_hooks) {
             var hook = this._disconnect_hooks[i];
+
+            hook(this, event);
+        };
+    };
+
+    this._run_rendering_hooks = function(lona_window) {
+        for(var i in this._rendering_hooks) {
+            var hook = this._rendering_hooks[i];
 
             hook(this, event);
         };

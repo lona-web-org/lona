@@ -217,6 +217,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             };
 
             _this._run_widget_hooks();
+            _this.lona_context._run_rendering_hooks(_this);
         });
     };
 
