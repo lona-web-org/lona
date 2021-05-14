@@ -262,7 +262,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         if(this._view_runtime_id == undefined ||
            view_runtime_id != this._view_runtime_id) {
 
-            // the runtime is not fully setup yet or the incoming message 
+            // the runtime is not fully setup yet or the incoming message
             // seems to be related to a previous runtime connected to this
             // window
 
@@ -326,11 +326,14 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             history.pushState({}, '', url);
         };
 
-        if(this.lona_context.settings.update_title && this.lona_context.settings.title) {
+        if(this.lona_context.settings.update_title &&
+           this.lona_context.settings.title) {
+
             document.title = this.lona_context.settings.title;
         };
 
-        message = Lona.symbols.PROTOCOL.MESSAGE_PREFIX + JSON.stringify(message);
+        message = (Lona.symbols.PROTOCOL.MESSAGE_PREFIX +
+                   JSON.stringify(message));
 
         this.lona_context.send(message);
     };
