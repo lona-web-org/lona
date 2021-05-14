@@ -42,6 +42,26 @@ Lona.LonaContext = function(settings) {
         return window_id;
     };
 
+    // input events -----------------------------------------------------------
+    this.patch_input_events = function(root_node_selector, window_id) {
+        var _this = this;
+
+        // find window
+        if(window_id == undefined) {
+            window_id = 1;
+        };
+
+        var _window = this._windows[window_id];
+
+        // patch input events
+        var node = document.querySelector(root_node_selector);
+        var selector = 'a,form,[data-lona-events]';
+
+        node.querySelectorAll(selector).forEach(function(node) {
+            _window._input_event_handler.patch_input_events(node);
+        });
+    };
+
     // hooks ------------------------------------------------------------------
     this.add_connect_hook = function(hook) {
         this._connect_hooks.push(hook);
