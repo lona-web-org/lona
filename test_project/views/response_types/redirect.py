@@ -14,9 +14,9 @@ class RedirectView(LonaView):
         for i in [3, 2, 1]:
             s.set_text(str(i))
 
-            request.client.show(html)
+            self.show(html)
 
-            request.view.sleep(1)
+            self.sleep(1)
 
         return {
             'redirect': '/',

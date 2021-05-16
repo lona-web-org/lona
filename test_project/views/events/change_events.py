@@ -35,10 +35,10 @@ class ChangeEventsView(LonaView):
             ),
         )
 
-        request.client.show(html)
+        self.show(html)
 
         while True:
-            input_event = request.client.await_change(html=html)
+            input_event = self.await_change(html=html)
 
             pre.set_text(
                 'changed node: {}\nvalue: {}'.format(

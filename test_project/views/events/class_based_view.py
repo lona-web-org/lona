@@ -18,7 +18,7 @@ class ClassBasedView(LonaView):
         )
 
         while True:
-            input_event = request.client.await_click(
+            input_event = self.await_click(
                 self.html[-3],
                 self.html[-1],
                 html=self.html,
@@ -26,7 +26,7 @@ class ClassBasedView(LonaView):
 
             if input_event.node == self.html[-1]:
                 self.message.set_text('View Stopped')
-                request.client.show(self.html)
+                self.show(self.html)
 
                 return
 
@@ -38,8 +38,6 @@ class ClassBasedView(LonaView):
             self.message.set_text(
                 'handled by handle_input_event_root()')
 
-            input_event.request.client.show(self.html)
-
         else:
             return input_event
 
@@ -47,8 +45,6 @@ class ClassBasedView(LonaView):
         if input_event.node_has_id('handle_input_event'):
             self.message.set_text(
                 'handled by handle_input_event()')
-
-            input_event.request.client.show(self.html)
 
         else:
             return input_event

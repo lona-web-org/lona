@@ -56,7 +56,7 @@ class WidgetDataView(LonaView):
             widget,
         )
 
-        request.client.show(html)
+        self.show(html)
 
         while True:
             # list
@@ -65,28 +65,28 @@ class WidgetDataView(LonaView):
             for i in range(6):
                 widget.data['list'].append(i)
                 widget.update_state()
-                request.client.show(html)
-                request.view.sleep(float(interval.value))
+                self.show(html)
+                self.sleep(float(interval.value))
 
             widget.data['list'].remove(2)
             widget.update_state()
-            request.client.show(html)
-            request.view.sleep(float(interval.value))
+            self.show(html)
+            self.sleep(float(interval.value))
 
             widget.data['list'].insert(2, 2)
             widget.update_state()
-            request.client.show(html)
-            request.view.sleep(float(interval.value))
+            self.show(html)
+            self.sleep(float(interval.value))
 
             widget.data['list'].clear()
             widget.update_state()
-            request.client.show(html)
-            request.view.sleep(float(interval.value))
+            self.show(html)
+            self.sleep(float(interval.value))
 
             widget.data['list'] = [5, 4, 3, 2, 1]
             widget.update_state()
-            request.client.show(html)
-            request.view.sleep(float(interval.value))
+            self.show(html)
+            self.sleep(float(interval.value))
 
             # dict
             widget.data = [{}]
@@ -94,20 +94,20 @@ class WidgetDataView(LonaView):
             for i in range(6):
                 widget.data[0][i] = i
                 widget.update_state()
-                request.client.show(html)
-                request.view.sleep(float(interval.value))
+                self.show(html)
+                self.sleep(float(interval.value))
 
             widget.data[0].pop(2)
             widget.update_state()
-            request.client.show(html)
-            request.view.sleep(float(interval.value))
+            self.show(html)
+            self.sleep(float(interval.value))
 
             widget.data[0].clear()
             widget.update_state()
-            request.client.show(html)
-            request.view.sleep(float(interval.value))
+            self.show(html)
+            self.sleep(float(interval.value))
 
             widget.data[0] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
             widget.update_state()
-            request.client.show(html)
-            request.view.sleep(float(interval.value))
+            self.show(html)
+            self.sleep(float(interval.value))

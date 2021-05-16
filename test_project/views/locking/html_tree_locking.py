@@ -20,16 +20,16 @@ class LockingView(LonaView):
 
         while True:
             now.set_text(datetime.now())
-            request.client.show(self.html)
+            self.show(self.html)
 
-            request.view.sleep(1)
+            self.sleep(1)
 
     def handle_input_event(self, input_event):
         with self.html.lock:
             self.message.set_text('Button clicked; Lock')
-            input_event.request.client.show(self.html)
+            self.show(self.html)
 
-            input_event.request.view.sleep(2)
+            self.sleep(2)
 
             self.message.set_text('Unlock')
-            input_event.request.client.show(self.html)
+            self.show(self.html)

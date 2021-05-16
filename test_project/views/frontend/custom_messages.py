@@ -1,5 +1,4 @@
 from datetime import datetime
-from time import sleep
 
 from lona.html import HTML, H2
 from lona.view import LonaView
@@ -12,7 +11,7 @@ class CustomMessagesView(LonaView):
             H2('Messages'),
         )
 
-        request.client.show(html)
+        self.show(html)
 
         while True:
             private_message = dumps({
@@ -35,7 +34,7 @@ class CustomMessagesView(LonaView):
                 },
             })
 
-            request.client.send_str(private_message)
-            request.client.send_str(broadcast_message, broadcast=True)
+            self.send_str(private_message)
+            self.send_str(broadcast_message, broadcast=True)
 
-            sleep(1)
+            self.sleep(1)

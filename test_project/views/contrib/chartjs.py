@@ -58,13 +58,13 @@ class ChartJSView(LonaView):
         )
 
         while True:
-            input_event = request.client.await_input_event(html=html)
+            input_event = self.await_input_event(html=html)
 
             if input_event.node_has_id('stop'):
                 return
 
             elif input_event.node_has_id('daemonize'):
-                request.view.daemonize()
+                self.daemonize()
 
             elif input_event.node_has_id('update'):
                 # chart 1

@@ -49,7 +49,7 @@ class CrashingEventHandler(LonaView):
             CrashWidget(),
         )
 
-        input_event = request.client.await_input_event(html=html)
+        input_event = self.await_input_event(html=html)
 
         if input_event.node_has_id('handle_request'):
             raise ValueError('Success! Crash in handle_request()')
@@ -64,9 +64,9 @@ class CrashingEventHandler(LonaView):
             while True:
                 html[1].set_text(str((datetime.now())))
 
-                request.client.show(html)
+                self.show(html)
 
-                request.view.sleep(1)
+                self.sleep(1)
 
     def handle_input_event_root(self, input_event):
         if input_event.node_has_id('handle_input_event_root'):

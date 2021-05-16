@@ -62,4 +62,4 @@ class CustomEventView(LonaView):
             widget,
         )
 
-        request.client.show(html)
+        self.show(html)

@@ -58,7 +58,7 @@ class ClickEventView(LonaView):
         )
 
         while True:
-            input_event = request.client.await_click(html=html)
+            input_event = self.await_click(html=html)
 
             data = {
                 'event_id': input_event.event_id,

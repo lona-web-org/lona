@@ -16,7 +16,7 @@ class NonNodeEventView(LonaView):
         while True:
             html = template.format(message)
 
-            input_event = request.client.await_input_event(html=html)
+            input_event = self.await_input_event(html=html)
 
             if input_event.node_has_id('red-button'):
                 message = 'Red Button clicked'

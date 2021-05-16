@@ -32,11 +32,11 @@ class WidgetEventHandlerView(LonaView):
         )
 
         while True:
-            input_event = request.client.await_input_event(html=html)
+            input_event = self.await_input_event(html=html)
 
             if input_event.node.has_id('stop_view'):
                 message.set_text('View Stopped')
-                request.client.show(html)
+                self.show(html)
 
                 return
 

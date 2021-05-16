@@ -31,28 +31,28 @@ class InteractiveView(LonaView):
 
             for i in range(0, 5):
                 widget.append(Div('Div {}'.format(i+1)))
-                request.client.show(html)
+                self.show(html)
 
-                request.view.sleep(float(interval.value))
+                self.sleep(float(interval.value))
 
             for i in range(0, 5):
                 widget[i].insert(i+1, Div('Div {}.{}'.format(i+1, i+1)))
-                request.client.show(html)
+                self.show(html)
 
-                request.view.sleep(float(interval.value))
+                self.sleep(float(interval.value))
 
             for i in range(0, 5):
                 widget[i].style = {'color': 'red'}
-                request.client.show(html)
+                self.show(html)
 
-                request.view.sleep(float(interval.value))
+                self.sleep(float(interval.value))
 
             moving_div = Div('Div 6', style={'color': 'blue'})
 
             for i in range(0, 5):
                 widget[i].append(moving_div)
-                request.client.show(html)
+                self.show(html)
 
-                request.view.sleep(float(interval.value))
+                self.sleep(float(interval.value))
 
-            request.client.show(html)
+            self.show(html)

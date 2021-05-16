@@ -66,4 +66,4 @@ class DjangoDatabindingView(LonaView):
         while True:
             pre.set_text(pformat(form.values))
 
-            request.client.await_input_event(html=html)
+            self.await_input_event(html=html)

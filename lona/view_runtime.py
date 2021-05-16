@@ -279,7 +279,7 @@ class ViewRuntime:
             # response dicts
             if raw_response_dict:
                 if isinstance(raw_response_dict, AbstractNode):
-                    self.request.client.show(html=raw_response_dict)
+                    self.view.show(html=raw_response_dict)
 
                     return
 

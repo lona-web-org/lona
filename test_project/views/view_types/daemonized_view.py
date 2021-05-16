@@ -17,10 +17,10 @@ class DaemonizedView(LonaView):
             start_daemonized,
         )
 
-        input_event = request.client.await_input_event(html=html)
+        input_event = self.await_input_event(html=html)
 
         if input_event.node == start_daemonized:
-            request.view.daemonize()
+            self.daemonize()
 
             message.set_text('View started daemonized')
 
@@ -29,9 +29,9 @@ class DaemonizedView(LonaView):
 
         for i in range(15):
             log.set_text('Counting ({}/15)'.format(i+1))
-            request.client.show(html)
+            self.show(html)
 
-            request.view.sleep(1)
+            self.sleep(1)
 
         message.set_text('View stopped')
-        request.client.show(html)
+        self.show(html)

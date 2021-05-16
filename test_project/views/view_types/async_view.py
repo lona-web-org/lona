@@ -15,8 +15,8 @@ async def long_running_coroutine():
         await asyncio.sleep(1)
 
 
-async def show_html(request):
-    request.client.show("Error: You shouldn't see this!")
+async def show_html(view):
+    view.show("Error: You shouldn't see this!")
 
 
 class AsyncView(LonaView):
@@ -40,17 +40,17 @@ class AsyncView(LonaView):
                 Button('Crash', _id='crash'),
             )
 
-            input_event = request.client.await_input_event(html=html)
+            input_event = self.await_input_event(html=html)
 
             if input_event.node_has_id('sleep-forever'):
                 html[1].set_text('Sleeping forever')
 
-                request.client.show(html)
+                self.show(html)
 
-                request.view.sleep(300)
+                self.sleep(300)
 
             elif input_event.node_has_id('await-short-running-coroutine'):
-                return_value = request.view.await_sync(
+                return_value = self.await_sync(
                     short_running_coroutine()
                 )
 
@@ -60,17 +60,17 @@ class AsyncView(LonaView):
                     )
                 )
 
-                request.client.show(html)
+                self.show(html)
 
             elif input_event.node_has_id('await-long-running-coroutine'):
                 html[1].set_text('running long_running_coroutine()')
 
-                request.client.show(html)
+                self.show(html)
 
-                request.view.await_sync(long_running_coroutine())
+                self.await_sync(long_running_coroutine())
 
             elif input_event.node_has_id('show-html'):
-                request.view.await_sync(show_html(request))
+                self.await_sync(show_html(self))
 
             return html
 

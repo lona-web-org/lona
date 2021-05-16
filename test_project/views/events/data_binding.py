@@ -74,7 +74,7 @@ class DataBindingView(LonaView):
         )
 
         while True:
-            request.client.await_input_event(html=html)
+            self.await_input_event(html=html)
 
             pre.set_text(
                 pformat({

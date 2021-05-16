@@ -108,7 +108,7 @@ class EventBubblingView(LonaView):
         )
 
         while True:
-            input_event = request.client.await_input_event(html=html)
+            input_event = self.await_input_event(html=html)
 
             self.print('>> view.handle_request {}'.format(repr(input_event)))
 
