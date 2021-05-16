@@ -28,6 +28,7 @@ class FallbackView(LonaView):
                 view = view_class(
                     server=self.server,
                     view_runtime=self.view_runtime,
+                    request=request,
                 )
 
                 return view.handle_request(request, **extra_contenxt)

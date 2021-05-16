@@ -43,6 +43,12 @@ class ViewRuntime:
         self.frontend = frontend
         self.start_connection = start_connection
 
+        # setup request
+        self.request = Request(
+            view_runtime=self,
+            connection=self.start_connection,
+        )
+
         # find view
         if route:
             self.view = route.view
@@ -62,6 +68,7 @@ class ViewRuntime:
         self.view = self.view_class(
             server=self.server,
             view_runtime=self,
+            request=self.request,
         )
 
         # setup state
@@ -90,11 +97,6 @@ class ViewRuntime:
             'change': None,
             'submit': None,
         }
-
-        self.request = Request(
-            view_runtime=self,
-            connection=self.start_connection,
-        )
 
         self.view_args = (self.request,)
         self.view_kwargs = {}
@@ -175,6 +177,7 @@ class ViewRuntime:
             view = view_class(
                 server=self.server,
                 view_runtime=self,
+                request=self.request,
             )
 
             return self.handle_raw_response_dict(
@@ -207,6 +210,7 @@ class ViewRuntime:
                 view = view_class(
                     server=self.server,
                     view_runtime=self,
+                    request=self.request,
                 )
 
                 response_dict = self.handle_raw_response_dict(
@@ -239,6 +243,7 @@ class ViewRuntime:
             view = view_class(
                 server=self.server,
                 view_runtime=self,
+                request=self.request,
             )
 
             return self.handle_raw_response_dict(
@@ -301,6 +306,7 @@ class ViewRuntime:
             view = view_class(
                 server=self.server,
                 view_runtime=self,
+                request=self.request,
             )
 
             return self.handle_raw_response_dict(
@@ -327,6 +333,7 @@ class ViewRuntime:
             view = view_class(
                 server=self.server,
                 view_runtime=self,
+                request=self.request,
             )
 
             return self.handle_raw_response_dict(
@@ -390,6 +397,7 @@ class ViewRuntime:
             view = view_class(
                 server=self.server,
                 view_runtime=self,
+                request=self.request,
             )
 
             self.handle_raw_response_dict(
