@@ -1,4 +1,4 @@
-from lona.html import HTML, Div, H2
+from lona.html import HTML, Div, Br, H2, Select, Strong
 from lona.view import LonaView
 
 
@@ -6,8 +6,23 @@ class InteractiveView(LonaView):
     def handle_request(self, request):
         widget = HTML()
 
+        interval = Select(
+            values=[
+                (1,    '1s',    False),
+                (0.5,  '0.5s',  True),
+                (0.25, '0.25s', False),
+                (0.01, '0.01s', False),
+            ],
+        )
+
         html = HTML(
             H2('Interactive View'),
+
+            Strong('Interval: '),
+            interval,
+            Br(),
+            Br(),
+
             widget,
         )
 
@@ -18,19 +33,19 @@ class InteractiveView(LonaView):
                 widget.append(Div('Div {}'.format(i+1)))
                 request.client.show(html)
 
-                request.view.sleep(0.5)
+                request.view.sleep(float(interval.value))
 
             for i in range(0, 5):
                 widget[i].insert(i+1, Div('Div {}.{}'.format(i+1, i+1)))
                 request.client.show(html)
 
-                request.view.sleep(0.5)
+                request.view.sleep(float(interval.value))
 
             for i in range(0, 5):
                 widget[i].style = {'color': 'red'}
                 request.client.show(html)
 
-                request.view.sleep(0.5)
+                request.view.sleep(float(interval.value))
 
             moving_div = Div('Div 6', style={'color': 'blue'})
 
@@ -38,6 +53,6 @@ class InteractiveView(LonaView):
                 widget[i].append(moving_div)
                 request.client.show(html)
 
-                request.view.sleep(0.5)
+                request.view.sleep(float(interval.value))
 
             request.client.show(html)
