@@ -55,7 +55,11 @@ class StaticFileLoader:
     def __init__(self, server):
         self.server = server
 
-        self.static_dirs = (self.server.settings.STATIC_DIRS)
+        self.static_dirs = self.server.settings.STATIC_DIRS.copy()
+
+        # resolving potential relative paths
+        for index, static_dir in enumerate(self.static_dirs):
+            self.static_dirs[index] = self.server.resolve_path(static_dir)
 
         logger.debug('static dirs %s loaded', repr(self.static_dirs)[1:-1])
 
