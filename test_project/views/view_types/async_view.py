@@ -1,6 +1,6 @@
 import asyncio
 
-from lona.html import HTML, Br, H2, Div, Button, A
+from lona.html import HTML, Br, H2, Div, Button
 from lona.view import LonaView
 
 
@@ -24,7 +24,6 @@ class AsyncView(LonaView):
         try:
             html = HTML(
                 H2('Async View'),
-                A('Home', href='/'),
                 Div(),
 
                 Br(),
@@ -44,7 +43,7 @@ class AsyncView(LonaView):
             input_event = request.client.await_input_event(html=html)
 
             if input_event.node_has_id('sleep-forever'):
-                html[2].set_text('Sleeping forever')
+                html[1].set_text('Sleeping forever')
 
                 request.client.show(html)
 
@@ -55,7 +54,7 @@ class AsyncView(LonaView):
                     short_running_coroutine()
                 )
 
-                html[2].set_text(
+                html[1].set_text(
                     'short_running_coroutine() returned {}'.format(
                         repr(return_value)
                     )
@@ -64,7 +63,7 @@ class AsyncView(LonaView):
                 request.client.show(html)
 
             elif input_event.node_has_id('await-long-running-coroutine'):
-                html[2].set_text('running long_running_coroutine()')
+                html[1].set_text('running long_running_coroutine()')
 
                 request.client.show(html)
 
