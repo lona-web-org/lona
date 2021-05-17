@@ -31,9 +31,6 @@ routes = [
     Route('/view-types/daemonized-view/',
           'views/view_types/daemonized_view.py::DaemonizedView'),
 
-    Route('/view-types/class-based-view/',
-          'views/view_types/class_based_view.py::ClassBasedView'),
-
     Route('/view-types/async-view/',
           'views/view_types/async_view.py::AsyncView'),
 

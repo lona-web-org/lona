@@ -26,7 +26,6 @@ class HomeView(LonaView):
                 <li><a href="/view-types/non-interactive-view/">Non-Interactive View</a></li>
                 <li><a href="/view-types/http-pass-through/">HTTP Pass Through View</a></li>
                 <li><a href="/view-types/daemonized-view/">Daemonized View</a></li>
-                <li><a href="/view-types/class-based-view/">Class Based View</a></li>
                 <li><a href="/view-types/async-view/">Async View</a></li>
             </ul>
 
