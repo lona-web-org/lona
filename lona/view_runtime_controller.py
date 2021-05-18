@@ -103,10 +103,10 @@ class ViewRuntimeController:
     def remove_connection(self, connection, window_id=None):
         for user, view_runtimes in self.running_single_user_views.items():
             for view_runtime in view_runtimes:
-                view_runtime.remove_connection(connection, window_id=None)
+                view_runtime.remove_connection(connection, window_id=window_id)
 
         for route, view in self.running_multi_user_views.items():
-            view.remove_connection(connection, window_id=None)
+            view.remove_connection(connection, window_id=window_id)
 
     def remove_view_runtime(self, view_runtime):
         user = view_runtime.start_connection.user

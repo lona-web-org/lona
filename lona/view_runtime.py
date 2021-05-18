@@ -402,18 +402,19 @@ class ViewRuntime:
             )
 
     def remove_connection(self, connection, window_id=None):
-        if connection in self.connections:
-            if window_id:
-                if self.connections[connection] == window_id:
+        with self.document.lock:
+            if connection in self.connections:
+                if window_id:
+                    if self.connections[connection][0] == window_id:
+                        self.connections.pop(connection)
+
+                else:
                     self.connections.pop(connection)
 
-            else:
-                self.connections.pop(connection)
-
-        # if the last connection gets closed and the view should
-        # not continue running in background, it gets stopped
-        if not self.connections and not self.is_daemon:
-            self.stop()
+            # if the last connection gets closed and the view should
+            # not continue running in background, it gets stopped
+            if not self.connections and not self.is_daemon:
+                self.stop()
 
     # lona messages ###########################################################
     def send_redirect(self, target_url, connections={}):
