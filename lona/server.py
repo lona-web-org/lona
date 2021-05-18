@@ -15,10 +15,10 @@ from aiohttp.web import (
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
 from lona.client_pre_compiler import ClientPreCompiler
+from lona.static_file_loader import StaticFileLoader
 from lona.message_bus.broker import MessageBusBroker
 from lona.message_bus.client import MessageBusClient
 from lona.response_parser import ResponseParser
-from lona.static_files import StaticFileLoader
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
 from lona.server_state import ServerState
