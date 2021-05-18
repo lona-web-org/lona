@@ -1,0 +1,30 @@
+body {
+    font-family: sans-serif;
+}
+
+#lona-messages {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.lona-message {
+    background: rgba(0, 0, 0, 0.75);
+    font-weight: bold;
+}
+
+a,
+a:hover,
+a:visited {
+    color: blue;
+    text-decoration: none;
+}
+
+a:active {
+    color: red;
+    text-decoration: none;
+}
+
+table.statistics th {
+    text-align: right;
+}
