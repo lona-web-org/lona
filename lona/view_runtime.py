@@ -372,9 +372,9 @@ class ViewRuntime:
 
     # connection management ###################################################
     def add_connection(self, connection, window_id, url):
-        self.connections[connection] = (window_id, url, )
-
         with self.document.lock:
+            self.connections[connection] = (window_id, url, )
+
             data_type, data = self.document.serialize()
 
             if not data:
@@ -386,9 +386,9 @@ class ViewRuntime:
             )
 
     def reconnect_connection(self, connection, window_id, url):
-        self.connections[connection] = (window_id, url, )
-
         with self.document.lock:
+            self.connections[connection] = (window_id, url, )
+
             self.send_view_start()
 
             data_type, data = self.document.serialize()
@@ -418,64 +418,69 @@ class ViewRuntime:
 
     # lona messages ###########################################################
     def send_redirect(self, target_url, connections={}):
-        connections = connections or self.connections
+        with self.document.lock:
+            connections = connections or self.connections
 
-        for connection, (window_id, url) in connections.items():
-            message = encode_redirect(
-                window_id=window_id,
-                view_runtime_id=self.view_runtime_id,
-                target_url=target_url,
-            )
+            for connection, (window_id, url) in connections.items():
+                message = encode_redirect(
+                    window_id=window_id,
+                    view_runtime_id=self.view_runtime_id,
+                    target_url=target_url,
+                )
 
-            connection.send_str(message)
+                connection.send_str(message)
 
     def send_http_redirect(self, target_url, connections={}):
-        connections = connections or self.connections
+        with self.document.lock:
+            connections = connections or self.connections
 
-        for connection, (window_id, url) in connections.items():
-            message = encode_http_redirect(
-                window_id=window_id,
-                view_runtime_id=self.view_runtime_id,
-                target_url=target_url,
-            )
+            for connection, (window_id, url) in connections.items():
+                message = encode_http_redirect(
+                    window_id=window_id,
+                    view_runtime_id=self.view_runtime_id,
+                    target_url=target_url,
+                )
 
-            connection.send_str(message)
+                connection.send_str(message)
 
     def send_data(self, title=None, data=None, connections={}):
-        connections = connections or self.connections
+        with self.document.lock:
+            connections = connections or self.connections
 
-        # send message
-        for connection, (window_id, url) in list(connections.items()):
-            message = encode_data(
-                window_id=window_id,
-                view_runtime_id=self.view_runtime_id,
-                title=title,
-                data=data,
-            )
+            # send message
+            for connection, (window_id, url) in connections.items():
+                message = encode_data(
+                    window_id=window_id,
+                    view_runtime_id=self.view_runtime_id,
+                    title=title,
+                    data=data,
+                )
 
-            connection.send_str(message)
+                connection.send_str(message)
 
     def send_view_start(self, connections={}):
-        connections = connections or self.connections
+        with self.document.lock:
+            connections = connections or self.connections
 
-        for connection, (window_id, url) in list(connections.items()):
-            message = encode_view_start(
-                window_id=window_id,
-                view_runtime_id=self.view_runtime_id,
-            )
+            for connection, (window_id, url) in connections.items():
+                message = encode_view_start(
+                    window_id=window_id,
+                    view_runtime_id=self.view_runtime_id,
+                )
 
-            connection.send_str(message)
+                connection.send_str(message)
 
     def send_view_stop(self, connections={}):
-        connections = connections or self.connections
+        with self.document.lock:
+            connections = connections or self.connections
 
-        for connection, (window_id, url) in list(connections.items()):
-            message = encode_view_stop(
-                window_id=window_id,
-                view_runtime_id=self.view_runtime_id,
-            )
+            for connection, (window_id, url) in connections.items():
+                message = encode_view_stop(
+                    window_id=window_id,
+                    view_runtime_id=self.view_runtime_id,
+                )
 
-            connection.send_str(message)
+                connection.send_str(message)
 
     def handle_raw_response_dict(self, raw_response_dict, connections={}):
         connections = connections or self.connections

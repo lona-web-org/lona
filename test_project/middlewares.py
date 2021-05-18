@@ -23,7 +23,7 @@ class RateLimitMiddleware:
         request = data.request
         user = request.user
 
-        if request.server.get_running_views_count(user) < self.VIEW_MAX:
+        if request.server.get_running_views_count(user) < (self.VIEW_MAX + 1):
             return data
 
         return 'To many running views'
