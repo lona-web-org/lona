@@ -219,7 +219,10 @@ class ViewRuntimeController:
 
             self.running_single_user_views[user].append(view_runtime)
 
-            view_runtime.start()
+            self.server.run_function_async(
+                view_runtime.start,
+                excutor_name='runtime_worker',
+            )
 
         # input events
         elif method == METHOD.INPUT_EVENT:

@@ -53,7 +53,7 @@ class LonaServer:
         self.websocket_connections = []
         self.user = Mapping()
         self._loop = None
-        self._executor = None
+        self._worker_pool = None
         self.hostname = os.uname().nodename
 
         server_logger.debug("starting server in '%s'", project_root)
@@ -228,16 +228,16 @@ class LonaServer:
     def set_loop(self, loop):
         self._loop = loop
 
-    def set_executor(self, executor):
-        self._executor = executor
+    def set_worker_pool(self, worker_pool):
+        self._worker_pool = worker_pool
 
     @property
     def loop(self):
         return self._loop
 
     @property
-    def executor(self):
-        return self._executor
+    def worker_pool(self):
+        return self._worker_pool
 
     async def start(self, *args, **kwargs):
         server_logger.debug('start')
@@ -245,8 +245,8 @@ class LonaServer:
         if not self._loop:
             raise RuntimeError('loop is not set')
 
-        if not self._executor:
-            raise RuntimeError('executor is not set')
+        if not self._worker_pool:
+            raise RuntimeError('worker_pool is not set')
 
         self.view_runtime_controller.start()
         await self.message_bus_client.start()
@@ -274,11 +274,16 @@ class LonaServer:
 
         return future
 
-    def run_function_async(self, function, *args, **kwargs):
+    def run_function_async(self, function, *args,
+                           excutor_name='worker', **kwargs):
+
         def _function():
             return function(*args, **kwargs)
 
-        return self._loop.run_in_executor(self._executor, _function)
+        return self._loop.run_in_executor(
+            self._worker_pool.get_executor(excutor_name),
+            _function,
+        )
 
     def run(self, function_or_coroutine,
             *args, sync=False, wait=True, **kwargs):

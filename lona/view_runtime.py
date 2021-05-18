@@ -76,6 +76,7 @@ class ViewRuntime:
         self.view_runtime_id = time.monotonic_ns()
         self.state = VIEW_RUNTIME_STATE.NOT_STARTED
         self.thread_ident = None
+        self.thread_name = None
         self.started_at = None
         self.stopped_at = None
 
@@ -224,7 +225,10 @@ class ViewRuntime:
     def start(self):
         try:
             # update internal state
-            self.thread_ident = threading.current_thread().ident
+            current_thread = threading.current_thread()
+
+            self.thread_ident = current_thread.ident
+            self.thread_name = current_thread.name
             self.state = VIEW_RUNTIME_STATE.RUNNING
             self.started_at = datetime.now()
 

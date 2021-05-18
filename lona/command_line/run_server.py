@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import logging
 import signal
@@ -8,6 +7,7 @@ import os
 from aiohttp.web import Application, run_app
 
 from lona.shell.shell import embed_shell, generate_shell_server
+from lona.worker_pool import WorkerPool
 from lona.logging import setup_logging
 from lona.server import LonaServer
 
@@ -34,20 +34,19 @@ def run_server(args, message_broker_mode=False):
         message_broker_mode=message_broker_mode,
     )
 
-    executor = ThreadPoolExecutor(
-        max_workers=server.settings.MAX_WORKERS,
-        thread_name_prefix='LonaWorker',
+    worker_pool = WorkerPool(
+        settings=server.settings,
     )
 
     async def shutdown(app):
         server = app['lona_server']
 
-        await server.loop.run_in_executor(None, server.executor.shutdown)
+        await server.loop.run_in_executor(None, server.worker_pool.shutdown)
 
     app.on_shutdown.append(shutdown)
 
     server.set_loop(loop)
-    server.set_executor(executor)
+    server.set_worker_pool(worker_pool)
 
     # run server
     if args.shell:
