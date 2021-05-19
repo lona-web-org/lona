@@ -124,6 +124,11 @@
         }, 1000);
       });
 
+      // timeouts -------------------------------------------------------------
+      lona_context.add_view_timeout_hook(function(lona_context, lona_window) {
+        lona_window.set_html('Waiting for server...');
+      });
+
       // rendering statistics -------------------------------------------------
       document.querySelector('#enable-rendering-statistics').onclick = function(event) {
         event.preventDefault();

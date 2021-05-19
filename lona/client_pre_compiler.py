@@ -27,6 +27,13 @@ class ClientPreCompiler:
     def _get_path(self):
         return os.path.join(self.tmp_dir.name, 'lona.js')
 
+    def get_settings(self):
+        settings = self.server.settings
+
+        return {
+            'VIEW_START_TIMEOUT': settings.CLIENT_VIEW_START_TIMEOUT,
+        }
+
     def compile(self):
         logger.debug('pre compiling client')
 
@@ -36,6 +43,7 @@ class ClientPreCompiler:
 
             template_context = {
                 'symbols': dumps(Symbol.dump_symbol_classes()),
+                'settings': dumps(self.get_settings()),
             }
 
             file_content = template.render(
