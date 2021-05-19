@@ -12,4 +12,12 @@ Lona.LonaWindowShim = function(lona_context, lona_window, widget_id) {
             data,
         );
     };
+
+    this.set_html = function(html) {
+        if(this._lona_window._view_running) {
+            throw('RuntimeError: cannot set HTML while a view is running');
+        };
+
+        this._lona_window._root.innerHTML = html;
+    };
 };
