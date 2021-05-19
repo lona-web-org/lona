@@ -192,7 +192,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                     };
                 };
 
-                if(!lona_window._view_stopped) {
+                if(lona_window._view_running) {
                     input_event_handler.fire_input_event(
                         undefined,
                         node,

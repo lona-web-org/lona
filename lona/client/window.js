@@ -27,7 +27,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
     // window state -----------------------------------------------------------
     this._crashed = false;
-    this._view_stopped = undefined;
+    this._view_running = false;
     this._view_runtime_id = undefined;
     this._nodes = {};
     this._widget_marker = {};
@@ -231,7 +231,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // view start
         if(method == Lona.symbols.METHOD.VIEW_START) {
             this._view_runtime_id = view_runtime_id;
-            this._view_stopped = false;
+            this._view_running = true;
 
             return;
 
@@ -285,7 +285,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
         // view stop
         } else if(method == Lona.symbols.METHOD.VIEW_STOP) {
-            this._view_stopped = true;
+            this._view_running = false;
 
         };
     };
