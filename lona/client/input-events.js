@@ -2,6 +2,18 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
     this.lona_context = lona_context;
     this.lona_window = lona_window;
 
+    this.gen_event_id = function() {
+        var event_id = this._event_id;
+
+        this._event_id += 1;
+
+        return event_id;
+    };
+
+    this.reset_event_id = function() {
+        this._event_id = 1;
+    };
+
     this._get_value = function(node) {
         var value = node.value;
 
@@ -331,6 +343,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
 
         // send event message
         var payload = [
+            this.gen_event_id(),
             event_type,
             data,
             widget_id,
@@ -354,4 +367,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
 
         this.lona_context.send(message);
     };
+
+    // setup ------------------------------------------------------------------
+    this.reset_event_id();
 };

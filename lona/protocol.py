@@ -127,7 +127,13 @@ def decode_message(raw_message):
 
     # input event
     if method == METHOD.INPUT_EVENT:
-        if not (isinstance(payload[0], str) or 304 > payload[0] > 300):
+
+        # event id
+        if not isinstance(payload[0], int):
+            return _invalid_message()
+
+        # event type
+        if not (isinstance(payload[1], str) or 304 > payload[1] > 300):
             return _invalid_message()
 
         return (EXIT_CODE.SUCCESS, *message)

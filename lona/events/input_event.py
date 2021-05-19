@@ -14,30 +14,32 @@ class InputEvent:
         self.id_list = []
         self.class_list = []
 
-        # parse input event type
-        if isinstance(payload[0], str):
-            self.type = INPUT_EVENT_TYPE.CUSTOM
-            self.name = payload[0]
-            self.data = payload[1]
-            self.node_info = payload[2:]
+        self.event_id = payload[0]
 
-        elif payload[0] == INPUT_EVENT_TYPE.CLICK:
+        # parse input event type
+        if isinstance(payload[1], str):
+            self.type = INPUT_EVENT_TYPE.CUSTOM
+            self.name = payload[1]
+            self.data = payload[2]
+            self.node_info = payload[3:]
+
+        elif payload[1] == INPUT_EVENT_TYPE.CLICK:
             self.type = INPUT_EVENT_TYPE.CLICK
             self.name = 'click'
-            self.data = payload[1]
-            self.node_info = payload[2:]
+            self.data = payload[2]
+            self.node_info = payload[3:]
 
-        elif payload[0] == INPUT_EVENT_TYPE.CHANGE:
+        elif payload[1] == INPUT_EVENT_TYPE.CHANGE:
             self.type = INPUT_EVENT_TYPE.CHANGE
             self.name = 'change'
-            self.data = payload[1]
-            self.node_info = payload[2:]
+            self.data = payload[2]
+            self.node_info = payload[3:]
 
-        elif payload[0] == INPUT_EVENT_TYPE.SUBMIT:
+        elif payload[1] == INPUT_EVENT_TYPE.SUBMIT:
             self.type = INPUT_EVENT_TYPE.SUBMIT
             self.name = 'submit'
-            self.data = payload[1]
-            self.node_info = payload[2:]
+            self.data = payload[2]
+            self.node_info = payload[3:]
 
         # find node
         # node info contains a lona node id

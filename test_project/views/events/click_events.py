@@ -61,6 +61,7 @@ class ClickEventView(LonaView):
             input_event = request.client.await_click(html=html)
 
             data = {
+                'event_id': input_event.event_id,
                 'node': input_event.node._id,
                 'tag_name': input_event.node.tag_name,
                 'event_data': input_event.data

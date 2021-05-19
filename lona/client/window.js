@@ -61,6 +61,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     // html rendering helper --------------------------------------------------
     this._clear = function() {
         this._root.innerHTML = '';
+        this._input_event_handler.reset_event_id();
     };
 
     this._clear_node_cache = function() {
