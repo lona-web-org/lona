@@ -3,7 +3,7 @@ from html.parser import HTMLParser
 from lona.html.text_node import TextNode
 from lona.html.node import Node
 
-SINGLE_TAGS = [
+SELF_CLOSING_TAGS = [
     'area',
     'base',
     'br',
@@ -37,7 +37,7 @@ class NodeHTMLParser(HTMLParser):
 
         # tag overrides
         node_kwargs['tag_name'] = tag
-        node_kwargs['single_tag'] = tag in SINGLE_TAGS
+        node_kwargs['self_closing_tag'] = tag in SELF_CLOSING_TAGS
 
         node = Node(**node_kwargs)
         self._node.append(node)

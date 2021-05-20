@@ -134,12 +134,12 @@ class Canvas(Node):
 
 class Hr(Node):
     TAG_NAME = 'hr'
-    SINGLE_TAG = True
+    SELF_CLOSING_TAG = True
 
 
 class Br(Node):
     TAG_NAME = 'br'
-    SINGLE_TAG = True
+    SELF_CLOSING_TAG = True
 
 
 # inputs ######################################################################
@@ -162,7 +162,7 @@ class Button(Node):
 
 class InputNode(Node):
     TAG_NAME = 'input'
-    SINGLE_TAG = True
+    SELF_CLOSING_TAG = True
 
 
 class Submit(InputNode):
@@ -212,7 +212,7 @@ class OptionNode(Node):
 # complex html nodes ##########################################################
 class Img(Node):
     TAG_NAME = 'img'
-    SINGLE_TAG = True
+    SELF_CLOSING_TAG = True
 
 
 class A(Node):

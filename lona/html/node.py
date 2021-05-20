@@ -10,14 +10,14 @@ from lona.protocol import NODE_TYPE
 
 class Node(AbstractNode):
     TAG_NAME = 'html'
-    SINGLE_TAG = False
+    SELF_CLOSING_TAG = False
     ID_LIST = []
     CLASS_LIST = []
     STYLE = {}
     ATTRIBUTES = {}
     EVENTS = []
 
-    def __init__(self, *args, tag_name=None, single_tag=None, **kwargs):
+    def __init__(self, *args, tag_name=None, self_closing_tag=None, **kwargs):
         self._id_list = IDList(self, self.ID_LIST)
         self._class_list = ClassList(self, self.CLASS_LIST)
         self._style = StyleDict(self, self.STYLE)
@@ -28,11 +28,11 @@ class Node(AbstractNode):
         # tag overrides
         self.tag_name = tag_name or self.TAG_NAME
 
-        if single_tag is None:
-            self.single_tag = self.SINGLE_TAG
+        if self_closing_tag is None:
+            self.self_closing_tag = self.SELF_CLOSING_TAG
 
         else:
-            self.single_tag = single_tag
+            self.self_closing_tag = self_closing_tag
 
         # args (nodes)
         for arg in args:
@@ -281,7 +281,7 @@ class Node(AbstractNode):
                     skip_value=skip_value,
                 )
 
-            if self.single_tag:
+            if self.self_closing_tag:
                 string += ' />'
 
             else:
@@ -299,7 +299,7 @@ class Node(AbstractNode):
                 string += '\n'
 
             # closing tag
-            if not self.single_tag:
+            if not self.self_closing_tag:
                 string += '</{}>'.format(self.tag_name)
 
             return string
