@@ -307,6 +307,30 @@ class Node(AbstractNode):
     def __repr__(self):
         return self.__str__()
 
+    # comparrison #############################################################
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            return False
+
+        # campare attributes
+        return (
+            self.tag_name,
+            self.self_closing_tag,
+            self._id_list,
+            self._class_list,
+            self._style,
+            self._attributes,
+            self._nodes,
+        ) == (
+            other.tag_name,
+            other.self_closing_tag,
+            other._id_list,
+            other._class_list,
+            other._style,
+            other._attributes,
+            other._nodes,
+        )
+
     # HTML helper #############################################################
     def set_text(self, text):
         self.nodes = [str(text)]

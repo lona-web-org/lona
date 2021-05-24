@@ -78,6 +78,20 @@ class AttributeList:
 
                 self.append(attribute)
 
+    def __eq__(self, other):
+        with self._node.lock:
+            if isinstance(other, self.__class__):
+                other = other._attributes
+
+            elif not isinstance(other, (list, set, tuple)):
+                return False
+
+            other = set(other)
+            common_attributes = set(self._attributes) & other
+
+            return (len(self._attributes) == len(other) and
+                    len(self._attributes) == len(common_attributes))
+
     def __len__(self):
         with self._node.lock:
             return len(self._attributes)

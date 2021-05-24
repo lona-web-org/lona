@@ -6,6 +6,12 @@ class TextNode(AbstractNode):
     def __init__(self, string):
         self._string = str(string)
 
+    def __eq__(self, other):
+        if isinstance(other, TextNode):
+            other = other._string
+
+        return self._string == other
+
     def wrap_method(self, method):
         def wrapper(*args, **kwargs):
             return_value = method(*args, **kwargs)

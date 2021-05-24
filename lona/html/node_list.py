@@ -25,7 +25,7 @@ class NodeList:
         if node.parent and node.parent is not self._node:
             node.parent.remove(node)
 
-        elif node == self._node.root:
+        elif node is self._node.root:
             raise RuntimeError('loop detected')
 
         node._set_parent(self._node)
@@ -132,6 +132,27 @@ class NodeList:
                 index,
                 node._serialize(),
             ])
+
+    def __eq__(self, other):
+        with self._node.lock:
+            if isinstance(other, self.__class__):
+                other = other._nodes
+
+            elif not isinstance(other, (list, tuple, set)):
+                return False
+
+            if not len(self._nodes) == len(other):
+                return False
+
+            for index, node in enumerate(self._nodes):
+                if node != other[index]:
+                    return False
+
+            return True
+
+    def __in__(self, other):
+        with self._node.lock:
+            return other in self._nodes
 
     def __bool__(self):
         with self._node.lock:

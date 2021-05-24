@@ -101,6 +101,13 @@ class AttributeDict:
                 name,
             ])
 
+    def __eq__(self, other):
+        with self._node.lock:
+            if isinstance(other, self.__class__):
+                other = other._attributes
+
+        return self._attributes == other
+
     def __iter__(self):
         with self._node.lock:
             return self._attributes.__iter__()
