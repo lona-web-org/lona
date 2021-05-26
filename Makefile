@@ -44,10 +44,12 @@ freeze: dev-env
 # tests #######################################################################
 test: dev-env
 	. $(PYTHON_DEV_ENV)/bin/activate && \
+	rm -rf htmlcov && \
 	time tox $(args)
 
 ci-test: dev-env
 	. $(PYTHON_DEV_ENV)/bin/activate && \
+	rm -rf htmlcov && \
 	time JENKINS_URL=1 tox -r $(args)
 
 # linting #####################################################################
