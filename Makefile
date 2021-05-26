@@ -50,6 +50,11 @@ ci-test: dev-env
 	. $(PYTHON_DEV_ENV)/bin/activate && \
 	time JENKINS_URL=1 tox -r $(args)
 
+# linting #####################################################################
+lint: dev-env
+	. $(PYTHON_DEV_ENV)/bin/activate && \
+	flake8 lona tests
+
 # packaging ###################################################################
 sdist: packaging-env
 	. $(PYTHON_PACKAGING_ENV)/bin/activate && \

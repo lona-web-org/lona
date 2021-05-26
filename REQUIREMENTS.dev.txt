@@ -1,2 +1,3 @@
 -e .
 tox
+flake8
