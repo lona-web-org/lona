@@ -475,9 +475,7 @@ class LonaServer:
         try:
             async for message in websocket:
                 if message.type == WSMsgType.TEXT:
-                    self._loop.create_task(
-                        self._handle_websocket_message(connection, message),
-                    )
+                    await self._handle_websocket_message(connection, message)
 
                 elif message.type == WSMsgType.PING:
                     await websocket.pong()
