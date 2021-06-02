@@ -45,3 +45,10 @@ def get_file(obj):
         return obj.__module__
 
     return inspect.getfile(obj)
+
+
+def get_object_repr(obj):
+    return '<{} object at {}>'.format(
+        obj.__class__.__name__,
+        hex(id(obj)),
+    )

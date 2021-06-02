@@ -8,6 +8,7 @@ from lona.exceptions import ServerStop
 from lona.types import Mapping
 
 logger = logging.getLogger('lona.view_runtime_controller')
+input_events_logger = logging.getLogger('lona.input_events')
 
 
 class ViewRuntimeController:
@@ -119,7 +120,7 @@ class ViewRuntimeController:
 
         """
         this method gets called by the
-        lona.middlewares.LonaMessageMiddleware.handle_websocket_message
+        lona.middlewares.LonaMessageMiddleware.process_websocket_message
 
         """
 
@@ -226,13 +227,31 @@ class ViewRuntimeController:
 
         # input events
         elif method == METHOD.INPUT_EVENT:
+            input_events_logger.debug('event #%s: decoded', payload[0])
+
             user = connection.user
 
             if user not in self.running_single_user_views:
+                input_events_logger.debug(
+                    'event #%s: user is unknown. event is skipped',
+                    payload[0],
+                )
+
                 return
 
             for view_runtime in self.running_single_user_views[user]:
                 if view_runtime.view_runtime_id == view_runtime_id:
+                    input_events_logger.debug(
+                        'event #%s: is handled by runtime #%s',
+                        payload[0],
+                        view_runtime_id,
+                    )
+
                     view_runtime.handle_input_event(connection, payload)
 
-                    break
+                    return
+
+            input_events_logger.debug(
+                'event #%s: runtime id is unknown. event is skipped',
+                payload[0],
+            )

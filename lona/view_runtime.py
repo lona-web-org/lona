@@ -11,6 +11,7 @@ from lona.exceptions import StopReason, ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
 from lona.symbols import VIEW_RUNTIME_STATE
+from lona.imports import get_object_repr
 from lona.html.document import Document
 from lona.errors import ForbiddenError
 from lona.request import Request
@@ -25,6 +26,7 @@ from lona.protocol import (
 
 
 logger = logging.getLogger('lona.view_runtime')
+input_events_logger = logging.getLogger('lona.input_events')
 
 
 class ViewRuntime:
@@ -524,6 +526,12 @@ class ViewRuntime:
         return self.server.run_coroutine_sync(_await_input_event())
 
     def handle_input_event(self, connection, payload):
+        input_events_logger.debug(
+            'runtime #%s: handling event #%s',
+            self.view_runtime_id,
+            payload[0],
+        )
+
         request = Request(
             view_runtime=self,
             connection=connection,
@@ -542,23 +550,43 @@ class ViewRuntime:
                 if data:
                     self.send_data(data=data)
 
+        def log_handled_message():
+            input_events_logger.debug(
+                'runtime #%s: event #%s: was handled',
+                self.view_runtime_id,
+                payload[0],
+            )
+
         try:
             # input event root handler
+            input_events_logger.debug(
+                'runtime #%s: event #%s: running View.handle_input_event_root()',  # NOQA
+                self.view_runtime_id,
+                payload[0],
+            )
+
             input_event = self.view.handle_input_event_root(input_event)
 
             if not input_event:
                 send_html_patches()
 
-                return
+                return log_handled_message()
 
             # widgets
             for widget in input_event.widgets[::-1]:
+                input_events_logger.debug(
+                    'runtime #%s: event #%s: running %s.handle_input_event()',
+                    self.view_runtime_id,
+                    payload[0],
+                    get_object_repr(widget),
+                )
+
                 input_event = widget.handle_input_event(input_event)
 
                 if not input_event:
                     send_html_patches()
 
-                    return
+                    return log_handled_message()
 
             # pending input events
             if(input_event.name in self.pending_input_events and
@@ -567,27 +595,58 @@ class ViewRuntime:
                 future, nodes = self.pending_input_events[input_event.name]
 
                 if not nodes or input_event.node in nodes:
+                    input_events_logger.debug(
+                        'runtime #%s: event #%s: is handled as pending %s event',  # NOQA
+                        self.view_runtime_id,
+                        payload[0],
+                        input_event.name,
+                    )
+
                     future.set_result(input_event)
                     self.pending_input_events[input_event.name] = None
 
-                    return
+                    return log_handled_message()
 
             if self.pending_input_events['event'] is not None:
                 future, nodes = self.pending_input_events['event']
 
                 if not nodes or input_event.node in nodes:
+                    input_events_logger.debug(
+                        'runtime #%s: event #%s: is handled as pending generic event',  # NOQA
+                        self.view_runtime_id,
+                        payload[0],
+                    )
+
                     future.set_result(input_event)
                     self.pending_input_events['event'] = None
 
-                    return
+                    return log_handled_message()
 
             # input event handler (class based views)
+            input_events_logger.debug(
+                'runtime #%s: event #%s: running View.handle_input_event()',
+                self.view_runtime_id,
+                payload[0],
+            )
+
             input_event = self.view.handle_input_event(input_event)
 
             send_html_patches()
 
+            return log_handled_message()
+
         except(StopReason, CancelledError):
-            pass
+            input_events_logger.debug(
+                'runtime #%s: event #%s: handling was stopped',
+                self.view_runtime_id,
+                payload[0],
+            )
 
         except Exception as exception:
+            input_events_logger.debug(
+                'runtime #%s: event #%s: exception occurred',
+                self.view_runtime_id,
+                payload[0],
+            )
+
             self.issue_500_error(exception)
