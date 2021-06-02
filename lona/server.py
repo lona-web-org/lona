@@ -532,6 +532,7 @@ class LonaServer:
                 response = await self.run_function_async(
                     view,
                     http_request,
+                    excutor_name='runtime_worker',
                 )
 
             if asyncio.iscoroutine(response):
@@ -603,6 +604,7 @@ class LonaServer:
         if not response_dict:
             response_dict = await self.run_function_async(
                 view_runtime.start,
+                excutor_name='runtime_worker',
             )
 
         return self._render_response(response_dict)
