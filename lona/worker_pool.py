@@ -14,11 +14,20 @@ class WorkerPool:
                 max_workers=self.settings.MAX_RUNTIME_THREADS,
                 thread_name_prefix='LonaRuntimeWorker',
             ),
+            'static_worker': None,
             'application_worker': None,
         }
 
+        if(self.settings.MAX_STATIC_THREADS and
+           self.settings.STATIC_FILES_SERVE):
+
+            self._executors['static_worker'] = ThreadPoolExecutor(
+                max_workers=self.settings.MAX_STATIC_THREADS,
+                thread_name_prefix='LonaStaticWorker',
+            )
+
         if self.settings.MAX_APPLICATION_THREADS:
-            self._executor['application_worker'] = ThreadPoolExecutor(
+            self._executors['application_worker'] = ThreadPoolExecutor(
                 max_workers=self.settings.MAX_APPLICATION_THREADS,
                 thread_name_prefix='LonaApplicationWorker',
             )

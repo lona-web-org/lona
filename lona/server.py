@@ -412,6 +412,7 @@ class LonaServer:
         abs_path = await self.run_function_async(
             self.static_file_loader.resolve_path,
             rel_path,
+            excutor_name='static_worker',
         )
 
         if not abs_path:
