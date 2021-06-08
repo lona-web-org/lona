@@ -13,6 +13,10 @@ class LogFilter(logging.Filter):
         self.excluded = []
         self.included = []
 
+    def clear(self):
+        self.excluded.clear()
+        self.included.clear()
+
     def include(self, logger_name):
         self.included.append(logger_name)
 
@@ -123,23 +127,38 @@ class LogFormatter(logging.Formatter):
         )
 
 
-def setup_logging(args):
-    logging.basicConfig(level={
-        'debug': logging.DEBUG,
-        'info': logging.INFO,
-        'warn': logging.WARN,
-        'error': logging.ERROR,
-        'critical': logging.CRITICAL,
-    }[args.log_level.lower()])
+def setup_logging(args, log_formatter=None, log_filter=None):
+    # set log level
+    if not args.debug_mode:
+        log_level = {
+            'debug': logging.DEBUG,
+            'info': logging.INFO,
+            'warn': logging.WARN,
+            'error': logging.ERROR,
+            'critical': logging.CRITICAL,
+        }[args.log_level.lower()]
 
-    log_formatter = LogFormatter()
-    log_filter = LogFilter()
+    else:
+        log_level = logging.DEBUG
+
+    logging.basicConfig(level=log_level)
+
+    # setup log formatting and log filtering
+    log_formatter = log_formatter or LogFormatter()
+    log_filter = log_filter or LogFilter()
 
     for handler in logging.getLogger().root.handlers:
         handler.setFormatter(log_formatter)
         handler.addFilter(log_filter)
 
-    if args.loggers:
+    if args.debug_mode:
+        if args.debug_mode == 'messages':
+            log_filter.include('lona.server.websockets')
+
+        elif args.debug_mode == 'input-events':
+            log_filter.include('lona.input_events')
+
+    elif args.loggers:
         for logger_name in args.loggers:
             if logger_name.startswith('_'):
                 log_filter.exclude(logger_name[1:])

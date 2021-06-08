@@ -48,6 +48,11 @@ def handle_command_line(argv):
         nargs='+',
     )
 
+    parser_run_server.add_argument(
+        '--debug-mode',
+        choices=['messages', 'input-events'],
+    )
+
     # settings
     parser_run_server.add_argument(
         '--project-root',
@@ -125,6 +130,11 @@ def handle_command_line(argv):
         nargs='+',
     )
 
+    parser_message_broker.add_argument(
+        '--debug-mode',
+        choices=['messages', 'input-events'],
+    )
+
     # settings
     parser_message_broker.add_argument(
         '--project-root',
@@ -200,6 +210,11 @@ def handle_command_line(argv):
         '--loggers',
         type=str,
         nargs='+',
+    )
+
+    parser_collect_static.add_argument(
+        '--debug-mode',
+        choices=['messages', 'input-events'],
     )
 
     # settings
