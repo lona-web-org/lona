@@ -248,6 +248,10 @@ class LonaServer:
         if not self._worker_pool:
             raise RuntimeError('worker_pool is not set')
 
+        # run checks
+        if self.settings.TEST_VIEW_START_TIMEOUT:
+            server_logger.warning('TEST_VIEW_START_TIMEOUT is enabled')
+
         self.view_runtime_controller.start()
         await self.message_bus_client.start()
 

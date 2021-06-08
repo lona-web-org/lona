@@ -234,6 +234,10 @@ class ViewRuntime:
             self.state = VIEW_RUNTIME_STATE.RUNNING
             self.started_at = datetime.now()
 
+            # test CLIENT_VIEW_START_TIMEOUT
+            if self.server.settings.TEST_VIEW_START_TIMEOUT:
+                time.sleep(self.server.settings.CLIENT_VIEW_START_TIMEOUT + 1)
+
             # start view
             self.send_view_start()
 
