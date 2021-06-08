@@ -102,10 +102,16 @@ Lona.LonaContext = function(settings) {
     };
 
     this._run_rendering_hooks = function(lona_window) {
-        for(var i in this._rendering_hooks) {
-            var hook = this._rendering_hooks[i];
+        try {
+            for(var i in this._rendering_hooks) {
+                var hook = this._rendering_hooks[i];
 
-            hook(this, lona_window);
+                hook(this, lona_window);
+            };
+
+        } catch(error) {
+            lona_window.crash(error);
+
         };
     };
 
