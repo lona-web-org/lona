@@ -3,6 +3,7 @@ from lona.view import LonaView
 from lona.html import (
     SelectNode,
     OptionNode,
+    CHANGE,
     Widget,
     Button,
     HTML,
@@ -85,7 +86,7 @@ class EventBubblingView(LonaView):
                         'handle_input_event',
                         value='handle_input_event',
                     ),
-                    changeable=True,
+                    events=[CHANGE],
                 ),
             ),
 
