@@ -17,6 +17,7 @@ from lona.errors import ForbiddenError
 from lona.request import Request
 
 from lona.protocol import (
+    encode_input_event_ack,
     encode_http_redirect,
     encode_view_start,
     encode_view_stop,
@@ -562,6 +563,21 @@ class ViewRuntime:
             )
 
         try:
+            # sending input event ack
+            input_events_logger.debug(
+                'runtime #%s: event #%s: sending ACK',
+                self.view_runtime_id,
+                payload[0],
+            )
+
+            connection.send_str(
+                encode_input_event_ack(
+                    window_id=self.connections[connection][0],
+                    view_runtime_id=self.view_runtime_id,
+                    input_event_id=payload[0],
+                )
+            )
+
             # input event root handler
             input_events_logger.debug(
                 'runtime #%s: event #%s: running View.handle_input_event_root()',  # NOQA

@@ -25,11 +25,12 @@ class METHOD(Symbol):
 
     VIEW = Symbol('VIEW', 101)
     INPUT_EVENT = Symbol('INPUT_EVENT', 102)
-    REDIRECT = Symbol('REDIRECT', 201)
-    HTTP_REDIRECT = Symbol('HTTP_REDIRECT', 202)
-    DATA = Symbol('DATA', 203)
-    VIEW_START = Symbol('VIEW_START', 204)
-    VIEW_STOP = Symbol('VIEW_STOP', 205)
+    INPUT_EVENT_ACK = Symbol('INPUT_EVENT_ACK', 201)
+    REDIRECT = Symbol('REDIRECT', 202)
+    HTTP_REDIRECT = Symbol('HTTP_REDIRECT', 203)
+    DATA = Symbol('DATA', 204)
+    VIEW_START = Symbol('VIEW_START', 205)
+    VIEW_STOP = Symbol('VIEW_STOP', 206)
 
 
 class INPUT_EVENT_TYPE(Symbol):
@@ -139,6 +140,12 @@ def decode_message(raw_message):
         return (EXIT_CODE.SUCCESS, *message)
 
     return (EXIT_CODE.INVALID_METHOD, *message)
+
+
+def encode_input_event_ack(window_id, view_runtime_id, input_event_id):
+    return PROTOCOL.MESSAGE_PREFIX.value + dumps(
+        [window_id, view_runtime_id, METHOD.INPUT_EVENT_ACK, input_event_id],
+    )
 
 
 def encode_redirect(window_id, view_runtime_id, target_url):
