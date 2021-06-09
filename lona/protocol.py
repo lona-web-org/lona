@@ -174,5 +174,5 @@ def encode_view_start(window_id, view_runtime_id):
 
 def encode_view_stop(window_id, view_runtime_id):
     return PROTOCOL.MESSAGE_PREFIX.value + dumps(
-        [window_id, view_runtime_id, METHOD.VIEW_STOP, view_runtime_id, None],
+        [window_id, view_runtime_id, METHOD.VIEW_STOP, None],
     )
