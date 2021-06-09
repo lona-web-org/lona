@@ -26,6 +26,7 @@ Lona.LonaContext = function(settings) {
     this._disconnect_hooks = [];
     this._rendering_hooks = [];
     this._view_timeout_hooks = [];
+    this._input_event_timeout_hooks = [];
     this._message_handler = [];
 
     // window -----------------------------------------------------------------
@@ -81,6 +82,10 @@ Lona.LonaContext = function(settings) {
         this._view_timeout_hooks.push(hook);
     };
 
+    this.add_input_event_timeout_hook = function(hook) {
+        this._input_event_timeout_hooks.push(hook);
+    };
+
     this.add_message_handler = function(handler) {
         this._message_handler.push(handler);
     };
@@ -121,6 +126,22 @@ Lona.LonaContext = function(settings) {
         try {
             for(var i in this._view_timeout_hooks) {
                 var hook = this._view_timeout_hooks[i];
+
+                hook(this, lona_window_shim);
+            };
+
+        } catch(error) {
+            lona_window.crash(error);
+
+        };
+    };
+
+    this._run_input_event_timeout_hooks = function(lona_window) {
+        var lona_window_shim = new Lona.LonaWindowShim(this, lona_window);
+
+        try {
+            for(var i in this._input_event_timeout_hooks) {
+                var hook = this._input_event_timeout_hooks[i];
 
                 hook(this, lona_window_shim);
             };

@@ -2,6 +2,11 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
     this.lona_context = lona_context;
     this.lona_window = lona_window;
 
+    this.reset = function() {
+        this._event_id = 1;
+        this._timeouts = {};
+    };
+
     this.gen_event_id = function() {
         var event_id = this._event_id;
 
@@ -10,8 +15,10 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         return event_id;
     };
 
-    this.reset_event_id = function() {
-        this._event_id = 1;
+    this.clear_timeout = function(event_id) {
+        clearTimeout(this._timeouts[event_id]);
+
+        delete this._timeouts[event_id];
     };
 
     this._get_value = function(node) {
@@ -315,6 +322,8 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
     };
 
     this.fire_input_event = function(widget_id, node, event_type, data) {
+        var _this = this;
+
         if(this.lona_window._crashed) {
             return;
         };
@@ -342,8 +351,10 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
 
         // send event message
+        var event_id = _this.gen_event_id();
+
         var payload = [
-            this.gen_event_id(),
+            event_id,
             event_type,
             data,
             widget_id,
@@ -354,8 +365,8 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         ];
 
         var message = [
-            this.lona_window._window_id,
-            this.lona_window._view_runtime_id,
+            _this.lona_window._window_id,
+            _this.lona_window._view_runtime_id,
             Lona.symbols.METHOD.INPUT_EVENT,
             payload,
         ]
@@ -365,9 +376,14 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             JSON.stringify(message)
         );
 
-        this.lona_context.send(message);
+        _this.lona_context.send(message);
+
+        // setup timeout
+        _this._timeouts[event_id] = setTimeout(function() {
+            _this.lona_context._run_input_event_timeout_hooks(_this);
+        }, Lona.settings.INPUT_EVENT_TIMEOUT * 1000);
     };
 
     // setup ------------------------------------------------------------------
-    this.reset_event_id();
+    this.reset();
 };

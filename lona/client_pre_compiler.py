@@ -32,6 +32,7 @@ class ClientPreCompiler:
 
         return {
             'VIEW_START_TIMEOUT': settings.CLIENT_VIEW_START_TIMEOUT,
+            'INPUT_EVENT_TIMEOUT': settings.CLIENT_INPUT_EVENT_TIMEOUT,
         }
 
     def compile(self):

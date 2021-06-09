@@ -570,6 +570,10 @@ class ViewRuntime:
                 payload[0],
             )
 
+            # test CLIENT_INPUT_EVENT_TIMEOUT
+            if self.server.settings.TEST_INPUT_EVENT_TIMEOUT:
+                time.sleep(self.server.settings.CLIENT_INPUT_EVENT_TIMEOUT + 1)
+
             connection.send_str(
                 encode_input_event_ack(
                     window_id=self.connections[connection][0],

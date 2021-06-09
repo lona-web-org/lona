@@ -129,6 +129,10 @@
         lona_window.set_html('Waiting for server...');
       });
 
+      lona_context.add_input_event_timeout_hook(function(lona_context, lona_window) {
+        show_message('Waiting for server...');
+      });
+
       // rendering statistics -------------------------------------------------
       document.querySelector('#enable-rendering-statistics').onclick = function(event) {
         event.preventDefault();

@@ -61,7 +61,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     // html rendering helper --------------------------------------------------
     this._clear = function() {
         this._root.innerHTML = '';
-        this._input_event_handler.reset_event_id();
+        this._input_event_handler.reset();
     };
 
     this._clear_node_cache = function() {
@@ -294,6 +294,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             if(html) {
                 this._show_html(html);
             };
+
+        // input event acks
+        } else if(method == Lona.symbols.METHOD.INPUT_EVENT_ACK) {
+            this._input_event_handler.clear_timeout(payload);
 
         // view stop
         } else if(method == Lona.symbols.METHOD.VIEW_STOP) {
