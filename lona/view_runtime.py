@@ -125,7 +125,7 @@ class ViewRuntime:
         self._state = new_state
 
     # middlewares #############################################################
-    def run_middlewares(self):
+    def run_middlewares(self, connection, window_id, url):
         try:
             handled, raw_response_dict, middleware = \
                 self.server.middleware_controller.handle_request(
@@ -137,13 +137,21 @@ class ViewRuntime:
                 if not raw_response_dict:
                     raw_response_dict = ''
 
-                self.send_view_start()
+                self.send_view_start(
+                    connections={
+                        connection: (window_id, url),
+                    },
+                )
 
                 response_dict = self.handle_raw_response_dict(
                     raw_response_dict,
                 )
 
-                self.send_view_stop()
+                self.send_view_stop(
+                    connections={
+                        connection: (window_id, url),
+                    },
+                )
 
                 return response_dict
 
@@ -153,7 +161,11 @@ class ViewRuntime:
                 exc_info=True,
             )
 
-            self.send_view_start()
+            self.send_view_start(
+                connections={
+                    connection: (window_id, url),
+                },
+            )
 
             view_class = self.server.view_loader.load(
                 self.server.settings.CORE_ERROR_500_VIEW,
@@ -165,20 +177,27 @@ class ViewRuntime:
             )
 
             return self.handle_raw_response_dict(
-                view.handle_request(
+                raw_response_dict=view.handle_request(
                     self.request,
                     exception=exception,
-                )
+                ),
+                connections={
+                    connection: (window_id, url),
+                },
             )
 
     # permission checks #######################################################
-    def run_user_enter(self):
+    def run_user_enter(self, connection, window_id, url):
         try:
             try:
                 self.view.handle_user_enter(self.request)
 
             except ForbiddenError as exception:
-                self.send_view_start()
+                self.send_view_start(
+                    connections={
+                        connection: (window_id, url),
+                    },
+                )
 
                 view_class = self.server.view_loader.load(
                     self.server.settings.CORE_ERROR_403_VIEW,
@@ -196,7 +215,11 @@ class ViewRuntime:
                     ),
                 )
 
-                self.send_view_stop()
+                self.send_view_stop(
+                    connections={
+                        connection: (window_id, url),
+                    },
+                )
 
                 return response_dict
 
@@ -400,7 +423,11 @@ class ViewRuntime:
         with self.document.lock:
             self.connections[connection] = (window_id, url, )
 
-            self.send_view_start()
+            self.send_view_start(
+                connections={
+                    connection: (window_id, url),
+                }
+            )
 
             data_type, data = self.document.serialize()
 

@@ -602,6 +602,9 @@ class LonaServer:
 
         response_dict = await self.run_function_async(
             view_runtime.run_middlewares,
+            connection=connection,
+            window_id=None,
+            url=None,
         )
 
         if not response_dict:

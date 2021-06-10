@@ -164,14 +164,22 @@ class ViewRuntimeController:
                 url=url,
             )
 
-            response_dict = view_runtime.run_middlewares()
+            response_dict = view_runtime.run_middlewares(
+                connection=connection,
+                window_id=window_id,
+                url=url,
+            )
 
             # request got handled by a middleware
             if response_dict:
                 return
 
             # check for 403 forbidden error
-            response_dict = view_runtime.run_user_enter()
+            response_dict = view_runtime.run_user_enter(
+                connection=connection,
+                window_id=window_id,
+                url=url,
+            )
 
             if response_dict:
                 return
