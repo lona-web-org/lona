@@ -460,6 +460,9 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
+                if not connection.is_interactive:
+                    continue
+
                 message = encode_redirect(
                     window_id=window_id,
                     view_runtime_id=self.view_runtime_id,
@@ -473,6 +476,9 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
+                if not connection.is_interactive:
+                    continue
+
                 message = encode_http_redirect(
                     window_id=window_id,
                     view_runtime_id=self.view_runtime_id,
@@ -487,6 +493,9 @@ class ViewRuntime:
 
             # send message
             for connection, (window_id, url) in connections.items():
+                if not connection.is_interactive:
+                    continue
+
                 message = encode_data(
                     window_id=window_id,
                     view_runtime_id=self.view_runtime_id,
@@ -501,6 +510,9 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
+                if not connection.is_interactive:
+                    continue
+
                 message = encode_view_start(
                     window_id=window_id,
                     view_runtime_id=self.view_runtime_id,
@@ -513,6 +525,9 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
+                if not connection.is_interactive:
+                    continue
+
                 message = encode_view_stop(
                     window_id=window_id,
                     view_runtime_id=self.view_runtime_id,
