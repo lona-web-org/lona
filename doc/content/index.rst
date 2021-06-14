@@ -3,6 +3,10 @@
 Lona Documentation
 ==================
 
+| Source code: `github.com/fscherf/lona <https://github.com/fscherf/lona>`_
+| Pypi package: `pypi.org/project/lona <https://pypi.org/project/lona>`_
+
+
 What is Lona?
 -------------
 
@@ -35,10 +39,10 @@ pythonic API to write self contained views.
                 button,
             )
 
-            request.client.show(html)
+            self.show(html)
 
             # this call blocks until the button was clicked
-            input_event = request.client.await_click(button)
+            input_event = self.await_click(button)
 
             if input_event.node == button:
                 message.set_text('Button clicked')
@@ -52,4 +56,5 @@ How does it work?
 Lona comes with a Javascript based browser library that speaks a specialized
 protocol with the backend.
 This protocol specifies messages like "hey frontend, please show $HTML" and
-"hey backend, someone clicked on node XY".
+"hey backend, someone clicked on node XY" 
+{{ link('end-user-documentation/basic-concept.rst', 'read more') }}

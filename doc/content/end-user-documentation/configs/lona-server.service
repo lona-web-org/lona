@@ -1,0 +1,13 @@
+# /etc/systemd/system/lona-server.service
+
+[Unit]
+Description=Lona Server
+
+[Service]
+User=www-data
+Type=simple
+WorkingDirectory=/srv/lona/lona-project-template/lona_project
+ExecStart=/srv/lona/lona-project-template/env/bin/lona run-server --host=localhost --port=8080 -s settings.py deployment_settings.py --shell-server-url=file://socket
+
+[Install]
+WantedBy=lona.target

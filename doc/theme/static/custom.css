@@ -7,3 +7,54 @@ a.icon-home img {
 .rst-content a:visited {
     color: #2980B9 !important;
 }
+
+nav.wy-nav-side {
+    padding-bottom: 0;
+}
+
+ul.toc-tree {
+    margin-top: -1em;
+    margin-bottom: 2em;
+}
+
+table.docutils {
+    width: 100%;
+}
+
+.raw-setting .highlight {
+    border-top: 2px solid #2881b9 !important;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 0.2em !important;
+}
+
+.raw-setting .description {
+    margin-left: 2em;
+}
+
+.setting {
+    float: left;
+    border-top: 2px solid #2881b9 !important;
+}
+
+.setting .highlight {
+    margin: 0 !important;
+    padding: 12px;
+}
+
+.setting pre {
+    float: left;
+    font-weight: bold;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.setting-description {
+    margin-top: 0.5em;
+    margin-left: 2em;
+    margin-bottom: 2em;
+}
+
+.setting-description p {
+    margin: 0;
+}

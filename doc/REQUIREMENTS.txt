@@ -1,2 +1,5 @@
+-e../
+Sphinx==4.0.3
 flamingo[live-server,pygments,thumbnails]==1.6
 sphinx_rtd_theme
+beautifulsoup4

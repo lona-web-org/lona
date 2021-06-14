@@ -15,3 +15,4 @@ This list is in chronological order.
     |Hut                           |Review
     |Roland Hieber                 |Logo design
     |Meike Reichle                 |Lots and lots of testing
+    |Jan Lübbe                     |Review
