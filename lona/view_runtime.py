@@ -76,7 +76,7 @@ class ViewRuntime:
         self.stop_reason = None
         self.is_daemon = False
 
-        self.view_runtime_id = time.monotonic_ns()
+        self.view_runtime_id = str(time.monotonic_ns())
         self.state = VIEW_RUNTIME_STATE.NOT_STARTED
         self.thread_ident = None
         self.thread_name = None

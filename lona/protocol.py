@@ -111,7 +111,7 @@ def decode_message(raw_message):
         return _invalid_message()
 
     # view_runtime_id
-    if not isinstance(message[1], (int, NoneType)):
+    if not isinstance(message[1], (str, NoneType)):
         return _invalid_message()
 
     window_id, view_runtime_id, method, payload = message

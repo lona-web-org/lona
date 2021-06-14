@@ -22,7 +22,7 @@ class AbstractNode:
     @property
     def id(self):
         if not hasattr(self, '_id'):
-            self._id = time.monotonic_ns()
+            self._id = str(time.monotonic_ns())
 
         return self._id
 

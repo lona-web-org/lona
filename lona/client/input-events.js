@@ -340,11 +340,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
 
         if(node) {
             lona_node_id = node.getAttribute('data-lona-node-id');
-
-            if(lona_node_id) {
-                lona_node_id = parseInt(lona_node_id);
-            };
-
             node_tag_name = node.tagName;
             node_id = node.id || '';
             node_class = node.classList.value || '';
