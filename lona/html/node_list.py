@@ -17,7 +17,7 @@ class NodeList:
             node = TextNode(node)
 
         if not isinstance(node, AbstractNode):
-            raise ValueError('unsupported type: {}'.format(repr(node)))
+            raise ValueError('unsupported type: {}'.format(type(node)))
 
         return node
 

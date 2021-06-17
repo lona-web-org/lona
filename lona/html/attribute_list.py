@@ -14,7 +14,7 @@ class AttributeList:
     # list helper #############################################################
     def add(self, attribute):
         if not isinstance(attribute, (int, bool, float, str)):
-            raise ValueError('unsupported type')
+            raise ValueError('unsupported type: {}'.format(type(attribute)))
 
         with self._node.lock:
             if attribute in self._attributes:
@@ -107,11 +107,11 @@ class AttributeList:
     # serialisation ###########################################################
     def _reset(self, value):
         if not isinstance(value, list):
-            raise ValueError('unsupported type')
+            raise ValueError('unsupported type: {}'.format(type(value)))
 
         for i in value:
             if not isinstance(i, (int, bool, float, str)):
-                raise ValueError('unsupported type')
+                raise ValueError('unsupported type: {}'.format(type(value)))
 
         with self._node.lock:
             self._attributes = value
