@@ -5,7 +5,7 @@ from yarl import URL
 from lona.protocol import encode_http_redirect, METHOD
 from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
-from lona.types import Mapping
+from lona._types import Mapping
 
 logger = logging.getLogger('lona.view_runtime_controller')
 input_events_logger = logging.getLogger('lona.input_events')

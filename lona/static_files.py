@@ -1,4 +1,4 @@
-from lona.types import Symbol
+from lona._types import Symbol
 
 
 class SORT_ORDER(Symbol):

@@ -1,7 +1,7 @@
 import json
 
-from lona.types import Symbol
-from lona.json import dumps
+from lona._types import Symbol
+from lona._json import dumps
 
 NoneType = type(None)
 

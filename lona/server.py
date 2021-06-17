@@ -27,7 +27,7 @@ from lona.view_loader import ViewLoader
 from lona.connection import Connection
 from lona.settings import Settings
 from lona.routing import Router
-from lona.types import Mapping
+from lona._types import Mapping
 
 DEFAULT_SETTINGS = os.path.join(
     os.path.dirname(__file__),

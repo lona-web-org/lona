@@ -1,4 +1,4 @@
-from lona.types import Symbol
+from lona._types import Symbol
 
 
 class VIEW_RUNTIME_STATE(Symbol):

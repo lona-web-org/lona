@@ -1,6 +1,6 @@
 import json
 
-from lona.json import dumps
+from lona._json import dumps
 
 
 def decode_message(raw_message):

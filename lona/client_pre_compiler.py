@@ -4,8 +4,8 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 
-from lona.types import Symbol
-from lona.json import dumps
+from lona._types import Symbol
+from lona._json import dumps
 
 SOURCE_ROOT = os.path.join(os.path.dirname(__file__), 'client')
 

@@ -1,7 +1,7 @@
 import logging
 
 from lona.html.abstract_node import AbstractNode
-from lona.json import dumps
+from lona._json import dumps
 
 logger = logging.getLogger('lona.response_parser')
 

@@ -2,7 +2,7 @@ import threading
 import asyncio
 
 from lona.symbols import VIEW_RUNTIME_STATE
-from lona.types import Symbol
+from lona._types import Symbol
 
 
 class Client:
