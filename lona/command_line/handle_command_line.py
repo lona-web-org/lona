@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
 import logging
+import sys
 import os
 
 from jinja2 import Environment
@@ -24,10 +25,17 @@ def handle_command_line(argv):
         description=DESCRIPTION,
     )
 
-    sub_parsers = parser.add_subparsers(
-        dest='command',
-        required=True,
-    )
+    # the keyword 'required' is not available in python versions lower than 3.7
+    if sys.version_info < (3, 7):
+        sub_parsers = parser.add_subparsers(
+            dest='command',
+        )
+
+    else:
+        sub_parsers = parser.add_subparsers(
+            dest='command',
+            required=True,
+        )
 
     # run-server ##############################################################
     parser_run_server = sub_parsers.add_parser(
@@ -270,6 +278,10 @@ def handle_command_line(argv):
 
     # parse argv
     args = parser.parse_args(argv[1:])
+
+    # this can happen on python versions lower than 3.7
+    if not args.command:
+        exit('no sub command was given')
 
     def parse_overrides(raw_overrides):
         environment = Environment()
