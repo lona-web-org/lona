@@ -14,6 +14,7 @@ from lona.symbols import VIEW_RUNTIME_STATE
 from lona.imports import get_object_repr
 from lona.html.document import Document
 from lona.errors import ForbiddenError
+from lona._time import monotonic_ns
 from lona.request import Request
 
 from lona.protocol import (
@@ -76,7 +77,7 @@ class ViewRuntime:
         self.stop_reason = None
         self.is_daemon = False
 
-        self.view_runtime_id = str(time.monotonic_ns())
+        self.view_runtime_id = str(monotonic_ns())
         self.state = VIEW_RUNTIME_STATE.NOT_STARTED
         self.thread_ident = None
         self.thread_name = None

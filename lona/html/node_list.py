@@ -1,4 +1,4 @@
-from time import monotonic_ns
+from time import monotonic
 
 from lona.html.abstract_node import AbstractNode
 from lona.protocol import OPERATION, PATCH_TYPE
@@ -41,7 +41,7 @@ class NodeList:
             index = self._nodes.index(node)
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.INSERT,
@@ -59,7 +59,7 @@ class NodeList:
             index = self._nodes.index(node)
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.INSERT,
@@ -74,7 +74,7 @@ class NodeList:
             node._set_parent(None)
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.REMOVE,
@@ -88,7 +88,7 @@ class NodeList:
             node._set_parent(None)
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.REMOVE,
@@ -107,7 +107,7 @@ class NodeList:
                 self._nodes.remove(node)
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.CLEAR,
@@ -125,7 +125,7 @@ class NodeList:
             self._nodes[index] = node
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 PATCH_TYPE.NODES,
                 OPERATION.SET,
@@ -180,7 +180,7 @@ class NodeList:
                 self._nodes.append(node)
 
                 self._patches.append([
-                    monotonic_ns(),
+                    monotonic(),
                     self._node.id,
                     PATCH_TYPE.NODES,
                     OPERATION.RESET,

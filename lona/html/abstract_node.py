@@ -1,6 +1,5 @@
-import time
-
 from lona.html.selector import Selector
+from lona._time import monotonic_ns
 
 
 class DummyLock:
@@ -22,7 +21,7 @@ class AbstractNode:
     @property
     def id(self):
         if not hasattr(self, '_id'):
-            self._id = str(time.monotonic_ns())
+            self._id = str(monotonic_ns())
 
         return self._id
 

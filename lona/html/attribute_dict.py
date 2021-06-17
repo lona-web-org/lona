@@ -1,4 +1,4 @@
-from time import monotonic_ns
+from time import monotonic
 
 from lona.protocol import OPERATION, PATCH_TYPE
 
@@ -25,7 +25,7 @@ class AttributeDict:
             attribute = self._attributes.pop(name)
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.REMOVE,
@@ -41,7 +41,7 @@ class AttributeDict:
 
             self._attributes.clear()
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.CLEAR,
@@ -81,7 +81,7 @@ class AttributeDict:
             self._attributes[name] = value
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.SET,
@@ -94,7 +94,7 @@ class AttributeDict:
             del self._attributes[name]
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.REMOVE,
@@ -136,7 +136,7 @@ class AttributeDict:
             self._attributes = value
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._node.id,
                 self.PATCH_TYPE,
                 OPERATION.RESET,

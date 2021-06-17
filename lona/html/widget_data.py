@@ -1,4 +1,4 @@
-from time import monotonic_ns
+from time import monotonic
 from copy import deepcopy
 
 from lona.protocol import OPERATION, PATCH_TYPE
@@ -35,7 +35,7 @@ class ListOverlay:
             self._original_data.append(item)
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -49,7 +49,7 @@ class ListOverlay:
             self._original_data.clear()
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -82,7 +82,7 @@ class ListOverlay:
             self._original_data.insert(index, item)
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -96,7 +96,7 @@ class ListOverlay:
             item = self._original_data.pop(index)
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -113,7 +113,7 @@ class ListOverlay:
             for i in self._original_data:
                 if i == item:
                     self._widget_data._patches.append([
-                        monotonic_ns(),
+                        monotonic(),
                         self._widget.id,
                         PATCH_TYPE.WIDGET_DATA,
                         self._key_path,
@@ -139,7 +139,7 @@ class ListOverlay:
             self._original_data[name] = item
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -173,7 +173,7 @@ class ListOverlay:
             del self._original_data[name]
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -210,7 +210,7 @@ class DictOverlay:
             self._original_data.clear()
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -241,7 +241,7 @@ class DictOverlay:
             item = self._original_data.pop(key)
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -256,7 +256,7 @@ class DictOverlay:
             key, value = self._original_data.popitem()
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -275,7 +275,7 @@ class DictOverlay:
                 self._original_data[key] = value
 
                 self._widget_data._patches.append([
-                    monotonic_ns(),
+                    monotonic(),
                     self._widget.id,
                     PATCH_TYPE.WIDGET_DATA,
                     self._key_path,
@@ -296,7 +296,7 @@ class DictOverlay:
             self._original_data[name] = item
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -330,7 +330,7 @@ class DictOverlay:
             del self._original_data[name]
 
             self._widget_data._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 self._key_path,
@@ -407,7 +407,7 @@ class WidgetData:
             self._data = value
 
             self._patches.append([
-                monotonic_ns(),
+                monotonic(),
                 self._widget.id,
                 PATCH_TYPE.WIDGET_DATA,
                 [],
