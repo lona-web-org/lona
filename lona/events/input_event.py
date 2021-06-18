@@ -58,7 +58,7 @@ class InputEvent:
         if self.node is None:
             return name in self.id_list
 
-        if not isinstance(self.node, Widget):
+        if isinstance(self.node, Widget):
             if not hasattr(self.node, 'has_id'):
                 return False
 
@@ -68,7 +68,7 @@ class InputEvent:
         if self.node is None:
             return name in self.class_list
 
-        if not isinstance(self.node, Widget):
+        if isinstance(self.node, Widget):
             if not hasattr(self.node, 'has_class'):
                 return False
 
