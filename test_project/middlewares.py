@@ -1,4 +1,15 @@
+import logging
+
+logger = logging.getLogger('test_project')
+
+
 class CrashingMiddleware:
+    async def on_startup(self, data):
+        logger.debug('running startup hook')
+
+    async def on_shutdown(self, data):
+        logger.debug('running shutdown hook')
+
     def handle_connection(self, data):
         request = data.request
 

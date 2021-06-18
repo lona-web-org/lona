@@ -18,14 +18,6 @@ TEMPLATE_EXTRA_CONTEXT = {
     'extra_context_variable': 'bar',
 }
 
-STARTUP_HOOKS = [
-    'hooks.py::server_startup',
-]
-
-SHUTDOWN_HOOKS = [
-    'hooks.py::server_shutdown',
-]
-
 MIDDLEWARES = [
     'middlewares.py::CrashingMiddleware',
 ]

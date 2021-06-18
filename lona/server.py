@@ -134,10 +134,18 @@ class LonaServer:
         else:
             server_logger.warning('routing table is empty')
 
-        # setup websocket middleware controller
+        # setup middleware controller
         server_logger.debug('setup middleware controller')
 
         self.middleware_controller = MiddlewareController(self)
+
+        self._app.on_startup.append(
+            self.middleware_controller.run_on_startup,
+        )
+
+        self._app.on_shutdown.append(
+            self.middleware_controller.run_on_shutdown,
+        )
 
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')
@@ -183,44 +191,6 @@ class LonaServer:
         server_logger.debug('setup static file')
 
         self.static_file_loader = StaticFileLoader(self)
-
-        # setup startup hooks
-        server_logger.debug('setup startup hooks')
-
-        for hook in self.settings.STARTUP_HOOKS:
-            if isinstance(hook, str):
-                try:
-                    hook = self.acquire(hook)
-
-                except Exception:
-                    server_logger.error(
-                        "Exception occurred while importing startup hook '%s'",
-                        hook,
-                        exc_info=True,
-                    )
-
-                    continue
-
-            self._app.on_startup.append(hook)
-
-        # setup shutdown hooks
-        server_logger.debug('setup shutdown hooks')
-
-        for hook in self.settings.SHUTDOWN_HOOKS:
-            if isinstance(hook, str):
-                try:
-                    hook = self.acquire(hook)
-
-                except Exception:
-                    server_logger.error(
-                        "Exception occurred while importing shutdown hook '%s'",  # NOQA
-                        hook,
-                        exc_info=True,
-                    )
-
-                    continue
-
-            self._app.on_shutdown.append(hook)
 
         # finish
         server_logger.debug('setup finish')

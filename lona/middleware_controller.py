@@ -20,12 +20,15 @@ class MiddlewareData:
 
 
 class MiddlewareController:
-    HOOK_NAMES = [
-        'handle_connection',
-        'handle_websocket_message',
-        'handle_request',
-        'handle_message_bus_connection',
-        'handle_bus_message',
+    HOOKS = [
+        # contains: (HOOK_NAME, HOOK_IS_ASYNC, )
+        ('on_startup',                      True),
+        ('on_shutdown',                     True),
+        ('handle_connection',              False),
+        ('handle_websocket_message',       False),
+        ('handle_request',                 False),
+        ('handle_message_bus_connection',  False),
+        ('handle_bus_message',             False),
     ]
 
     def __init__(self, server):
@@ -69,13 +72,13 @@ class MiddlewareController:
         logger.debug('discover middleware hooks')
 
         self.hooks = {
-            hook_name: [] for hook_name in self.HOOK_NAMES
+            hook_name: [] for hook_name, _ in self.HOOKS
         }
 
         for middleware in self.middlewares:
             logger.debug('discovering %s', middleware)
 
-            for hook_name in self.HOOK_NAMES:
+            for hook_name, hook_is_async in self.HOOKS:
                 if not hasattr(middleware, hook_name):
                     continue
 
@@ -84,7 +87,7 @@ class MiddlewareController:
                 if not callable(hook):
                     continue
 
-                if asyncio.iscoroutinefunction(hook):
+                if not hook_is_async and asyncio.iscoroutinefunction(hook):
                     logger.error(
                         '%s.%s is a coroutine function',
                         middleware,
@@ -97,8 +100,8 @@ class MiddlewareController:
 
                 logger.debug('%s.%s discovered', middleware, hook_name)
 
-    def _run_middlewares(self, hook_name, data):
-        if hook_name not in self.HOOK_NAMES:
+    def _run_middlewares_sync(self, hook_name, data):
+        if hook_name not in self.hooks:
             raise NotImplementedError("unknown hook '{}'".format(hook_name))
 
         logger.debug(
@@ -144,6 +147,54 @@ class MiddlewareController:
 
         return False, data, None
 
+    async def _run_middlewares_async(self, hook_name, data):
+        if hook_name not in self.hooks:
+            raise NotImplementedError("unknown hook '{}'".format(hook_name))
+
+        logger.debug(
+            'running %s with %s',
+            hook_name,
+            repr(data),
+        )
+
+        for middleware, hook in self.hooks[hook_name]:
+            logger.debug(
+                'running %s.%s(%s)',
+                middleware,
+                hook_name,
+                repr(data),
+            )
+
+            try:
+                await hook(data)
+
+            except Exception:
+                logger.error(
+                    'Exception raised while running %s',
+                    repr(hook),
+                    exc_info=True,
+                )
+
+    async def run_on_startup(self, *args, **kwargs):
+        data = MiddlewareData(
+            server=self.server,
+        )
+
+        await self._run_middlewares_async(
+            'on_startup',
+            data,
+        )
+
+    async def run_on_shutdown(self, *args, **kwargs):
+        data = MiddlewareData(
+            server=self.server,
+        )
+
+        await self._run_middlewares_async(
+            'on_shutdown',
+            data,
+        )
+
     async def handle_connection(self, connection):
         data = MiddlewareData(
             server=self.server,
@@ -152,7 +203,7 @@ class MiddlewareController:
         )
 
         return await self.server.run_function_async(
-            self._run_middlewares,
+            self._run_middlewares_sync,
             'handle_connection',
             data,
         )
@@ -165,7 +216,7 @@ class MiddlewareController:
         )
 
         return await self.server.run_function_async(
-            self._run_middlewares,
+            self._run_middlewares_sync,
             'handle_websocket_message',
             data,
         )
@@ -178,7 +229,10 @@ class MiddlewareController:
             view=view,
         )
 
-        return self._run_middlewares('handle_request', data)
+        return self._run_middlewares_sync(
+            'handle_request',
+            data,
+        )
 
     async def handle_message_bus_connection(self, connection):
         data = MiddlewareData(
@@ -186,7 +240,7 @@ class MiddlewareController:
         )
 
         return await self.server.run_function_async(
-            self._run_middlewares,
+            self._run_middlewares_sync,
             'handle_message_bus_connection',
             data,
         )
@@ -198,4 +252,7 @@ class MiddlewareController:
             params=params,
         )
 
-        return self._run_middlewares('handle_bus_message', data)
+        return self._run_middlewares_sync(
+            'handle_bus_message',
+            data,
+        )

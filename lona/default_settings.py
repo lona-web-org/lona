@@ -61,10 +61,6 @@ CORE_MIDDLEWARES = [
 
 MIDDLEWARES = []
 
-# hooks
-STARTUP_HOOKS = []
-SHUTDOWN_HOOKS = []
-
 # shell
 CORE_COMMANDS = [
     'lona.shell.commands.lona_server_state.LonaServerStateCommand',
