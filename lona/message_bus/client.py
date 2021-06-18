@@ -51,6 +51,10 @@ class MessageBusClient:
     async def _receive_messages(self):
         self.session = ClientSession()
 
+        retries = 0
+        max_retries = 2
+        retry_timeout = 0.5
+
         while self._running:
             try:
                 logger.debug('connecting to %s', self.url)
@@ -58,6 +62,8 @@ class MessageBusClient:
                 self.websocket = await self.session.ws_connect(self.url)
 
                 logger.debug('connected')
+
+                retries = 0
 
                 async for message in self.websocket:
                     if message.type == WSMsgType.TEXT:
@@ -78,7 +84,16 @@ class MessageBusClient:
                 return
 
             except ClientConnectorError:
-                logger.error('ConnectionRefusedError: {}'.format(self.url))
+                retries += 1
+
+                if retries == max_retries:
+                    retries = 0
+
+                    logger.error('ConnectionRefusedError: {}'.format(self.url))
+
+                    await asyncio.sleep(retry_timeout)
+
+                    continue
 
             except Exception:
                 logger.error(
