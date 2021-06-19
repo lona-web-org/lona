@@ -1,4 +1,3 @@
-from itertools import chain
 from pprint import pformat
 import traceback
 import textwrap
@@ -26,15 +25,10 @@ class LonaViewsCommand:
         server = self.repl.locals['server']
         controller = server.view_runtime_controller
 
-        view_runtimes = chain(
-            controller.iter_multi_user_view_runtimes(),
-            controller.iter_single_user_view_runtimes(),
-        )
-
         view_runtime_ids = []
 
-        for view_runtime in view_runtimes:
-            view_runtime_ids.append(str(view_runtime.view_runtime_id))
+        for view_runtime in controller.iter_view_runtimes():
+            view_runtime_ids.append(view_runtime.view_runtime_id)
 
         view_runtime_ids = sorted(view_runtime_ids)
         candidates = []
@@ -174,7 +168,7 @@ class LonaViewsCommand:
 
         try:
             view_runtime = controller.get_view_runtime(
-                view_runtime_id=int(arguments['runtime-id']),
+                view_runtime_id=arguments['runtime-id'],
             )
 
         except Exception:
@@ -267,17 +261,12 @@ class LonaViewsCommand:
         server = self.repl.locals['server']
         controller = server.view_runtime_controller
 
-        view_runtimes = chain(
-            controller.iter_multi_user_view_runtimes(),
-            controller.iter_single_user_view_runtimes(),
-        )
-
         rows = [
             ['Runtime ID', 'Thread ID', 'Flags', 'User', 'Route ID',
              'URL', 'State'],
         ]
 
-        for view_runtime in view_runtimes:
+        for view_runtime in controller.iter_view_runtimes():
             # find route id
             route = view_runtime.route
 

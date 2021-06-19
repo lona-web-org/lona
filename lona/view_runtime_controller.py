@@ -5,116 +5,254 @@ from yarl import URL
 from lona.protocol import encode_http_redirect, METHOD
 from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
-from lona._types import Mapping
 
-logger = logging.getLogger('lona.view_runtime_controller')
 input_events_logger = logging.getLogger('lona.input_events')
+views_logger = logging.getLogger('lona.views')
 
 
 class ViewRuntimeController:
     def __init__(self, server):
         self.server = server
 
-        self.running_single_user_views = Mapping()
-        # contains: {
-        #     connection.user: [
-        #         view_runtime,
-        #     ]
-        # }
-
-        self.running_multi_user_views = Mapping()
-        # contains: {
-        #    route: view_runtime,
-        # }
+        self._view_runtimes = {
+            # contains: view_runtime_id: view_runtime
+        }
 
     def start(self):
-        return
+        pass
 
     def stop(self):
-        # running views per user
-        for user, view_runtimes in self.running_single_user_views.items():
-            for view_runtime in view_runtimes.copy():
-                view_runtime.stop(reason=ServerStop)
-
-        # multi user views
-        for route, view in self.running_multi_user_views.items():
-            view.stop(reason=ServerStop)
+        for view_runtime in self.iter_view_runtimes():
+            view_runtime.stop(reason=ServerStop)
 
     # helper ##################################################################
-    def iter_single_user_view_runtimes(self):
-        # this method is not thread safe
-        # only for debug purposes
-        # yields: view_runtime
+    def get_view_runtime(self, view_runtime_id):
+        try:
+            return self._view_runtimes[view_runtime_id]
 
-        running_single_user_views = self.running_single_user_views.copy()
+        except KeyError:
+            return None
 
-        for user, view_runtimes in running_single_user_views.items():
-            for view_runtime in view_runtimes.copy():
-                yield view_runtime
+    def get_running_view_runtime(self, user, route, match_info):
+        for view_runtime in self.iter_view_runtimes():
+            if(view_runtime.get_user() == user and
+               view_runtime.is_daemon and
+               view_runtime.route == route and
+               view_runtime.match_info == match_info):
 
-    def iter_multi_user_view_runtimes(self):
-        # this method is not thread safe
-        # only for debug purposes
-        # yields: view_runtime
+                return view_runtime
 
-        running_multi_user_views = self.running_multi_user_views.copy()
+    def remove_view_runtime(self, view_runtime):
+        try:
+            self._view_runtimes.pop(view_runtime.view_runtime_id)
 
-        for route, view_runtime in running_multi_user_views.items():
+        except KeyError:
+            pass
+
+    def iter_view_runtimes(self):
+        view_runtime_ids = list(self._view_runtimes.keys())
+
+        for view_runtime_id in view_runtime_ids:
+            view_runtime = self.get_view_runtime(view_runtime_id)
+
+            if not view_runtime:
+                continue
+
             yield view_runtime
 
-    def get_view_runtime(self, view_runtime_id):
-        # this method is not thread safe
-        # only for debug purposes
-        # yields: view_runtime
-
-        # multi user view runtimes
-        for view_runtime in self.iter_multi_user_view_runtimes():
-            if view_runtime.view_runtime_id == view_runtime_id:
-                return view_runtime
-
-        # single user view runtimes
-        for view_runtime in self.iter_single_user_view_runtimes():
-            if view_runtime.view_runtime_id == view_runtime_id:
-                return view_runtime
+    def remove_connection(self, connection, window_id=None):
+        for view_runtime in self.iter_view_runtimes():
+            view_runtime.remove_connection(
+                connection=connection,
+                window_id=window_id,
+            )
 
     def get_running_views_count(self, user):
-        if user not in self.running_single_user_views:
-            return 0
-
         count = 0
 
-        for view_runtime in self.running_single_user_views[user]:
-            if not view_runtime.frontend and not view_runtime.is_stopped:
+        for view_runtime in self.iter_view_runtimes():
+            if(view_runtime.start_connection and
+               view_runtime.start_connection.user == user):
+
                 count += 1
 
         return count
 
-    def view_is_already_running(self, request):
-        if request.user in self.running_single_user_views:
-            for view_runtime in self.running_single_user_views[request.user]:
-                if(view_runtime.route == request.route and
-                   view_runtime.match_info == request.match_info and
-                   view_runtime.is_daemon):
-
-                    return True
-
-        return False
-
-    # view management #########################################################
-    def remove_connection(self, connection, window_id=None):
-        for user, view_runtimes in self.running_single_user_views.items():
-            for view_runtime in view_runtimes:
-                view_runtime.remove_connection(connection, window_id=window_id)
-
-        for route, view in self.running_multi_user_views.items():
-            view.remove_connection(connection, window_id=window_id)
-
-    def remove_view_runtime(self, view_runtime):
-        user = view_runtime.start_connection.user
-
-        self.running_single_user_views[user].remove(view_runtime)
-
     # lona messages ###########################################################
+    def handle_input_event_message(self, connection, window_id,
+                                   view_runtime_id, method, payload):
+
+        view_runtime = self.get_view_runtime(view_runtime_id)
+
+        if not view_runtime:
+            input_events_logger.debug(
+                'event #%s: runtime id is unknown. event is skipped',
+                payload[0],
+            )
+
+            return
+
+        if connection.user not in view_runtime.get_user_list():
+            input_events_logger.debug(
+                'event #%s: connection.user is not authorized. event is skipped',  # NOQA
+                payload[0],
+            )
+
+            return
+
+        input_events_logger.debug(
+            'event #%s: gets handled by runtime #%s',
+            payload[0],
+            view_runtime_id,
+        )
+
+        view_runtime.handle_input_event(connection, payload)
+
+    def handle_view_message(self, connection, window_id, view_runtime_id,
+                            method, payload):
+
+        url, post_data = payload
+
+        # resolve url
+        url_object = URL(url)
+        match, route, match_info = self.server.router.resolve(url_object.path)
+
+        # route is not interactive; issue a http redirect
+        if(connection.is_interactive and
+           match and
+           (route.http_pass_through or not route.interactive)):
+
+            views_logger.debug('route is not interactive; issue a http redirect')  # NOQA
+
+            message = encode_http_redirect(
+                window_id=window_id,
+                view_runtime_id=None,
+                target_url=url,
+            )
+
+            connection.send_str(message)
+
+            views_logger.debug('message handled')
+
+            return
+
+        # reconnect to daemonized view runtime ################################
+        if connection.is_interactive:
+            views_logger.debug('removing old connections')
+
+            self.remove_connection(
+                connection,
+                window_id=window_id,
+            )
+
+            # search for a runnnig view runtime to reconnect to
+            views_logger.debug('searching for running view runtime')
+
+            running_view_runtime = self.get_running_view_runtime(
+                user=connection.user,
+                route=route,
+                match_info=match_info,
+            )
+
+            if running_view_runtime and not running_view_runtime.is_stopped:
+                views_logger.debug(
+                    'reconnecting to %s',
+                    repr(running_view_runtime),
+                )
+
+                running_view_runtime.reconnect_connection(
+                    connection=connection,
+                    window_id=window_id,
+                    url=url,
+                )
+
+                views_logger.debug('message handled')
+
+                return
+
+        # start new view runtime ##############################################
+        # remove previous running runtime
+        if connection.is_interactive and running_view_runtime:
+            views_logger.debug('removing previous runtime')
+
+            self.server.view_runtime_controller.remove_view_runtime(
+                view_runtime=running_view_runtime
+            )
+
+        # start nev runtime
+        views_logger.debug('trying to start a new view runtime')
+
+        frontend = False
+
+        if not connection.is_interactive and match and route.interactive:
+            frontend = True
+
+            views_logger.debug('running in frontend mode')
+
+        view_runtime = ViewRuntime(
+            server=self.server,
+            url=url,
+            route=route,
+            match_info=match_info,
+            post_data=post_data or {},
+            start_connection=connection,
+            frontend=frontend,
+        )
+
+        if connection.is_interactive:
+            view_runtime.add_connection(
+                connection=connection,
+                window_id=window_id,
+                url=url,
+            )
+
+        # run middlewares
+        response_dict = view_runtime.run_middlewares(
+            connection=connection,
+            window_id=window_id,
+            url=url,
+        )
+
+        # request got handled by a middleware
+        if response_dict:
+            views_logger.debug('connection was refused by middleware')
+
+            return response_dict
+
+        # check for 403 forbidden error
+        response_dict = view_runtime.run_user_enter(
+            connection=connection,
+            window_id=window_id,
+            url=url,
+        )
+
+        if response_dict:
+            views_logger.debug('connection was refused by view')
+
+            return response_dict
+
+        self._view_runtimes[view_runtime.view_runtime_id] = view_runtime
+
+        # start view runtime
+        views_logger.debug('starting new view runtime')
+
+        if connection.is_interactive:
+            # If the connection is interactive this method got called
+            # by the LonaMessageMiddleware and therefore run in the generic
+            # worker pool up this point.
+            # To release the worker we have to reschedule to the
+            # 'runtime_worker' pool.
+
+            self.server.run_function_async(
+                view_runtime.start,
+                excutor_name='runtime_worker',
+            )
+
+        else:
+            return view_runtime.start()
+
+        views_logger.debug('message handled')
+
     def handle_lona_message(self, connection, window_id, view_runtime_id,
                             method, payload):
 
@@ -126,140 +264,24 @@ class ViewRuntimeController:
 
         # views
         if method == METHOD.VIEW:
-            url, post_data = payload
+            views_logger.debug('view message decoded: %s', repr(payload))
 
-            url_object = URL(url)
-
-            # disconnect client window from previous view
-            self.remove_connection(connection, window_id)
-
-            # resolve url
-            match, route, match_info = self.server.router.resolve(
-                url_object.path)
-
-            # route is not interactive; issue a http redirect
-            if match and (route.http_pass_through or not route.interactive):
-                message = encode_http_redirect(
-                    window_id=window_id,
-                    view_runtime_id=None,
-                    target_url=url,
-                )
-
-                connection.send_str(message)
-
-                return
-
-            view_runtime = ViewRuntime(
-                server=self.server,
-                url=url,
-                route=route,
-                match_info=match_info,
-                post_data=post_data or {},
-                start_connection=connection,
-            )
-
-            view_runtime.add_connection(
+            self.handle_view_message(
                 connection=connection,
                 window_id=window_id,
-                url=url,
-            )
-
-            response_dict = view_runtime.run_middlewares(
-                connection=connection,
-                window_id=window_id,
-                url=url,
-            )
-
-            # request got handled by a middleware
-            if response_dict:
-                return
-
-            # check for 403 forbidden error
-            response_dict = view_runtime.run_user_enter(
-                connection=connection,
-                window_id=window_id,
-                url=url,
-            )
-
-            if response_dict:
-                return
-
-            # reconnect or close previous started single user views
-            # for this route
-            user = connection.user
-            running_view_runtime = None
-
-            if user in self.running_single_user_views:
-                for _view_runtime in self.running_single_user_views[user]:
-                    if(_view_runtime.route == route and
-                       _view_runtime.match_info == match_info and
-                       _view_runtime.is_daemon):
-
-                        running_view_runtime = _view_runtime
-
-                        break
-
-            if running_view_runtime:
-                if not running_view_runtime.is_stopped:
-                    running_view_runtime.reconnect_connection(
-                        connection=connection,
-                        window_id=window_id,
-                        url=url,
-                    )
-
-                    return
-
-                else:
-                    running_view_runtime.stop()
-
-            # connect to a multi user view
-            elif(route in self.running_multi_user_views):
-                self.running_multi_user_views[route].reconnect_connection(
-                    connection=connection,
-                    window_id=window_id,
-                    url=url,
-                )
-
-                return
-
-            # start view
-            if user not in self.running_single_user_views:
-                self.running_single_user_views[user] = []
-
-            self.running_single_user_views[user].append(view_runtime)
-
-            self.server.run_function_async(
-                view_runtime.start,
-                excutor_name='runtime_worker',
+                view_runtime_id=view_runtime_id,
+                method=method,
+                payload=payload,
             )
 
         # input events
         elif method == METHOD.INPUT_EVENT:
             input_events_logger.debug('event #%s: decoded', payload[0])
 
-            user = connection.user
-
-            if user not in self.running_single_user_views:
-                input_events_logger.debug(
-                    'event #%s: user is unknown. event is skipped',
-                    payload[0],
-                )
-
-                return
-
-            for view_runtime in self.running_single_user_views[user]:
-                if view_runtime.view_runtime_id == view_runtime_id:
-                    input_events_logger.debug(
-                        'event #%s: is handled by runtime #%s',
-                        payload[0],
-                        view_runtime_id,
-                    )
-
-                    view_runtime.handle_input_event(connection, payload)
-
-                    return
-
-            input_events_logger.debug(
-                'event #%s: runtime id is unknown. event is skipped',
-                payload[0],
+            self.handle_input_event_message(
+                connection=connection,
+                window_id=window_id,
+                view_runtime_id=view_runtime_id,
+                method=method,
+                payload=payload,
             )
