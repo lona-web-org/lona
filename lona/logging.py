@@ -155,6 +155,9 @@ def setup_logging(args, log_formatter=None, log_filter=None):
         if args.debug_mode == 'messages':
             log_filter.include('lona.server.websockets')
 
+        elif args.debug_mode == 'views':
+            log_filter.include('lona.views')
+
         elif args.debug_mode == 'input-events':
             log_filter.include('lona.input_events')
 

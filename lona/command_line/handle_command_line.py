@@ -58,7 +58,7 @@ def handle_command_line(argv):
 
     parser_run_server.add_argument(
         '--debug-mode',
-        choices=['messages', 'input-events'],
+        choices=['messages', 'views', 'input-events'],
     )
 
     # settings
@@ -140,7 +140,7 @@ def handle_command_line(argv):
 
     parser_message_broker.add_argument(
         '--debug-mode',
-        choices=['messages', 'input-events'],
+        choices=['messages', 'views', 'input-events'],
     )
 
     # settings
@@ -222,7 +222,7 @@ def handle_command_line(argv):
 
     parser_collect_static.add_argument(
         '--debug-mode',
-        choices=['messages', 'input-events'],
+        choices=['messages', 'views', 'input-events'],
     )
 
     # settings
