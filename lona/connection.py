@@ -20,14 +20,14 @@ class Connection:
     def user(self, value):
         self._user = value
 
-    def send_str(self, string, sync=True):
+    def send_str(self, string, wait=True):
         if not self.is_interactive:
             raise NotInteractiveError
 
         try:
-            return self.server.run(
+            return self.server.run_coroutine_sync(
                 self.websocket.send_str(string),
-                sync=sync,
+                wait=wait,
             )
 
         except ConnectionResetError:
