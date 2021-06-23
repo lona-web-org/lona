@@ -115,18 +115,31 @@ class LonaView:
             self._view_runtime.send_data(title=title)
 
     # messaging ###############################################################
-    def send_str(self, string, broadcast=False):
+    def send_str(self, string, broadcast=False,
+                 filter_connections=lambda connection: True, wait=True):
+
         self._assert_not_main_thread()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
 
-        if not broadcast:
-            self._request.connection.send_str(string, sync=True)
+        # broadcast
+        if broadcast:
+            for connection in self.server.websocket_connections.copy():
+                if not filter_connections(connection):
+                    continue
 
-            return
+                connection.send_str(string, wait=wait)
 
-        for connection in self._request._server.websocket_connections:
-            connection.send_str(string, sync=True)
+        # view local
+        else:
+            runtime = self._view_runtime
+
+            with runtime.document.lock:
+                for connection in list(runtime.connections.keys()):
+                    if not connection.is_interactive:
+                        continue
+
+                    connection.send_str(string, wait=wait)
 
     # input events ############################################################
     def _await_specific_input_event(self, *nodes, event_type='', html=None):
