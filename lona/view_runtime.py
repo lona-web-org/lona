@@ -98,12 +98,6 @@ class ViewRuntime:
             'submit': None,
         }
 
-        self.view_args = (self.request,)
-        self.view_kwargs = {}
-
-        if not self.frontend:
-            self.view_kwargs = dict(self.match_info or {})
-
     # state ###################################################################
     @property
     def state(self):
@@ -285,10 +279,7 @@ class ViewRuntime:
             # start view
             self.send_view_start()
 
-            raw_response_dict = self.view.handle_request(
-                *self.view_args,
-                **self.view_kwargs,
-            )
+            raw_response_dict = self.view.handle_request(self.request)
 
             # response dicts
             if raw_response_dict:
