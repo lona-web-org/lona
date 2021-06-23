@@ -266,47 +266,6 @@ class LonaServer:
             _function,
         )
 
-    def run(self, function_or_coroutine,
-            *args, sync=False, wait=True, **kwargs):
-
-        is_coroutine = asyncio.iscoroutine(function_or_coroutine)
-
-        is_coroutine_function = asyncio.iscoroutinefunction(
-            function_or_coroutine)
-
-        # coroutine
-        if is_coroutine or is_coroutine_function:
-            coroutine = function_or_coroutine
-
-            if is_coroutine_function:
-                coroutine = function_or_coroutine(*args, **kwargs)
-
-            # sync
-            if sync:
-                return self.run_coroutine_sync(coroutine, wait=wait)
-
-            # async
-            else:
-                return coroutine
-
-        # function
-        else:
-            function = function_or_coroutine
-
-            def _function():
-                return function(*args, **kwargs)
-
-            # sync
-            if sync:
-                if wait:
-                    return function(*args, **kwargs)
-
-                return self._loop.run_in_executor(self._executor, _function)
-
-            # async
-            else:
-                return self.run_function_async(function, *args, **kwargs)
-
     # path helper #############################################################
     def resolve_path(self, path):
         if path.startswith('/'):
