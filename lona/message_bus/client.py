@@ -141,11 +141,11 @@ class MessageBusClient:
 
         logger.debug('stop')
 
-    def send_str(self, string, sync=True):
+    def send_str(self, string, wait=True):
         try:
-            return self.server.run(
+            return self.server.run_coroutine_sync(
                 self.websocket.send_str(string),
-                sync=sync,
+                wait=wait,
             )
 
         except ConnectionResetError:
