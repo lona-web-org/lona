@@ -27,7 +27,6 @@ from lona.connection import Connection
 from lona.settings import Settings
 from lona.protocol import METHOD
 from lona.routing import Router
-from lona._types import Mapping
 
 DEFAULT_SETTINGS = os.path.join(
     os.path.dirname(__file__),
@@ -51,7 +50,6 @@ class LonaServer:
         self.port = port
 
         self.websocket_connections = []
-        self.user = Mapping()
         self._loop = None
         self._worker_pool = None
         self.hostname = os.uname().nodename
@@ -294,22 +292,11 @@ class LonaServer:
         if websocket is not None:
             self.websocket_connections.append(connection)
 
-            if connection.user not in self.user:
-                self.user[connection.user] = []
-
-            self.user[connection.user].append(connection)
-
         return connection, (handled, data, middleware)
 
     def _remove_connection(self, connection):
         if connection in self.websocket_connections:
             self.websocket_connections.remove(connection)
-
-        if connection.user in self.user:
-            self.user[connection.user].remove(connection)
-
-            if len(self.user[connection.user]) == 0:
-                self.user.pop(connection.user)
 
     # view helper #############################################################
     def _render_response(self, response_dict):
@@ -560,10 +547,13 @@ class LonaServer:
         return bool(view_runtime)
 
     def get_connection_count(self, user):
-        if user not in self.user:
-            return 0
+        count = 0
 
-        return len(self.user[user])
+        for connection in self.websocket_connections.copy():
+            if connection.user == user:
+                count += 1
+
+        return count
 
     def get_template(self, *args, **kwargs):
         return self.templating_engine.get_template(*args, **kwargs)
