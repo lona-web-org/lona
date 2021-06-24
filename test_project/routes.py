@@ -59,6 +59,14 @@ routes = [
     Route('/permissions/access-denied-in-handle-request/',
           'views/permissions/denied_in_handle_request.py::DenyAccess'),
 
+    Route('/permissions/access-denied-in-handle-user-enter/non-interactive/',
+          'views/permissions/denied_in_handle_user_enter.py::DenyAccess',
+          interactive=False),
+
+    Route('/permissions/access-denied-in-handle-request/non-interactive/',
+          'views/permissions/denied_in_handle_request.py::DenyAccess',
+          interactive=False),
+
     # error types
     Route('/error-types/interactive-500/',
           'views/error_types/interactive_500.py::InteractiveErrorView'),

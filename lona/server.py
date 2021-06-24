@@ -22,10 +22,10 @@ from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
 from lona.server_state import ServerState
-from lona.view_runtime import ViewRuntime
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
 from lona.settings import Settings
+from lona.protocol import METHOD
 from lona.routing import Router
 from lona._types import Mapping
 
@@ -449,8 +449,7 @@ class LonaServer:
         else:
             http_logger.debug('no route matched')
 
-        # http pass through
-        # FIXME: add support for handle_user_enter
+        # http pass through ###################################################
         if match and route.http_pass_through:
             http_logger.debug('http_pass_through mode')
 
@@ -461,6 +460,7 @@ class LonaServer:
                 view = view(
                     server=self,
                     view_runtime=None,
+                    request=http_request,
                 ).handle_request
 
             # run view
@@ -486,12 +486,13 @@ class LonaServer:
 
             return response
 
-        # websocket requests
+        # websocket requests ##################################################
         if(http_request.method == 'GET' and
            http_request.headers.get('upgrade', '').lower() == 'websocket'):
 
             return await self._handle_websocket_request(http_request)
 
+        # non interactive view or frontend ####################################
         # setup connection
         try:
             connection, middleware_data = await self._setup_connection(
@@ -515,39 +516,17 @@ class LonaServer:
 
             return Response(status=503, body='503: Service Unavailable')
 
-        # run non interactive view or frontend
-        if match and not route.interactive:
-            frontend = False
-
-            http_logger.debug('non-interactive mode')
-
-        else:
-            http_logger.debug('frontend mode')
-
-            frontend = True
-
-        view_runtime = ViewRuntime(
-            server=self,
-            url=http_request.path,
-            route=route,
-            match_info=match_info,
-            post_data=await http_request.post(),
-            frontend=frontend,
-            start_connection=connection,
-        )
+        post_data = await http_request.post()
 
         response_dict = await self.run_function_async(
-            view_runtime.run_middlewares,
+            self.view_runtime_controller.handle_view_message,
             connection=connection,
             window_id=None,
-            url=None,
+            view_runtime_id=None,
+            method=METHOD.VIEW,
+            payload=[http_request.path, post_data],
+            excutor_name='runtime_worker',
         )
-
-        if not response_dict:
-            response_dict = await self.run_function_async(
-                view_runtime.start,
-                excutor_name='runtime_worker',
-            )
 
         return self._render_response(response_dict)
 
