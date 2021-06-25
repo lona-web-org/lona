@@ -55,9 +55,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             event.preventDefault();
 
             try {
-                var element = event.target || event.srcElement;
-
-                lona_window.run_view(element.href);
+                lona_window.run_view(node.href);
 
             } catch(error) {
                 lona_window._crashed = true;
@@ -77,8 +75,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             event.preventDefault();
 
             try {
-                var node = event.target || event.srcElement;
-
                 var event_data = {
                     alt_key: event.altKey,
                     shift_key: event.shiftKey,
@@ -120,8 +116,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                     event.preventDefault();
 
                     try {
-                        var node = event.target || event.srcElement;
-
                         if(node.delay_timer !== undefined) {
                             clearTimeout(node.delay_timer);
                         }
@@ -155,7 +149,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             event.preventDefault();
 
             try {
-                var node = event.target || event.srcElement;
                 var value = input_event_handler._get_value(node);
 
                 input_event_handler.fire_input_event(
