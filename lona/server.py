@@ -498,8 +498,11 @@ class LonaServer:
 
         # connection got closed by middleware
         if handled:
-            if data:
-                return self._render_response(data)
+            if data is not None:
+                if isinstance(data, dict):
+                    return self._render_response(data)
+
+                return data
 
             return Response(status=503, body='503: Service Unavailable')
 
