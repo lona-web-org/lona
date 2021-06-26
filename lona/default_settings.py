@@ -38,6 +38,12 @@ CLIENT_RECOMPILE = False
 CLIENT_VIEW_START_TIMEOUT = 2
 CLIENT_INPUT_EVENT_TIMEOUT = 2
 
+# sessions
+SESSIONS = True
+SESSIONS_KEY_GENERATOR = 'lona.middlewares.sessions.generate_session_key'
+SESSIONS_KEY_NAME = 'sessionid'
+SESSIONS_KEY_RANDOM_LENGTH = 28
+
 # state
 SERVER_STATE_ATOMIC = True
 
