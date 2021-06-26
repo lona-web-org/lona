@@ -56,7 +56,7 @@ ERROR_500_VIEW = ''
 
 # middlewares
 CORE_MIDDLEWARES = [
-    'lona.middlewares.LonaMessageMiddleware',
+    'lona.middlewares.lona_messages.LonaMessageMiddleware',
 ]
 
 MIDDLEWARES = []
