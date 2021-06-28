@@ -3,7 +3,6 @@ import os
 MAX_WORKER_THREADS = 4
 MAX_STATIC_THREADS = 4
 MAX_RUNTIME_THREADS = 6
-MAX_APPLICATION_THREADS = 0
 
 # routing
 ROUTING_TABLE = 'lona.default_routes.routes'

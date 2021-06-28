@@ -15,7 +15,6 @@ class WorkerPool:
                 thread_name_prefix='LonaRuntimeWorker',
             ),
             'static_worker': None,
-            'application_worker': None,
         }
 
         if(self.settings.MAX_STATIC_THREADS and
@@ -24,12 +23,6 @@ class WorkerPool:
             self._executors['static_worker'] = ThreadPoolExecutor(
                 max_workers=self.settings.MAX_STATIC_THREADS,
                 thread_name_prefix='LonaStaticWorker',
-            )
-
-        if self.settings.MAX_APPLICATION_THREADS:
-            self._executors['application_worker'] = ThreadPoolExecutor(
-                max_workers=self.settings.MAX_APPLICATION_THREADS,
-                thread_name_prefix='LonaApplicationWorker',
             )
 
     def get_executor(self, name):
