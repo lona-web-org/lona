@@ -6,6 +6,7 @@ from lona.html import (
     TextInput,
     CheckBox,
     TextArea,
+    Button,
     Select,
     HTML,
     Div,
@@ -64,6 +65,9 @@ class DataBindingView(LonaView):
                 ),
                 Div(
                     pre,
+                    Button('Set texts', _id='set-texts'),
+                    Button('Daemonize', _id='daemonize'),
+                    Button('Stop', _id='stop'),
 
                     style={
                         'float': 'left',
@@ -74,14 +78,25 @@ class DataBindingView(LonaView):
         )
 
         while True:
-            self.await_input_event(html=html)
+            input_event = self.await_input_event(html=html)
 
-            pre.set_text(
-                pformat({
-                    'check_box': check_box.value,
-                    'text_input': text_input.value,
-                    'select': select.value,
-                    'select_multiple': select_multiple.value,
-                    'text_area': text_area.value,
-                })
-            )
+            if input_event.node_has_id('set-texts'):
+                text_input.value = 'test'
+                text_area.value = 'test'
+
+            elif input_event.node_has_id('daemonize'):
+                self.daemonize()
+
+            elif input_event.node_has_id('stop'):
+                return 'View Stopped'
+
+            else:
+                pre.set_text(
+                    pformat({
+                        'check_box': check_box.value,
+                        'text_input': text_input.value,
+                        'select': select.value,
+                        'select_multiple': select_multiple.value,
+                        'text_area': text_area.value,
+                    })
+                )
