@@ -118,10 +118,10 @@ class StaticFileLoader:
 
         # sort
         self.node_stylesheets = sorted(
-            self.node_stylesheets, key=lambda x: x.sort_order)
+            self.node_stylesheets, key=lambda x: x.sort_order.value)
 
         self.node_scripts = sorted(
-            self.node_scripts, key=lambda x: x.sort_order)
+            self.node_scripts, key=lambda x: x.sort_order.value)
 
         # enable or disable static files
         self.static_files = [

@@ -1,10 +1,10 @@
-from lona._types import Symbol
+from enum import Enum
 
 
-class SORT_ORDER(Symbol):
-    FRAMEWORK = Symbol('FRAMEWORK', 100)
-    LIBRARY = Symbol('LIBRARY', 200)
-    APPLICATION = Symbol('APPLICATION', 300)
+class SORT_ORDER(Enum):
+    FRAMEWORK = 100
+    LIBRARY = 200
+    APPLICATION = 300
 
 
 class StaticFile:
