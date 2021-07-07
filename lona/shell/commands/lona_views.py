@@ -8,7 +8,7 @@ from rlpython.utils.attribute_table import write_attribute_table
 from rlpython.utils.argument_parser import ReplArgumentParser
 from rlpython.utils.table import write_table
 
-from lona.symbols import VIEW_RUNTIME_STATE
+from lona.view_runtime import VIEW_RUNTIME_STATE
 
 
 class LonaViewsCommand:
@@ -194,7 +194,7 @@ class LonaViewsCommand:
             ['Daemon', repr(view_runtime.is_daemon)],
             ['Started at', str(view_runtime.started_at)],
             ['Stopped at', str(view_runtime.stopped_at or '-')],
-            ['State', view_runtime.state],
+            ['State', view_runtime.state.name],
         ]
 
         write_attribute_table(rows, self.repl.write)
@@ -243,8 +243,8 @@ class LonaViewsCommand:
             self._print_exception(view_runtime.stop_reason)
 
         # shortened stack
-        elif(view_runtime.state > 20 and
-             view_runtime.state < 30):
+        elif(view_runtime.state.value > 20 and
+             view_runtime.state.value < 30):
 
             self.repl.write('Shortened Stack\n')
             self.repl.write('===============\n')
@@ -300,7 +300,7 @@ class LonaViewsCommand:
                 repr(view_runtime.request.user),
                 route_id,
                 url,
-                view_runtime.state,
+                view_runtime.state.name,
             ])
 
         write_table(rows, self.repl.write)

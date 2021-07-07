@@ -1,5 +1,6 @@
 from concurrent.futures import CancelledError
 from datetime import datetime
+from enum import Enum
 import threading
 import logging
 import asyncio
@@ -10,7 +11,6 @@ from yarl import URL
 from lona.exceptions import StopReason, ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
-from lona.symbols import VIEW_RUNTIME_STATE
 from lona.imports import get_object_repr
 from lona.html.document import Document
 from lona.errors import ForbiddenError
@@ -29,6 +29,20 @@ from lona.protocol import (
 
 logger = logging.getLogger('lona.view_runtime')
 input_events_logger = logging.getLogger('lona.input_events')
+
+
+class VIEW_RUNTIME_STATE(Enum):
+    NOT_STARTED = 10
+
+    RUNNING = 21
+    WAITING_FOR_IOLOOP = 22
+    SLEEPING = 23
+    WAITING_FOR_INPUT = 24
+
+    FINISHED = 31
+    CRASHED = 32
+    STOPPED_BY_USER = 33
+    STOPPED_BY_SERVER = 34
 
 
 class ViewRuntime:

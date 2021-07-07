@@ -1,7 +1,7 @@
 import threading
 import asyncio
 
-from lona.symbols import VIEW_RUNTIME_STATE
+from lona.view_runtime import VIEW_RUNTIME_STATE
 
 
 class LonaView:
