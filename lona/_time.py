@@ -3,7 +3,7 @@ import sys
 
 
 def _monotonic_ns_fallback():
-    return int(str(time.monotonic()).replace('.', ''))
+    return int(time.monotonic()*1e9)
 
 
 if sys.version_info < (3, 7):
