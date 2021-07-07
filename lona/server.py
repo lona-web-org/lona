@@ -16,8 +16,6 @@ from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
 from lona.client_pre_compiler import ClientPreCompiler
 from lona.static_file_loader import StaticFileLoader
-from lona.message_bus.broker import MessageBusBroker
-from lona.message_bus.client import MessageBusClient
 from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
@@ -40,24 +38,15 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 class LonaServer:
     def __init__(self, app, project_root, settings_paths=[],
-                 settings_pre_overrides={}, settings_post_overrides={},
-                 message_broker_mode=False,
-                 host='', port=None):
+                 settings_pre_overrides={}, settings_post_overrides={}):
 
         self.project_root = os.path.abspath(project_root)
-        self.message_broker_mode = message_broker_mode
-        self.host = host
-        self.port = port
 
         self.websocket_connections = []
         self._loop = None
         self._worker_pool = None
-        self.hostname = os.uname().nodename
 
         server_logger.debug("starting server in '%s'", project_root)
-
-        if self.message_broker_mode:
-            server_logger.debug('running in message broker mode')
 
         # setup aiohttp app
         self._app = app
@@ -102,12 +91,6 @@ class LonaServer:
 
         self.templating_engine = TemplatingEngine(self)
 
-        # setup message bus
-        server_logger.debug('setup message bus')
-
-        self.message_bus_broker = MessageBusBroker(server=self)
-        self.message_bus_client = MessageBusClient(server=self)
-
         # setup server state
         server_logger.debug('setup server state')
 
@@ -148,23 +131,15 @@ class LonaServer:
         # setup aiohttp routes
         server_logger.debug('setup aiohttp routing')
 
-        if self.message_broker_mode or self.settings.MESSAGE_BROKER:
-            self._app.router.add_route(
-                '*',
-                self.settings.MESSAGE_BROKER_URL,
-                self.message_bus_broker.handle_http_request,
-            )
+        static_url = self.settings.STATIC_URL_PREFIX + '{path:.*}'
 
-        if not self.message_broker_mode:
-            static_url = self.settings.STATIC_URL_PREFIX + '{path:.*}'
+        server_logger.debug('static url set to %s', repr(static_url))
 
-            server_logger.debug('static url set to %s', repr(static_url))
+        self._app.router.add_route(
+            '*', static_url, self._handle_static_file_request)
 
-            self._app.router.add_route(
-                '*', static_url, self._handle_static_file_request)
-
-            self._app.router.add_route(
-                '*', '/{path_info:.*}', self._handle_http_request)
+        self._app.router.add_route(
+            '*', '/{path_info:.*}', self._handle_http_request)
 
         # setup view loader
         server_logger.debug('setup view loader')
@@ -228,14 +203,11 @@ class LonaServer:
                 server_logger.warning('%s is enabled', test_name)
 
         self.view_runtime_controller.start()
-        await self.message_bus_client.start()
 
     async def stop(self, *args, **kwargs):
         server_logger.debug('stop')
 
         await self.run_function_async(self.view_runtime_controller.stop)
-        await self.message_bus_broker.stop()
-        await self.message_bus_client.stop()
 
         for connection in self.websocket_connections.copy():
             try:

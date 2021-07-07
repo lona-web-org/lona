@@ -119,88 +119,6 @@ def handle_command_line(argv):
         default='',
     )
 
-    # run-message-broker ######################################################
-    parser_message_broker = sub_parsers.add_parser(
-        'run-message-broker',
-    )
-
-    # logging
-    parser_message_broker.add_argument(
-        '-l',
-        '--log-level',
-        choices=['debug', 'info', 'warn', 'error', 'critical'],
-        default='warn',
-    )
-
-    parser_message_broker.add_argument(
-        '--loggers',
-        type=str,
-        nargs='+',
-    )
-
-    parser_message_broker.add_argument(
-        '--debug-mode',
-        choices=['messages', 'views', 'input-events'],
-    )
-
-    # settings
-    parser_message_broker.add_argument(
-        '--project-root',
-        type=str,
-        default=os.getcwd(),
-    )
-
-    parser_message_broker.add_argument(
-        '-s',
-        '--settings',
-        nargs='+',
-        default=[],
-    )
-
-    parser_message_broker.add_argument(
-        '-o',
-        '--settings-pre-overrides',
-        nargs='+',
-        default=[],
-    )
-
-    parser_message_broker.add_argument(
-        '-O',
-        '--settings-post-overrides',
-        nargs='+',
-        default=[],
-    )
-
-    # custom
-    parser_message_broker.add_argument(
-        '--host',
-        type=str,
-        default='localhost',
-    )
-
-    parser_message_broker.add_argument(
-        '--port',
-        type=int,
-        default=8080,
-    )
-
-    parser_message_broker.add_argument(
-        '--shutdown-timeout',
-        type=float,
-        default=0.0,
-    )
-
-    parser_message_broker.add_argument(
-        '--shell',
-        action='store_true',
-    )
-
-    parser_message_broker.add_argument(
-        '--shell-server-url',
-        type=str,
-        default='',
-    )
-
     # collect-static ##########################################################
     parser_collect_static = sub_parsers.add_parser(
         'collect-static',
@@ -312,9 +230,6 @@ def handle_command_line(argv):
     # run
     if args.command == 'run-server':
         run_server(args)
-
-    elif args.command == 'run-message-broker':
-        run_server(args, message_broker_mode=True)
 
     elif args.command == 'collect-static':
         collect_static(args)

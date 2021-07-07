@@ -79,15 +79,6 @@ CORE_COMMANDS = [
 
 COMMANDS = []
 
-# messaging
-MESSAGE_BROKER = True
-MESSAGE_BROKER_URL = '/lona/messages'
-
-MESSAGE_CLIENT = True
-MESSAGE_CLIENT_URL = 'http://{{server.host}}:{{server.port}}{{settings.MESSAGE_BROKER_URL}}'  # NOQA
-MESSAGE_CLIENT_ISSUER = '{{server.hostname}}:{{server.port}}'
-MESSAGE_CLIENT_RETRY_INTERVAL = 5
-
 # testing
 TEST_VIEW_START_TIMEOUT = False
 TEST_INPUT_EVENT_TIMEOUT = False

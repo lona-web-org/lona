@@ -14,7 +14,7 @@ from lona.server import LonaServer
 logger = logging.getLogger('lona')
 
 
-def run_server(args, message_broker_mode=False):
+def run_server(args):
     loop = asyncio.get_event_loop()
 
     # setup logging
@@ -29,9 +29,6 @@ def run_server(args, message_broker_mode=False):
         settings_paths=args.settings,
         settings_pre_overrides=args.settings_pre_overrides,
         settings_post_overrides=args.settings_post_overrides,
-        host=args.host,
-        port=args.port,
-        message_broker_mode=message_broker_mode,
     )
 
     worker_pool = WorkerPool(

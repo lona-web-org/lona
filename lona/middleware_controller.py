@@ -27,8 +27,6 @@ class MiddlewareController:
         ('handle_connection',              False),
         ('handle_websocket_message',       False),
         ('handle_request',                 False),
-        ('handle_message_bus_connection',  False),
-        ('handle_bus_message',             False),
     ]
 
     def __init__(self, server):
@@ -231,28 +229,5 @@ class MiddlewareController:
 
         return self._run_middlewares_sync(
             'handle_request',
-            data,
-        )
-
-    async def handle_message_bus_connection(self, connection):
-        data = MiddlewareData(
-            connection=connection,
-        )
-
-        return await self.server.run_function_async(
-            self._run_middlewares_sync,
-            'handle_message_bus_connection',
-            data,
-        )
-
-    def handle_bus_message(self, issuer, topic, params):
-        data = MiddlewareData(
-            issuer=issuer,
-            topic=topic,
-            params=params,
-        )
-
-        return self._run_middlewares_sync(
-            'handle_bus_message',
             data,
         )
