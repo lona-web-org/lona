@@ -1,6 +1,3 @@
-from lona._types import Symbol
-
-
 class Request:
     def __init__(self, view_runtime, connection):
         self._view_runtime = view_runtime
@@ -16,7 +13,7 @@ class Request:
             self.GET = {}
             self.POST = {}
 
-        self.method = Symbol('POST' if self.POST else 'GET')
+        self.method = 'POST' if self.POST else 'GET'
 
     @property
     def user(self):
