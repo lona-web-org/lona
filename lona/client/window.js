@@ -104,8 +104,29 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                     _this._widgets[key].deconstruct();
                 };
 
+                // remove widget
                 delete _this._widgets[key];
+
+                // remove widget data
                 delete _this._widget_data[key];
+
+                // remove widget from _widgets_to_setup
+                if(_this._widgets_to_setup.indexOf(key) > -1) {
+                    _this._widgets_to_setup.splice(
+                     _this._widgets_to_setup.indexOf(key), 1);
+                };
+
+                // remove widget from _widgets_to_update_nodes
+                if(_this._widgets_to_update_nodes.indexOf(key) > -1) {
+                    _this._widgets_to_update_nodes.splice(
+                     _this._widgets_to_update_nodes.indexOf(key), 1);
+                };
+
+                // remove widget from _widgets_to_update_data
+                if(_this._widgets_to_update_data.indexOf(key) > -1) {
+                    _this._widgets_to_update_data.splice(
+                     _this._widgets_to_update_data.indexOf(key), 1);
+                };
             };
         });
     };
