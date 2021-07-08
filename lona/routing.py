@@ -1,14 +1,12 @@
 import logging
 import re
 
-from lona._types import Symbol
-
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
 ROUTE_PART_FORMAT_STRING = r'(?P<{}>{})'
 DEFAULT_PATTERN = r'[^/]+'
 OPTIONAL_TRAILING_SLASH_PATTERN = r'(/)?'
 
-MATCH_ALL = Symbol('MATCH_ALL', 1)
+MATCH_ALL = 1
 
 logger = logging.getLogger('lona.routing')
 
@@ -104,9 +102,14 @@ class Route:
         return True, match_object.groupdict()
 
     def __repr__(self):
+        raw_pattern = self.raw_pattern
+
+        if raw_pattern == MATCH_ALL:
+            raw_pattern = 'MATCH_ALL'
+
         return '<Route({}, {}, {})>'.format(
             self.method,
-            self.raw_pattern,
+            raw_pattern,
             self.view,
         )
 
