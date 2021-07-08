@@ -56,7 +56,7 @@ class ClientPreCompiler:
             template = self.jinja2_env.get_template('lona.js')
 
             template_context = {
-                'symbols': dumps(self.get_enums()),
+                'protocol': dumps(self.get_enums()),
                 'settings': dumps(self.get_settings()),
             }
 

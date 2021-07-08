@@ -19,11 +19,11 @@ Lona.LonaWidgetDataUpdater = function(lona_context, lona_window) {
         });
 
         // SET
-        if(operation == Lona.symbols.OPERATION.SET) {
+        if(operation == Lona.protocol.OPERATION.SET) {
             widget_data[data[0]] = data[1];
 
         // RESET
-        } else if(operation == Lona.symbols.OPERATION.RESET) {
+        } else if(operation == Lona.protocol.OPERATION.RESET) {
             if(parent_data === undefined) {
                 this.lona_window._widget_data[node_id] = data[0];
 
@@ -33,7 +33,7 @@ Lona.LonaWidgetDataUpdater = function(lona_context, lona_window) {
             };
 
         // CLEAR
-        } else if(operation == Lona.symbols.OPERATION.CLEAR) {
+        } else if(operation == Lona.protocol.OPERATION.CLEAR) {
             if(widget_data instanceof Array) {
                 var new_data = [];
 
@@ -51,11 +51,11 @@ Lona.LonaWidgetDataUpdater = function(lona_context, lona_window) {
             };
 
         // INSERT
-        } else if(operation == Lona.symbols.OPERATION.INSERT) {
+        } else if(operation == Lona.protocol.OPERATION.INSERT) {
             widget_data.splice(data[0], 0, data[1]);
 
         // REMOVE
-        } else if(operation == Lona.symbols.OPERATION.REMOVE) {
+        } else if(operation == Lona.protocol.OPERATION.REMOVE) {
             if(widget_data instanceof Array) {
                 widget_data.splice(data[0], 1);
 

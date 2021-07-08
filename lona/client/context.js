@@ -182,14 +182,14 @@ Lona.LonaContext = function(settings) {
         console.debug('lona rx <<', raw_message);
 
         // all lona messages start with 'lona:'
-        if(!raw_message.startsWith(Lona.symbols.PROTOCOL.MESSAGE_PREFIX)) {
+        if(!raw_message.startsWith(Lona.protocol.PROTOCOL.MESSAGE_PREFIX)) {
             return this.lona_context._run_message_handler(raw_message);
         };
 
         // parse json
         try {
             raw_message = raw_message.substring(
-                Lona.symbols.PROTOCOL.MESSAGE_PREFIX.length,
+                Lona.protocol.PROTOCOL.MESSAGE_PREFIX.length,
             );
 
             var json_data = JSON.parse(raw_message);

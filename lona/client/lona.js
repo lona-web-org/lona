@@ -24,7 +24,7 @@ SOFTWARE.
 
 var Lona = Object();
 
-Lona.symbols = JSON.parse('{{ symbols }}');
+Lona.protocol = JSON.parse('{{ protocol }}');
 Lona.settings = JSON.parse('{{ settings }}');
 Lona.widget_classes = {};
 

@@ -11,7 +11,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
         var node_type = node_spec[0];
 
         // Node
-        if(node_type == Lona.symbols.NODE_TYPE.NODE) {
+        if(node_type == Lona.protocol.NODE_TYPE.NODE) {
             var node_id = node_spec[1];
             var node_tag_name = node_spec[2];
             var node_id_list = node_spec[3];
@@ -73,7 +73,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
             node_list.push(node);
 
         // TextNode
-        } else if(node_type == Lona.symbols.NODE_TYPE.TEXT_NODE) {
+        } else if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {
             var node_id = node_spec[1];
             var node_content = node_spec[2];
 
@@ -83,7 +83,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
             node_list.push(node);
 
         // Widget
-        } else if(node_type == Lona.symbols.NODE_TYPE.WIDGET) {
+        } else if(node_type == Lona.protocol.NODE_TYPE.WIDGET) {
             var node_id = node_spec[1];
             var node_widget_class_name = node_spec[2];
             var node_child_nodes = node_spec[3];

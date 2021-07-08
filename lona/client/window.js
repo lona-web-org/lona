@@ -197,7 +197,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             var data = html[1];
 
             // HTML
-            if(message_type == Lona.symbols.DATA_TYPE.HTML) {
+            if(message_type == Lona.protocol.DATA_TYPE.HTML) {
                 var selector = 'a,form,[data-lona-events]';
 
                 _this._root.innerHTML = data;
@@ -208,7 +208,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 });
 
             // HTML tree
-            } else if(message_type == Lona.symbols.DATA_TYPE.HTML_TREE) {
+            } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
                 _this._clear_node_cache();
 
                 var node_list = _this._dom_renderer._render_node(data)
@@ -217,7 +217,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 _this._dom_updater._apply_node_list(_this._root, node_list);
 
             // HTML update
-            } else if(message_type == Lona.symbols.DATA_TYPE.HTML_UPDATE) {
+            } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {
                 var patches = data[0];
                 var patched_widgets = data[1];
 
@@ -228,7 +228,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 patches.forEach(function(patch) {
                     var patch_type = patch[1];
 
-                    if(patch_type == Lona.symbols.PATCH_TYPE.WIDGET_DATA) {
+                    if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
                         _this._widget_data_updater._apply_patch(patch);
 
                     } else {;
@@ -257,7 +257,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         var payload = message[3];
 
         // view start
-        if(method == Lona.symbols.METHOD.VIEW_START) {
+        if(method == Lona.protocol.METHOD.VIEW_START) {
             clearTimeout(this._view_start_timeout);
 
             this._view_runtime_id = view_runtime_id;
@@ -269,7 +269,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             return;
 
         // redirect
-        } else if(method == Lona.symbols.METHOD.REDIRECT) {
+        } else if(method == Lona.protocol.METHOD.REDIRECT) {
             // TODO: implement loop detection
 
             if(this.lona_context.settings.follow_redirects) {
@@ -282,7 +282,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             };
 
         // http redirect
-        } else if(method == Lona.symbols.METHOD.HTTP_REDIRECT) {
+        } else if(method == Lona.protocol.METHOD.HTTP_REDIRECT) {
             if(this.lona_context.settings.follow_http_redirects) {
                 window.location = payload;
 
@@ -304,7 +304,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
 
         // data
-        if(method == Lona.symbols.METHOD.DATA) {
+        if(method == Lona.protocol.METHOD.DATA) {
             var title = payload[0];
             var html = payload[1];
 
@@ -317,11 +317,11 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             };
 
         // input event acks
-        } else if(method == Lona.symbols.METHOD.INPUT_EVENT_ACK) {
+        } else if(method == Lona.protocol.METHOD.INPUT_EVENT_ACK) {
             this._input_event_handler.clear_timeout(payload);
 
         // view stop
-        } else if(method == Lona.symbols.METHOD.VIEW_STOP) {
+        } else if(method == Lona.protocol.METHOD.VIEW_STOP) {
             this._view_running = false;
 
         };
@@ -366,7 +366,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         var message = [
             this._window_id,
             this._view_runtime_id,
-            Lona.symbols.METHOD.VIEW,
+            Lona.protocol.METHOD.VIEW,
             [url, post_data],
         ];
 
@@ -383,7 +383,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
 
         // send message
-        message = (Lona.symbols.PROTOCOL.MESSAGE_PREFIX +
+        message = (Lona.protocol.PROTOCOL.MESSAGE_PREFIX +
                    JSON.stringify(message));
 
         this.lona_context.send(message);
