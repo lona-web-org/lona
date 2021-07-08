@@ -1,83 +1,79 @@
+from enum import Enum
 import json
 
-from lona._types import Symbol
 from lona._json import dumps
 
 NoneType = type(None)
 
 
-class PROTOCOL(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
-
-    MESSAGE_PREFIX = Symbol('MESSAGE_PREFIX', 'lona:')
+class PROTOCOL(Enum):
+    MESSAGE_PREFIX = 'lona:'
 
 
-class EXIT_CODE(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
-
-    SUCCESS = Symbol('SUCCESS', 0)
-    INVALID_MESSAGE = Symbol('INVALID_MESSAGE', 1)
-    INVALID_METHOD = Symbol('INVALID_METHOD', 2)
+class EXIT_CODE(Enum):
+    SUCCESS = 0
+    INVALID_MESSAGE = 1
+    INVALID_METHOD = 2
 
 
-class METHOD(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
-
-    VIEW = Symbol('VIEW', 101)
-    INPUT_EVENT = Symbol('INPUT_EVENT', 102)
-    INPUT_EVENT_ACK = Symbol('INPUT_EVENT_ACK', 201)
-    REDIRECT = Symbol('REDIRECT', 202)
-    HTTP_REDIRECT = Symbol('HTTP_REDIRECT', 203)
-    DATA = Symbol('DATA', 204)
-    VIEW_START = Symbol('VIEW_START', 205)
-    VIEW_STOP = Symbol('VIEW_STOP', 206)
+class METHOD(Enum):
+    VIEW = 101
+    INPUT_EVENT = 102
+    INPUT_EVENT_ACK = 201
+    REDIRECT = 202
+    HTTP_REDIRECT = 203
+    DATA = 204
+    VIEW_START = 205
+    VIEW_STOP = 206
 
 
-class INPUT_EVENT_TYPE(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
-
-    CLICK = Symbol('CLICK', 301)
-    CHANGE = Symbol('CHANGE', 302)
-    SUBMIT = Symbol('SUBMIT', 303)
-    CUSTOM = Symbol('CUSTOM', 304)
+class INPUT_EVENT_TYPE(Enum):
+    CLICK = 301
+    CHANGE = 302
+    SUBMIT = 303
+    CUSTOM = 304
 
 
-class NODE_TYPE(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
-
-    NODE = Symbol('NODE', 401)
-    TEXT_NODE = Symbol('TEXT_NODE', 402)
-    WIDGET = Symbol('WIDGET', 403)
+class NODE_TYPE(Enum):
+    NODE = 401
+    TEXT_NODE = 402
+    WIDGET = 403
 
 
-class DATA_TYPE(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
-
-    HTML = Symbol('HTML', 501)
-    HTML_TREE = Symbol('HTML_TREE', 502)
-    HTML_UPDATE = Symbol('HTML_UPDATE', 503)
+class DATA_TYPE(Enum):
+    HTML = 501
+    HTML_TREE = 502
+    HTML_UPDATE = 503
 
 
-class PATCH_TYPE(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
-
-    ID_LIST = Symbol('ID_LIST', 601)
-    CLASS_LIST = Symbol('CLASS_LIST', 602)
-    STYLE = Symbol('STYLE', 603)
-    ATTRIBUTES = Symbol('ATTRIBUTES', 604)
-    NODES = Symbol('NODES', 605)
-    WIDGET_DATA = Symbol('WIDGET_DATA', 606)
+class PATCH_TYPE(Enum):
+    ID_LIST = 601
+    CLASS_LIST = 602
+    STYLE = 603
+    ATTRIBUTES = 604
+    NODES = 605
+    WIDGET_DATA = 606
 
 
-class OPERATION(Symbol):
-    _INCLUDE_IN_FRONTEND_LIBRARY = True
+class OPERATION(Enum):
+    SET = 701
+    RESET = 702
+    ADD = 703
+    CLEAR = 704
+    INSERT = 705
+    REMOVE = 706
 
-    SET = Symbol('SET', 701)
-    RESET = Symbol('RESET', 702)
-    ADD = Symbol('ADD', 703)
-    CLEAR = Symbol('CLEAR', 704)
-    INSERT = Symbol('INSERT', 705)
-    REMOVE = Symbol('REMOVE', 706)
+
+ENUMS = [
+    PROTOCOL,
+    EXIT_CODE,
+    METHOD,
+    INPUT_EVENT_TYPE,
+    NODE_TYPE,
+    DATA_TYPE,
+    PATCH_TYPE,
+    OPERATION,
+]
 
 
 def decode_message(raw_message):
@@ -116,6 +112,13 @@ def decode_message(raw_message):
 
     window_id, view_runtime_id, method, payload = message
 
+    try:
+        method = METHOD(method)
+        message[2] = method
+
+    except ValueError:
+        return _invalid_message()
+
     # view
     if method == METHOD.VIEW:
         if not isinstance(payload[0], str):
@@ -134,7 +137,14 @@ def decode_message(raw_message):
             return _invalid_message()
 
         # event type
-        if not (isinstance(payload[1], str) or 304 > payload[1] > 300):
+        if isinstance(payload[1], int):
+            try:
+                payload[1] = INPUT_EVENT_TYPE(payload[1])
+
+            except ValueError:
+                return _invalid_message()
+
+        elif not isinstance(payload[1], str):
             return _invalid_message()
 
         return (EXIT_CODE.SUCCESS, *message)

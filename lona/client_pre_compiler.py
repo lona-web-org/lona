@@ -4,7 +4,7 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 
-from lona._types import Symbol
+from lona.protocol import ENUMS
 from lona._json import dumps
 
 SOURCE_ROOT = os.path.join(os.path.dirname(__file__), 'client')
@@ -35,6 +35,19 @@ class ClientPreCompiler:
             'INPUT_EVENT_TIMEOUT': settings.CLIENT_INPUT_EVENT_TIMEOUT,
         }
 
+    def get_enums(self):
+        enums = {}
+
+        for enum in ENUMS:
+            enum_values = {}
+
+            for enum_value in enum:
+                enum_values[enum_value.name] = enum_value.value
+
+            enums[enum.__name__] = enum_values
+
+        return enums
+
     def compile(self):
         logger.debug('pre compiling client')
 
@@ -43,7 +56,7 @@ class ClientPreCompiler:
             template = self.jinja2_env.get_template('lona.js')
 
             template_context = {
-                'symbols': dumps(Symbol.dump_symbol_classes()),
+                'symbols': dumps(self.get_enums()),
                 'settings': dumps(self.get_settings()),
             }
 

@@ -1,3 +1,4 @@
+from enum import Enum
 import json
 
 SEPARATORS = (',', ':')
@@ -5,6 +6,9 @@ SEPARATORS = (',', ':')
 
 def default(value):
     # this function does not use isinstance() to avoid import loops
+
+    if isinstance(value, Enum):
+        return value.value
 
     if value.__class__.__name__ == 'Symbol':
         return value.value
