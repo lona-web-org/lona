@@ -10,9 +10,6 @@ def default(value):
     if isinstance(value, Enum):
         return value.value
 
-    if value.__class__.__name__ == 'Symbol':
-        return value.value
-
     if value.__class__.__name__ == 'WidgetData':
         return value._data
 
