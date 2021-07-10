@@ -493,10 +493,6 @@ class LonaServer:
     def state(self):
         return self._state
 
-    @state.setter
-    def state(self, data):
-        self._state._reset(data)
-
     # helper ##################################################################
     def get_running_views_count(self, *args, **kwargs):
         return self.view_runtime_controller.get_running_views_count(

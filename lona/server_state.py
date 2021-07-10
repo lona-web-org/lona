@@ -71,7 +71,3 @@ class ServerState(Overlay):
     @property
     def lock(self):
         return self._lock
-
-    def _reset(self, data):
-        with self.lock:
-            self._data = data
