@@ -43,9 +43,6 @@ SESSIONS_KEY_GENERATOR = 'lona.middlewares.sessions.generate_session_key'
 SESSIONS_KEY_NAME = 'sessionid'
 SESSIONS_KEY_RANDOM_LENGTH = 28
 
-# state
-SERVER_STATE_ATOMIC = True
-
 # views
 CORE_FRONTEND_VIEW = 'lona.default_views.FrontendView'
 FRONTEND_VIEW = ''

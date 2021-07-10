@@ -94,11 +94,7 @@ class LonaServer:
         # setup server state
         server_logger.debug('setup server state')
 
-        if self.settings.SERVER_STATE_ATOMIC:
-            self._state = ServerState(initial_data={})
-
-        else:
-            self._state = {}
+        self._state = ServerState(initial_data={})
 
         # setup routing
         server_logger.debug('setup routing')
@@ -499,11 +495,7 @@ class LonaServer:
 
     @state.setter
     def state(self, data):
-        if self.settings.SERVER_STATE_ATOMIC:
-            self._state._reset(data)
-
-        else:
-            self._state = data
+        self._state._reset(data)
 
     # helper ##################################################################
     def get_running_views_count(self, *args, **kwargs):
