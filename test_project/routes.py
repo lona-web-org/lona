@@ -53,6 +53,13 @@ routes = [
           'views/response_types/http_redirect.py::HTTPRedirectView'),
 
     # permissions
+    Route('/permissions/access-denied-in-PermissionMiddleware/',
+          'views/permissions/denied_in_middleware.py::View'),
+
+    Route('/permissions/access-denied-in-PermissionMiddleware/non-interactive/',  # NOQA
+          'views/permissions/denied_in_middleware.py::View',
+          interactive=False),
+
     Route('/permissions/access-denied-in-handle-user-enter/',
           'views/permissions/denied_in_handle_user_enter.py::DenyAccess'),
 

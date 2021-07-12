@@ -20,6 +20,7 @@ TEMPLATE_EXTRA_CONTEXT = {
 
 MIDDLEWARES = [
     'middlewares.py::CrashingMiddleware',
+    'middlewares.py::PermissionMiddleware',
 ]
 
 ERROR_404_VIEW = 'views/error_404.py::Error404View'

@@ -1,5 +1,7 @@
 import logging
 
+from lona.errors import ForbiddenError
+
 logger = logging.getLogger('test_project')
 
 
@@ -23,6 +25,21 @@ class CrashingMiddleware:
 
         if request.url.path == '/crashes/handle-request/':
             raise ValueError('It worked! This should crash!')
+
+        return data
+
+
+class PermissionMiddleware:
+    def handle_request(self, data):
+        request = data.request
+
+        paths = (
+            '/permissions/access-denied-in-PermissionMiddleware/',
+            '/permissions/access-denied-in-PermissionMiddleware/non-interactive/',  # NOQA
+        )
+
+        if request.url.path in paths:
+            raise ForbiddenError
 
         return data
 

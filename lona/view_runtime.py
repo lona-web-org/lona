@@ -180,6 +180,38 @@ class ViewRuntime:
 
                 return response_dict
 
+        except ForbiddenError as exception:
+            self.send_view_start(
+                connections={
+                    connection: (window_id, url),
+                },
+            )
+
+            view_class = self.server.view_loader.load(
+                self.server.settings.CORE_ERROR_403_VIEW,
+            )
+
+            view = view_class(
+                server=self.server,
+                view_runtime=self,
+                request=self.request,
+            )
+
+            response_dict = self.handle_raw_response_dict(
+                view.handle_request(
+                    self.request,
+                    exception=exception,
+                ),
+            )
+
+            self.send_view_stop(
+                connections={
+                    connection: (window_id, url),
+                },
+            )
+
+            return response_dict
+
         except Exception as exception:
             logger.error(
                 'Exception raised while running middleware hooks',
