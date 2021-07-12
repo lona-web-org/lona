@@ -244,69 +244,6 @@ class ViewRuntime:
                 },
             )
 
-    # permission checks #######################################################
-    def run_user_enter(self, connection, window_id, url):
-        try:
-            try:
-                self.view.handle_user_enter(self.request)
-
-            except ForbiddenError as exception:
-                self.send_view_start(
-                    connections={
-                        connection: (window_id, url),
-                    },
-                )
-
-                view_class = self.server.view_loader.load(
-                    self.server.settings.CORE_ERROR_403_VIEW,
-                )
-
-                view = view_class(
-                    server=self.server,
-                    view_runtime=self,
-                    request=self.request,
-                )
-
-                response_dict = self.handle_raw_response_dict(
-                    view.handle_request(
-                        self.request,
-                        exception=exception,
-                    ),
-                )
-
-                self.send_view_stop(
-                    connections={
-                        connection: (window_id, url),
-                    },
-                )
-
-                return response_dict
-
-        except Exception as exception:
-            logger.error(
-                'Exception raised while running handle_user_enter',
-                exc_info=True,
-            )
-
-            self.send_view_start()
-
-            view_class = self.server.view_loader.load(
-                self.server.settings.ERROR_500_VIEW,
-            )
-
-            view = view_class(
-                server=self.server,
-                view_runtime=self,
-                request=self.request,
-            )
-
-            return self.handle_raw_response_dict(
-                view.handle_request(
-                    self.request,
-                    exception=exception,
-                )
-            )
-
     # start and stop ##########################################################
     def start(self):
         try:

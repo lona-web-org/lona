@@ -219,18 +219,6 @@ class ViewRuntimeController:
 
             return response_dict
 
-        # check for 403 forbidden error
-        response_dict = view_runtime.run_user_enter(
-            connection=connection,
-            window_id=window_id,
-            url=url,
-        )
-
-        if response_dict:
-            views_logger.debug('connection was refused by view')
-
-            return response_dict
-
         self._view_runtimes[view_runtime.view_runtime_id] = view_runtime
 
         # start view runtime

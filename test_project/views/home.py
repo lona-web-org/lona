@@ -42,9 +42,7 @@ class HomeView(LonaView):
             <ul>
                 <li><a href="/permissions/access-denied-in-PermissionMiddleware/">Access denied in Middleware.handle_request()</a></li>
                 <li><a href="/permissions/access-denied-in-PermissionMiddleware/non-interactive/">Access denied in Middleware.handle_request() (non interactive)</a></li>
-                <li><a href="/permissions/access-denied-in-handle-user-enter/">Access denied in handle_user_enter()</a></li>
                 <li><a href="/permissions/access-denied-in-handle-request/">Access denied in handle_request()</a></li>
-                <li><a href="/permissions/access-denied-in-handle-user-enter/non-interactive/">Access denied in handle_user_enter() (non interactive)</a></li>
                 <li><a href="/permissions/access-denied-in-handle-request/non-interactive/">Access denied in handle_request() (non interactive)</a></li>
             </ul>
 
