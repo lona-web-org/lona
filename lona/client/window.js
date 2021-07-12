@@ -30,6 +30,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._crashed = false;
     this._view_running = false;
     this._view_runtime_id = undefined;
+    this._url = '';
     this._nodes = {};
     this._widget_marker = {};
     this._widget_data = {};
@@ -263,6 +264,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             this._view_runtime_id = view_runtime_id;
             this._view_running = true;
 
+            if(this.lona_context.settings.update_address_bar) {
+                history.pushState({}, '', this._url);
+            };
+
             this._clear();
             this._clear_node_cache();
 
@@ -355,6 +360,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // reset state
         this._view_running = false;
         this._view_runtime_id = undefined;
+        this._url = url;
 
         // reset view start timeout
         if(this._view_start_timeout != undefined) {
@@ -369,11 +375,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             Lona.protocol.METHOD.VIEW,
             [url, post_data],
         ];
-
-        // update address_bar
-        if(this.lona_context.settings.update_address_bar) {
-            history.pushState({}, '', url);
-        };
 
         // update html title
         if(this.lona_context.settings.update_title &&
