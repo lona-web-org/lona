@@ -24,7 +24,7 @@ class DataBindingView(LonaView):
             values=[
                 ('', '---'),
                 ('option-a', 'Option A', True),
-                ('option-b', 'Option B', True),
+                ('option-b', 'Option B', False),
             ],
             bubble_up=True,
         )
@@ -32,7 +32,7 @@ class DataBindingView(LonaView):
         select_multiple = Select(
             values=[
                 ('option-a', 'Option A', True),
-                ('option-b', 'Option B', True),
+                ('option-b', 'Option B', False),
                 ('option-c', 'Option C'),
             ],
             bubble_up=True,
