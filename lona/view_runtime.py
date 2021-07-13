@@ -109,7 +109,6 @@ class ViewRuntime:
             'event': None,
             'click': None,
             'change': None,
-            'submit': None,
         }
 
     # state ###################################################################

@@ -45,7 +45,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         node.onclick = undefined;
         node.oninput = undefined;
         node.onchange = undefined;
-        node.onsubmit = undefined;
     };
 
     this._patch_link = function(node) {
@@ -204,38 +203,24 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                     };
                 };
 
-                if(lona_window._view_running) {
-                    input_event_handler.fire_input_event(
-                        undefined,
-                        node,
-                        Lona.protocol.INPUT_EVENT_TYPE.SUBMIT,
-                        form_data,
-                    );
+                var method = (this.method || 'get').toLowerCase();
+                var action = this.action || window.location.href;
 
-                } else {
-                    // "traditional" form submit
-                    // this is implemented by invoking Method.VIEW with
-                    // post_data set instead of an input event
+                if(method == 'get') {
+                    var url = new URL(action);
+                    var href = url.origin + url.pathname;
 
-                    var method = (this.method || 'get').toLowerCase();
-                    var action = this.action || window.location.href;
+                    var query = new URLSearchParams(form_data).toString();
 
-                    if(method == 'get') {
-                        var url = new URL(action);
-                        var href = url.origin + url.pathname;
-
-                        var query = new URLSearchParams(form_data).toString();
-
-                        if(query) {
-                            href += '?' + query;
-                        };
-
-                        lona_window.run_view(href);
-
-                    } else if(method == 'post') {
-                        lona_window.run_view(action, form_data);
-
+                    if(query) {
+                        href += '?' + query;
                     };
+
+                    lona_window.run_view(href);
+
+                } else if(method == 'post') {
+                    lona_window.run_view(action, form_data);
+
                 };
 
             } catch(error) {

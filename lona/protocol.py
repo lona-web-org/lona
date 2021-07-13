@@ -30,8 +30,7 @@ class METHOD(Enum):
 class INPUT_EVENT_TYPE(Enum):
     CLICK = 301
     CHANGE = 302
-    SUBMIT = 303
-    CUSTOM = 304
+    CUSTOM = 303
 
 
 class NODE_TYPE(Enum):

@@ -188,13 +188,6 @@ class LonaView:
             html=html,
         )
 
-    def await_submit(self, *nodes, html=None):
-        return self._await_specific_input_event(
-            *nodes,
-            event_type='submit',
-            html=html,
-        )
-
     # runtime #################################################################
     def sleep(self, *args, **kwargs):
         self._view_runtime.state = VIEW_RUNTIME_STATE.SLEEPING

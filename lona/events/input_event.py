@@ -36,12 +36,6 @@ class InputEvent:
             self.data = payload[2]
             self.node_info = payload[3:]
 
-        elif payload[1] == INPUT_EVENT_TYPE.SUBMIT:
-            self.type = INPUT_EVENT_TYPE.SUBMIT
-            self.name = 'submit'
-            self.data = payload[2]
-            self.node_info = payload[3:]
-
         # find node
         # node info contains a lona node id
         if self.node_info[0] or self.node_info[1]:
