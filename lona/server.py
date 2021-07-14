@@ -518,6 +518,21 @@ class LonaServer:
 
         return count
 
+    def get_connected_user_count(self):
+        user = []
+
+        def add_user(new_user):
+            for _user in user:
+                if new_user == _user:
+                    return
+
+            user.append(new_user)
+
+        for connection in self.websocket_connections.copy():
+            add_user(connection.user)
+
+        return len(user)
+
     def get_template(self, *args, **kwargs):
         return self.templating_engine.get_template(*args, **kwargs)
 
