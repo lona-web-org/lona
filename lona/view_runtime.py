@@ -617,13 +617,8 @@ class ViewRuntime:
             payload[0],
         )
 
-        request = Request(
-            view_runtime=self,
-            connection=connection,
-        )
-
         input_event = InputEvent(
-            request=request,
+            request=self.request,
             payload=payload,
             document=self.document,
             connection=connection,
