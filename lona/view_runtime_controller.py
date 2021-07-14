@@ -106,7 +106,11 @@ class ViewRuntimeController:
             view_runtime_id,
         )
 
-        view_runtime.handle_input_event(connection, payload)
+        view_runtime.handle_input_event(
+            connection=connection,
+            window_id=window_id,
+            payload=payload,
+        )
 
     def handle_view_message(self, connection, window_id, view_runtime_id,
                             method, payload):

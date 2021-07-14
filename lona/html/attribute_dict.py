@@ -62,7 +62,7 @@ class AttributeDict:
         with self._node.lock:
             return self._attributes[name]
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name, value, issuer=None):
         if not isinstance(value, (int, bool, float, str)):
             raise ValueError('unsupported type: {}'.format(type(value)))
 
@@ -87,6 +87,7 @@ class AttributeDict:
                     name,
                     value,
                 ],
+                issuer=issuer,
             )
 
     def __delitem__(self, name):

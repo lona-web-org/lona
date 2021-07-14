@@ -24,6 +24,7 @@ from lona.protocol import (
     encode_view_stop,
     encode_redirect,
     encode_data,
+    DATA_TYPE,
 )
 
 
@@ -483,7 +484,45 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
+    def _send_html_update(self, title, data, connections={}):
+        with self.document.lock:
+            connections = connections or self.connections
+
+            data_type, patches = data
+
+            for connection, (window_id, url) in connections.items():
+                if not connection.is_interactive:
+                    continue
+
+                # filter patches
+                _patches = []
+
+                for patch in patches:
+                    if(patch.issuer and
+                       patch.issuer == (connection, window_id)):
+
+                        continue
+
+                    _patches.append(patch.data)
+
+                # send message
+                message = encode_data(
+                    window_id=window_id,
+                    view_runtime_id=self.view_runtime_id,
+                    title=title,
+                    data=[data_type, _patches],
+                )
+
+                connection.send_str(message)
+
     def send_data(self, title=None, data=None, connections={}):
+        if data and data[0] == DATA_TYPE.HTML_UPDATE:
+            return self._send_html_update(
+                title=title,
+                data=data,
+                connections=connections,
+            )
+
         with self.document.lock:
             connections = connections or self.connections
 
@@ -571,7 +610,7 @@ class ViewRuntime:
 
         return self.server.run_coroutine_sync(_await_input_event())
 
-    def handle_input_event(self, connection, payload):
+    def handle_input_event(self, connection, window_id, payload):
         input_events_logger.debug(
             'runtime #%s: handling event #%s',
             self.view_runtime_id,
@@ -587,6 +626,8 @@ class ViewRuntime:
             request=request,
             payload=payload,
             document=self.document,
+            connection=connection,
+            window_id=window_id,
         )
 
         def send_html_patches():

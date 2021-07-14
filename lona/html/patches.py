@@ -1,5 +1,7 @@
 class Patch:
-    def __init__(self, node_id, patch_type, operation, payload):
+    def __init__(self, node_id, patch_type, operation, payload, issuer=None):
+        self.issuer = issuer
+
         self.data = [
             node_id,
             patch_type,
@@ -29,7 +31,7 @@ class PatchStack:
         patch_data = []
 
         for patch in self.patches:
-            patch_data.append(patch.data)
+            patch_data.append(patch)
 
         return patch_data
 

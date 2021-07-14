@@ -3,10 +3,12 @@ from lona.html import Widget
 
 
 class InputEvent:
-    def __init__(self, request, payload, document):
+    def __init__(self, request, payload, document, connection, window_id):
         self.request = request
         self.payload = payload
         self.document = document
+        self.connection = connection
+        self.window_id = window_id
 
         self.data = {}
         self.node = None
