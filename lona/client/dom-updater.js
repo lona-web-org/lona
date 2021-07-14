@@ -527,8 +527,6 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
             this._remove_node(data[0]);
 
         };
-
-       this.lona_window._widgets_to_update_nodes.push(node_id);
     };
 
     this._apply_patch = function(patch) {

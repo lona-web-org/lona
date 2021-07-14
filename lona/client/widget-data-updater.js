@@ -5,9 +5,11 @@ Lona.LonaWidgetDataUpdater = function(lona_context, lona_window) {
     this._apply_patch = function(patch) {
         var node_id = patch[0];
         var patch_type = patch[1];
-        var key_path = patch[2];
-        var operation = patch[3];
-        var data = patch.splice(4);
+        var operation = patch[2];
+        var payload = patch.splice(3);
+
+        var key_path = payload[0];
+        var data = payload.splice(1);
 
         // key path
         var parent_data = undefined;
@@ -65,6 +67,6 @@ Lona.LonaWidgetDataUpdater = function(lona_context, lona_window) {
             };
         };
 
-       this.lona_window._widgets_to_update_data.splice(0, 0, node_id);
+       this.lona_window._widgets_to_update.splice(0, 0, node_id);
     };
 };

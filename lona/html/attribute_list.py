@@ -1,5 +1,3 @@
-from time import monotonic
-
 from lona.protocol import OPERATION, PATCH_TYPE
 
 
@@ -9,7 +7,6 @@ class AttributeList:
     def __init__(self, node, *args, **kwargs):
         self._node = node
         self._attributes = list(*args, **kwargs)
-        self._patches = []
 
     # list helper #############################################################
     def add(self, attribute):
@@ -22,13 +19,14 @@ class AttributeList:
 
             self._attributes.append(attribute)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.ADD,
-                attribute,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.ADD,
+                payload=[
+                    attribute,
+                ],
+            )
 
     def remove(self, attribute):
         with self._node.lock:
@@ -37,13 +35,14 @@ class AttributeList:
 
             self._attributes.remove(attribute)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.REMOVE,
-                attribute,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    attribute,
+                ],
+            )
 
     def clear(self):
         with self._node.lock:
@@ -52,12 +51,12 @@ class AttributeList:
 
             self._attributes.clear()
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.CLEAR,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.CLEAR,
+                payload=[],
+            )
 
     def toggle(self, attribute):
         with self._node.lock:
@@ -116,22 +115,14 @@ class AttributeList:
         with self._node.lock:
             self._attributes = value
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.RESET,
-                list(value),
-            ])
-
-    def _has_patches(self):
-        return bool(self._patches)
-
-    def _get_patches(self):
-        return list(self._patches)
-
-    def _clear_patches(self):
-        return self._patches.clear()
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.RESET,
+                payload=[
+                    list(value),
+                ],
+            )
 
     def _serialize(self):
         return list(self._attributes)

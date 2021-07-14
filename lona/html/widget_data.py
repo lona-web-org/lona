@@ -1,4 +1,3 @@
-from time import monotonic
 from copy import deepcopy
 
 from lona.protocol import OPERATION, PATCH_TYPE
@@ -34,27 +33,29 @@ class ListOverlay:
         with self._widget.lock:
             self._original_data.append(item)
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.INSERT,
-                len(self._original_data) - 1,
-                deepcopy(item),
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.INSERT,
+                payload=[
+                    self._key_path,
+                    len(self._original_data) - 1,
+                    deepcopy(item),
+                ],
+            )
 
     def clear(self):
         with self._widget.lock:
             self._original_data.clear()
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.CLEAR,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.CLEAR,
+                payload=[
+                    self._key_path,
+                ],
+            )
 
     def copy(self, *args, **kwargs):
         with self._widget.lock:
@@ -81,28 +82,30 @@ class ListOverlay:
         with self._widget.lock:
             self._original_data.insert(index, item)
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.INSERT,
-                self._original_data.index(item),
-                deepcopy(item),
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.INSERT,
+                payload=[
+                    self._key_path,
+                    self._original_data.index(item),
+                    deepcopy(item),
+                ],
+            )
 
     def pop(self, index):
         with self._widget.lock:
             item = self._original_data.pop(index)
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.REMOVE,
-                index,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    self._key_path,
+                    index,
+                ],
+            )
 
             return item
 
@@ -112,14 +115,15 @@ class ListOverlay:
 
             for i in self._original_data:
                 if i == item:
-                    self._widget_data._patches.append([
-                        monotonic(),
-                        self._widget.id,
-                        PATCH_TYPE.WIDGET_DATA,
-                        self._key_path,
-                        OPERATION.REMOVE,
-                        index,
-                    ])
+                    self._widget.document.add_patch(
+                        node_id=self._widget.id,
+                        patch_type=PATCH_TYPE.WIDGET_DATA,
+                        operation=OPERATION.REMOVE,
+                        payload=[
+                            self._key_path,
+                            index,
+                        ],
+                    )
 
                 index += 1
 
@@ -138,15 +142,16 @@ class ListOverlay:
 
             self._original_data[name] = item
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.SET,
-                name,
-                item,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.SET,
+                payload=[
+                    self._key_path,
+                    name,
+                    item,
+                ],
+            )
 
     def __getitem__(self, name):
         with self._widget.lock:
@@ -172,14 +177,15 @@ class ListOverlay:
         with self._widget.lock:
             del self._original_data[name]
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.REMOVE,
-                name,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    self._key_path,
+                    name,
+                ],
+            )
 
     def __str__(self, *args, **kwargs):
         with self._widget.lock:
@@ -209,13 +215,14 @@ class DictOverlay:
         with self._widget.lock:
             self._original_data.clear()
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.CLEAR,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.CLEAR,
+                payload=[
+                    self._key_path,
+                ],
+            )
 
     def copy(self, *args, **kwargs):
         with self._widget.lock:
@@ -240,14 +247,15 @@ class DictOverlay:
         with self._widget.lock:
             item = self._original_data.pop(key)
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.REMOVE,
-                key,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    self._key_path,
+                    key,
+                ],
+            )
 
             return item
 
@@ -255,14 +263,15 @@ class DictOverlay:
         with self._widget.lock:
             key, value = self._original_data.popitem()
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.REMOVE,
-                key,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    self._key_path,
+                    key,
+                ],
+            )
 
             return key, value
 
@@ -274,15 +283,16 @@ class DictOverlay:
             for key, value in update_dict.items():
                 self._original_data[key] = value
 
-                self._widget_data._patches.append([
-                    monotonic(),
-                    self._widget.id,
-                    PATCH_TYPE.WIDGET_DATA,
-                    self._key_path,
-                    OPERATION.SET,
-                    key,
-                    value,
-                ])
+                self._widget.document.add_patch(
+                    node_id=self._widget.id,
+                    patch_type=PATCH_TYPE.WIDGET_DATA,
+                    operation=OPERATION.SET,
+                    payload=[
+                        self._key_path,
+                        key,
+                        value,
+                    ],
+                )
 
     def values(self, *args, **kwargs):
         with self._widget.lock:
@@ -295,15 +305,16 @@ class DictOverlay:
 
             self._original_data[name] = item
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.SET,
-                name,
-                item,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.SET,
+                payload=[
+                    self._key_path,
+                    name,
+                    item,
+                ],
+            )
 
     def __getitem__(self, name):
         with self._widget.lock:
@@ -329,14 +340,15 @@ class DictOverlay:
         with self._widget.lock:
             del self._original_data[name]
 
-            self._widget_data._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                self._key_path,
-                OPERATION.REMOVE,
-                name,
-            ])
+            self._widget.document.add_patch(
+                node_id=self._widget.id,
+                patch_type=PATCH_TYPE.WIDGET_DATA,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    self._key_path,
+                    name,
+                ],
+            )
 
     def __str__(self, *args, **kwargs):
         with self._widget.lock:
@@ -360,9 +372,8 @@ class WidgetData:
 
     def __init__(self, widget):
         self._widget = widget
-        self._patches = []
 
-        self._reset({})
+        self._reset({}, initial=True)
 
     def __getitem__(self, *args, **kwargs):
         return self._overlay.__getitem__(*args, **kwargs)
@@ -397,7 +408,7 @@ class WidgetData:
         ]
 
     # serialisation ###########################################################
-    def _reset(self, value):
+    def _reset(self, value, initial=False):
         if not isinstance(value, (dict, list)):
             raise ValueError('widget state has to be dict or list')
 
@@ -406,14 +417,16 @@ class WidgetData:
         with self._widget.lock:
             self._data = value
 
-            self._patches.append([
-                monotonic(),
-                self._widget.id,
-                PATCH_TYPE.WIDGET_DATA,
-                [],
-                OPERATION.RESET,
-                deepcopy(value)
-            ])
+            if not initial:
+                self._widget.document.add_patch(
+                    node_id=self._widget.id,
+                    patch_type=PATCH_TYPE.WIDGET_DATA,
+                    operation=OPERATION.RESET,
+                    payload=[
+                        [],
+                        deepcopy(value)
+                    ],
+                )
 
             if isinstance(value, list):
                 self._overlay = ListOverlay(
@@ -428,15 +441,6 @@ class WidgetData:
                     key_path=[],
                     original_data=self._data
                 )
-
-    def _has_patches(self):
-        return bool(self._patches)
-
-    def _get_patches(self):
-        return self._patches.copy()
-
-    def _clear_patches(self):
-        self._patches = []
 
     def _serialize(self):
         return deepcopy(self._data)

@@ -18,10 +18,6 @@ function CustomEventWidget(lona_window) {
 
         this._patch_buttons();
     };
-
-    this.nodes_updated = function() {
-        this._patch_buttons();
-    };
 };
 
 Lona.register_widget_class('custom_event', CustomEventWidget);

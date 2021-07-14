@@ -1,5 +1,3 @@
-from time import monotonic
-
 from lona.html.abstract_node import AbstractNode
 from lona.protocol import OPERATION, PATCH_TYPE
 from lona.html.text_node import TextNode
@@ -9,7 +7,6 @@ class NodeList:
     def __init__(self, node):
         self._node = node
         self._nodes = []
-        self._patches = []
 
     # list helper #############################################################
     def _check_node(self, node):
@@ -29,7 +26,6 @@ class NodeList:
             raise RuntimeError('loop detected')
 
         node._set_parent(self._node)
-        node._clear_patches()
 
     def insert(self, index, node):
         node = self._check_node(node)
@@ -40,14 +36,15 @@ class NodeList:
 
             index = self._nodes.index(node)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                PATCH_TYPE.NODES,
-                OPERATION.INSERT,
-                index,
-                node._serialize(),
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=PATCH_TYPE.NODES,
+                operation=OPERATION.INSERT,
+                payload=[
+                    index,
+                    node._serialize(),
+                ],
+            )
 
     def append(self, node):
         node = self._check_node(node)
@@ -58,14 +55,15 @@ class NodeList:
 
             index = self._nodes.index(node)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                PATCH_TYPE.NODES,
-                OPERATION.INSERT,
-                index,
-                node._serialize(),
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=PATCH_TYPE.NODES,
+                operation=OPERATION.INSERT,
+                payload=[
+                    index,
+                    node._serialize(),
+                ],
+            )
 
     def remove(self, node):
         with self._node.lock:
@@ -73,13 +71,14 @@ class NodeList:
 
             node._set_parent(None)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                PATCH_TYPE.NODES,
-                OPERATION.REMOVE,
-                node.id,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=PATCH_TYPE.NODES,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    node.id,
+                ],
+            )
 
     def pop(self, index):
         with self._node.lock:
@@ -87,13 +86,14 @@ class NodeList:
 
             node._set_parent(None)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                PATCH_TYPE.NODES,
-                OPERATION.REMOVE,
-                node.id,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=PATCH_TYPE.NODES,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    node.id,
+                ],
+            )
 
             return node
 
@@ -106,12 +106,12 @@ class NodeList:
                 node._set_parent(None)
                 self._nodes.remove(node)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                PATCH_TYPE.NODES,
-                OPERATION.CLEAR,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=PATCH_TYPE.NODES,
+                operation=OPERATION.CLEAR,
+                payload=[],
+            )
 
     def __getitem__(self, index):
         with self._node.lock:
@@ -124,14 +124,15 @@ class NodeList:
             self._prepare_node(node)
             self._nodes[index] = node
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                PATCH_TYPE.NODES,
-                OPERATION.SET,
-                index,
-                node._serialize(),
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=PATCH_TYPE.NODES,
+                operation=OPERATION.SET,
+                payload=[
+                    index,
+                    node._serialize(),
+                ],
+            )
 
     def __eq__(self, other):
         with self._node.lock:
@@ -179,25 +180,14 @@ class NodeList:
                 self._prepare_node(node)
                 self._nodes.append(node)
 
-                self._patches.append([
-                    monotonic(),
-                    self._node.id,
-                    PATCH_TYPE.NODES,
-                    OPERATION.RESET,
-                    [i._serialize() for i in self._nodes]
-                ])
-
-    def _has_patches(self):
-        return bool(self._patches)
-
-    def _get_patches(self):
-        return list(self._patches)
-
-    def _clear_patches(self):
-        for node in self._nodes:
-            node._clear_patches()
-
-        self._patches.clear()
+                self._node.document.add_patch(
+                    node_id=self._node.id,
+                    patch_type=PATCH_TYPE.NODES,
+                    operation=OPERATION.RESET,
+                    payload=[
+                        [i._serialize() for i in self._nodes],
+                    ],
+                )
 
     def _serialize(self):
         return [i._serialize() for i in self._nodes]

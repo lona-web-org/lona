@@ -46,19 +46,6 @@ class Widget(AbstractNode):
         self.parent.remove(self)
 
     # serialisation ###########################################################
-    def _has_patches(self):
-        return self.nodes._has_patches() or self.data._has_patches()
-
-    def _get_patches(self):
-        return [
-            *self.nodes._get_patches(),
-            *self.data._get_patches(),
-        ]
-
-    def _clear_patches(self):
-        self.nodes._clear_patches()
-        self.data._clear_patches()
-
     def _serialize(self):
         return [
             NODE_TYPE.WIDGET,

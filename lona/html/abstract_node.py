@@ -10,6 +10,15 @@ class DummyLock:
         pass
 
 
+class DummyDocument:
+    @property
+    def lock(self):
+        return DummyLock()
+
+    def add_patch(self, *args, **kwargs):
+        pass
+
+
 class AbstractNode:
     def __copy__(self, *args, **kwargs):
         raise RuntimeError('copy is not supported')
@@ -52,7 +61,12 @@ class AbstractNode:
     # document ################################################################
     @property
     def document(self):
-        return getattr(self.root, '_document', None)
+        _document = getattr(self.root, '_document', None)
+
+        if not _document:
+            return DummyDocument()
+
+        return _document
 
     def _set_document(self, document):
         if self.parent:

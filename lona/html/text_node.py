@@ -65,15 +65,6 @@ class TextNode(AbstractNode):
         return '<TextNode({})>'.format(repr(self._string))
 
     # serialisation ###########################################################
-    def _has_patches(self):
-        return False
-
-    def _get_patches(self):
-        return []
-
-    def _clear_patches(self):
-        pass
-
     def _serialize(self):
         return [NODE_TYPE.TEXT_NODE, self.id, self._string]
 

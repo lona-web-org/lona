@@ -1,6 +1,7 @@
 from threading import RLock
 
 from lona.html.abstract_node import AbstractNode
+from lona.html.patches import PatchStack
 from lona.html.widget import Widget
 from lona.protocol import DATA_TYPE
 from lona.html.node import Node
@@ -10,10 +11,14 @@ class Document:
     def __init__(self):
         self._lock = RLock()
         self.html = None
+        self._patch_stack = PatchStack()
 
     @property
     def lock(self):
         return self._lock
+
+    def add_patch(self, *args, **kwargs):
+        self._patch_stack.add_patch(*args, **kwargs)
 
     # html ####################################################################
     def get_node(self, node_id, widget_id=None):
@@ -53,71 +58,6 @@ class Document:
 
         return tuple(value)
 
-    def _has_patches(self):
-        def has_patches(node):
-            if node._has_patches():
-                return True
-
-            if hasattr(node, 'nodes'):
-                for sub_node in node.nodes:
-                    if has_patches(sub_node):
-                        return True
-
-            return False
-
-        return has_patches(self.html)
-
-    def _collect_patches(self):
-        patches = []
-        patched_widgets = []
-        widget_path = []
-
-        # find patches and patched widgets
-        def add_patches(node):
-            node_is_widget = isinstance(node, Widget)
-
-            if node_is_widget:
-                widget_path.append(node.id)
-
-            # patched widgets
-            if node_is_widget:
-                if node.nodes._has_patches():
-                    patched_widgets.extend(widget_path)
-
-            elif node._has_patches():
-                patched_widgets.extend(widget_path)
-
-            # patches
-            if node._has_patches():
-                patches.extend(node._get_patches())
-
-            if hasattr(node, 'nodes'):
-                for sub_node in node.nodes:
-                    add_patches(sub_node)
-
-            if node_is_widget:
-                widget_path.remove(node.id)
-
-        add_patches(self.html)
-
-        # sort patches by timestamp
-        patches = sorted(patches, key=lambda x: x[0])
-
-        # remove timestamps
-        cleaned_patches = []
-
-        for patch in patches:
-            cleaned_patches.append(patch[1:])
-
-        # clean list of patched widgets
-        cleaned_patched_widgets = []
-
-        for widget_id in patched_widgets[::-1]:
-            if widget_id not in cleaned_patched_widgets:
-                cleaned_patched_widgets.append(widget_id)
-
-        return [cleaned_patches, cleaned_patched_widgets]
-
     def serialize(self):
         if not self.html:
             return self.apply('')
@@ -130,16 +70,18 @@ class Document:
 
         # HTML update
         elif html is self.html:
-            if not self._has_patches():
+            if not self._patch_stack.has_patches():
                 return
 
-            patches = self._collect_patches()
-            self.html._clear_patches()
+            patches = self._patch_stack.get_patches()
+            self._patch_stack.clear()
 
             return DATA_TYPE.HTML_UPDATE, patches
 
         # HTML
         else:
+            self._patch_stack.clear()
+
             if isinstance(self.html, AbstractNode):
                 self.html._set_document(None)
 
@@ -148,7 +90,6 @@ class Document:
                 self.html = html
 
                 self.html._set_document(self)
-                self.html._clear_patches()
 
                 return self.serialize()
 

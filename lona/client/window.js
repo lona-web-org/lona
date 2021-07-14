@@ -36,8 +36,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._widget_data = {};
     this._widgets = {};
     this._widgets_to_setup = [];
-    this._widgets_to_update_nodes = [];
-    this._widgets_to_update_data = [];
+    this._widgets_to_update = [];
 
     // error management -------------------------------------------------------
     this._print_error = function(error) {
@@ -70,8 +69,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this._widget_marker = {};
         this._widget_data = {};
         this._widgets_to_setup = [];
-        this._widgets_to_update_nodes = [];
-        this._widgets_to_update_data = [];
+        this._widgets_to_update = [];
     };
 
     this._clean_node_cache = function() {
@@ -117,16 +115,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                      _this._widgets_to_setup.indexOf(key), 1);
                 };
 
-                // remove widget from _widgets_to_update_nodes
-                if(_this._widgets_to_update_nodes.indexOf(key) > -1) {
-                    _this._widgets_to_update_nodes.splice(
-                     _this._widgets_to_update_nodes.indexOf(key), 1);
-                };
-
-                // remove widget from _widgets_to_update_data
-                if(_this._widgets_to_update_data.indexOf(key) > -1) {
-                    _this._widgets_to_update_data.splice(
-                     _this._widgets_to_update_data.indexOf(key), 1);
+                // remove widget from _widgets_to_update
+                if(_this._widgets_to_update.indexOf(key) > -1) {
+                    _this._widgets_to_update.splice(
+                     _this._widgets_to_update.indexOf(key), 1);
                 };
             };
         });
@@ -154,23 +146,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             };
         });
 
-        // nodes_updated
-        _this._widgets_to_update_nodes.forEach(function(node_id) {
-            var widget = _this._widgets[node_id];
-
-            if(widget === undefined) {
-                return;
-            };
-
-            widget.nodes = _this._dom_updater._get_widget_nodes(node_id);
-
-            if(widget.nodes_updated !== undefined) {
-                widget.nodes_updated();
-            };
-        });
-
         // data_updated
-        _this._widgets_to_update_data.forEach(function(node_id) {
+        _this._widgets_to_update.forEach(function(node_id) {
             var widget = _this._widgets[node_id];
             var widget_data = _this._widget_data[node_id];
 
@@ -186,8 +163,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         });
 
         _this._widgets_to_setup = [];
-        _this._widgets_to_update_nodes = [];
-        _this._widgets_to_update_data = [];
+        _this._widgets_to_update = [];
     };
 
     this._show_html = function(html) {
@@ -219,14 +195,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
             // HTML update
             } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {
-                var patches = data[0];
-                var patched_widgets = data[1];
-
                 _this._widgets_to_setup = [];
-                _this._widgets_to_update_nodes = patched_widgets;
-                _this._widgets_to_update_data = [];
+                _this._widgets_to_update = [];
 
-                patches.forEach(function(patch) {
+                data.forEach(function(patch) {
                     var patch_type = patch[1];
 
                     if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {

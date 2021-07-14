@@ -1,5 +1,3 @@
-from time import monotonic
-
 from lona.protocol import OPERATION, PATCH_TYPE
 
 
@@ -9,7 +7,6 @@ class AttributeDict:
     def __init__(self, node, *args, **kwargs):
         self._node = node
         self._attributes = dict(*args, **kwargs)
-        self._patches = []
 
     # dict helper #############################################################
     def keys(self):
@@ -24,13 +21,14 @@ class AttributeDict:
         with self._node.lock:
             attribute = self._attributes.pop(name)
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.REMOVE,
-                name,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    name,
+                ],
+            )
 
             return attribute
 
@@ -40,12 +38,13 @@ class AttributeDict:
                 return
 
             self._attributes.clear()
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.CLEAR,
-            ])
+
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.CLEAR,
+                payload=[],
+            )
 
     def get(self, *args, **kwargs):
         with self._node.lock:
@@ -80,26 +79,28 @@ class AttributeDict:
 
             self._attributes[name] = value
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.SET,
-                name,
-                value,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.SET,
+                payload=[
+                    name,
+                    value,
+                ],
+            )
 
     def __delitem__(self, name):
         with self._node.lock:
             del self._attributes[name]
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.REMOVE,
-                name,
-            ])
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    name,
+                ],
+            )
 
     def __eq__(self, other):
         with self._node.lock:
@@ -135,22 +136,14 @@ class AttributeDict:
         with self._node.lock:
             self._attributes = value
 
-            self._patches.append([
-                monotonic(),
-                self._node.id,
-                self.PATCH_TYPE,
-                OPERATION.RESET,
-                dict(value),
-            ])
-
-    def _has_patches(self):
-        return bool(self._patches)
-
-    def _get_patches(self):
-        return list(self._patches)
-
-    def _clear_patches(self):
-        return self._patches.clear()
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.RESET,
+                payload=[
+                    dict(value),
+                ],
+            )
 
     def _serialize(self):
         return dict(self._attributes)
