@@ -135,20 +135,6 @@ class ViewRuntime:
     def state(self, new_state):
         self._state = new_state
 
-    # user ####################################################################
-    def get_user(self):
-        return self.start_connection.user
-
-    def get_user_list(self):
-        user_list = []
-        connections = list(self.connections.keys())
-
-        for connection in connections:
-            if connection.user not in user_list:
-                user_list.append(connection.user)
-
-        return user_list
-
     # middlewares #############################################################
     def run_middlewares(self, connection, window_id, url):
         try:
