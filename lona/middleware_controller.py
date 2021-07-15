@@ -59,6 +59,8 @@ class MiddlewareController:
                 logger.error(
                     'Exception raised while loading %s', i, exc_info=True)
 
+                continue
+
             try:
                 self.middlewares.append(middleware_class())
 
