@@ -6,8 +6,9 @@ class Overlay:
         self._server_state = server_state
         self._data = data
 
+    @property
     def lock(self):
-        return self._server_state._lock_manager.lock
+        return self._server_state.lock
 
     def __getattribute__(self, name):
         if name.startswith('_') or name == 'lock':
