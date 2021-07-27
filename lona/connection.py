@@ -9,7 +9,7 @@ class Connection:
         self.websocket = websocket
 
     @property
-    def is_interactive(self):
+    def interactive(self):
         return self.websocket is not None
 
     @property
@@ -21,7 +21,7 @@ class Connection:
         self._user = value
 
     def send_str(self, string, wait=True):
-        if not self.is_interactive:
+        if not self.interactive:
             raise NotInteractiveError
 
         try:
@@ -37,7 +37,7 @@ class Connection:
             pass
 
     async def close(self):
-        if not self.is_interactive:
+        if not self.interactive:
             raise NotInteractiveError
 
         await self.websocket.close()

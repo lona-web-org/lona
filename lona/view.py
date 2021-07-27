@@ -175,7 +175,7 @@ class LonaView:
 
             with runtime.document.lock:
                 for connection in list(runtime.connections.keys()):
-                    if not connection.is_interactive:
+                    if not connection.interactive:
                         continue
 
                     connection.send_str(string, wait=wait)

@@ -447,7 +447,7 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
-                if not connection.is_interactive:
+                if not connection.interactive:
                     continue
 
                 message = encode_redirect(
@@ -463,7 +463,7 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
-                if not connection.is_interactive:
+                if not connection.interactive:
                     continue
 
                 message = encode_http_redirect(
@@ -481,7 +481,7 @@ class ViewRuntime:
             data_type, patches = data
 
             for connection, (window_id, url) in connections.items():
-                if not connection.is_interactive:
+                if not connection.interactive:
                     continue
 
                 # filter patches
@@ -518,7 +518,7 @@ class ViewRuntime:
 
             # send message
             for connection, (window_id, url) in connections.items():
-                if not connection.is_interactive:
+                if not connection.interactive:
                     continue
 
                 message = encode_data(
@@ -535,7 +535,7 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
-                if not connection.is_interactive:
+                if not connection.interactive:
                     continue
 
                 message = encode_view_start(
@@ -550,7 +550,7 @@ class ViewRuntime:
             connections = connections or self.connections
 
             for connection, (window_id, url) in connections.items():
-                if not connection.is_interactive:
+                if not connection.interactive:
                     continue
 
                 message = encode_view_stop(

@@ -68,7 +68,7 @@ class LonaSessionMiddleware:
 
             return data
 
-        if(not data.connection.is_interactive and
+        if(not data.connection.interactive and
            not get_session_key()):
 
             response = Response(

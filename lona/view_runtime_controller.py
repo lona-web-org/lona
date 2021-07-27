@@ -124,7 +124,7 @@ class ViewRuntimeController:
         match, route, match_info = self.server.router.resolve(url_object.path)
 
         # route is not interactive; issue a http redirect
-        if(connection.is_interactive and
+        if(connection.interactive and
            match and
            (route.http_pass_through or not route.interactive)):
 
@@ -143,7 +143,7 @@ class ViewRuntimeController:
             return
 
         # reconnect to daemonized view runtime ################################
-        if connection.is_interactive:
+        if connection.interactive:
             views_logger.debug('removing old connections')
 
             self.remove_connection(
@@ -178,7 +178,7 @@ class ViewRuntimeController:
 
         # start new view runtime ##############################################
         # remove previous running runtime
-        if connection.is_interactive and running_view_runtime:
+        if connection.interactive and running_view_runtime:
             views_logger.debug('removing previous runtime')
 
             self.server.view_runtime_controller.remove_view_runtime(
@@ -190,7 +190,7 @@ class ViewRuntimeController:
 
         frontend = False
 
-        if not connection.is_interactive and match and route.interactive:
+        if not connection.interactive and match and route.interactive:
             frontend = True
 
             views_logger.debug('running in frontend mode')
@@ -205,7 +205,7 @@ class ViewRuntimeController:
             frontend=frontend,
         )
 
-        if connection.is_interactive:
+        if connection.interactive:
             view_runtime.add_connection(
                 connection=connection,
                 window_id=window_id,
@@ -230,7 +230,7 @@ class ViewRuntimeController:
         # start view runtime
         views_logger.debug('starting new view runtime')
 
-        if connection.is_interactive:
+        if connection.interactive:
             # If the connection is interactive this method got called
             # by the LonaMessageMiddleware and therefore run in the generic
             # worker pool up this point.
