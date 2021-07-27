@@ -1,3 +1,5 @@
+from functools import reduce
+import operator
 import asyncio
 import logging
 import inspect
@@ -541,6 +543,26 @@ class LonaServer:
 
     def render_template(self, *args, **kwargs):
         return self.templating_engine.render_template(*args, **kwargs)
+
+    def get_view_class(self, route=None, import_string=None, url=None):
+        args = [bool(route), bool(import_string), bool(url)]
+
+        if reduce(operator.xor, args, True):
+            raise ValueError('too many or too few arguments given')
+
+        if route:
+            return self.view_loader.load(route.view)
+
+        if import_string:
+            return self.view_loader.load(import_string)
+
+        if url:
+            success, route, match_info = self.router.resolve(url)
+
+            if not success:
+                return None
+
+            return self.view_loader.load(route.view)
 
     def reverse(self, *args, **kwargs):
         return self.router.reverse(*args, **kwargs)
