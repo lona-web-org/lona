@@ -5,10 +5,49 @@ from lona.view_runtime import VIEW_RUNTIME_STATE
 
 
 class LonaView:
+    _objects = {}
+
     def __init__(self, server, view_runtime, request):
         self._server = server
         self._view_runtime = view_runtime
         self._request = request
+
+    # objects #################################################################
+    @classmethod
+    def _get_objects_key(cls, view_class, is_class=True):
+        if not is_class:
+            view_class = view_class.__class__
+
+        return '{}.{}'.format(
+            view_class.__module__,
+            view_class.__name__,
+        )
+
+    @classmethod
+    def _add_view_to_objects(cls, view_object):
+        objects_key = cls._get_objects_key(view_object, is_class=False)
+
+        if objects_key not in cls._objects:
+            cls._objects[objects_key] = []
+
+        cls._objects[objects_key].append(view_object)
+
+    @classmethod
+    def _remove_view_from_objects(cls, view_object):
+        objects_key = cls._get_objects_key(view_object, is_class=False)
+
+        if(objects_key in cls._objects and
+           view_object in cls._objects[objects_key]):
+
+            cls._objects[objects_key].remove(view_object)
+
+    @classmethod
+    def iter_objects(cls):
+        objects_key = cls._get_objects_key(cls, is_class=True)
+        view_objects = cls._objects.get(objects_key, []).copy()
+
+        for view_object in view_objects:
+            yield view_object
 
     # properties ##############################################################
     @property
