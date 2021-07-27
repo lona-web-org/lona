@@ -23,7 +23,7 @@ def generate_random_string(length):
     for i in range(length):
         characters.append(random.choice(choices))
 
-    return ''.join(choices)
+    return ''.join(characters)
 
 
 def generate_session_key(connection):
