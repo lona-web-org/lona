@@ -260,3 +260,6 @@ class LonaView:
 
     def handle_input_event(self, input_event):
         return input_event
+
+    def on_shutdown(self, reason):
+        pass

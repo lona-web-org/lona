@@ -231,6 +231,23 @@ class ViewRuntime:
             )
 
     # start and stop ##########################################################
+    def run_shutdown_hook(self):
+        logger.debug(
+            'running %s with stop reason %s',
+            self.view.on_shutdown,
+            self.stop_reason,
+        )
+
+        try:
+            self.view.on_shutdown(self.stop_reason)
+
+        except Exception:
+            logger.error(
+                'Exception raised while running %s',
+                self.view.on_shutdown,
+                exc_info=True,
+            )
+
     def start(self):
         try:
             # update internal state
@@ -272,8 +289,8 @@ class ViewRuntime:
 
                 return self.handle_raw_response_dict(raw_response_dict)
 
-        except(StopReason, CancelledError):
-            pass
+        except(StopReason, CancelledError) as _stop_reason:
+            self.stop_reason = _stop_reason
 
         # 403 Forbidden
         except ForbiddenError as exception:
@@ -325,6 +342,8 @@ class ViewRuntime:
             self.is_stopped = True
             self.stopped_at = datetime.now()
             self.send_view_stop()
+
+        self.run_shutdown_hook()
 
     def stop(self, reason=UserAbort, clean_up=True):
         self.stop_reason = reason
