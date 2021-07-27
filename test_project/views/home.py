@@ -100,6 +100,11 @@ class HomeView(LonaView):
                 <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
             </ul>
 
+            <h2>Multi User</h2>
+            <ul>
+                <li><a href="/multi-user/multi-user-chat/">Multi User Chat</a></li>
+            </ul>
+
             <h2>Contrib</h2>
             <ul>
                 <li><a href="/contrib/chart-js/">Chart.js</a></li>

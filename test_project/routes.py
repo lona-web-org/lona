@@ -146,6 +146,13 @@ routes = [
     Route('/frontend/custom-messages/',
           'views/frontend/custom_messages.py::CustomMessagesView'),
 
+    # multi user
+    Route('/multi-user/multi-user-chat/<topic>',
+          'views/multi_user/multi_user_chat.py::MultiUserChat'),
+
+    Route('/multi-user/multi-user-chat(/)',
+          'views/multi_user/multi_user_chat.py::MultiUserChat'),
+
     # contrib
     Route('/contrib/chart-js/',
           'views/contrib/chartjs.py::ChartJSView'),
