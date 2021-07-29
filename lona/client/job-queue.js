@@ -38,11 +38,11 @@ Lona.JobQueue = function(lona_window) {
                 await promise;
             };
 
-            this._unlock();
-
         } catch(error) {
-            this._lona_window._crashed = true;
-            this._lona_window._print_error(error);
+            this._lona_window.crash(error);
+
+        } finally {
+            this._unlock();
 
         };
     };

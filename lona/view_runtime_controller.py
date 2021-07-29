@@ -114,6 +114,37 @@ class ViewRuntimeController:
             payload=payload,
         )
 
+    def handle_client_error_message(self, connection, window_id,
+                                    view_runtime_id, method, payload):
+
+        view_runtime = self.get_view_runtime(view_runtime_id)
+
+        if not view_runtime:
+            views_logger.debug(
+                'runtime id is unknown. event is skipped',
+                payload[0],
+            )
+
+            return
+
+        if connection.user != view_runtime.start_connection.user:
+            views_logger.debug(
+                'connection.user is not authorized. client error is skipped',  # NOQA
+            )
+
+            return
+
+        views_logger.debug(
+            'client error gets handled by runtime #%s',
+            view_runtime_id,
+        )
+
+        view_runtime.handle_client_error(
+            connection=connection,
+            window_id=window_id,
+            payload=payload,
+        )
+
     def handle_view_message(self, connection, window_id, view_runtime_id,
                             method, payload):
 
@@ -273,6 +304,18 @@ class ViewRuntimeController:
             input_events_logger.debug('event #%s: decoded', payload[0])
 
             self.handle_input_event_message(
+                connection=connection,
+                window_id=window_id,
+                view_runtime_id=view_runtime_id,
+                method=method,
+                payload=payload,
+            )
+
+        # client error
+        elif method == METHOD.CLIENT_ERROR:
+            views_logger.debug('client error decoded')
+
+            self.handle_client_error_message(
                 connection=connection,
                 window_id=window_id,
                 view_runtime_id=view_runtime_id,

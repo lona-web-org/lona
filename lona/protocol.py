@@ -21,6 +21,7 @@ class METHOD(Enum):
     VIEW = 101
     INPUT_EVENT = 102
     INPUT_EVENT_ACK = 103
+    CLIENT_ERROR = 104
 
     # issuer: server
     REDIRECT = 201
@@ -147,6 +148,13 @@ def decode_message(raw_message):
                 return _invalid_message()
 
         elif not isinstance(payload[1], str):
+            return _invalid_message()
+
+        return (EXIT_CODE.SUCCESS, *message)
+
+    # client error
+    if method == METHOD.CLIENT_ERROR:
+        if not isinstance(payload[0], str):
             return _invalid_message()
 
         return (EXIT_CODE.SUCCESS, *message)

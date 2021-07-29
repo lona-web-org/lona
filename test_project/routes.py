@@ -99,6 +99,9 @@ routes = [
     Route('/crashes/handle-500/',
           'views/crashes/handle_500.py::CrashingView'),
 
+    Route('/crashes/frontend-widget/',
+          'views/crashes/frontend_widget.py::CrashingFrontendWidgetView'),
+
     # routing
     Route('/routing/url-args/<a:[^/]+>/<b:[^/]+>/<c:[^/]+>/',
           'views/routing/url_args.py::URLArgsView'),

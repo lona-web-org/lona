@@ -57,8 +57,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                 lona_window.run_view(node.href);
 
             } catch(error) {
-                lona_window._crashed = true;
-                lona_window._print_error(error);
+                lona_window.crash(error);
 
             };
 
@@ -93,8 +92,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                 );
 
             } catch(error) {
-                lona_window._crashed = true;
-                lona_window._print_error(error);
+                lona_window.crash(error);
 
             };
 
@@ -131,8 +129,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                         }, input_delay);
 
                     } catch(error) {
-                        lona_window._crashed = true;
-                        lona_window._print_error(error);
+                        lona_window.crash(error);
 
                     };
 
@@ -158,8 +155,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                 );
 
             } catch(error) {
-                lona_window._crashed = true;
-                lona_window._print_error(error);
+                lona_window.crash(error);
 
             };
 
@@ -224,8 +220,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                 };
 
             } catch(error) {
-                lona_window._crashed = true;
-                lona_window._print_error(error);
+                lona_window.crash(error);
 
             };
 

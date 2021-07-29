@@ -14,6 +14,7 @@ from lona.events.input_event import InputEvent
 from lona.imports import get_object_repr
 from lona.html.document import Document
 from lona.errors import ForbiddenError
+from lona.errors import ClientError
 from lona._time import monotonic_ns
 from lona.request import Request
 
@@ -384,31 +385,26 @@ class ViewRuntime:
         self.stop(reason=exception, clean_up=False)
 
         # run 500 view
-        # this runs if the crash happened in an input event handler after
-        # the view stopped
-        if self.is_stopped:
-            view_class = self.server.view_loader.load(
-                self.server.settings.CORE_ERROR_500_VIEW,
-            )
+        self.send_view_start()
 
-            view = view_class(
-                server=self.server,
-                view_runtime=self,
-                request=self.request,
-            )
+        view_class = self.server.view_loader.load(
+            self.server.settings.CORE_ERROR_500_VIEW,
+        )
 
-            self.handle_raw_response_dict(
-                view.handle_request(
-                    self.request,
-                    exception=exception,
-                )
-            )
+        view = view_class(
+            server=self.server,
+            view_runtime=self,
+            request=self.request,
+        )
 
-            logger.error(
-                'Exception raised after running %s',
-                self.view,
-                exc_info=True,
+        self.handle_raw_response_dict(
+            view.handle_request(
+                self.request,
+                exception=exception,
             )
+        )
+
+        self.send_view_stop()
 
     # connection management ###################################################
     def add_connection(self, connection, window_id, url):
@@ -753,10 +749,19 @@ class ViewRuntime:
             )
 
         except Exception as exception:
-            input_events_logger.debug(
+            input_events_logger.error(
                 'runtime #%s: event #%s: exception occurred',
                 self.view_runtime_id,
                 payload[0],
+                exc_info=True,
             )
 
             self.issue_500_error(exception)
+
+    def handle_client_error(self, connection, window_id, payload):
+        logger.error(
+            'client error raised:\n%s',
+            payload[0],
+        )
+
+        self.issue_500_error(ClientError(message=payload[0]))

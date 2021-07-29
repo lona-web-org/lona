@@ -38,26 +38,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._widgets_to_setup = [];
     this._widgets_to_update = [];
 
-    // error management -------------------------------------------------------
-    this._print_error = function(error) {
-        var error_string;
-
-        if(error.stack) {
-            error_string = error.stack.toString();
-
-        } else {
-            error_string = error.toString();
-
-        };
-
-        this._root.innerHTML = (
-            '<h1>Lona: Uncaught Error</h1>' +
-            '<pre>' + error_string + '</pre>'
-        );
-
-        throw(error);
-    };
-
     // html rendering helper --------------------------------------------------
     this._clear = function() {
         this._root.innerHTML = '';
@@ -219,24 +199,45 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
     // public api -------------------------------------------------------------
     this.crash = function(error) {
-        this._crashed = true;
-        this._print_error(error);
+        // encode message
+        var error_string;
+
+        if(error.stack) {
+            error_string = error.stack.toString();
+        } else {
+            error_string = error.toString();
+        };
+
+        var message = [
+            this._window_id,
+            this._view_runtime_id,
+            Lona.protocol.METHOD.CLIENT_ERROR,
+            [error_string],
+        ];
+
+        // send message
+        message = (Lona.protocol.PROTOCOL.MESSAGE_PREFIX +
+                   JSON.stringify(message));
+
+        this.lona_context.send(message);
+
+        throw(error);
     };
 
-    this._handle_websocket_message = function(message) {
+    this._handle_websocket_message = function (message) {
         var window_id = message[0];
         var view_runtime_id = message[1];
         var method = message[2];
         var payload = message[3];
 
         // view start
-        if(method == Lona.protocol.METHOD.VIEW_START) {
+        if (method == Lona.protocol.METHOD.VIEW_START) {
             clearTimeout(this._view_start_timeout);
 
             this._view_runtime_id = view_runtime_id;
             this._view_running = true;
 
-            if(this.lona_context.settings.update_address_bar) {
+            if (this.lona_context.settings.update_address_bar) {
                 history.pushState({}, '', this._url);
             };
 
