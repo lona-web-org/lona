@@ -143,4 +143,12 @@ class Router:
         if route.path:
             return route.path
 
-        return route.format_string.format(*args, **kwargs)
+        key_error = None
+
+        try:
+            return route.format_string.format(*args, **kwargs)
+
+        except KeyError as e:
+            key_error = e
+
+        raise ValueError('missing URL arg: {} '.format(key_error.args[0]))

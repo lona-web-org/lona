@@ -135,7 +135,7 @@ def test_reverse_matching():
     assert url == '/bar/'
 
     # /foo/bar/ but wrongly named arg
-    with pytest.raises(KeyError):
+    with pytest.raises(ValueError):
         url = router.reverse('foo', foo='bar')
 
     # unknown name
