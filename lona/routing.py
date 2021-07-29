@@ -12,33 +12,19 @@ logger = logging.getLogger('lona.routing')
 
 
 class Route:
-    def __init__(self, *args, name='', method='*', interactive=True,
+    def __init__(self, raw_pattern, view, name='', interactive=True,
                  http_pass_through=False, frontend_view=None):
 
-        self.method = '*'
-        self.raw_pattern = ''
-        self.format_string = ''
-        self.view = None
+        self.raw_pattern = raw_pattern
+        self.view = view
         self.name = name
-        self.optional_trailing_slash = False
         self.interactive = interactive
         self.http_pass_through = http_pass_through
         self.frontend_view = frontend_view
 
-        if len(args) == 3:
-            self.method, self.raw_pattern, self.view = args
-
-        elif len(args) == 2:
-            self.raw_pattern, self.view = args
-
-        else:
-            raise ValueError('to few arguments')
-
-        if method:
-            self.method = method
-
-        # parse raw path
         self.path = None
+        self.format_string = ''
+        self.optional_trailing_slash = False
 
         # match all
         if self.raw_pattern == MATCH_ALL:
@@ -110,8 +96,7 @@ class Route:
         if raw_pattern == MATCH_ALL:
             raw_pattern = 'MATCH_ALL'
 
-        return '<Route({}, {}, {})>'.format(
-            self.method,
+        return '<Route({}, {})>'.format(
             raw_pattern,
             self.view,
         )
