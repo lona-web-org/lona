@@ -4,7 +4,7 @@ import re
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
 ROUTE_PART_FORMAT_STRING = r'(?P<{}>{})'
 DEFAULT_PATTERN = r'[^/]+'
-OPTIONAL_TRAILING_SLASH_PATTERN = r'(/)?'
+OPTIONAL_TRAILING_SLASH_PATTERN = r'(/)'
 
 MATCH_ALL = 1
 
@@ -46,7 +46,7 @@ class Route:
 
         # string or regex
         else:
-            if self.raw_pattern.endswith('(/)'):
+            if self.raw_pattern.endswith(OPTIONAL_TRAILING_SLASH_PATTERN):
                 self.optional_trailing_slash = True
 
             groups = ABSTRACT_ROUTE_RE.findall(self.raw_pattern)
@@ -57,7 +57,10 @@ class Route:
                 self.format_string = self.raw_pattern
 
                 if self.optional_trailing_slash:
-                    self.path = self.path[:-3]
+                    suffix_len = len(OPTIONAL_TRAILING_SLASH_PATTERN) * -1
+
+                    self.path = self.path[:suffix_len]
+                    self.format_string = self.path[:suffix_len]
 
                 return
 
