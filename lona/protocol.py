@@ -17,14 +17,17 @@ class EXIT_CODE(Enum):
 
 
 class METHOD(Enum):
+    # issuer: client
     VIEW = 101
     INPUT_EVENT = 102
-    INPUT_EVENT_ACK = 201
-    REDIRECT = 202
-    HTTP_REDIRECT = 203
-    DATA = 204
-    VIEW_START = 205
-    VIEW_STOP = 206
+    INPUT_EVENT_ACK = 103
+
+    # issuer: server
+    REDIRECT = 201
+    HTTP_REDIRECT = 202
+    DATA = 203
+    VIEW_START = 204
+    VIEW_STOP = 205
 
 
 class INPUT_EVENT_TYPE(Enum):
