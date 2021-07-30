@@ -13,11 +13,18 @@ class DjangoSessionMiddleware:
         # find user
         logger.debug('searching for django user')
 
-        if isinstance(data.connection, User):
+        if isinstance(data.connection.user, User):
             return data
 
         session_key = data.connection.http_request.cookies.get('sessionid', '')
-        user = AnonymousUser()
+
+        if data.server.settings.get('DJANGO_AUTH_USE_LONA_ANONYMOUS_USER',
+                                    False):
+
+            user = data.connection.user
+
+        else:
+            user = AnonymousUser()
 
         if session_key:
             try:
