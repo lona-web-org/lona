@@ -248,9 +248,6 @@ class LonaView:
 
         return 'pong'
 
-    def get_user_list(self, *args, **kwargs):
-        return self._view_runtime.get_user_list(*args, **kwargs)
-
     # hooks ###################################################################
     def handle_request(self, *args, **kwargs):
         return ''
