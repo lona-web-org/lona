@@ -249,7 +249,7 @@ class LonaView:
         return 'pong'
 
     # hooks ###################################################################
-    def handle_request(self, *args, **kwargs):
+    def handle_request(self, request):
         return ''
 
     def handle_input_event_root(self, input_event):
