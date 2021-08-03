@@ -159,6 +159,22 @@ class Button(Node):
     TAG_NAME = 'button'
     EVENTS = [CLICK]
 
+    @property
+    def disabled(self):
+        return 'disabled' in self.attributes
+
+    @disabled.setter
+    def disabled(self, new_value):
+        with self.document.lock:
+            new_value = bool(new_value)
+
+            if new_value:
+                if 'disabled' not in self.attributes:
+                    self.attributes['disabled'] = 'True'
+            else:
+                if 'disabled' in self.attributes:
+                    self.attributes.remove('disabled')
+
 
 class InputNode(Node):
     TAG_NAME = 'input'
