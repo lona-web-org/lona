@@ -9,16 +9,16 @@ class FallbackView(LonaView):
     VIEW_SETTING = ''
     TEMPLATE_SETTING = ''
 
-    def render_default_template(self, request, **extra_contenxt):
+    def render_default_template(self, request, **extra_context):
         template_setting = request.server.settings.get(self.TEMPLATE_SETTING)
 
         return {
             'template': template_setting,
             'request': request,
-            **extra_contenxt,
+            **extra_context,
         }
 
-    def handle_request(self, request, **extra_contenxt):
+    def handle_request(self, request, **extra_context):
         view_setting = request.server.settings.get(self.VIEW_SETTING, '')
 
         if view_setting:
@@ -31,7 +31,7 @@ class FallbackView(LonaView):
                     request=request,
                 )
 
-                return view.handle_request(request, **extra_contenxt)
+                return view.handle_request(request, **extra_context)
 
             except Exception:
                 logger.error(
@@ -40,9 +40,9 @@ class FallbackView(LonaView):
                     exc_info=True,
                 )
 
-                return self.render_default_template(request, **extra_contenxt)
+                return self.render_default_template(request, **extra_context)
 
-        return self.render_default_template(request, **extra_contenxt)
+        return self.render_default_template(request, **extra_context)
 
 
 class FrontendView(FallbackView):
