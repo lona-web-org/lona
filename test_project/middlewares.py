@@ -13,9 +13,9 @@ class CrashingMiddleware:
         logger.debug('running shutdown hook')
 
     def handle_connection(self, data):
-        request = data.request
+        http_request = data.http_request
 
-        if request.path == '/crashes/handle-connection/':
+        if http_request.path == '/crashes/handle-connection/':
             raise ValueError('It worked! This should crash!')
 
         return data

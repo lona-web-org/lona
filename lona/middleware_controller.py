@@ -198,8 +198,8 @@ class MiddlewareController:
     async def handle_connection(self, connection):
         data = MiddlewareData(
             server=self.server,
+            http_request=connection.http_request,
             connection=connection,
-            request=connection.http_request,
         )
 
         return await self.server.run_function_async(

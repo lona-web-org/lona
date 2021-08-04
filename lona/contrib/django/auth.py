@@ -16,7 +16,7 @@ class DjangoSessionMiddleware:
         if isinstance(data.connection.user, User):
             return data
 
-        session_key = data.connection.http_request.cookies.get('sessionid', '')
+        session_key = data.http_request.cookies.get('sessionid', '')
 
         if data.server.settings.get('DJANGO_AUTH_USE_LONA_ANONYMOUS_USER',
                                     False):
