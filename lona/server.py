@@ -22,6 +22,7 @@ from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
 from lona.server_state import ServerState
+from lona.shell.shell import embed_shell
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
 from lona.settings import Settings
@@ -496,6 +497,11 @@ class LonaServer:
         return self._state
 
     # helper ##################################################################
+    def embed_shell(self, _locals={}):
+        _locals['server'] = self
+
+        return embed_shell(self, locals=_locals)
+
     def get_running_views_count(self, *args, **kwargs):
         return self.view_runtime_controller.get_running_views_count(
             *args,

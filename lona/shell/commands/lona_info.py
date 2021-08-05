@@ -27,7 +27,7 @@ class LonaInfoCommand:
             ['Key', 'Value'],
             ['Lona version', 'v{}'.format(VERSION_STRING)],
             ['project root', self.repl.locals['server'].project_root],
-            ['cli args', pformat(self.repl.locals['cli_args'])],
+            ['cli args', pformat(self.repl.locals.get('cli_args', {}))],
         ]
 
         write_table(rows, self.repl.write)

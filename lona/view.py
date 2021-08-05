@@ -2,6 +2,7 @@ import threading
 import asyncio
 
 from lona.view_runtime import VIEW_RUNTIME_STATE
+from lona.shell.shell import embed_shell
 
 
 class LonaView:
@@ -247,6 +248,12 @@ class LonaView:
         self._assert_view_is_running()
 
         return 'pong'
+
+    # helper ##################################################################
+    def embed_shell(self, _locals={}):
+        _locals['self'] = self
+
+        return embed_shell(server=self.server, locals=_locals)
 
     # hooks ###################################################################
     def handle_request(self, request):
