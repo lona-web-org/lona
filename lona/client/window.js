@@ -45,9 +45,18 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     this._clear_node_cache = function() {
+        // running widget deconstructors
+        for(var key in this._widgets) {
+            if(this._widgets[key].deconstruct !== undefined) {
+                this._widgets[key].deconstruct();
+            };
+        };
+
+        // resetting node state
         this._nodes = {};
         this._widget_marker = {};
         this._widget_data = {};
+        this._widgets = {}
         this._widgets_to_setup = [];
         this._widgets_to_update = [];
     };
