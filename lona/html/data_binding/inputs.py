@@ -92,6 +92,9 @@ class TextInput(Widget):
         return self.NODE_CLASS(**self.gen_node_args(**kwargs))
 
     def handle_input_event(self, input_event):
+        if input_event.name != 'change':
+            return input_event
+
         self.input_node.attributes.__setitem__(
             'value',
             input_event.data,

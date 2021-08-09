@@ -78,6 +78,9 @@ class Select(Widget):
         }
 
     def handle_input_event(self, input_event):
+        if input_event.name != 'change':
+            return input_event
+
         with self.lock:
             self.value = input_event.data
 
