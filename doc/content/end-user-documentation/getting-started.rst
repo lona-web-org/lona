@@ -4,7 +4,7 @@ Getting Started
 ===============
 
 The easiest way to start a Lona project is to use the
-`lona-project-template <github.com/fscherf/lona-project-template>`_.
+`lona-project-template <https://github.com/fscherf/lona-project-template>`_.
 
 .. code-block:: text
 
