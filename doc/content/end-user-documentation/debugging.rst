@@ -77,7 +77,7 @@ with ``%lona_``.
 
     ^Command               ^Description
     |%threads [THREAD_ID]           |Prints all threads or all information on given thread
-    |%lona_info                     |Prints basic information about the running Lona server <br> and its connfiguration
+    |%lona_info                     |Prints basic information about the running Lona server <br> and its configuration
     |%lona_settings [SETTINGS_NAME] |Prints one or all settings
     |%lona_routes [-r URL]          |Prints all or the matching routes when URL is provided
     |%lona_connections              |Prints all current server connections
