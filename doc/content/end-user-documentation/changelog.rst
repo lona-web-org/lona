@@ -1,7 +1,18 @@
+toctree: False
 
 
 Changelog
 =========
+
+`1.0.1 <https://github.com/fscherf/lona/releases/tag/1.0.1>`_
+-------------------------------------------------------------
+
+Bugfixes
+~~~~~~~~
+
+* html: data binding: skip all non change events
+    * Previously ``TextInput`` and ``Select`` catched all input events and handled
+      them as ``CHANGE`` event. Now unknown events get bubbled up.
 
 `1.0 <https://github.com/fscherf/lona/releases/tag/1.0>`_
 ---------------------------------------------------------
