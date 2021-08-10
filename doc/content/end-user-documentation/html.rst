@@ -31,6 +31,62 @@ In Lona every HTML element is represented as a python object, derived from
 	</div>
 
 
+Sub Nodes
+~~~~~~~~~
+
+Internally nodes and subnodes behave like python lists and implement all common
+list interfaces and methods.
+
+.. code-block:: python
+
+    from lona.html import Div
+
+    >>> div = Div(Div('foo'), Div('bar'))
+    >>> div
+    <div data-lona-node-id="65286584612039">
+        <div data-lona-node-id="65286584010206">
+            foo
+        </div>
+        <div data-lona-node-id="65286584292299">
+            bar
+        </div>
+    </div>
+
+    >>> div.nodes
+    <NodeList([<div data-lona-node-id="65286584010206">
+        foo
+    </div>, <div data-lona-node-id="65286584292299">
+        bar
+    </div>]))>
+
+    >>> div[0]  # or div.nodes[0]
+    <div data-lona-node-id="65286584010206">
+        foo
+    </div>
+
+
+Using HTML Strings
+~~~~~~~~~~~~~~~~~~
+
+To initialize an HTML tree you can use ``lona.html.HTML``. When
+``lona.html.HTML`` gets a HTML string passed in that does not start with ``\``,
+the string gets parsed and converted into ``lona.html.Node`` objects.
+The resulting tree behaves like a normal Lona HTML tree.
+
+.. code-block:: python
+
+    from lona.html import HTML
+
+    >>> html = HTML('<h1>Hello World</h1><p>Lorem Ipsum</p>')
+    >>> html
+    <h1 data-lona-node-id="66513259465059">
+        Hello World
+    </h1>
+    <p data-lona-node-id="66513260451573">
+        Lorem Ipsum
+    </p>
+
+
 Attributes
 ~~~~~~~~~~
 
