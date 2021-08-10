@@ -31,6 +31,7 @@ MENU = [
         ['Debugging', 'end-user-documentation/debugging.rst'],
         ['Deployment', 'end-user-documentation/deployment.rst'],
         ['Contributors', 'end-user-documentation/contributors.rst'],
+        ['Changelog', 'end-user-documentation/changelog.rst'],
     ]],
 
     ['Cookbook', [
