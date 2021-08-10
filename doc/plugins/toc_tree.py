@@ -21,6 +21,9 @@ class TocTree:
         if not content['content_body']:
             return
 
+        if not content.get('toctree', True):
+            return
+
         soup = BeautifulSoup(content['content_body'], 'html.parser')
         toc_tree_data = []
 
