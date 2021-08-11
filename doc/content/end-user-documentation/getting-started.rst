@@ -53,7 +53,7 @@ view.
     # lona_project/routes.py
 
     routes = [
-        Route('/count-to-ten/', 'views/count_to_ten.py::CountToTen')
+        Route('/count-to-ten/', 'views/count_to_ten.py::CountToTen'),
         Route('/', 'views/home.py::HomeView'),
     ]
 
