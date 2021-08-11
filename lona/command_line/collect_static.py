@@ -39,12 +39,22 @@ def collect_static(args):
             pass
 
     def _cp(source, destination):
-        _print('cp {} {}'.format(source, destination))
+        source_is_dir = os.path.isdir(source)
+
+        if source_is_dir:
+            _print('cp -r {} {}'.format(source, destination))
+
+        else:
+            _print('cp {} {}'.format(source, destination))
 
         if args.dry_run:
             return
 
-        shutil.copy(source, destination)
+        if source_is_dir:
+            shutil.copytree(source, destination)
+
+        else:
+            shutil.copy(source, destination)
 
     # setup logging
     setup_logging(args)
