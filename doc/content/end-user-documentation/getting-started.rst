@@ -8,7 +8,7 @@ The easiest way to start a Lona project is to use the
 
 .. code-block:: text
 
-    $ git clone github.com/fscherf/lona-project-template
+    $ git clone https://github.com/fscherf/lona-project-template
     $ cd lona-project-template
     $ make server
 
