@@ -83,7 +83,10 @@ class TemplatingEngine:
                      repr(self.template_dirs)[1:-1])
 
         self.jinja2_env = Environment(
-            loader=FileSystemLoader(self.template_dirs),
+            loader=FileSystemLoader(
+                self.template_dirs,
+                followlinks=True,
+            ),
         )
 
     # public api ##############################################################
