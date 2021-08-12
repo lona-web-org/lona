@@ -22,6 +22,7 @@ MENU = [
     ['End User Documentation', [
         ['Basic Concept', 'end-user-documentation/basic-concept.rst'],
         ['Getting Started', 'end-user-documentation/getting-started.rst'],
+        ['Lona Scripts', 'end-user-documentation/lona-scripts.rst'],
         ['Views', 'end-user-documentation/views.rst'],
         ['HTML', 'end-user-documentation/html.rst'],
         ['Frontends', 'end-user-documentation/frontends.rst'],

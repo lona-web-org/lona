@@ -3,6 +3,52 @@
 Getting Started
 ===============
 
+Running Lona From A Script
+--------------------------
+
+For microservices or small prototypes Lona app can be run using a single python
+script.
+
+.. code-block:: text
+
+    $ pip install lona
+
+.. code-block:: python
+
+    from datetime import datetime
+    import time
+
+    from lona.view import LonaView
+    from lona import LonaApp
+
+    app = LonaApp(__file__)
+
+    @app.route('/')
+    class ClockView(LonaView):
+        def handle_request(self, request):
+            timestamp = Div()
+
+            html = HTML(
+                H1('Clock'),
+                timestamp,
+            )
+
+            while True:
+                timestamp.set_text(str(datetime.now()))
+
+                self.show(html)
+
+                time.sleep(1)
+
+    app.run(port=8080)
+
+**More information:**
+{{ link('end-user-documentation/lona-scripts.rst', 'Lona Scripts') }}
+
+
+Starting A Lona Project From The Project Template
+-------------------------------------------------
+
 The easiest way to start a Lona project is to use the
 `lona-project-template <https://github.com/fscherf/lona-project-template>`_.
 
@@ -18,7 +64,7 @@ should see ``Hello World``.
 
 
 Writing a view
---------------
+``````````````
 
 In this section we will create an interactive view that counts to ten.
 
@@ -64,7 +110,7 @@ The new view should now accessible on ``http://localhost:8080/count-to-ten/``.
 
 
 Adding HTML and CSS
--------------------
+```````````````````
 
 The overall layout of your page gets defined by
 ``lona_project/templates/lona/frontend.html``. Here you can add a banner,

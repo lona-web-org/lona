@@ -41,7 +41,8 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 class LonaServer:
     def __init__(self, app, project_root, settings_paths=[],
-                 settings_pre_overrides={}, settings_post_overrides={}):
+                 settings_pre_overrides={}, settings_post_overrides={},
+                 routes=[]):
 
         self.project_root = os.path.abspath(project_root)
 
@@ -103,10 +104,11 @@ class LonaServer:
         server_logger.debug('setup routing')
         self.router = Router()
 
-        server_logger.debug("loading routing table from '%s'",
-                            self.settings.ROUTING_TABLE)
+        if not routes:
+            server_logger.debug("loading routing table from '%s'",
+                                self.settings.ROUTING_TABLE)
 
-        routes = self.acquire(self.settings.ROUTING_TABLE)
+            routes = self.acquire(self.settings.ROUTING_TABLE)
 
         if routes:
             self.router.add_routes(*routes)

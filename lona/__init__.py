@@ -1,2 +1,4 @@
+from .app import LonaApp  # NOQA
+
 VERSION = (1, 0, 2)
 VERSION_STRING = '{}'.format('.'.join([str(i) for i in VERSION]))

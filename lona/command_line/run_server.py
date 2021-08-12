@@ -14,16 +14,16 @@ from lona.server import LonaServer
 logger = logging.getLogger('lona')
 
 
-def run_server(args):
+def run_server(args, app=None, server=None):
     loop = asyncio.get_event_loop()
 
     # setup logging
     log_formatter, log_filter = setup_logging(args)
 
     # setup lona server
-    app = Application()
+    app = app or Application()
 
-    server = LonaServer(
+    server = server or LonaServer(
         app=app,
         project_root=args.project_root,
         settings_paths=args.settings,

@@ -1,0 +1,74 @@
+from datetime import datetime
+import time
+
+from lona.html import HTML, H1, Div, A
+from lona import LonaApp, LonaView
+
+app = LonaApp(__file__)
+
+app.settings.MAX_WORKER_THREADS = 10
+
+app.settings.STATIC_DIRS = [
+    'static',
+]
+
+
+@app.middleware
+class MyMiddleware:
+    def handle_request(self, data):
+        print('>> middleware running')
+
+        return data
+
+
+@app.frontend_view
+class FrontendView(LonaView):
+    def handle_request(self, request):
+        print('>> running frontend')
+
+        return {
+            'template': self.server.settings.FRONTEND_TEMPLATE,
+        }
+
+
+@app.route('/')
+class Home(LonaView):
+    def handle_request(self, request):
+        return """
+            <h1>Lona Test Script</h1>
+            <ul>
+                <li><a href="/interactive-view/">Interactive View</a></li>
+                <li><a href="/non-interactive-view/">Non Interactive View</a></li>
+            </ul>
+        """  # NOQA
+
+
+@app.route('/interactive-view/')
+class InteractiveView(LonaView):
+    def handle_request(self, request):
+        timestamp = Div()
+
+        html = HTML(
+            H1('Interactive View'),
+            A('Home', href='/'),
+            timestamp,
+        )
+
+        while True:
+            timestamp.set_text(str(datetime.now()))
+
+            self.show(html)
+
+            time.sleep(1)
+
+
+@app.route('/non-interactive-view/', interactive=False)
+class NoneInteractiveView(LonaView):
+    def handle_request(self, request):
+        return """
+            <h1>Non Interactive View</h1>
+            <a href="/">Home</a>
+        """
+
+
+app.run(port=8080)
