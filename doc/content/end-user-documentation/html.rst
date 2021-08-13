@@ -98,14 +98,14 @@ Attributes
 
 .. code-block:: html
 
-    <div data-lona-node-id="174102029578147" id="foo bar baz"></div>
+    <div data-lona-node-id="174102029578147" id="bar"></div>
 
 .. code-block:: python
 
-    >>> d.attributes['foo']
+    >>> div.attributes['foo']
     'bar'
-    >>> d.attributes['foo'] = 'foo'
-    >>> d.attributes['foo']
+    >>> div.attributes['foo'] = 'foo'
+    >>> div.attributes['foo']
     'foo'
 
 
@@ -353,13 +353,13 @@ Handling Input Events
         def __init__(self, initial_value=0):
             self.counter = initial_value
 
-            counter_label = Span(str(self.counter))
+            self.counter_label = Span(str(self.counter))
             self.inc_button = Button('+')
             self.dec_button = Button('-')
 
             self.nodes = [
                 Div(
-                    counter_label,
+                    self.counter_label,
                     self.inc_button,
                     self.dec_button,
                 ),

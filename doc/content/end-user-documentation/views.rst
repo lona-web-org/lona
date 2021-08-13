@@ -320,7 +320,6 @@ JSON Responses
 .. code-block:: python
 
     from lona import LonaView
-    from lona.html import H1
 
 
     class MyLonaView(LonaView):
@@ -487,7 +486,7 @@ CHANGE
 
 .. code-block:: python
 
-    from lona.html import TextInput, TextArea, Select
+    from lona.html import HTML, TextInput
     from lona import LonaView
 
 
