@@ -4,6 +4,19 @@ toctree: False
 Changelog
 =========
 
+
+`1.1 <https://github.com/fscherf/lona/releases/tag/1.1>`_
+---------------------------------------------------------
+
+Changes
+~~~~~~~
+
+* templating: add support for symlinks
+* add Lona scripts
+* add import shortcuts for ``LonaView``, ``Route``,
+  ``ForbiddenError``, ``ClientError``, ``UserAbort`` and ``ServerStop``
+
+
 `1.0.2 <https://github.com/fscherf/lona/releases/tag/1.0.2>`_
 -------------------------------------------------------------
 
