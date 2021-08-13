@@ -29,6 +29,8 @@ To mark a view non interactive, use the ``interactive`` keyword in the
 
     # routes.py
 
+    from lona import Route
+
     routes = [
         Route('/json-api.json', 'views/json_api.py::JSONAPIView', interactive=False)
     ]
@@ -37,7 +39,7 @@ To mark a view non interactive, use the ``interactive`` keyword in the
 
     # views/json_api.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class JSONAPIView(LonaView):
@@ -71,6 +73,8 @@ To mark a view as HTTP pass through, use the ``http_pass_through`` keyword in th
 
     # routes.py
 
+    from lona import Route
+
     routes = [
         Route('/http-pass-through/', 'views/http_pass_through.py::HTTPPassThroughView',
               http_pass_through=True),
@@ -83,7 +87,7 @@ To mark a view as HTTP pass through, use the ``http_pass_through`` keyword in th
 
     from aiohttp.web import Response
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class HTTPPassThroughView(LonaView):
@@ -104,7 +108,7 @@ Simple Patterns
 
     # routes.py
 
-    from lona.routing import Route
+    from lona import Route
 
     routes = [
         Route('/<arg1>/<arg2>/', 'views/my_view.py::MyView'),
@@ -114,7 +118,7 @@ Simple Patterns
 
     # views/my_view.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyView(LonaView):
@@ -130,7 +134,7 @@ Custom Patterns
 
     # routes.py
 
-    from lona.routing import Route
+    from lona import Route
 
     routes = [
         Route('/<arg1:[a-z]{3}>/', 'views/my_view.py::MyView'),
@@ -144,7 +148,7 @@ Trailing Slashes
 
     # routes.py
 
-    from lona.routing import Route
+    from lona import Route
 
     routes = [
         Route('/<arg1>(/)', 'views/my_view.py::MyView'),
@@ -179,7 +183,7 @@ in ``request.GET``.
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):
@@ -199,7 +203,7 @@ to wait for user input and saves resources.
 .. code-block:: python
 
     from lona.html import HTML, Form, TextInput, Submit, H1
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):
@@ -226,7 +230,8 @@ HTML Responses
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
+
 
     class MyLonaView(LonaView):
         def handle_request(self, request):
@@ -237,8 +242,9 @@ HTML Responses
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
     from lona.html import H1
+
 
     class MyLonaView(LonaView):
         def handle_request(self, request):
@@ -250,7 +256,8 @@ Template Responses
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
+
 
     class MyLonaView(LonaView):
         return {
@@ -261,7 +268,8 @@ Template Responses
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
+
 
     class MyLonaView(LonaView):
         return {
@@ -275,9 +283,11 @@ Redirects
 
 .. code-block:: python
 
+    from lona import LonaView
     from lona.html import H1
 
-    class LonaView:
+
+    class MyLonaView(LonaView):
         def handle_request(self, request):
             return {
                 'redirect': '/',
@@ -289,9 +299,11 @@ HTTP Redirects
 
 .. code-block:: python
 
+    from lona import LonaView
     from lona.html import H1
 
-    class LonaView:
+
+    class MyLonaView(LonaView):
         def handle_request(self, request):
             return {
                 'http_redirect': '/',
@@ -307,9 +319,11 @@ JSON Responses
 
 .. code-block:: python
 
+    from lona import LonaView
     from lona.html import H1
 
-    class LonaView:
+
+    class MyLonaView(LonaView):
         def handle_request(self, request):
             return {
                 'json': {
@@ -323,7 +337,7 @@ View Hooks
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):
@@ -399,10 +413,10 @@ To raise a forbidden error and run the 403 view you can raise
 .. code-block:: python
 
     from lona.errors import ForbiddenError
-    from lona.view import LonaView
+    from lona import LonaView
 
 
-    class MyView(LonaView):
+    class MyLonaView(LonaView):
         def handle_request(self, request):
             if not request.user.is_staff:
                 raise forbidden
@@ -436,10 +450,10 @@ CLICK
 .. code-block:: python
 
     from lona.html import HTML, Div, Button, CLICK
-    from lona.view import LonaView
+    from lona import LonaView
 
 
-    class MyView(LonaView):
+    class MyLonaView(LonaView):
         def handle_request(self, request):
             html = HTML(
                 Div('Click me', events=[CLICK]),
@@ -474,10 +488,10 @@ CHANGE
 .. code-block:: python
 
     from lona.html import TextInput, TextArea, Select
-    from lona.view import LonaView
+    from lona import LonaView
 
 
-    class MyView(LonaView):
+    class MyLonaView(LonaView):
         def handle_request(self, request):
             html = HTML(
                 TextInput(value='foo', bubble_up=True),
@@ -533,7 +547,7 @@ wizards possible.
 .. code-block:: python
 
     from lona.html import HTML, H1, Button
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):
@@ -561,7 +575,7 @@ Input events can also be handled in ``handle_input_event()`` when
     from datetime import datetime
 
     from lona.html import HTML, H1, Div, Button
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):
@@ -600,7 +614,7 @@ to override even widget event handler.
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):

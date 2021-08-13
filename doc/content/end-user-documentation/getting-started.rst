@@ -73,7 +73,7 @@ In this section we will create an interactive view that counts to ten.
     # lona_project/views/count_to_ten.py
 
     from lona.html import HTML, H1, P, Div
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class CountToTen(LonaView):
@@ -97,6 +97,8 @@ view.
 .. code-block:: python
 
     # lona_project/routes.py
+
+    from lona import Route
 
     routes = [
         Route('/count-to-ten/', 'views/count_to_ten.py::CountToTen'),

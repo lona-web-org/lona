@@ -25,9 +25,11 @@ pythonic API to write self contained views.
 .. code-block:: python
 
     from lona.html import HTML, Button, Div, H1
-    from lona.view import LonaView
+    from lona import LonaApp, LonaView
 
+    app = LonaView(__file__)
 
+    @app.route('/')
     class MyView(LonaView):
         def handle_request(self, request):
             message = Div('Button not clicked')
@@ -39,15 +41,21 @@ pythonic API to write self contained views.
                 button,
             )
 
-            self.show(html)
+            request.client.show(html)
 
             # this call blocks until the button was clicked
-            input_event = self.await_click(button)
+            input_event = request.client.await_click(button)
 
             if input_event.node == button:
                 message.set_text('Button clicked')
 
             return html
+
+
+    app.run(port=8080)
+
+**More information:**
+{{ link('end-user-documentation/getting-started.rst', 'Getting Started') }}
 
 
 How does it work?
