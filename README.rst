@@ -53,10 +53,10 @@ pythonic API to write self contained views.
                 button,
             )
 
-            request.client.show(html)
+            self.show(html)
 
             # this call blocks until the button was clicked
-            input_event = request.client.await_click(button)
+            input_event = self.await_click(button)
 
             if input_event.node == button:
                 message.set_text('Button clicked')
