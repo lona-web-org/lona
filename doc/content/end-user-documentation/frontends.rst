@@ -142,7 +142,7 @@ On the server all messages get handled by middlewares.
 
     class CustomMessagesMiddleware:
         def handle_websocket_message(self, data):
-            if not data.message.startswith('custom-message':):
+            if not data.message.startswith('custom-message:'):
                 return data
 
             message = data.message.split(':', 1)[1]
