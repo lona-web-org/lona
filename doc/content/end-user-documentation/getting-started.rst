@@ -17,6 +17,7 @@ script.
 
     from datetime import datetime
     import time
+    from lona.html import Div, H1, HTML
 
     from lona.view import LonaView
     from lona import LonaApp
