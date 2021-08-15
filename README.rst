@@ -39,7 +39,7 @@ pythonic API to write self contained views.
     from lona.html import HTML, Button, Div, H1
     from lona import LonaApp, LonaView
 
-    app = LonaView(__file__)
+    app = LonaApp(__file__)
 
     @app.route('/')
     class MyView(LonaView):
