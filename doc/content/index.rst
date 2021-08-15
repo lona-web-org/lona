@@ -3,7 +3,7 @@
 Lona Documentation
 ==================
 
-| Source code: `github.com/fscherf/lona <https://github.com/fscherf/lona>`_
+| Source code: `github.com/lona-web-org/lona <https://github.com/lona-web-org/lona>`_
 | Pypi package: `pypi.org/project/lona <https://pypi.org/project/lona>`_
 
 

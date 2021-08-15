@@ -52,11 +52,11 @@ Starting A Lona Project From The Project Template
 -------------------------------------------------
 
 The easiest way to start a Lona project is to use the
-`lona-project-template <https://github.com/fscherf/lona-project-template>`_.
+`lona-project-template <https://github.com/lona-web-org/lona-project-template>`_.
 
 .. code-block:: text
 
-    $ git clone https://github.com/fscherf/lona-project-template
+    $ git clone https://github.com/lona-web-org/lona-project-template
     $ cd lona-project-template
     $ make server
 

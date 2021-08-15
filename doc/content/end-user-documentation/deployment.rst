@@ -4,7 +4,7 @@ Deployment
 ==========
 
 In this section we will deploy
-`lona-project-template <https://github.com/fscherf/lona-project-template>`_
+`lona-project-template <https://github.com/lona-web-org/lona-project-template>`_
 using `Apache2 <https://httpd.apache.org/>`_ and
 `systemd <https://systemd.io/>`_.
 
@@ -31,7 +31,7 @@ Lona
 
     $ sudo mkdir -p /srv/lona
     $ sudo mkdir -p /srv/lona/static
-    $ sudo git clone https://github.com/fscherf/lona-project-template /srv/lona/lona-project-template
+    $ sudo git clone https://github.com/lona-web-org/lona-project-template /srv/lona/lona-project-template
     $ sudo chown -R www-data:www-data /srv/lona
     $ cd /srv/lona/lona-project-template
     $ sudo -u www-data make env

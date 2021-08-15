@@ -10,7 +10,7 @@ setup(
     name='lona',
     version=VERSION_STRING,
     author='Florian Scherf',
-    url='https://github.com/fscherf/lona',
+    url='https://github.com/lona-web-org/lona',
     author_email='f.scherf@pengutronix.de',
     license='MIT',
     packages=find_packages(),

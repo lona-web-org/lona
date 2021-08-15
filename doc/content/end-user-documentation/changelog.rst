@@ -5,8 +5,8 @@ Changelog
 =========
 
 
-`1.1 <https://github.com/fscherf/lona/releases/tag/1.1>`_
----------------------------------------------------------
+`1.1 <https://github.com/lona-web-org/lona/releases/tag/1.1>`_
+--------------------------------------------------------------
 
 Changes
 ~~~~~~~
@@ -17,8 +17,8 @@ Changes
   ``ForbiddenError``, ``ClientError``, ``UserAbort`` and ``ServerStop``
 
 
-`1.0.2 <https://github.com/fscherf/lona/releases/tag/1.0.2>`_
--------------------------------------------------------------
+`1.0.2 <https://github.com/lona-web-org/lona/releases/tag/1.0.2>`_
+------------------------------------------------------------------
 
 Bugfixes
 ~~~~~~~~
@@ -29,8 +29,8 @@ Bugfixes
     copy a directory
 
 
-`1.0.1 <https://github.com/fscherf/lona/releases/tag/1.0.1>`_
--------------------------------------------------------------
+`1.0.1 <https://github.com/lona-web-org/lona/releases/tag/1.0.1>`_
+------------------------------------------------------------------
 
 Bugfixes
 ~~~~~~~~
@@ -40,7 +40,7 @@ Bugfixes
   * Previously ``TextInput`` and ``Select`` catched all input events and
     handled them as ``CHANGE`` event. Now unknown events get bubbled up.
 
-`1.0 <https://github.com/fscherf/lona/releases/tag/1.0>`_
----------------------------------------------------------
+`1.0 <https://github.com/lona-web-org/lona/releases/tag/1.0>`_
+--------------------------------------------------------------
 
 Initial stable release
