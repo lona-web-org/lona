@@ -4,6 +4,14 @@ toctree: False
 Changelog
 =========
 
+`1.1.1 <https://github.com/lona-web-org/lona/releases/tag/1.1.1>`_
+------------------------------------------------------------------
+
+Bugfixes
+~~~~~~~~
+
+* html: nodes: Button: fix ``disabled`` property
+
 
 `1.1 <https://github.com/lona-web-org/lona/releases/tag/1.1>`_
 --------------------------------------------------------------
