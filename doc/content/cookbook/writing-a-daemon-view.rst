@@ -19,11 +19,13 @@ running view.
 
     class DaemonView(LonaView):
         def handle_request(self, request):
-            timestamp = Span()
+            self.timestamp = Span()
 
             html = HTML(
                 H1('Daemon View'),
-                'running since: ', timestamp,
+                'running since: ', Span(str(datetime.now())),
+                Br(),
+                'last update: ', self.timestamp,
                 Br(),
                 Button('Stop View', _id='stop-view'),
             )
