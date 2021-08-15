@@ -173,7 +173,7 @@ class Button(Node):
                     self.attributes['disabled'] = 'True'
             else:
                 if 'disabled' in self.attributes:
-                    self.attributes.remove('disabled')
+                    del self.attributes['disabled']
 
 
 class InputNode(Node):
