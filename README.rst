@@ -4,18 +4,18 @@
 .. image:: https://img.shields.io/pypi/l/lona.svg
     :alt: pypi.org
     :target: https://pypi.org/project/lona
-.. image:: https://img.shields.io/travis/com/fscherf/lona/master.svg
+.. image:: https://img.shields.io/travis/com/lona-web-org/lona/master.svg
     :alt: Travis branch
-    :target: https://travis-ci.com/fscherf/lona
+    :target: https://travis-ci.com/lona-web-org/lona
 .. image:: https://img.shields.io/pypi/pyversions/lona.svg
     :alt: pypi.org
     :target: https://pypi.org/project/lona
 .. image:: https://img.shields.io/pypi/v/lona.svg
     :alt: pypi.org
     :target: https://pypi.org/project/lona
-.. image:: https://img.shields.io/codecov/c/github/fscherf/lona.svg
+.. image:: https://img.shields.io/codecov/c/github/lona-web-org/lona.svg
     :alt: codecov.io
-    :target: https://codecov.io/gh/fscherf/lona/
+    :target: https://codecov.io/gh/lona-web-org/lona/
 
 
 Lona is a web application framework, designed to write responsive web apps in
