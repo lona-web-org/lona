@@ -11,14 +11,6 @@ Integrating Django
 
 .. code-block:: python
 
-    # settings.py
-
-    MIDDLEWARES = [
-        'lona.contrib.django.auth.DjangoSessionMiddleware',
-    ]
-
-.. code-block:: python
-
     # routes.py
 
     from lona.routing import Route, MATCH_ALL

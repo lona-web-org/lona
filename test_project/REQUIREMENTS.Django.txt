@@ -1,4 +1,0 @@
--e ..
--e django-project/
-aiohttp_wsgi
-Django>=2.2,<3

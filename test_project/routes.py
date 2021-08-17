@@ -1,15 +1,4 @@
-import os
-
-from lona.routing import Route, MATCH_ALL
-
-DJANGO = False
-
-if os.environ.get('DJANGO', '0') == '1':
-    from django_project.wsgi import application
-    from aiohttp_wsgi import WSGIHandler
-
-    DJANGO = True
-    wsgi_handler = WSGIHandler(application)
+from lona.routing import Route
 
 
 routes = [
@@ -163,21 +152,3 @@ routes = [
     # home
     Route('/', 'views/home.py::HomeView'),
 ]
-
-
-if DJANGO:
-    routes += [
-        Route('/django/login-required/',
-              'views/django/permission_views.py::DjangLoginView'),
-
-        Route('/django/template-based-form/',
-              'views/django/template_based_form.py::DjangoTemplateView'),
-
-        Route('/django/node-based-form/',
-              'views/django/node_based_form.py::DjangoNodeBasedView'),
-
-        Route('/django/data-binding-form/',
-              'views/django/data_binding_form.py::DjangoDatabindingView'),
-
-        Route(MATCH_ALL, wsgi_handler, http_pass_through=True),
-    ]
