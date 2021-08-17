@@ -416,7 +416,7 @@ can issue events with custom data.
     from lona.html import Widget, Div
 
     class MyWidget(Widget):
-        FRONTEND_WIDGET = 'MyFrontendWidget'
+        FRONTEND_WIDGET_CLASS = 'MyFrontendWidget'
 
         STATIC_FILES = [
             # the path is always relative to the current file
