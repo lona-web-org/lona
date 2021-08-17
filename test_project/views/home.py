@@ -84,6 +84,7 @@ class HomeView(LonaView):
                 <li><a href="/frontend/widget-data/">Widget Data</a></li>
                 <li><a href="/frontend/custom-event/">Custom Event</a></li>
                 <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
+                <li><a href="/frontend/canvas/">Canvas</a></li>
             </ul>
 
             <h2>Multi User</h2>

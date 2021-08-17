@@ -140,6 +140,9 @@ routes = [
     Route('/frontend/custom-messages/',
           'views/frontend/custom_messages.py::CustomMessagesView'),
 
+    Route('/frontend/canvas/',
+          'views/frontend/canvas.py::CanvasView'),
+
     # multi user
     Route('/multi-user/multi-user-chat/<topic>',
           'views/multi_user/multi_user_chat.py::MultiUserChat'),

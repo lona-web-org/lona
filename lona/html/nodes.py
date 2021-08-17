@@ -115,10 +115,6 @@ class Td(Node):
     TAG_NAME = 'td'
 
 
-class Canvas(Node):
-    TAG_NAME = 'canvas'
-
-
 class Hr(Node):
     TAG_NAME = 'hr'
     SELF_CLOSING_TAG = True
