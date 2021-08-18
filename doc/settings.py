@@ -29,6 +29,7 @@ MENU = [
         ['Error Views', 'end-user-documentation/error-views.rst'],
         ['Middlewares', 'end-user-documentation/middlewares.rst'],
         ['Settings', 'end-user-documentation/settings.rst'],
+        ['Lona Shell', 'end-user-documentation/lona-shell.rst'],
         ['Debugging', 'end-user-documentation/debugging.rst'],
         ['Deployment', 'end-user-documentation/deployment.rst'],
         ['Contributors', 'end-user-documentation/contributors.rst'],

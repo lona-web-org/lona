@@ -3,6 +3,10 @@
 Settings
 ========
 
+Settings can be live analyzed by using the
+{{ link('end-user-documentation/lona-shell.rst', 'Lona Shell') }} command
+``%lona_settings``.
+
 Threads
 -------
 

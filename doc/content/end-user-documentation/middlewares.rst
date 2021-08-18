@@ -11,6 +11,10 @@ event handler: The middleware data gets passed into the every middleware until
 the data gets not returned. When the data gets not returned, Lona regards the
 data as handled.
 
+Middlewares can be live analyzed by using the
+{{ link('end-user-documentation/lona-shell.rst', 'Lona Shell') }} command
+``%lona_middlewares``.
+
 .. code-block:: python
 
     # middlewares/my_middleware.py

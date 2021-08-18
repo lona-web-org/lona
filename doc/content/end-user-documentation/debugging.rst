@@ -66,9 +66,9 @@ Lona Shell
 ----------
 
 The Lona shell is based on `rlpython <https://pypi.org/project/rlpython/>`_ and
-can be started directly from the server process using ``--shell``, a shell
-server and can be embedded via ``server.embed_shell()`` or
-``LonaView.embed_shell()``.
+can be started directly from the server process using ``--shell``, when using
+script using ``app.run(shell=True)`` and a shell server and can be embedded
+using ``server.embed_shell()`` or ``LonaView.embed_shell()``.
 
 The shell is a full python REPL and contains some use full commands prefixed
 with ``%lona_``.
