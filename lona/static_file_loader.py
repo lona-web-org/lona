@@ -13,7 +13,10 @@ class StaticFileLoader:
     def __init__(self, server):
         self.server = server
 
-        self.static_dirs = self.server.settings.STATIC_DIRS.copy()
+        self.static_dirs = [
+            *self.server.settings.STATIC_DIRS,
+            *self.server.settings.CORE_STATIC_DIRS,
+        ]
 
         # resolving potential relative paths
         for index, static_dir in enumerate(self.static_dirs):
@@ -195,7 +198,7 @@ class StaticFileLoader:
             return self.server.client_pre_compiler.resolve()
 
         # searching in static dirs
-        for static_dir in self.static_dirs[::-1]:
+        for static_dir in self.static_dirs:
             abs_path = os.path.join(static_dir, rel_path)
 
             logger.debug("trying '%s'", abs_path)
