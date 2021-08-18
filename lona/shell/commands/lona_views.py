@@ -1,3 +1,5 @@
+import __main__
+
 from pprint import pformat
 import traceback
 import textwrap
@@ -43,10 +45,13 @@ class LonaViewsCommand:
 
     # helper ##################################################################
     def _get_view_path(self, view_runtime):
+        if view_runtime.view.__module__ == '__main__':
+            return __main__.__file__
+
         if view_runtime.view.__module__.endswith('.py'):
             return view_runtime.view.__module__
 
-        return inspect.getabsfile(view_runtime.view)
+        return inspect.getabsfile(view_runtime.view.__class__)
 
     def _get_view_name(self, view_runtime):
         return view_runtime.view.__class__.__name__
