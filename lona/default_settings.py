@@ -70,6 +70,7 @@ MIDDLEWARES = []
 # shell
 CORE_COMMANDS = [
     'lona.shell.commands.lona_server_state.LonaServerStateCommand',
+    'lona.shell.commands.lona_static_files.LonaStaticFilesCommand',
     'lona.shell.commands.lona_connections.LonaConnectionsCommand',
     'lona.shell.commands.lona_settings.LonaSettingsCommand',
     'lona.shell.commands.lona_routes.LonaRoutesCommand',
