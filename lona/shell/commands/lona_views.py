@@ -134,7 +134,7 @@ class LonaViewsCommand:
 
         try:
             view_runtime = controller.get_view_runtime(
-                view_runtime_id=int(arguments['runtime-id']),
+                view_runtime_id=arguments['runtime-id'],
             )
 
         except Exception:
