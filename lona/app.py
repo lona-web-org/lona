@@ -51,9 +51,6 @@ class LonaApp:
         self.settings = Settings()
         self.settings.add(default_settings.__file__)
 
-        self.settings.CORE_TEMPLATE_DIRS.insert(0, self.template_dir)
-        self.settings.STATIC_DIRS.insert(0, self.static_dir)
-
     # helper ##################################################################
     def _get_settings_as_dict(self):
         settings = {}
@@ -165,6 +162,10 @@ class LonaApp:
 
     # server ##################################################################
     def run(self, **args):
+        # finish settings
+        self.settings.CORE_TEMPLATE_DIRS.insert(0, self.template_dir)
+        self.settings.STATIC_DIRS.insert(0, self.static_dir)
+
         # setup arguments
         server_args = ServerArgs(
             host='localhost',
