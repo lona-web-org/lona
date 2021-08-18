@@ -2,9 +2,12 @@
   <head>
     <meta charset="utf-8" />
     {{ Lona.load_stylesheets() }}
+    <link href="{{ Lona.load_static_file('lona/style.css') }}" rel="stylesheet">
   </head>
   <body>
+    {% include "lona/header.html" %}
     <div id="lona"></div>
+    {% include "lona/footer.html" %}
     {{ Lona.load_scripts() }}
     <script>
       var lona_context = new Lona.LonaContext({
@@ -16,9 +19,7 @@
         follow_http_redirects: true,
       });
 
-      lona_context.add_disconnect_hook(function(lona_context, event) {
-        document.querySelector('#lona').innerHTML = 'Server disconnected';
-      });
+      {% include "lona/frontend.js" %}
 
       lona_context.setup();
     </script>

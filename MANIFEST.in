@@ -1,4 +1,5 @@
 recursive-include lona/templates/ *
+recursive-include lona/static/ *
 recursive-include lona/client/ *
 recursive-include lona/contrib/*/static/ *
 
