@@ -158,18 +158,20 @@ method.
 All paths, besides paths starting with ``/``, have to be relative to the python
 script.
 
+**More information on extending the frontend template:**
+`Custom Templates </end-user-documentation/frontends.html#custom-templates>`_
+
 .. code-block:: python
 
     from lona import LonaApp
 
     app = LonaApp(__file__)
 
-    app.add_template('my/html/template.html', """
-        <h1>My Template</h1.>
-        <p>Hello World</p>
+    app.add_template('lona/header.html', """
+        <h1>My Lona Project</h1.>
     """)
 
-    app.add_template('my/html/template.html', path='path/to/my/template.html')
+    app.add_template('lona/header.html', path='lona/header.html')
 
 
 Adding Static Files
@@ -182,16 +184,19 @@ method.
 All paths, besides paths starting with ``/``, have to be relative to the python
 script.
 
+The default frontend template includes ``lona/style.css`` which can be
+overridden.
+
 .. code-block:: python
 
     from lona import LonaApp
 
     app = LonaApp(__file__)
 
-    app.add_static_file('my/css/stylesheet.css', """
+    app.add_static_file('lona/style.css', """
         body {
             background-color: white;
         }
     """)
 
-    app.add_template('my/css/stylesheet.css', path='path/to/my/stylesheet.css')
+    app.add_template('lona/style.css', path='lona/style.css')

@@ -23,34 +23,45 @@ Lona uses ``settings.FRONTEND_TEMPLATE`` which is set to
 ``lona/frontend.html`` by default. You can reset this value or provide a
 template under this path.
 
+The default frontend template (shown below) is split up in
+``lona/header.html``, ``lona/footer.html`` and ``lona/frontend.js``.
+Therefore the parts before and after the views can be overridden for styling
+and Javascript can be added to ``lona/frontend.js``.
+
+The default frontend template includes ``lona/style.css`` which can be
+overridden.
+
 .. code-block:: html
 
     <!-- templates/lona/frontend.html -->
     <html>
-        <head>
-            <meta charset="utf-8" />
+    <head>
+        <meta charset="utf-8" />
+        {{ Lona.load_stylesheets() }}
+        <link href="{{ Lona.load_static_file('lona/style.css') }}" rel="stylesheet">
+    </head>
+    <body>
+        {% include "lona/header.html" %}
+        <div id="lona"></div>
+        {% include "lona/footer.html" %}
+        {{ Lona.load_scripts() }}
+        <script>
+        var lona_context = new Lona.LonaContext({
+            target: '#lona',
+            title: 'Lona',
+            update_address_bar: true,
+            update_title: true,
+            follow_redirects: true,
+            follow_http_redirects: true,
+        });
 
-            // this loads the Javascipt client and all Javascript files
-            // included in Lona widgets
-            {{ Lona.load_stylesheets() }}
-        </head>
-        <body>
-            <div id="lona"></div>
-            {{ Lona.load_scripts() }}
-            <script>
-                var lona_context = new Lona.LonaContext({
-                    target: '#lona',
-                    title: 'Lona',
-                    update_address_bar: true,
-                    update_title: true,
-                    follow_redirects: true,
-                    follow_http_redirects: true,
-                });
+        {% include "lona/frontend.js" %}
 
-                lona_context.setup();
-            </script>
-        </body>
+        lona_context.setup();
+        </script>
+    </body>
     </html>
+
 
 
 Loading static files
