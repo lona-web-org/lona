@@ -1,5 +1,4 @@
 from datetime import datetime
-import time
 
 from lona.html import HTML, H1, Div, A
 from lona import LonaApp, LonaView
@@ -59,7 +58,7 @@ class InteractiveView(LonaView):
 
             self.show(html)
 
-            time.sleep(1)
+            self.sleep(1)
 
 
 @app.route('/non-interactive-view/', interactive=False)
