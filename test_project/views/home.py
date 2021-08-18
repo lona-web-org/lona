@@ -105,11 +105,6 @@ class HomeView(LonaView):
             <ul>
                 <li><a href="/multi-user/multi-user-chat/">Multi User Chat</a></li>
             </ul>
-
-            <h2>Contrib</h2>
-            <ul>
-                <li><a href="/contrib/chart-js/">Chart.js</a></li>
-            </ul>
         """  # NOQA
 
         return body

@@ -145,10 +145,6 @@ routes = [
     Route('/multi-user/multi-user-chat(/)',
           'views/multi_user/multi_user_chat.py::MultiUserChat'),
 
-    # contrib
-    Route('/contrib/chart-js/',
-          'views/contrib/chartjs.py::ChartJSView'),
-
     # home
     Route('/', 'views/home.py::HomeView'),
 ]
