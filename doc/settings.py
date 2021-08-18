@@ -57,7 +57,8 @@ MENU = [
     ]],
 
     [['Contrib'], [
-        ['Django Auth', 'contrib/django-auth.rst'],
+        ['Django', 'contrib/django/index.rst'],
+        ['Chart.js', 'contrib/chartjs/index.rst'],
     ]],
 ]
 
