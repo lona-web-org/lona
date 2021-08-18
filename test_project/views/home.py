@@ -1,25 +1,9 @@
-import os
-
 from lona.view import LonaView
 
 
 class HomeView(LonaView):
     def handle_request(self, request):
-        body = ''
-
-        if os.environ.get('DJANGO', '0') == '1':
-            body += """
-                <h2>Django Views</h2>
-                <ul>
-                    <li><a href="/admin/">Django Admin</a></li>
-                    <li><a href="/django/login-required/">Login Required</a></li>
-                    <li><a href="/django/template-based-form/">Template Based Form</a></li>
-                    <li><a href="/django/node-based-form/">Node Based Form</a></li>
-                    <li><a href="/django/data-binding-form/">Data Binding Form</a></li>
-                </ul>
-            """  # NOQA
-
-        body += """
+        return """
             <h2>View Types</h2>
             <ul>
                 <li><a href="/view-types/interactive-view/">Interactive View</a></li>
@@ -106,5 +90,3 @@ class HomeView(LonaView):
                 <li><a href="/multi-user/multi-user-chat/">Multi User Chat</a></li>
             </ul>
         """  # NOQA
-
-        return body
