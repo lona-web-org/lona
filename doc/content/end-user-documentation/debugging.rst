@@ -75,14 +75,17 @@ with ``%lona_``.
 
 .. table::
 
-    ^Command               ^Description
-    |%threads [THREAD_ID]           |Prints all threads or all information on given thread
-    |%lona_info                     |Prints basic information about the running Lona server <br> and its configuration
-    |%lona_settings [SETTINGS_NAME] |Prints one or all settings
-    |%lona_routes [-r URL]          |Prints all or the matching routes when URL is provided
-    |%lona_connections              |Prints all current server connections
-    |%lona_server_state             |Prints server.state
-    |%lona_views [RUNTIME_ID]       |Prints all running views or all information on given view
+    ^Command                                        ^Description
+    |%threads [THREAD_ID]                           |Prints all threads or all information on given thread
+    |%lona_info                                     |Prints basic information about the running Lona server <br> and its configuration
+    |%lona_settings [SETTINGS_NAME]                 |Prints one or all settings
+    |%lona_routes [-r URL]                          |Prints all or the matching routes when URL is provided
+    |%lona_connections                              |Prints all current server connections
+    |%lona_server_state                             |Prints server.state
+    |%lona_views [RUNTIME_ID] [--memory]            |Prints all running views or all information on given <br> view. When "--memory" is set, all current variables <br> of the view get printed
+    |%lona_static_files [-l] [-r NAME] [static-dir] |Prints all loaded static files or static file directories
+    |%lona_templates [-l] [-r NAME] [template-dir]  |Prints all loaded templates or template directories
+    |%lona_middlewares                              |Prints all loaded middleware hooks
 
 
 Using Lona Shell Server
