@@ -270,25 +270,28 @@ class ViewRuntime:
             self.view_class._add_view_to_objects(self.view)
 
             # run view
-            raw_response_dict = self.view.handle_request(self.request)
+            raw_response_dict = self.view.handle_request(self.request) or ''
 
             # response dicts
-            if raw_response_dict:
-                if isinstance(raw_response_dict, AbstractNode):
+            if isinstance(raw_response_dict, AbstractNode):
+                if self.route and not self.route.interactive:
+                    raw_response_dict = str(raw_response_dict)
+
+                else:
                     self.view.show(html=raw_response_dict)
 
                     return
 
-                # check if non-interactive features got used in
-                # interactive mode
-                if(self.route and self.route.interactive and
-                    isinstance(raw_response_dict, dict) and (
-                     'json' in raw_response_dict or
-                     'file' in raw_response_dict)):
+            # check if non-interactive features got used in
+            # interactive mode
+            if(self.route and self.route.interactive and
+                isinstance(raw_response_dict, dict) and (
+                    'json' in raw_response_dict or
+                    'file' in raw_response_dict)):
 
-                    raise RuntimeError('JSON and file responses are only available in non-interactive mode')  # NOQA
+                raise RuntimeError('JSON and file responses are only available in non-interactive mode')  # NOQA
 
-                return self.handle_raw_response_dict(raw_response_dict)
+            return self.handle_raw_response_dict(raw_response_dict)
 
         except(StopReason, CancelledError) as _stop_reason:
             self.stop_reason = _stop_reason
