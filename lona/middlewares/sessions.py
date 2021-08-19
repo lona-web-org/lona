@@ -55,6 +55,7 @@ class LonaSessionMiddleware:
     def handle_connection(self, data):
         http_request = data.connection.http_request
         settings = data.server.settings
+        router = data.server.router
 
         def get_session_key():
             if settings.SESSIONS_KEY_NAME not in http_request.cookies:
@@ -71,6 +72,14 @@ class LonaSessionMiddleware:
         if(not data.connection.interactive and
            not get_session_key()):
 
+            # skip cookie setting and redirecting on non-interactive routes
+            # without this exception REST APIs don't work as expected
+            match, route, match_info = router.resolve(http_request.path)
+
+            if match and not route.interactive:
+                return data
+
+            # set cookie and redirect so the cookie will take effect
             response = Response(
                 status=200,
                 content_type='text/html',
