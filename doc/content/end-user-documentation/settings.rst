@@ -30,6 +30,20 @@ Routing
     :name: ROUTING_TABLE
     :path: lona.default_settings.ROUTING_TABLE
 
+.. setting::
+    :name: ROUTING_RESOLVE_CACHE_MAX_SIZE
+    :path: lona.default_settings.ROUTING_RESOLVE_CACHE_MAX_SIZE
+
+    Lona uses a ``functools.lru_cache`` to cache resolving requests. This
+    setting configures the max size of this cache.
+
+.. setting::
+    :name: ROUTING_REVERSE_CACHE_MAX_SIZE
+    :path: lona.default_settings.ROUTING_REVERSE_CACHE_MAX_SIZE
+
+    Lona uses a ``functools.lru_cache`` to cache reverse resolving requests.
+    This setting configures the max size of this cache.
+
 
 Templating
 ----------

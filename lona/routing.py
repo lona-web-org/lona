@@ -1,5 +1,8 @@
+from functools import lru_cache
 import logging
 import re
+
+from lona import default_settings
 
 ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
 ROUTE_PART_FORMAT_STRING = r'(?P<{}>{})'
@@ -106,6 +109,34 @@ class Router:
     def __init__(self):
         self.routes = []
 
+        self.resize_resolve_cache(
+            default_settings.ROUTING_RESOLVE_CACHE_MAX_SIZE,
+        )
+
+        self.resize_reverse_cache(
+            default_settings.ROUTING_REVERSE_CACHE_MAX_SIZE,
+        )
+
+    # caches ##################################################################
+    def resize_resolve_cache(self, max_size):
+        self._resolve_lru_cache = lru_cache(max_size)(self._resolve)
+
+    def resize_reverse_cache(self, max_size):
+        self._reverse_lru_cache = lru_cache(max_size)(self._reverse)
+
+    def get_resolve_cache_info(self):
+        return self._resolve_lru_cache.cache_info()
+
+    def get_reverse_cache_info(self):
+        return self._reverse_lru_cache.cache_info()
+
+    def clear_resolve_cache_info(self):
+        return self._resolve_lru_cache.cache_clear()
+
+    def clear_reverse_cache_info(self):
+        return self._reverse_lru_cache.cache_clear()
+
+    # routes ##################################################################
     def add_route(self, route):
         self.routes.append(route)
 
@@ -113,7 +144,8 @@ class Router:
         for route in routes:
             self.add_route(route)
 
-    def resolve(self, path):
+    # resolve #################################################################
+    def _resolve(self, path):
         logger.debug("resolving '%s'", path)
 
         for route in self.routes:
@@ -128,7 +160,11 @@ class Router:
 
         return False, None, {}
 
-    def reverse(self, name, *args, **kwargs):
+    def resolve(self, *args, **kwargs):
+        return self._resolve_lru_cache(*args, **kwargs)
+
+    # reverse #################################################################
+    def _reverse(self, name, *args, **kwargs):
         route = None
 
         for i in self.routes:
@@ -152,3 +188,6 @@ class Router:
             key_error = e
 
         raise ValueError('missing URL arg: {} '.format(key_error.args[0]))
+
+    def reverse(self, *args, **kwargs):
+        return self._reverse_lru_cache(*args, **kwargs)
