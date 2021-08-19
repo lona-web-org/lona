@@ -6,8 +6,8 @@ Getting Started
 Running Lona From A Script
 --------------------------
 
-For microservices or small prototypes Lona app can be run using a single python
-script.
+For microservices or small prototypes a Lona app can be run using a single
+python script.
 
 .. code-block:: text
 
