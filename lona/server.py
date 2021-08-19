@@ -487,7 +487,7 @@ class LonaServer:
             window_id=None,
             view_runtime_id=None,
             method=METHOD.VIEW,
-            payload=[http_request.path, post_data],
+            payload=[str(http_request.url), post_data],
             excutor_name='runtime_worker',
         )
 
