@@ -9,7 +9,8 @@ is supposed to load the Lona Javascript client, define the basic layout of the
 website and load all static files.
 
 **More information:**
-`Basic Concept </end-user-documentation/basic-concept.rst>`_
+`Basic Concept </end-user-documentation/basic-concept.html>`_
+
 
 Lona has a default frontend view build in that uses an overrideable template.
 To customize your Lona application you can override the template or the entire
@@ -160,7 +161,8 @@ On the server all messages get handled by middlewares.
 
             print(message)
 
-**More information:** `Middlewares </end-user-documentation/middlewares.rst>`_
+**More information:**
+`Middlewares </end-user-documentation/middlewares.html>`_
 
 
 Server To Client
