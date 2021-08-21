@@ -3,6 +3,9 @@
 Basic Concept
 =============
 
+Workflow
+--------
+
 Lets say you have view that counts to ten:
 
 .. code-block:: python
@@ -53,49 +56,49 @@ message will look like this:
 
 .. code-block:: text
 
-	[WIDGET,
-	 '663758909164540',
-	 '',
-	 [[NODE,
-	   '663758908759614',
-	   'h1',
-	   [],
-	   [],
-	   {},
-	   {},
-	   [[TEXT_NODE, '663758908791192', 'Count To Ten']]],
-	  [NODE,
-	   '663758908960048',
-	   'p',
-	   [],
-	   [],
-	   {},
-	   {},
-	   [[TEXT_NODE, '663758908983761', 'Counter: '],
-		[NODE,
-		 '663758909061401',
-		 'div',
-		 [],
-		 [],
-		 {},
-		 {},
-		 [[TEXT_NODE, '663788860494138', '0']]]]]],
-	 {}]
+    [WIDGET,
+     '663758909164540',
+     '',
+     [[NODE,
+       '663758908759614',
+       'h1',
+       [],
+       [],
+       {},
+       {},
+       [[TEXT_NODE, '663758908791192', 'Count To Ten']]],
+      [NODE,
+       '663758908960048',
+       'p',
+       [],
+       [],
+       {},
+       {},
+       [[TEXT_NODE, '663758908983761', 'Counter: '],
+        [NODE,
+         '663758909061401',
+         'div',
+         [],
+         [],
+         {},
+         {},
+         [[TEXT_NODE, '663788860494138', '0']]]]]],
+      {}]
 
 The encoded HTML gets rendered to browser readable HTML by the Javascript
 client
 
 .. code-block:: html
 
-	<h1 data-lona-node-id="663758908759614">
-	  Count To Ten
-	</h1>
-	<p data-lona-node-id="663758908960048">
-	  Counter:
-	  <div data-lona-node-id="663758909061401">
-		0
-	  </div>
-	</p>
+    <h1 data-lona-node-id="663758908759614">
+      Count To Ten
+    </h1>
+    <p data-lona-node-id="663758908960048">
+      Counter:
+      <div data-lona-node-id="663758909061401">
+        0
+      </div>
+    </p>
 
 
 The HTML gets only send entirely once, because the view
@@ -103,3 +106,78 @@ only updates the div named ``counter`` before calling ``show()`` again.
 
 Every Lona HTML node has a unique id stored in ``data-lona-node-id``. When a
 node gets updated Lona sends updates only for that specific node.
+
+
+Asynchronous Code
+-----------------
+
+Lona is based on asyncio and uses
+`aiohttp <https://docs.aiohttp.org/en/stable/>`_ as its HTTP server. So Lona is
+asynchronous internally, but provides an asynchronous API that does not
+use Pythons ``async`` and ``await`` syntax.
+
+.. code-block:: python
+
+    from loa.html import HTML, H1, Button
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            html = HTML(
+                H1('Click The Button'),
+                Button('Click Me'),
+            )
+
+            self.show(html)
+
+            # This call blocks until the button is clicked
+            input_event = self.await_click()
+
+            self.show(H1('button was clicked'))
+
+Why is that? Asyncio implements cooperative multitasking. That means Asyncio
+requires every piece of code, running on its ioloop, to be fully compliant.
+
+Lets say Lona would use ``await`` for its asynchronous API and you want to
+write a view that pulls all data from a database and save it again:
+
+.. code-block:: python
+
+    from loa.html import HTML, H1, Button
+    from orm.models import MyModel
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        async def handle_request(self, request):
+            html = HTML(
+                H1('Click The Button to update database'),
+                Button('Click Me'),
+            )
+
+            self.show(html)
+
+            input_event = await self.await_click()
+
+            # pull data from the database and update in the database
+            for model in MyModel.objects.all():
+                model.update_table()
+
+When the button is clicked the view does not release the ioloop scope until
+the all database operations are finished. In this time, nothing else can
+happen. The ioloop is blocked (potential forever).  This is no obvious problem
+for developers that are not that familiar with asyncio, and issues like that
+first show up in production, in a multi user environment.
+
+You could move all blocking code to a thread (thats what Lona internally does
+with your whole view) to not block the ioloop, but that splits the view logic
+in multiple pieces of code, what introduces complexity.
+
+Lona uses multi-threading which allows for self-contained views without the
+need to implement cascading callbacks. This does not mean you cant use
+``await`` in your views if you really have to (more information:
+`LonaView.await_sync() </end-user-documentation/views.html#lonaview-await-sync-awaitable>`_
+
+**More information on resource management:**
+`Resource Management </end-user-documentation/views.html#resource-management>`_
