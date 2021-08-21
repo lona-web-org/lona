@@ -20,7 +20,7 @@ Lona is a web application framework, designed to write responsive web apps in
 
 **Documentation:** `lona-web.org <http://lona-web.org>`_
 
-**Changelog:** `lona-web.org/changelog <http://lona-web.org/end-user-documentation/changelog.html>`_
+**Changelog:** `lona-web.org/changelog <http://lona-web.org/changelog.html>`_
 
 **Reddit:** `reddit.com/r/lona_web_org/ <https://www.reddit.com/r/lona_web_org/>`_
 
@@ -68,7 +68,8 @@ pythonic API to write self contained views.
 
     app.run(port=8080)
 
-**More information:** `Getting Started <http://lona-web.org/end-user-documentation/getting-started.html>`_
+**More information:**
+`Getting Started <http://lona-web.org/end-user-documentation/getting-started.html>`_
 
 
 How does it work?
@@ -80,4 +81,4 @@ This protocol specifies messages like "hey frontend, please show $HTML" and
 "hey backend, someone clicked on node XY".
 
 **More information:**
-`Basic Concept <https://lona-web.org/end-user-documentation/basic-concept.html>`_
+`Basic Concept <https://lona-web.org/basic-concept.html>`_

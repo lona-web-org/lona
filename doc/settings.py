@@ -19,8 +19,14 @@ PLUGINS = [
 ]
 
 MENU = [
+    ['Lona', [
+        ['Basic Concept', 'basic-concept.rst'],
+        ['News / Getting Help', 'news-getting-help.rst'],
+        ['Contributors', 'contributors.rst'],
+        ['Changelog', 'changelog.rst'],
+    ]],
+
     ['End User Documentation', [
-        ['Basic Concept', 'end-user-documentation/basic-concept.rst'],
         ['Getting Started', 'end-user-documentation/getting-started.rst'],
         ['Lona Scripts', 'end-user-documentation/lona-scripts.rst'],
         ['Views', 'end-user-documentation/views.rst'],
@@ -32,9 +38,6 @@ MENU = [
         ['Lona Shell', 'end-user-documentation/lona-shell.rst'],
         ['Debugging', 'end-user-documentation/debugging.rst'],
         ['Deployment', 'end-user-documentation/deployment.rst'],
-        ['Contributors', 'end-user-documentation/contributors.rst'],
-        ['News / Getting Help', 'end-user-documentation/news-getting-help.rst'],
-        ['Changelog', 'end-user-documentation/changelog.rst'],
     ]],
 
     ['Cookbook', [

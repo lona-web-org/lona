@@ -39,7 +39,7 @@ By default all Lona views are interactive. Interactive Lona views run over an
 websocket connection, which makes input events and background views possible.
 
 **More information:**
-{{ link('end-user-documentation/basic-concept.rst', 'Basic Concept') }}
+{{ link('basic-concept.rst', 'Basic Concept') }}
 
 
 Non-Interactive
