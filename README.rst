@@ -4,9 +4,6 @@
 .. image:: https://img.shields.io/pypi/l/lona.svg
     :alt: pypi.org
     :target: https://pypi.org/project/lona
-.. image:: https://img.shields.io/travis/com/lona-web-org/lona/master.svg
-    :alt: Travis branch
-    :target: https://travis-ci.com/lona-web-org/lona
 .. image:: https://img.shields.io/pypi/pyversions/lona.svg
     :alt: pypi.org
     :target: https://pypi.org/project/lona
