@@ -22,6 +22,7 @@ MENU = [
     ['Lona', [
         ['Basic Concept', 'basic-concept.rst'],
         ['News / Getting Help', 'news-getting-help.rst'],
+        ['How To Contribute', 'how-to-contribute.rst'],
         ['Contributors', 'contributors.rst'],
         ['Changelog', 'changelog.rst'],
     ]],
