@@ -32,6 +32,9 @@ Javascript application.
 Lona handles the server side and the client side, and provides a simple,
 pythonic API to write self contained views.
 
+.. code-block:: text
+
+    # pip install lona
 
 .. code-block:: python
 
@@ -75,3 +78,6 @@ Lona comes with a Javascript based browser library that speaks a specialized
 protocol with the backend.
 This protocol specifies messages like "hey frontend, please show $HTML" and
 "hey backend, someone clicked on node XY".
+
+**More information:**
+`Basic Concept <https://lona-web.org/end-user-documentation/basic-concept.html>`_
