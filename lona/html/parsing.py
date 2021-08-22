@@ -47,7 +47,15 @@ class NodeHTMLParser(HTMLParser):
         self.set_current_node(self._node.parent)
 
     def handle_data(self, data):
-        self._node.append(TextNode(data))
+        text = data
+
+        if self._node.tag_name != 'pre':
+            text = text.strip()
+
+            if not text:
+                return
+
+        self._node.append(TextNode(text))
 
 
 def html_string_to_node_list(html_string):
