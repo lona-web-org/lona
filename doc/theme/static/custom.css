@@ -58,3 +58,24 @@ table.docutils {
 div.wy-menu.wy-menu-vertical p.caption:first-child {
     display: none;
 }
+
+/* anchors ----------------------------------------------------------------- */
+a.anchor {
+    font-size: 80%;
+}
+
+a.anchor,
+a.anchor:active,
+a.anchor:visited {
+    color: #BBBBBB !important;
+}
+
+a.anchor:hover {
+    color: #2980B9 !important;
+}
+
+a.anchor:after {
+    font-family: monospace;
+    margin-left: 0.25em;
+    content: '¶';
+}

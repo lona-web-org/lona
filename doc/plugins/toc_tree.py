@@ -39,12 +39,28 @@ class TocTree:
 
             indentation = int(header.name[1:]) - 1
 
+            # add anchor
+            anchor = soup.new_tag('a')
+            anchor.attrs['class'] = 'anchor'
+
+            anchor.attrs['href'] = '/{}#{}'.format(
+                content['output'],
+                section.attrs['id'],
+            )
+
+            header.append(anchor)
+
             # trim header
             header_string = FUNCTION_RE.sub('()', header.text)
 
             toc_tree_data.append(
                 (section, header_string, indentation, )
             )
+
+        # render html with anchors
+        if not content['has_anchors']:
+            content['content_body'] = str(soup)
+            content['has_anchors'] = True
 
         # render toc tree
         content['toc_tree'] = _toc_tree_template.render(
