@@ -65,6 +65,50 @@ list interfaces and methods.
     </div>
 
 
+Selectors
+~~~~~~~~~
+
+To find nodes in big node trees Lona provides a query selector API similar to
+Javascript.
+
+``AbstractNode.query_selector()`` returnes the first first matching node in
+the node tree. ``AbstractNode.query_selector_all()`` returnes a list of all
+matching nodes.
+
+.. code-block:: python
+
+    from lona.html import HTML
+
+    html = HTML("""
+        <div>
+            <div id="foo">
+                Foo
+                <div id="bar">Bar</div>
+            </div>
+        </div>
+    """)
+
+    foo = html.query_selector('#foo')
+    bar = foo.query_selector('#bar')
+
+
+Syntax
+""""""
+
+.. table::
+
+    ^Example          ^Description
+    |"div"            |Selects all nodes with the tag name "div"
+    |"div#foo"        |Selects all nodes with the tag name "div" and the id "foo"
+    |"div#foo#bar"    |Selects all nodes with the tag name "div" and the ids "foo" and "bar"
+    |"#foo"           |Selects all nodes with the id "foo"
+    |"#foo#bar"       |Selects all nodes with the ids "foo" and "bar"
+    |".foo"           |Selects all nodes with the class "foo"
+    |".foo.bar"       |Selects all nodes with the classes "foo" and "bar"
+    |"#foo,#bar"      |Selects all nodes with the classes "foo" or "bar"
+    |"[foo=bar]"      |Selects all nodes with the attribute "foo" set to "bar"
+
+
 Using HTML Strings
 ~~~~~~~~~~~~~~~~~~
 

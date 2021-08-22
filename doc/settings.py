@@ -42,6 +42,7 @@ MENU = [
     ]],
 
     ['Cookbook', [
+        ['Using Traditional HTML', 'cookbook/using-traditional-html.rst'],
         ['Writing A Lona Form', 'cookbook/writing-a-lona-form.rst'],
 
         ['Writing A Traditional Form',
