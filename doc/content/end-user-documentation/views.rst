@@ -7,7 +7,7 @@ Resource Management
 -------------------
 
 Lona is based on multi-threading (more information:
-`Asynchronous Code </end-user-documentation/basic-concept.html#asynchronous-code>`_).
+`Asynchronous Code </basic-concept.html#asynchronous-code>`_).
 That means that every hook of a ``lona.LonaView`` like ``handle_request()`` or
 ``handle_input_event()`` block one thread each until your business logic
 finishes.
