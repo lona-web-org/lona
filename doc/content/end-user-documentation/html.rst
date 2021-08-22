@@ -216,6 +216,63 @@ Extending Nodes
         CLASS_LIST = ['btn', 'btn-primary']
 
 
+Locking
+~~~~~~~
+
+Lona is multithreaded and up to three views can be involved at the same time
+to run a view (more information:
+`Resource management </end-user-documentation/views.html#resource-management>`_)
+
+To avoid race conditions between threads you can use
+``lona.html.AbstractNode.lock``.
+
+The followwing view implements a counter that gets incremented once a second
+in ``handle_request()``. When the decrement button is clicked, the event gets
+handled in ``handle_input_event()``. When incrementing and decrementing, the
+view reads the current value from the HTML tree, changes it and writes back.
+To avoid race conditions, both callbacks lock the HTML tree, before reading
+and release it after writing.
+
+.. code-block:: python
+
+    from lona.html import HTML, Div, H1, Button
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            self.counter = Div('0')
+            self.button = Button('Decrement Counter')
+
+            self.html = HTML(
+                H1('Counter'),
+                self.counter,
+                self.button,
+            )
+
+            while True:
+
+                # increment counter
+                with self.html.lock:
+                    self.counter.set_text(
+                        str(int(self.counter.get_text()) + 1)
+                    )
+
+                # show html
+                self.show(self.html)
+                self.sleep(1)
+
+        def handle_input_event(self, input_event):
+            if input_event.node is not self.button:
+                return
+
+            # decrement button
+            with self.html.lock:
+                self.counter.set_text(
+                    str(int(self.counter.get_text()) - 1)
+                )
+
+
 Inputs
 ~~~~~~
 
