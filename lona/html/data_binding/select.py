@@ -85,6 +85,8 @@ class Select(Widget):
             self.value = input_event.data
 
             if self.bubble_up:
+                if input_event.node is self.select_node:
+                    input_event.node = self
                 return input_event
 
     @property

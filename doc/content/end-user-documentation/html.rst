@@ -334,7 +334,7 @@ Select
 
     from lona.html import Select
 
-    CheckBox([
+    Select([
         # value, label, is_selected
         ('foo', 'Foo', True),
         ('bar', 'Bar', False),
