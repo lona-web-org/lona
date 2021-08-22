@@ -14,7 +14,7 @@ running view.
     from datetime import datetime
 
     from lona.html import HTML, Span, H1, Br, Button
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class DaemonView(LonaView):

@@ -13,13 +13,12 @@ python script.
 .. code-block:: python
 
     from datetime import datetime
-    import time
 
     from lona.html import HTML, H1, Div
-    from lona.view import LonaView
-    from lona import LonaApp
+    from lona import LonaApp, LonaView
 
     app = LonaApp(__file__)
+
 
     @app.route('/')
     class ClockView(LonaView):
@@ -36,7 +35,8 @@ python script.
 
                 self.show(html)
 
-                time.sleep(1)
+                self.sleep(1)
+
 
     app.run(port=8080)
 
@@ -87,15 +87,16 @@ Views can be added by using the ``LonaApp.route()`` decorator or by setting
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaApp, LonaView
     from lona.html import H1
-    from lona import LonaApp
 
     app = LonaApp(__file__)
 
+
     @app.route('/')
     class MyLonaView(LonaView):
-        return H1('Hello World')
+        def handle_request(self, request):
+            return H1('Hello World')
 
 
     app.run()
@@ -112,16 +113,17 @@ by using the ``LonaApp.frontend_view()`` decorator.
 
 .. code-block:: python
 
-    from lona.view import LonaView
-    from lona import LonaApp
+    from lona import LonaApp, LonaView
 
     app = LonaApp(__file__)
 
+
     @app.frontend_view
     class MyFrontendView(LonaView):
-        return {
-            'template': self.server.settings.FRONTEND_TEMPLATE,
-        }
+        def handle_request(self, request):
+            return {
+                'template': self.server.settings.FRONTEND_TEMPLATE,
+            }
 
 
 Adding Middlewares
@@ -139,6 +141,7 @@ or import strings.
     from lona import LonaApp
 
     app = LonaApp(__file__)
+
 
     @app.middleware
     class MyMiddleware:

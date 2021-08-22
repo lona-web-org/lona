@@ -11,7 +11,7 @@ accesses in a transaction, ``server.state.lock`` can be used explicit.
 
 .. code-block:: python
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):

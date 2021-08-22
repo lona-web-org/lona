@@ -16,14 +16,12 @@ python script.
 .. code-block:: python
 
     from datetime import datetime
-    import time
-    from lona.html import Div, H1, HTML
 
     from lona.html import HTML, H1, Div
-    from lona.view import LonaView
-    from lona import LonaApp
+    from lona import LonaApp, LonaView
 
     app = LonaApp(__file__)
+
 
     @app.route('/')
     class ClockView(LonaView):
@@ -40,7 +38,8 @@ python script.
 
                 self.show(html)
 
-                time.sleep(1)
+                self.sleep(1)
+
 
     app.run(port=8080)
 

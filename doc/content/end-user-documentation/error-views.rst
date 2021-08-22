@@ -76,7 +76,7 @@ Custom Views
 
     # views/error_403.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class Error403View(LonaView):
@@ -101,7 +101,7 @@ Custom Views
 
     # views/error_403.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class Error404View(LonaView):
@@ -126,7 +126,7 @@ Custom Views
 
     # views/error_500.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class Error500View(LonaView):

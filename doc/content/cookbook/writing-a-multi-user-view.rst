@@ -10,7 +10,7 @@ user connects or a message was send.
 .. code-block:: python
 
     from lona.html import HTML, H1, H2, Div, TextArea, Button, Hr
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MultiUserChat(LonaView):

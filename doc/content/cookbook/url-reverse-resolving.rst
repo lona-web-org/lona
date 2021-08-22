@@ -21,7 +21,7 @@ URL Reverse Resolving
 
     # views.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class URLArgsView(LonaView):

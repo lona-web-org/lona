@@ -286,10 +286,11 @@ Template Responses
 
 
     class MyLonaView(LonaView):
-        return {
-            'template': 'path/to/your/template.html',
-            'foo': 'bar',
-        }
+        def handle_request(self, request):
+            return {
+                'template': 'path/to/your/template.html',
+                'foo': 'bar',
+            }
 
 
 .. code-block:: python
@@ -298,10 +299,11 @@ Template Responses
 
 
     class MyLonaView(LonaView):
-        return {
-            'template_string': '<h1>{{ header }}}</h1>',
-            'header': 'Hello World',
-        }
+        def handle_request(self, request):
+            return {
+                'template_string': '<h1>{{ header }}}</h1>',
+                'header': 'Hello World',
+            }
 
 
 Redirects

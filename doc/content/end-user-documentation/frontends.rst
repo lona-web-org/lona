@@ -178,7 +178,7 @@ as handled.
 
     # views.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class CustomMessageView(LonaView):
@@ -204,7 +204,7 @@ Writing A Custom Frontend View
 
     # views/frontend.py
 
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class FrontendView(LonaView):

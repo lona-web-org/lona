@@ -18,7 +18,7 @@ in ``request.POST``.
 .. code-block:: python
 
     from lona.html import HTML, Form, TextInput, Submit, H1
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):

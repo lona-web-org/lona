@@ -14,7 +14,7 @@ To get notified when the value is changed set ``bubble_up`` to ``True``.
 .. code-block:: python
 
     from lona.html import HTML, TextInput, Button
-    from lona.view import LonaView
+    from lona import LonaView
 
 
     class MyLonaView(LonaView):
