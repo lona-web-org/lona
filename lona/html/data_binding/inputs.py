@@ -104,6 +104,8 @@ class TextInput(Widget):
         self.value = input_event.data
 
         if self.bubble_up:
+            if input_event.node is self.input_node:
+                input_event.node = self
             return input_event
 
     # properties ##############################################################
