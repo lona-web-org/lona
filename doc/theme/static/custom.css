@@ -79,3 +79,8 @@ a.anchor:after {
     margin-left: 0.25em;
     content: '¶';
 }
+
+/* footer ------------------------------------------------------------------ */
+#footer {
+    text-align: right;
+}
