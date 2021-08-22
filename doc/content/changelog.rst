@@ -4,6 +4,36 @@ toctree: False
 Changelog
 =========
 
+`1.3 <https://github.com/lona-web-org/lona/releases/tag/1.3>`_ (2021-08-22)
+---------------------------------------------------------------------------
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+* html: inputs: ``TextInput``, ``TextArea``, ``CheckBox``, ``Select``:
+  ``input_event.node`` now contain the outer widget, not the inner node to
+  make checks in views simpler
+
+* sessions: the session middleware now skips cookie setting and redirecting on
+  non interactive views to make REST APIs work as expected
+
+Changes
+~~~~~~~
+
+* routing: the router now uses ``functools.lru_cache`` for ``resolve()`` and
+  ``reverse()``
+* html: parsing: obsolete empty ``TextNode`` objects that are not part of a
+  ``pre`` get filtered out now
+* views: non-interactive views can return Lona HTML trees now
+
+Bugfixes
+~~~~~~~~
+
+* views: ``GET`` variables were fixed for non-interactive views
+* views: handling of empty return values for non-interactive views like
+  ``''`` or ``None`` was fixed
+
+
 `1.2 <https://github.com/lona-web-org/lona/releases/tag/1.2>`_ (2021-08-19)
 ---------------------------------------------------------------------------
 
