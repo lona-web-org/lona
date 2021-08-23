@@ -31,6 +31,22 @@ In Lona every HTML element is represented as a python object, derived from
 	</div>
 
 
+Comparing Nodes
+~~~~~~~~~~~~~~~
+
+Nodes can compared using ``==`` and ``is``. When using ``==`` Lona checks if
+two nodes have the same tag name and attributes. When using ``is`` Lona checks
+if two nodes are the same object.
+
+.. code-block:: python
+
+    >>> from lona.html import Span, Div
+    >>> Div() == Div()        # True
+    >>> Span() == Div()       # False
+    >>> Div(a=1) == Div(a=1)  # True
+    >>> Div(a=1) is Div(a=1)  # False
+
+
 Sub Nodes
 ~~~~~~~~~
 

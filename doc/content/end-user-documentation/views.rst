@@ -468,6 +468,17 @@ event got returned by the last widget in the chain, Lona checks if
 ``await_[input_event|click|change]()``. If not
 ``LonaView.handle_input_event()`` gets called as last member of the chain.
 
+Input events can, but don't have to, contain a node that issued the event in
+``input_event.node``.
+
+.. note::
+
+    Be careful when comparing ``input_event.node`` with another node.
+    ``==`` checks if two nodes have equal attributes, bot does not check if
+    node A is the same node as node B.
+
+    To check if node A is node B us ``is`` instead of ``==``.
+
 
 Input Event types
 ~~~~~~~~~~~~~~~~~
