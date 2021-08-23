@@ -80,7 +80,7 @@ HTTP Pass Through
 ~~~~~~~~~~~~~~~~~
 
 HTTP pass through views bypass the most of the Lona server infrastructure and
-speak directly to `aiohttp <docs.aiohttp.org/en/stable/>`_. Therefore HTTP
+speak directly to `aiohttp <https://docs.aiohttp.org/en/stable/>`_. Therefore HTTP
 pass through views get `aiohttp request objects <https://docs.aiohttp.org/en/stable/web_reference.html#request-and-base-request>`_
 passed in and have to return `aiohttp response objects <https://docs.aiohttp.org/en/stable/web_reference.html#response-classes>`_.
 

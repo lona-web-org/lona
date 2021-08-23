@@ -12,7 +12,7 @@ The shell is a full python REPL and contains some use full commands prefixed
 with ``%lona_``.
 
 **More information on all Lona shell commands:**
-`Lona Shell <end-user-documentation/debugging.html#lona-shell>`_
+`Lona Shell </end-user-documentation/debugging.html#lona-shell>`_
 
 
 Analyzing Views

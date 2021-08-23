@@ -9,7 +9,7 @@ is supposed to load the Lona Javascript client, define the basic layout of the
 website and load all static files.
 
 **More information:**
-`Basic Concept </end-user-documentation/basic-concept.html>`_
+`Basic Concept </basic-concept.html>`_
 
 
 Lona has a default frontend view build in that uses an overrideable template.

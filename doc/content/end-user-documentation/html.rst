@@ -662,4 +662,4 @@ template tags.
     {{ Lona.load_stylesheets() }}
 
 
-**More information:** `Frontends <end-user-documentation/frontends.html>`_
+**More information:** `Frontends </end-user-documentation/frontends.html>`_
