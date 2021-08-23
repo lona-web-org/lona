@@ -25,6 +25,7 @@ MENU = [
         ['How To Contribute', 'how-to-contribute.rst'],
         ['Contributors', 'contributors.rst'],
         ['Changelog', 'changelog.rst'],
+        ['License', 'license.rst'],
         ['Stickers', 'stickers.rst'],
     ]],
 
