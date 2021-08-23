@@ -1,3 +1,4 @@
+is_template: False
 
 
 Views
@@ -39,7 +40,7 @@ By default all Lona views are interactive. Interactive Lona views run over an
 websocket connection, which makes input events and background views possible.
 
 **More information:**
-{{ link('basic-concept.rst', 'Basic Concept') }}
+`Basic Concept </basic-concept.html>`_
 
 
 Non-Interactive
@@ -89,7 +90,7 @@ to WSGI based frameworks like Django.
 HTTP pass through views can be callbacks instead of classes, to make
 projects like `aiohttp wsgi <https://aiohttp-wsgi.readthedocs.io/en/stable/>`_
 work. More information:
-{{ link('cookbook/integrating-django.rst', 'Integrating Django') }}.
+`Integrating Django </cookbook/integrating-django.html>`_.
 
 To mark a view as HTTP pass through, use the ``http_pass_through`` keyword in the
 ``routes.py``.
@@ -435,7 +436,7 @@ To raise a forbidden error and run the 403 view you can raise
 ``lona.errors.ForbiddenError``.
 
 **More information:**
-{{ link('end-user-documentation/error-views.rst', 'Error Views') }}
+`Error views </end-user-documentation/error-views.html>`_
 
 .. code-block:: python
 
@@ -666,7 +667,7 @@ LonaView.show\(html=None, template=None, template_string=None, title=None, templ
     before, Lona sends only updates, not the entire HTML tree all over again.
 
     **More information on HTML trees:**
-    {{ link('end-user-documentation/html.rst', 'HTML') }}
+    `HTML </end-user-documentation/html.html>`_
 
 
 LonaView.set_title(title)
@@ -789,7 +790,7 @@ LonaView.embed_shell\(\)
 
     Embeds a `rlpython <https://pypi.org/project/rlpython/>`_ based shell.
     More info on shells:
-    {{ link('end-user-documentation/debugging.rst', 'Debugging') }}.
+    `Debugging </end-user-documentation/debugging.html>`_.
 
 
 Server Methods
@@ -858,4 +859,4 @@ Server.embed_shell\(\)
     Embeds a `rlpython <https://pypi.org/project/rlpython/>`_ based shell in
     the server context.
     More info on shells:
-    {{ link('end-user-documentation/debugging.rst', 'Debugging') }}.
+    `Debugging </end-user-documentation/debugging.html>`_.
