@@ -136,7 +136,7 @@ use Pythons ``async`` and ``await`` syntax.
 
 .. code-block:: python
 
-    from loa.html import HTML, H1, Button
+    from lona.html import HTML, H1, Button
     from lona import LonaView
 
 
