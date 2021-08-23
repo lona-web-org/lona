@@ -162,7 +162,7 @@ write a view that pulls all data from a database and save it again:
 
 .. code-block:: python
 
-    from loa.html import HTML, H1, Button
+    from lona.html import HTML, H1, Button
     from orm.models import MyModel
     from lona import LonaView
 
