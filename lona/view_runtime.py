@@ -11,11 +11,11 @@ from yarl import URL
 from lona.exceptions import StopReason, ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
+from lona.unique_ids import generate_unique_id
 from lona.imports import get_object_repr
 from lona.html.document import Document
 from lona.errors import ForbiddenError
 from lona.errors import ClientError
-from lona._time import monotonic_ns
 from lona.request import Request
 
 from lona.protocol import (
@@ -100,7 +100,7 @@ class ViewRuntime:
         self.stop_reason = None
         self.is_daemon = False
 
-        self.view_runtime_id = str(monotonic_ns())
+        self.view_runtime_id = generate_unique_id(name_space='view_runtimes')
         self.state = VIEW_RUNTIME_STATE.NOT_STARTED
         self.thread_ident = None
         self.thread_name = None

@@ -1,5 +1,5 @@
+from lona.unique_ids import generate_unique_id
 from lona.html.selector import Selector
-from lona._time import monotonic_ns
 
 
 class DummyLock:
@@ -30,7 +30,7 @@ class AbstractNode:
     @property
     def id(self):
         if not hasattr(self, '_id'):
-            self._id = str(monotonic_ns())
+            self._id = generate_unique_id(name_space='nodes')
 
         return self._id
 
