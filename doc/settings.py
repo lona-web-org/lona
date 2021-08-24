@@ -21,6 +21,7 @@ PLUGINS = [
 MENU = [
     ['Lona', [
         ['Basic Concept', 'basic-concept.rst'],
+        ['FAQ', 'faq.rst'],
         ['News / Getting Help', 'news-getting-help.rst'],
         ['How To Contribute', 'how-to-contribute.rst'],
         ['Contributors', 'contributors.rst'],
