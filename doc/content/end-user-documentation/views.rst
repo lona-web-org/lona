@@ -165,6 +165,7 @@ Attributes
 .. table::
 
     ^Name        ^Description
+    |interactive |(Bool) Is true when the request came in over an websocket connection
     |method      |(String) Contains either 'GET' or 'POST'
     |GET         |(Dict) Contains the URL query
     |POST        |(Dict) Contains POST arguments. Empty in case of GET requests

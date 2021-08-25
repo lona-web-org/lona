@@ -16,6 +16,10 @@ class Request:
         self.method = 'POST' if self.POST else 'GET'
 
     @property
+    def interactive(self):
+        return self.connection.interactive
+
+    @property
     def user(self):
         return getattr(self.connection, 'user', None)
 
