@@ -18,3 +18,9 @@ def terminal_supports_colors():
         # Microsoft Visual Studio Code's built-in terminal supports colors
         os.environ.get('TERM_PROGRAM') == 'vscode'
     )
+
+
+def colors_are_enabled():
+    # https://no-color.org/
+
+    return 'NO_COLOR' not in os.environ
