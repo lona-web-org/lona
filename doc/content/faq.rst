@@ -12,7 +12,7 @@ contained, but when it uses widgets or helper functions from another module,
 things become inconsistent.
 
 To make that a reliable feature you would have to maintain a list of all loaded
-files and directories, and track changes, file removes and addition of new
+files and directories and track changes, file removes and addition of new
 files. And you would have to maintain this list between restarts, to not miss
 events, if files get changed fast after each other, like in a git rebase.
 
