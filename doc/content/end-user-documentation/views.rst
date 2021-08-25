@@ -4,32 +4,6 @@ is_template: False
 Views
 =====
 
-Resource Management
--------------------
-
-Lona is based on multi-threading (more information:
-`Asynchronous Code </basic-concept.html#asynchronous-code>`_).
-That means that every hook of a ``lona.LonaView`` like ``handle_request()`` or
-``handle_input_event()`` block one thread each until your business logic
-finishes.
-
-When planing resources for your application keep in mind that every view that
-runs can use up to three threads at a time (one for ``handle_request()``, one
-for ``handle_input_event()`` and one for messaging between server and client).
-
-Lona splits up threading in two pools: the ``view_runtime_pool`` and the
-``worker_pool``, configured through ``settings.MAX_RUNTIME_THREADS`` and
-``settings.MAX_WORKER_THREADS``.
-
-``LonaView.handle_request()``, the main entry point for view business logic,
-runs in ``view_runtime_pool`` separated from all other Lona tasks because
-these are expected to run for a very long time potentially (up to days or
-weeks).
-
-All other hooks and messaging runs in ``worker_pool``. Business logic that
-runs there is expected to don't run that long.
-
-
 View Types
 ----------
 

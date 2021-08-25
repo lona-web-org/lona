@@ -1,0 +1,13 @@
+# /etc/systemd/system/lona-server.service
+
+[Unit]
+Description=Lona Server
+
+[Service]
+User=www-data
+Type=simple
+WorkingDirectory=/srv/lona/
+ExecStart=/srv/lona/env/bin/python /srv/lona/my-script.py
+
+[Install]
+WantedBy=multi-user.target

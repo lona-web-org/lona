@@ -7,7 +7,8 @@ Description=Lona Server
 User=www-data
 Type=simple
 WorkingDirectory=/srv/lona/lona-project-template/lona_project
+ExecStartPre=/srv/lona/lona-project-template/env/bin/lona collect-static /srv/lona/static/ -s settings.py deployment_settings.py --clean
 ExecStart=/srv/lona/lona-project-template/env/bin/lona run-server --host=localhost --port=8080 -s settings.py deployment_settings.py --shell-server-url=file://socket
 
 [Install]
-WantedBy=lona.target
+WantedBy=multi-user.target
