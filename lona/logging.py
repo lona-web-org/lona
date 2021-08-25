@@ -87,7 +87,7 @@ class LogFormatter(logging.Formatter):
             )
 
         # colors
-        if not self.colors_enabled:
+        if record.levelname == 'INFO' or not self.colors_enabled:
             return record_string
 
         RED = '31'
@@ -102,11 +102,6 @@ class LogFormatter(logging.Formatter):
             style = ''
             background = ''
             color = GREEN
-
-        elif record.levelname == 'INFO':
-            style = ''
-            background = ''
-            color = WHITE
 
         elif record.levelname == 'WARNING':
             style = ''
