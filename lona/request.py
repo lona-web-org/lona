@@ -19,6 +19,10 @@ class Request:
     def user(self):
         return getattr(self.connection, 'user', None)
 
+    @user.setter
+    def user(self, new_value):
+        self.connection.user = new_value
+
     @property
     def frontend(self):
         return self._view_runtime.frontend
