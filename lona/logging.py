@@ -45,6 +45,14 @@ class LogFilter(logging.Filter):
 
                 return False
 
+        if record.name == 'lona':
+            # The lona root logger is used by the command line tools
+            # to report errors, for example when startup is not possible due
+            # an invalid host or port.
+            # These errors can't be ignored.
+
+            return True
+
         if record.name in self.excluded:
             return False
 
