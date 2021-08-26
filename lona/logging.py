@@ -5,6 +5,8 @@ import datetime
 import logging
 import socket
 
+from lona.command_line.terminal import terminal_supports_colors
+
 
 class LogFilter(logging.Filter):
     def __init__(self, *args, **kwargs):
@@ -50,6 +52,11 @@ class LogFilter(logging.Filter):
 
 
 class LogFormatter(logging.Formatter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.colors_enabled = terminal_supports_colors()
+
     def format(self, record):
         current_thread_name = threading.current_thread().name
 
@@ -80,6 +87,9 @@ class LogFormatter(logging.Formatter):
             )
 
         # colors
+        if not self.colors_enabled:
+            return record_string
+
         RED = '31'
         YELLOW = '33'
         WHITE = '37'
