@@ -4,6 +4,20 @@ toctree: False
 Changelog
 =========
 
+`1.4.1 <https://github.com/lona-web-org/lona/releases/tag/1.4.1>`_ (2021-08-27)
+-------------------------------------------------------------------------------
+
+Changes
+~~~~~~~
+
+* html
+
+  * support for defining sub nodes as list was added
+  * ``AbstractNode.closest()`` was added
+
+* support for ``python -m lona`` was added
+
+
 `1.4 <https://github.com/lona-web-org/lona/releases/tag/1.4>`_ (2021-08-26)
 ---------------------------------------------------------------------------
 
