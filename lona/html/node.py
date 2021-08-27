@@ -36,7 +36,12 @@ class Node(AbstractNode):
 
         # args (nodes)
         for arg in args:
-            self.append(arg)
+            if isinstance(arg, (list, tuple)):
+                for node in list(arg):
+                    self.append(node)
+
+            else:
+                self.append(arg)
 
         # kwargs (attributes)
         for name, value in kwargs.items():

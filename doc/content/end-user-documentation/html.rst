@@ -80,6 +80,28 @@ list interfaces and methods.
         foo
     </div>
 
+Sub nodes can be defined as args, as a list or by using the ``nodes`` keyword.
+
+.. note::
+
+    The list syntax was added in 1.4.1
+
+.. code-block:: python
+
+    from lona.html import Div
+
+    Div(Div('foo'), Div('bar'))
+
+    Div([
+        Div('foo'),
+        Div('bar'),
+    ])
+
+    Div(nodes=[
+        Div('foo'),
+        Div('bar'),
+    ])
+
 
 Selectors
 ~~~~~~~~~
