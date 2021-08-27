@@ -79,8 +79,8 @@ class Node(AbstractNode):
                 self._class_list.extend(value)
 
             elif name == 'style':
-                if not isinstance(value, dict):
-                    raise ValueError('style has to be dict')
+                if not isinstance(value, (dict, str)):
+                    raise ValueError('style has to be dict or string')
 
                 self._style.update(value)
 
