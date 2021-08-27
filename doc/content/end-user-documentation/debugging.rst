@@ -3,6 +3,22 @@
 Debugging
 =========
 
+Running The Lona Module
+-----------------------
+
+.. note::
+
+    Added in 1.4.1
+
+Lona can run from its command line tool ``lona`` or by using
+``python -m lona``. Both calls share the same command line arguments
+
+.. code-block:: bash
+
+    lona run-server -s settings.py --port=8080
+    python -m lona run-server -s settings.py --port=8080
+
+
 Lona Server Command Line Options
 --------------------------------
 
