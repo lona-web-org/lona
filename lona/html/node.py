@@ -62,7 +62,7 @@ class Node(AbstractNode):
             # patchable attributes
             elif name == 'id':
                 if not isinstance(value, (str, list)):
-                    raise ValueError('id has to be string or list of srings')  # NOQA
+                    raise ValueError('id has to be string or list of strings')  # NOQA
 
                 if isinstance(value, str):
                     value = value.split(' ')
@@ -71,7 +71,7 @@ class Node(AbstractNode):
 
             elif name == 'class':
                 if not isinstance(value, (str, list)):
-                    raise ValueError('class has to be string or list of srings')  # NOQA
+                    raise ValueError('class has to be string or list of strings')  # NOQA
 
                 if isinstance(value, str):
                     value = value.split(' ')
@@ -183,7 +183,7 @@ class Node(AbstractNode):
                 if 'data-lona-ignore' in self._attributes:
                     del self._attributes['data-lona-ignore']
 
-    # serialisation ###########################################################
+    # serialization ###########################################################
     def _has_patches(self):
         return any([
             self._id_list._has_patches(),
@@ -312,7 +312,7 @@ class Node(AbstractNode):
     def __repr__(self):
         return self.__str__()
 
-    # comparrison #############################################################
+    # comparisons #############################################################
     def __eq__(self, other):
         if not isinstance(other, Node):
             return False
