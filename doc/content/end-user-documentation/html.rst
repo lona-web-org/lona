@@ -147,6 +147,33 @@ Syntax
     |"[foo=bar]"      |Selects all nodes with the attribute "foo" set to "bar"
 
 
+Closest\(selector\)
+"""""""""""""""""""
+
+.. note::
+
+    Added in 1.4.1
+
+``AbstractNode.closest()`` returns the closest parent node that matches the
+given selector.
+
+.. code-block:: python
+
+    from lona.html import Table, Tr, Td, A, CLICK
+
+    link = A('click me', href='#', events=[CLICK]
+
+    table = Table(
+        Tr(
+            Td('Foo'),
+            Td('bar'),
+            Td(a),
+        )
+    )
+
+    tr = a.closest('tr')
+
+
 Using HTML Strings
 ~~~~~~~~~~~~~~~~~~
 

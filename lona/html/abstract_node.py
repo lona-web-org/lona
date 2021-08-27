@@ -113,3 +113,17 @@ class AbstractNode:
                     nodes.append(node)
 
             return nodes
+
+    def closest(self, raw_selector_string):
+        selector = Selector(raw_selector_string)
+
+        with self.lock:
+            node = self.parent
+
+            while node is not None:
+                if selector.match(node):
+                    break
+
+                node = node.parent
+
+        return node
