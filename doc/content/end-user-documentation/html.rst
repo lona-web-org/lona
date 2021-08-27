@@ -131,7 +131,7 @@ matching nodes.
 
 
 Syntax
-""""""
+++++++
 
 .. table::
 
@@ -148,7 +148,7 @@ Syntax
 
 
 Closest\(selector\)
-"""""""""""""""""""
++++++++++++++++++++
 
 .. note::
 
@@ -247,6 +247,33 @@ Style
 .. code-block:: html
 
     <div data-lona-node-id="182311158684648" style="color: red; background-color: blue"></div>
+
+
+Helper Methods
+~~~~~~~~~~~~~~
+
+Node.hide()
++++++++++++
+
+    Sets ``Node.style['display']`` to ``'none'``.
+
+
+Node.show()
++++++++++++
+
+    Deletes ``Node.style['display']`` if is set.
+
+
+Node.set_text(string)
++++++++++++++++++++++
+
+    Resets ``Node.nodes`` to the given string.
+
+
+Node.get_text()
++++++++++++++++
+
+    Returns a concatenated string of all sub nodes, without HTML syntax.
 
 
 Adding Custom Nodes
@@ -365,7 +392,7 @@ passed further.
 
 
 Button
-""""""
+++++++
 
 .. code-block:: python
 
@@ -387,7 +414,7 @@ Button
 
 
 TextInput / TextArea
-""""""""""""""""""""
+++++++++++++++++++++
 
 .. code-block:: python
 
@@ -427,7 +454,7 @@ uses ``oninput`` events with ``input_delay`` as timeout.
 
 
 CheckBox
-""""""""
+++++++++
 
 .. code-block:: python
 
@@ -450,7 +477,7 @@ CheckBox
 
 
 Select
-""""""
+++++++
 
 .. code-block:: python
 
@@ -545,7 +572,7 @@ Handling Input Events
 
 
 Event Bubbling
-""""""""""""""
+++++++++++++++
 
 When an input event gets issued by the frontend, Lona runs all Widget
 input event handler from the innermost to the outermost until one of them
@@ -627,7 +654,7 @@ can issue events with custom data.
 
 
 Firing Custom Input Events
-""""""""""""""""""""""""""
+++++++++++++++++++++++++++
 
 .. code-block:: javascript
 
@@ -646,7 +673,7 @@ Firing Custom Input Events
 
 
 Adding Javascript And CSS To Frontend Widgets
-"""""""""""""""""""""""""""""""""""""""""""""
++++++++++++++++++++++++++++++++++++++++++++++
 
 Widgets can include stylesheets and javascript files in ``STATIC_FILES``. This
 makes packaging of widgets possible.
