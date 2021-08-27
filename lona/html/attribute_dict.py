@@ -178,5 +178,49 @@ class AttributeDict:
 class StyleDict(AttributeDict):
     PATCH_TYPE = PATCH_TYPE.STYLE
 
+    def __init__(self, node, *args, **kwargs):
+        self._node = node
+
+        args = list(args)
+
+        for index, arg in enumerate(args):
+            if isinstance(arg, str):
+                args[index] = self._parse_style_string(arg)
+
+        self._attributes = dict(*args, **kwargs)
+
     def __repr__(self):
         return '<StyleDict({})>'.format(repr(self._attributes))
+
+    def _parse_style_string(self, style_string):
+        values = {}
+
+        for css_rule in style_string.split(';'):
+            if not css_rule.strip():
+                continue
+
+            if ':' not in css_rule:
+                raise ValueError(
+                    'Invalid style string: {}'.format(style_string)
+                )
+
+            name, value = css_rule.split(':', 1)
+
+            values[name.strip()] = value.strip()
+
+        return values
+
+    def _reset(self, value):
+        if isinstance(value, str):
+            value = self._parse_style_string(value)
+
+        return super()._reset(value)
+
+    def update(self, value):
+        if not isinstance(value, (dict, str)):
+            raise ValueError('dict or string required')
+
+        if isinstance(value, str):
+            value = self._parse_style_string(value)
+
+        return super().update(value)
