@@ -147,7 +147,7 @@ class Form(Node):
 
 
 class Fieldset(Node):
-    TAG_NAME = 'form'
+    TAG_NAME = 'fieldset'
 
 
 class Label(Node):
