@@ -4,7 +4,7 @@ from lona.html.widget import Widget
 
 
 class HTML(Widget):
-    def __init__(self, *nodes):
+    def __init__(self, *nodes, use_high_level_nodes=True, node_classes=None):
         self.nodes = []
 
         for node in nodes:
@@ -22,7 +22,11 @@ class HTML(Widget):
                         self.nodes.append(HTML(node))
 
                     else:
-                        self.nodes = html_string_to_node_list(node)
+                        self.nodes = html_string_to_node_list(
+                            html_string=node,
+                            use_high_level_nodes=use_high_level_nodes,
+                            node_classes=node_classes or {},
+                        )
 
                 else:
                     self.nodes.append(TextNode(node))

@@ -46,12 +46,23 @@ class Select(Node):
     @property
     def values(self):
         with self.lock:
-            return self._values
+            values = []
+
+            for node in self.nodes:
+                if node.tag_name != 'option':
+                    continue
+
+                values.append(
+                    (node.attributes.get('value', ''),
+                     node.get_text(),
+                     'selected' in node.attributes, )
+                )
+
+            return values
 
     @values.setter
     def values(self, new_values):
         with self.lock:
-            self._values = []
             self.clear()
 
             for i in new_values:
@@ -62,10 +73,6 @@ class Select(Node):
                     option_node.attributes['selected'] = ''
 
                 self.append(option_node)
-
-                self._values.append(
-                    (value, name, ),
-                )
 
     @property
     def value(self):
