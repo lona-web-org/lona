@@ -83,7 +83,7 @@ class EventBubblingView(LonaView):
             )
         )
 
-        self.select = html.query_selector('select').parent
+        self.select = html.query_selector('select')
         self.console = html.query_selector('pre')
 
         while True:

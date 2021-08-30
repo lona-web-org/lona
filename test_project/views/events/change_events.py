@@ -1,7 +1,6 @@
 from pprint import pformat
 
-from lona.html import TextInputNode, CheckboxNode, Div, H2, Pre
-from lona.events import CHANGE
+from lona.html import TextInput, CheckBox, Div, H2, Pre
 from lona.view import LonaView
 
 
@@ -18,8 +17,14 @@ class ChangeEventsView(LonaView):
             H2('Change Events'),
             Div(
                 Div(
-                    Div(CheckboxNode(events=[CHANGE])),
-                    Div(TextInputNode(value='Change me', events=[CHANGE])),
+                    Div(CheckBox(input_delay=0, bubble_up=True)),
+                    Div(
+                        TextInput(
+                            value='Change me',
+                            input_delay=0,
+                            bubble_up=True,
+                        )
+                    ),
                     style={
                         'float': 'left',
                         'width': '50%',
