@@ -3,18 +3,6 @@ from lona.html.node import Node
 
 
 # simple html nodes ###########################################################
-class Html(Node):
-    TAG_NAME = 'html'
-
-
-class Head(Node):
-    TAG_NAME = 'head'
-
-
-class Body(Node):
-    TAG_NAME = 'body'
-
-
 class Nav(Node):
     TAG_NAME = 'nav'
 
