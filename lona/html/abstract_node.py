@@ -84,6 +84,10 @@ class AbstractNode:
 
         return document.lock
 
+    # input events ############################################################
+    def handle_input_event(self, input_event):
+        return input_event
+
     # queries #################################################################
     def iter_nodes(self, node=None):
         node = node or self
