@@ -117,6 +117,9 @@ routes = [
     Route('/events/data-binding/',
           'views/events/data_binding.py::DataBindingView'),
 
+    Route('/events/callbacks/',
+          'views/events/callbacks.py::InputEventCallbackView'),
+
     # locking
     Route('/locking/html-tree/',
           'views/locking/html_tree_locking.py::LockingView'),

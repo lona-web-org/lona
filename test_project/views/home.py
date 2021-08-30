@@ -65,6 +65,7 @@ class HomeView(LonaView):
                 <li><a href="/events/widget-event-handler/">Widget Event Handler</a></li>
                 <li><a href="/events/class-based-view/">Class Based View</a></li>
                 <li><a href="/events/event-bubbling/">Event Bubbling</a></li>
+                <li><a href="/events/callbacks/">Callbacks</a></li>
             </ul>
 
             <h2>Locking</h2>
