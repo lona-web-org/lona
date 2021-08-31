@@ -108,8 +108,8 @@ class TBody(Node):
     TAG_NAME = 'tbody'
 
 
-class TFood(Node):
-    TAG_NAME = 'tfood'
+class TFoot(Node):
+    TAG_NAME = 'tfoot'
 
 
 class ColGroup(Node):
