@@ -26,6 +26,18 @@ class TextInput(Node):
             self.value = value
 
     def handle_change(self, input_event):
+        # Data binding nodes catch their own change events and synchronize
+        # their internal value. When setting their value, a HTML patch,
+        # containing the set value, gets created that gets distributed to all
+        # connections that are connected to the runtime. By default the input
+        # timeout is set to 300ms. When the user # is typing fast, it can
+        # happen that a patch gets applied when the user is still typing,
+        # resetting the input to a previous state. For the
+        # user it looks like the input looses characters while typing.
+
+        # The solution for this problem is to don't send patches back to users
+        # who issued them.
+
         self.attributes.__setitem__(
             'value',
             input_event.data,
