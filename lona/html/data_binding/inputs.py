@@ -25,10 +25,7 @@ class TextInput(Node):
         if value is not None:
             self.value = value
 
-    def handle_input_event(self, input_event):
-        if input_event.name != 'change':
-            return input_event
-
+    def handle_change(self, input_event):
         self.attributes.__setitem__(
             'value',
             input_event.data,

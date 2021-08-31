@@ -19,10 +19,7 @@ class Select(Node):
         self.values = values
         self.disabled = disabled
 
-    def handle_input_event(self, input_event):
-        if input_event.name != 'change':
-            return input_event
-
+    def handle_change(self, input_event):
         with self.lock:
             self.value = input_event.data
 
