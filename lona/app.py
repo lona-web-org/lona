@@ -94,8 +94,6 @@ class LonaApp:
         else:
             return decorator
 
-        return decorator
-
     def frontend_view(self, view_class=None):
         def decorator(view_class):
             self.settings.FRONTEND_VIEW = view_class
@@ -105,8 +103,6 @@ class LonaApp:
 
         else:
             return decorator
-
-        return decorator
 
     # files ###################################################################
     def _add_file(self, temp_dir, name, string='', path=''):
