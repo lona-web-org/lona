@@ -56,7 +56,7 @@ class Node(AbstractNode):
                     name = name[1:]
 
             # lona classes
-            if name in ('ignore'):
+            if name == 'ignore':
                 setattr(self, name, value)
 
             # patchable attributes
