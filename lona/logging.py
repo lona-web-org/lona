@@ -112,6 +112,10 @@ class LogFormatter(logging.Formatter):
 
         BRIGHT = '1'
 
+        style = ''
+        background = ''
+        color = ''
+
         if record.levelname == 'DEBUG':
             style = ''
             background = ''
