@@ -10,13 +10,14 @@ class Select(Node):
     TAG_NAME = 'select'
     EVENTS = [CHANGE]
 
-    def __init__(self, *args, values=[], disabled=False, bubble_up=False,
+    def __init__(self, *args, values=None, disabled=False, bubble_up=False,
                  **kwargs):
 
         super().__init__(*args, **kwargs)
 
         self.bubble_up = bubble_up
-        self.values = values
+        if values is not None:
+            self.values = values
         self.disabled = disabled
 
     def handle_change(self, input_event):

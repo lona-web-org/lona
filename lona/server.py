@@ -40,9 +40,9 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 
 
 class LonaServer:
-    def __init__(self, app, project_root, settings_paths=[],
-                 settings_pre_overrides={}, settings_post_overrides={},
-                 routes=[]):
+    def __init__(self, app, project_root, settings_paths=None,
+                 settings_pre_overrides=None, settings_post_overrides=None,
+                 routes=None):
 
         self.project_root = os.path.abspath(project_root)
 
@@ -66,7 +66,7 @@ class LonaServer:
             DEFAULT_SETTINGS,
         ]
 
-        for path in settings_paths:
+        for path in settings_paths or []:
             self.settings_paths.append(
                 os.path.normpath(
                     os.path.join(self.project_root, path),
@@ -499,7 +499,9 @@ class LonaServer:
         return self._state
 
     # helper ##################################################################
-    def embed_shell(self, _locals={}):
+    def embed_shell(self, _locals=None):
+        if _locals is None:
+            _locals = {}
         _locals['server'] = self
 
         return embed_shell(self, locals=_locals)

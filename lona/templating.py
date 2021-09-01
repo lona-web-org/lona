@@ -114,18 +114,18 @@ class TemplatingEngine:
 
         return context
 
-    def render_string(self, template_string, template_context={}):
+    def render_string(self, template_string, template_context=None):
         template = self.jinja2_env.from_string(template_string)
 
         template_context = self.generate_template_context(
-            overrides=template_context)
+            overrides=template_context or {})
 
         return template.render(template_context)
 
-    def render_template(self, template_name, template_context={}):
+    def render_template(self, template_name, template_context=None):
         template = self.get_template(template_name)
 
         template_context = self.generate_template_context(
-            overrides=template_context)
+            overrides=template_context or {})
 
         return template.render(template_context)
