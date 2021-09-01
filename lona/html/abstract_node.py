@@ -84,6 +84,22 @@ class AbstractNode:
 
         return document.lock
 
+    # input events ############################################################
+    def handle_change(self, input_event):
+        return input_event
+
+    def handle_click(self, input_event):
+        return input_event
+
+    def handle_input_event(self, input_event):
+        if input_event.name == 'change':
+            return self.handle_change(input_event)
+
+        elif input_event.name == 'click':
+            return self.handle_click(input_event)
+
+        return input_event
+
     # queries #################################################################
     def iter_nodes(self, node=None):
         node = node or self

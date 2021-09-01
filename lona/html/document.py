@@ -2,9 +2,7 @@ from threading import RLock
 
 from lona.html.abstract_node import AbstractNode
 from lona.html.patches import PatchStack
-from lona.html.widget import Widget
 from lona.protocol import DATA_TYPE
-from lona.html.node import Node
 
 
 class Document:
@@ -21,42 +19,25 @@ class Document:
         self._patch_stack.add_patch(*args, **kwargs)
 
     # html ####################################################################
-    def get_node(self, node_id, widget_id=None):
-        if isinstance(node_id, Node):
-            node_id = node_id.id
-
-        value = [None, [], ]
-        widget = [None]
-        widget_path = []
-
-        def iter_nodes(node):
-            if isinstance(node, Widget):
-                widget_path.append(node)
-
-                if widget_id and node.id == widget_id:
-                    widget[0] = node
-
-            if isinstance(node, (Node, Widget)):
-                if node.id == node_id:
-                    value[0] = node
-                    value[1].extend(widget_path)
-
-                    return
-
-                if node.nodes:
-                    for i in node.nodes:
-                        iter_nodes(i)
-
-            if isinstance(node, Widget):
-                widget_path.pop()
+    def get_node(self, node_id):
+        node = None
+        nodes = []
 
         with self.lock:
-            iter_nodes(self.html)
+            for _node in self.html.iter_nodes():
+                if _node.id == node_id:
+                    node = _node
 
-        if widget[0]:
-            value[1].append(widget[0])
+                    break
 
-        return tuple(value)
+            if not node:
+                return []
+
+            while node.parent is not None:
+                nodes.append(node)
+                node = node.parent
+
+        return nodes
 
     def serialize(self):
         if not self.html:

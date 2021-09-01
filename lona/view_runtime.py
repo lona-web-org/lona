@@ -681,16 +681,16 @@ class ViewRuntime:
 
                 return log_handled_message()
 
-            # widgets
-            for widget in input_event.widgets[::-1]:
+            # node input event handler
+            for node in input_event.nodes:
                 input_events_logger.debug(
                     'runtime #%s: event #%s: running %s.handle_input_event()',
                     self.view_runtime_id,
                     payload[0],
-                    get_object_repr(widget),
+                    get_object_repr(node),
                 )
 
-                input_event = widget.handle_input_event(input_event)
+                input_event = node.handle_input_event(input_event)
 
                 if not input_event:
                     send_html_patches()

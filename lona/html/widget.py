@@ -55,10 +55,6 @@ class Widget(AbstractNode):
             self.data._serialize(),
         ]
 
-    # event handling ##########################################################
-    def handle_input_event(self, input_event):
-        return input_event
-
     # string representation ###################################################
     def __str__(self):
         return '<!--lona-widget:{}-->\n{}\n<!--end-lona-widget:{}-->'.format(

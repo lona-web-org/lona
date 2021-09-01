@@ -1,21 +1,8 @@
 from lona.events.event_types import CLICK
-from lona.html.widget import Widget  # NOQA
 from lona.html.node import Node
 
 
 # simple html nodes ###########################################################
-class Html(Node):
-    TAG_NAME = 'html'
-
-
-class Head(Node):
-    TAG_NAME = 'head'
-
-
-class Body(Node):
-    TAG_NAME = 'body'
-
-
 class Nav(Node):
     TAG_NAME = 'nav'
 
@@ -148,7 +135,7 @@ class Form(Node):
 
 
 class Fieldset(Node):
-    TAG_NAME = 'form'
+    TAG_NAME = 'fieldset'
 
 
 class Label(Node):
@@ -176,53 +163,26 @@ class Button(Node):
                     del self.attributes['disabled']
 
 
-class InputNode(Node):
+class Submit(Node):
     TAG_NAME = 'input'
     SELF_CLOSING_TAG = True
+    EVENTS = [CLICK]
 
-
-class Submit(InputNode):
     ATTRIBUTES = {
         'type': 'submit',
         'value': 'Submit',
     }
 
 
-class Reset(InputNode):
+class Reset(Node):
+    TAG_NAME = 'input'
+    SELF_CLOSING_TAG = True
+    EVENTS = [CLICK]
+
     ATTRIBUTES = {
         'type': 'reset',
         'value': 'Reset',
     }
-
-
-class TextInputNode(InputNode):
-    ATTRIBUTES = {
-        'type': 'text',
-    }
-
-
-class CheckboxNode(InputNode):
-    ATTRIBUTES = {
-        'type': 'checkbox',
-    }
-
-
-class TextAreaNode(Node):
-    TAG_NAME = 'textarea'
-
-    def __repr__(self):
-        return self.__str__(
-            skip_value=True,
-            node_string=self.attributes.get('value', ''),
-        )
-
-
-class SelectNode(Node):
-    TAG_NAME = 'select'
-
-
-class OptionNode(Node):
-    TAG_NAME = 'option'
 
 
 # complex html nodes ##########################################################

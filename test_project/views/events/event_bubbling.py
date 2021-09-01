@@ -1,9 +1,7 @@
 from lona.view import LonaView
 
 from lona.html import (
-    SelectNode,
-    OptionNode,
-    CHANGE,
+    Select,
     Widget,
     Button,
     HTML,
@@ -42,55 +40,33 @@ class BubblingWidget(Widget):
             )
         )
 
-        if self.view.stop_at != self.text:
+        if self.view.select.value != self.text:
             return input_event
 
 
 class EventBubblingView(LonaView):
     def handle_request(self, request):
-        self.stop_at = None
-
-        self.console = Pre(
-            style={
-                'background-color': 'lightgrey',
-            },
-        )
-
         html = HTML(
             H2('Event Bubbling'),
             Div(
                 'Stop Event at ',
-                SelectNode(
-                    OptionNode(
-                        '---',
-                        value='',
-                        selected=True,
-                    ),
-                    OptionNode(
-                        'handle_input_event_root',
-                        value='handle_input_event_root',
-                    ),
-                    OptionNode(
-                        'Widget 1',
-                        value='Widget 1',
-                    ),
-                    OptionNode(
-                        'Widget 2',
-                        value='Widget 2',
-                    ),
-                    OptionNode(
-                        'Widget 3',
-                        value='Widget 3',
-                    ),
-                    OptionNode(
-                        'handle_input_event',
-                        value='handle_input_event',
-                    ),
-                    events=[CHANGE],
+                Select(
+                    values=[
+                        ('', '---', True),
+                        ('handle_input_event_root', 'handle_input_event_root'),
+                        ('Widget 1', 'Widget 1'),
+                        ('Widget 2', 'Widget 2'),
+                        ('Widget 3', 'Widget 3'),
+                    ]
                 ),
             ),
 
-            self.console,
+            # console
+            Pre(
+                style={
+                    'background-color': 'lightgrey',
+                },
+            ),
 
             Button('Click Me'),
             BubblingWidget(
@@ -107,6 +83,9 @@ class EventBubblingView(LonaView):
             )
         )
 
+        self.select = html.query_selector('select')
+        self.console = html.query_selector('pre')
+
         while True:
             input_event = self.await_input_event(html=html)
 
@@ -122,21 +101,16 @@ class EventBubblingView(LonaView):
         self.console.nodes.append(message)
 
     def handle_input_event_root(self, input_event):
-        if input_event.type == 'change':
-            self.stop_at = input_event.data
-
-            return
-
         self.clear()
 
         self.print(
             '>> view.handle_input_event_root({})'.format(repr(input_event)))
 
-        if self.stop_at != 'handle_input_event_root':
+        if self.select.value != 'handle_input_event_root':
             return input_event
 
     def handle_input_event(self, input_event):
         self.print('>> view.handle_input_event({})'.format(repr(input_event)))
 
-        if self.stop_at != 'handle_input_event':
+        if self.select.value != 'handle_input_event':
             return input_event

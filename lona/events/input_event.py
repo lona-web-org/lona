@@ -11,8 +11,8 @@ class InputEvent:
         self.window_id = window_id
 
         self.data = {}
+        self.nodes = []
         self.node = None
-        self.widgets = []
         self.tag_name = ''
         self.id_list = []
         self.class_list = []
@@ -41,10 +41,8 @@ class InputEvent:
         # find node
         # node info contains a lona node id
         if self.node_info[0] or self.node_info[1]:
-            self.node, self.widgets = document.get_node(
-                widget_id=self.node_info[0],
-                node_id=self.node_info[1],
-            )
+            self.nodes = document.get_node(node_id=self.node_info[1])
+            self.node = self.nodes[0]
 
         self.tag_name = self.node_info[2]
         self.id_list = (self.node_info[3] or '').split(' ')
