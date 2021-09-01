@@ -162,6 +162,11 @@ Request Objects
 Attributes
 ~~~~~~~~~~
 
+.. note::
+
+    * ``request.user`` is writable since 1.4
+    * ``request.interactive`` was added in 1.4
+
 .. table::
 
     ^Name        ^Description
@@ -431,14 +436,19 @@ To raise a forbidden error and run the 403 view you can raise
 Input Events
 ------------
 
+.. note::
+
+    Changed in 1.5: In all versions prior to 1.5, only widgets could handle
+    their own events. In versions after 1.5 all node classes can.
+
 Input events get handled in a chain of hooks. Every hook is required to return
 the given input event, to pass it down the chain, or return ``None`` to mark
 the event as handled.
 
 The first member of the chain is ``LonaView.handle_input_event_root()``. If the
 event got returned Lona passes the event into all
-``Widget.handle_input_event()`` by bubbling the event the HTML tree up. If the
-event got returned by the last widget in the chain, Lona checks if
+``AbstractNode.handle_input_event()`` by bubbling the event the HTML tree up.
+If the event got returned by the last widget in the chain, Lona checks if
 ``LonaView.handle_request()`` awaits an input event using
 ``await_[input_event|click|change]()``. If not
 ``LonaView.handle_input_event()`` gets called as last member of the chain.
@@ -521,10 +531,15 @@ CHANGE
 Input Event Attributes
 ~~~~~~~~~~~~~~~~~~~~~~
 
+.. note::
+
+    Added in 1.5: ``InputEvent.nodes``
+
 .. table::
 
     ^Name        ^Description
     |node        |(lona.html.Node) Reference to the node that issued the input_event
+    |nodes       |(list(lona.html.Node)) Contains a list of all nodes in the chain up to the root
     |data        |(Dict) For click events this contains meta data from the browser
     |tag_name    |(String) Contains the tag name of the node in the browser
     |id_list     |(List) Contains a list of all ids of the node in the browser
@@ -576,6 +591,43 @@ wizards possible.
             input_event = self.await_click()
 
             print(input_event.node, 'was clicked')
+
+
+Handling Input events In A Callback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    Added in 1.5
+
+Every subclass of ``lona.html.AbstractNode`` can implement
+``handle_input_event()`` to handle its own input events.
+
+A callbacks can be implemented using inheritance or by simply resetting the
+values of ``AbstractNode.handle_input_event()``,
+``AbstractNode.handle_click()`` or ``AbstractNode.handle_change()``.
+
+.. code-block:: python
+
+    from lona.html import HTML, H1, Button
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_button_click(self, input_event):
+            print('button was clicked')
+
+        def handle_request(self, request):
+            button = Button('click me')
+
+            button = self.handle_button_click
+
+            html = HTML(
+                H1('Click the button'),
+                Button('click me'),
+            )
+
+            self.show(html)
 
 
 Handling Input Events In A Hook

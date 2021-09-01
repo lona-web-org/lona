@@ -177,10 +177,20 @@ given selector.
 Using HTML Strings
 ~~~~~~~~~~~~~~~~~~
 
+.. note::
+
+    Added in 1.5: Support for high level nodes, the keyword
+    ``use_high_level_nodes``
+
 To initialize an HTML tree you can use ``lona.html.HTML``. When
 ``lona.html.HTML`` gets a HTML string passed in that does not start with ``\``,
 the string gets parsed and converted into ``lona.html.Node`` objects.
 The resulting tree behaves like a normal Lona HTML tree.
+
+``lona.html.HTML`` uses high level nodes from the standard library like
+``lona.html.TextInput`` which implement high level methods and properties.
+To disable this and parse HTML into blank nodes you can set
+``use_high_level_nodes=False``.
 
 .. code-block:: python
 
