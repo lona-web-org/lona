@@ -738,7 +738,7 @@ class ViewRuntime:
                 payload[0],
             )
 
-            input_event = self.view.handle_input_event(input_event)
+            self.view.handle_input_event(input_event)
 
             send_html_patches()
 

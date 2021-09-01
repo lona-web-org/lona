@@ -4,8 +4,6 @@ import runpy
 
 
 def acquire(import_string, ignore_import_cache=False):
-    attribute = None
-
     # scripts
     if '::' in import_string:
         script, attribute_name = import_string.split('::')
@@ -15,7 +13,7 @@ def acquire(import_string, ignore_import_cache=False):
             raise ImportError("script '{}' has no attribute '{}'".format(
                 script, attribute_name))
 
-        attribute = attributes[attribute_name]
+        return attributes[attribute_name]
 
     # modules
     elif '.' in import_string:
@@ -32,12 +30,10 @@ def acquire(import_string, ignore_import_cache=False):
             raise ImportError("module '{}' has no attribute '{}'".format(
                 module_name, attribute_name))
 
-        attribute = getattr(module, attribute_name)
+        return getattr(module, attribute_name)
 
     else:
         raise TypeError('invalid import string')
-
-    return attribute
 
 
 def get_file(obj):

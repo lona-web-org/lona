@@ -176,8 +176,7 @@ class LonaApp:
 
         server_args.add(**args)
 
-        # setup logging
-        log_formatter, log_filter = setup_logging(server_args)
+        setup_logging(server_args)
 
         # setup server
         app = Application()
