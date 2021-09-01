@@ -250,7 +250,9 @@ class LonaView:
         return 'pong'
 
     # helper ##################################################################
-    def embed_shell(self, _locals={}):
+    def embed_shell(self, _locals=None):
+        if _locals is None:
+            _locals = {}
         _locals['self'] = self
 
         return embed_shell(server=self.server, locals=_locals)

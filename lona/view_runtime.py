@@ -48,14 +48,14 @@ class VIEW_RUNTIME_STATE(Enum):
 
 
 class ViewRuntime:
-    def __init__(self, server, url, route, match_info, post_data={},
+    def __init__(self, server, url, route, match_info, post_data=None,
                  frontend=False, start_connection=None):
 
         self.server = server
         self.url = URL(url or '')
         self.route = route
         self.match_info = match_info
-        self.post_data = post_data
+        self.post_data = post_data or {}
         self.frontend = frontend
         self.start_connection = start_connection
 
@@ -460,7 +460,7 @@ class ViewRuntime:
                 self.stop()
 
     # lona messages ###########################################################
-    def send_redirect(self, target_url, connections={}):
+    def send_redirect(self, target_url, connections=None):
         with self.document.lock:
             connections = connections or self.connections
 
@@ -476,7 +476,7 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
-    def send_http_redirect(self, target_url, connections={}):
+    def send_http_redirect(self, target_url, connections=None):
         with self.document.lock:
             connections = connections or self.connections
 
@@ -492,7 +492,7 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
-    def _send_html_update(self, title, data, connections={}):
+    def _send_html_update(self, title, data, connections=None):
         with self.document.lock:
             connections = connections or self.connections
 
@@ -523,12 +523,12 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
-    def send_data(self, title=None, data=None, connections={}):
+    def send_data(self, title=None, data=None, connections=None):
         if data and data[0] == DATA_TYPE.HTML_UPDATE:
             return self._send_html_update(
                 title=title,
                 data=data,
-                connections=connections,
+                connections=connections or {},
             )
 
         with self.document.lock:
@@ -548,7 +548,7 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
-    def send_view_start(self, connections={}):
+    def send_view_start(self, connections=None):
         with self.document.lock:
             connections = connections or self.connections
 
@@ -563,7 +563,7 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
-    def send_view_stop(self, connections={}):
+    def send_view_stop(self, connections=None):
         with self.document.lock:
             connections = connections or self.connections
 
@@ -578,7 +578,7 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
-    def handle_raw_response_dict(self, raw_response_dict, connections={}):
+    def handle_raw_response_dict(self, raw_response_dict, connections=None):
         connections = connections or self.connections
 
         response_dict = self.server.response_parser.render_response_dict(
@@ -606,13 +606,13 @@ class ViewRuntime:
         return response_dict
 
     # input events ############################################################
-    def await_input_event(self, nodes=[], event_type='event'):
+    def await_input_event(self, nodes=None, event_type='event'):
         async def _await_input_event():
             if self.pending_input_events[event_type] is not None:
                 raise RuntimeError('already waiting for a {} event', str(event_type))  # NOQA
 
             future = asyncio.Future()
-            self.pending_input_events[event_type] = [future, nodes]
+            self.pending_input_events[event_type] = [future, nodes or []]
 
             return await future
 
