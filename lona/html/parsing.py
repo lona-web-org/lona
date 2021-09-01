@@ -138,7 +138,7 @@ class NodeHTMLParser(HTMLParser):
     def handle_data(self, data):
         text = data
 
-        if self._node.tag_name != 'pre':
+        if self._node.tag_name not in ('pre', 'textarea'):
             text = text.strip()
 
             if not text:
