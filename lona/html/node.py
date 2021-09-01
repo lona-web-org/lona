@@ -177,11 +177,8 @@ class Node(AbstractNode):
     def ignore(self, value):
         if value:
             self._attributes['data-lona-ignore'] = 'True'
-
         else:
-            with self.lock:
-                if 'data-lona-ignore' in self._attributes:
-                    del self._attributes['data-lona-ignore']
+            del self._attributes['data-lona-ignore']
 
     # serialization ###########################################################
     def _serialize(self):
@@ -339,5 +336,5 @@ class Node(AbstractNode):
 
     def show(self):
         with self.lock:
-            if 'display' in self.style and self.style['display'] == 'none':
+            if self.style.get('display', '') == 'none':
                 del self.style['display']

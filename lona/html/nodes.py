@@ -152,15 +152,10 @@ class Button(Node):
 
     @disabled.setter
     def disabled(self, new_value):
-        with self.document.lock:
-            new_value = bool(new_value)
-
-            if new_value:
-                if 'disabled' not in self.attributes:
-                    self.attributes['disabled'] = 'True'
-            else:
-                if 'disabled' in self.attributes:
-                    del self.attributes['disabled']
+        if new_value:
+            self.attributes['disabled'] = ''
+        else:
+            del self.attributes['disabled']
 
 
 class Submit(Node):

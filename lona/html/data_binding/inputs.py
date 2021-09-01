@@ -38,13 +38,14 @@ class TextInput(Node):
         # The solution for this problem is to don't send patches back to users
         # who issued them.
 
-        self.attributes.__setitem__(
-            'value',
-            input_event.data,
-            issuer=(input_event.connection, input_event.window_id),
-        )
+        with self.lock:
+            self.attributes.__setitem__(
+                'value',
+                input_event.data,
+                issuer=(input_event.connection, input_event.window_id),
+            )
 
-        self.value = input_event.data
+            self.value = input_event.data
 
         if self.bubble_up:
             return input_event
@@ -62,16 +63,14 @@ class TextInput(Node):
     # disabled
     @property
     def disabled(self):
-        return self.attributes.get('disabled', '')
+        return 'disabled' in self.attributes
 
     @disabled.setter
     def disabled(self, new_value):
-        with self.lock:
-            if new_value:
-                self.attributes['disabled'] = True
-
-            elif 'disabled' in self.attributes:
-                self.attributes.pop('disabled')
+        if new_value:
+            self.attributes['disabled'] = ''
+        else:
+            del self.attributes['disabled']
 
 
 class TextArea(TextInput):
@@ -93,8 +92,11 @@ class CheckBox(TextInput):
 
     @property
     def value(self):
-        return self.attributes.get('checked', False)
+        return 'checked' in self.attributes
 
     @value.setter
     def value(self, new_value):
-        self.attributes['checked'] = bool(new_value)
+        if new_value:
+            self.attributes['checked'] = ''
+        else:
+            del self.attributes['checked']

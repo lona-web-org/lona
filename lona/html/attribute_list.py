@@ -71,11 +71,8 @@ class AttributeList:
 
     def extend(self, attributes):
         with self._node.lock:
-            for attribute in iter(attributes):
-                if attribute in self._attributes:
-                    continue
-
-                self.append(attribute)
+            for attribute in attributes:
+                self.add(attribute)
 
     def __eq__(self, other):
         with self._node.lock:

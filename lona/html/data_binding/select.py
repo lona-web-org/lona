@@ -21,25 +21,22 @@ class Select(Node):
         self.disabled = disabled
 
     def handle_change(self, input_event):
-        with self.lock:
-            self.value = input_event.data
+        self.value = input_event.data
 
-            if self.bubble_up:
-                return input_event
+        if self.bubble_up:
+            return input_event
 
     # properties ##############################################################
     @property
     def disabled(self):
-        return self.attributes.get('disabled', '')
+        return 'disabled' in self.attributes
 
     @disabled.setter
     def disabled(self, new_value):
-        with self.lock:
-            if new_value:
-                self.attributes['disabled'] = True
-
-            elif 'disabled' in self.attributes:
-                self.attributes.pop('disabled')
+        if new_value:
+            self.attributes['disabled'] = ''
+        else:
+            del self.attributes['disabled']
 
     @property
     def values(self):
@@ -79,12 +76,12 @@ class Select(Node):
 
             for option in self.nodes:
                 if 'selected' in option.attributes:
-                    value.append(option.attributes['value'])
+                    value.append(option.attributes.get('value', ''))
 
             if not value and self.nodes:
                 option = self.nodes[0]
 
-                value.append(option.attributes['value'])
+                value.append(option.attributes.get('value', ''))
 
             if not value:
                 return None
@@ -101,10 +98,7 @@ class Select(Node):
 
         with self.lock:
             for option in self.nodes:
-                if option.attributes['value'] in new_value:
-                    if 'selected' not in option.attributes:
-                        option.attributes['selected'] = ''
-
+                if option.attributes.get('value', '') in new_value:
+                    option.attributes['selected'] = ''
                 else:
-                    if 'selected' in option.attributes:
-                        option.attributes.pop('selected')
+                    del option.attributes['selected']

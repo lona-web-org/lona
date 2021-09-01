@@ -19,6 +19,9 @@ class AttributeDict:
 
     def pop(self, name):
         with self._node.lock:
+            if name not in self._attributes:
+                return None
+
             attribute = self._attributes.pop(name)
 
             self._node.document.add_patch(
@@ -91,17 +94,7 @@ class AttributeDict:
             )
 
     def __delitem__(self, name):
-        with self._node.lock:
-            del self._attributes[name]
-
-            self._node.document.add_patch(
-                node_id=self._node.id,
-                patch_type=self.PATCH_TYPE,
-                operation=OPERATION.REMOVE,
-                payload=[
-                    name,
-                ],
-            )
+        self.pop(name)
 
     def __eq__(self, other):
         with self._node.lock:
@@ -179,15 +172,13 @@ class StyleDict(AttributeDict):
     PATCH_TYPE = PATCH_TYPE.STYLE
 
     def __init__(self, node, *args, **kwargs):
-        self._node = node
-
         args = list(args)
 
         for index, arg in enumerate(args):
             if isinstance(arg, str):
                 args[index] = self._parse_style_string(arg)
 
-        self._attributes = dict(*args, **kwargs)
+        super().__init__(node, *args, **kwargs)
 
     def __repr__(self):
         return '<StyleDict({})>'.format(repr(self._attributes))
