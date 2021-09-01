@@ -184,31 +184,6 @@ class Node(AbstractNode):
                     del self._attributes['data-lona-ignore']
 
     # serialization ###########################################################
-    def _has_patches(self):
-        return any([
-            self._id_list._has_patches(),
-            self._class_list._has_patches(),
-            self._style._has_patches(),
-            self._attributes._has_patches(),
-            self._nodes._has_patches(),
-        ])
-
-    def _get_patches(self):
-        return [
-            *self._id_list._get_patches(),
-            *self._class_list._get_patches(),
-            *self._style._get_patches(),
-            *self._attributes._get_patches(),
-            *self._nodes._get_patches(),
-        ]
-
-    def _clear_patches(self):
-        self._id_list._clear_patches()
-        self._class_list._clear_patches()
-        self._style._clear_patches()
-        self._attributes._clear_patches()
-        self._nodes._clear_patches()
-
     def _serialize(self):
         return [
             NODE_TYPE.NODE,
