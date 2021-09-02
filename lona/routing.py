@@ -179,14 +179,13 @@ class Router:
         if route.path:
             return route.path
 
-        key_error = None
-
         try:
             return route.format_string.format(*args, **kwargs)
 
         except KeyError as e:
             key_error = e
 
+        # raise is outside of except block to avoid stacking tracebacks
         raise ValueError('missing URL arg: {} '.format(key_error.args[0]))
 
     def reverse(self, *args, **kwargs):
