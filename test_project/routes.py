@@ -48,7 +48,7 @@ routes = [
     Route('/permissions/access-denied-in-PermissionMiddleware/',
           'views/permissions/denied_in_middleware.py::View'),
 
-    Route('/permissions/access-denied-in-PermissionMiddleware/non-interactive/',  # NOQA
+    Route('/permissions/access-denied-in-PermissionMiddleware/non-interactive/',
           'views/permissions/denied_in_middleware.py::View',
           interactive=False),
 
@@ -69,7 +69,7 @@ routes = [
 
     Route(
         '/error-types/non-interactive-feature-error/',
-        'views/error_types/non_interactive_feature_error.py::NonInteractiveFeatureErrorView',  # NOQA
+        'views/error_types/non_interactive_feature_error.py::NonInteractiveFeatureErrorView',
     ),
 
     # crashes

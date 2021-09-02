@@ -609,7 +609,7 @@ class ViewRuntime:
     def await_input_event(self, nodes=None, event_type='event'):
         async def _await_input_event():
             if self.pending_input_events[event_type] is not None:
-                raise RuntimeError('already waiting for a {} event', str(event_type))  # NOQA
+                raise RuntimeError('already waiting for a {} event', str(event_type))
 
             future = asyncio.Future()
             self.pending_input_events[event_type] = [future, nodes or []]
@@ -669,7 +669,7 @@ class ViewRuntime:
 
             # input event root handler
             input_events_logger.debug(
-                'runtime #%s: event #%s: running View.handle_input_event_root()',  # NOQA
+                'runtime #%s: event #%s: running View.handle_input_event_root()',
                 self.view_runtime_id,
                 payload[0],
             )
@@ -705,7 +705,7 @@ class ViewRuntime:
 
                 if not nodes or input_event.node in nodes:
                     input_events_logger.debug(
-                        'runtime #%s: event #%s: is handled as pending %s event',  # NOQA
+                        'runtime #%s: event #%s: is handled as pending %s event',
                         self.view_runtime_id,
                         payload[0],
                         input_event.name,
@@ -721,7 +721,7 @@ class ViewRuntime:
 
                 if not nodes or input_event.node in nodes:
                     input_events_logger.debug(
-                        'runtime #%s: event #%s: is handled as pending generic event',  # NOQA
+                        'runtime #%s: event #%s: is handled as pending generic event',
                         self.view_runtime_id,
                         payload[0],
                     )

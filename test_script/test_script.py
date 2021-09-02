@@ -39,7 +39,7 @@ class Home(LonaView):
                 <li><a href="/interactive-view/">Interactive View</a></li>
                 <li><a href="/non-interactive-view/">Non Interactive View</a></li>
             </ul>
-        """  # NOQA
+        """
 
 
 @app.route('/interactive-view/')

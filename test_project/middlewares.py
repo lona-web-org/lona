@@ -35,7 +35,7 @@ class PermissionMiddleware:
 
         paths = (
             '/permissions/access-denied-in-PermissionMiddleware/',
-            '/permissions/access-denied-in-PermissionMiddleware/non-interactive/',  # NOQA
+            '/permissions/access-denied-in-PermissionMiddleware/non-interactive/',
         )
 
         if request.url.path in paths:

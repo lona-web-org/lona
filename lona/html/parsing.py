@@ -55,7 +55,7 @@ def _find_node_classes(module):
             else:
                 if node_class.TAG_NAME in NODE_CLASSES:
                     logger.warning(
-                        'WARNING: Two Node classes with the same tag name were found: %s',  # NOQA
+                        'WARNING: Two Node classes with the same tag name were found: %s',
                         node_class.TAG_NAME,
                     )
 

@@ -288,7 +288,7 @@ class LonaServer:
             text=response_dict['text'],
         )
 
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # NOQA
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
 
         return response
 

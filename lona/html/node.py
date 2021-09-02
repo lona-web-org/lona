@@ -62,7 +62,7 @@ class Node(AbstractNode):
             # patchable attributes
             elif name == 'id':
                 if not isinstance(value, (str, list)):
-                    raise ValueError('id has to be string or list of strings')  # NOQA
+                    raise ValueError('id has to be string or list of strings')
 
                 if isinstance(value, str):
                     value = value.split(' ')
@@ -71,7 +71,7 @@ class Node(AbstractNode):
 
             elif name == 'class':
                 if not isinstance(value, (str, list)):
-                    raise ValueError('class has to be string or list of strings')  # NOQA
+                    raise ValueError('class has to be string or list of strings')
 
                 if isinstance(value, str):
                     value = value.split(' ')

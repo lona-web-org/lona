@@ -96,7 +96,7 @@ class ViewRuntimeController:
 
         if connection.user != view_runtime.start_connection.user:
             input_events_logger.debug(
-                'event #%s: connection.user is not authorized. event is skipped',  # NOQA
+                'event #%s: connection.user is not authorized. event is skipped',
                 payload[0],
             )
 
@@ -128,16 +128,11 @@ class ViewRuntimeController:
             return
 
         if connection.user != view_runtime.start_connection.user:
-            views_logger.debug(
-                'connection.user is not authorized. client error is skipped',  # NOQA
-            )
+            views_logger.debug('connection.user is not authorized. client error is skipped')
 
             return
 
-        views_logger.debug(
-            'client error gets handled by runtime #%s',
-            view_runtime_id,
-        )
+        views_logger.debug('client error gets handled by runtime #%s', view_runtime_id)
 
         view_runtime.handle_client_error(
             connection=connection,
@@ -145,8 +140,7 @@ class ViewRuntimeController:
             payload=payload,
         )
 
-    def handle_view_message(self, connection, window_id, view_runtime_id,
-                            method, payload):
+    def handle_view_message(self, connection, window_id, view_runtime_id, method, payload):
 
         url, post_data = payload
 
@@ -159,7 +153,7 @@ class ViewRuntimeController:
            match and
            (route.http_pass_through or not route.interactive)):
 
-            views_logger.debug('route is not interactive; issue a http redirect')  # NOQA
+            views_logger.debug('route is not interactive; issue a http redirect')
 
             message = encode_http_redirect(
                 window_id=window_id,
