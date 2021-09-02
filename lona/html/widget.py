@@ -45,7 +45,7 @@ class Widget(AbstractNode):
 
         self.parent.remove(self)
 
-    # serialisation ###########################################################
+    # serialization ###########################################################
     def _serialize(self):
         return [
             NODE_TYPE.WIDGET,
