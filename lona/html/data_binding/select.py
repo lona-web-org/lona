@@ -30,7 +30,7 @@ class Select(Node):
     # properties ##############################################################
     @property
     def disabled(self):
-        return self.attributes.get('disabled', '')
+        return 'disabled' in self.attributes
 
     @disabled.setter
     def disabled(self, new_value):
