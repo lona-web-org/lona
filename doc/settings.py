@@ -51,6 +51,12 @@ MENU = [
         ['Deployment', 'end-user-documentation/deployment.rst'],
     ]],
 
+    [['Contrib'], [
+        ['Django', 'contrib/django/index.rst'],
+        ['Bootstrap 5', 'contrib/bootstrap-5/index.rst'],
+        ['Chart.js', 'contrib/chartjs/index.rst'],
+    ]],
+
     ['Cookbook', [
         ['Using Traditional HTML', 'cookbook/using-traditional-html.rst'],
         ['Writing A Lona Form', 'cookbook/writing-a-lona-form.rst'],
@@ -71,12 +77,6 @@ MENU = [
 
         ['Adding A Custom Command To Lona Shell',
          'cookbook/adding-a-custom-command-to-lona-shell.rst'],
-    ]],
-
-    [['Contrib'], [
-        ['Django', 'contrib/django/index.rst'],
-        ['Bootstrap 5', 'contrib/bootstrap-5/index.rst'],
-        ['Chart.js', 'contrib/chartjs/index.rst'],
     ]],
 ]
 
