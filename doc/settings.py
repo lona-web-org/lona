@@ -75,6 +75,7 @@ MENU = [
 
     [['Contrib'], [
         ['Django', 'contrib/django/index.rst'],
+        ['Bootstrap 5', 'contrib/bootstrap-5/index.rst'],
         ['Chart.js', 'contrib/chartjs/index.rst'],
     ]],
 ]
