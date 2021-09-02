@@ -362,7 +362,7 @@ class LonaServer:
         if handled:
             if data:
                 if not isinstance(data, str):
-                    raise RuntimeError('%s.handle_connection returned non string data'.format(middleware))  # NOQA
+                    raise RuntimeError('{}.handle_connection returned non string data'.format(middleware))  # NOQA
 
                 await connection.send_str(data, wait=False)
 

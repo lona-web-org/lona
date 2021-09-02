@@ -609,7 +609,7 @@ class ViewRuntime:
     def await_input_event(self, nodes=None, event_type='event'):
         async def _await_input_event():
             if self.pending_input_events[event_type] is not None:
-                raise RuntimeError('already waiting for a {} event', str(event_type))  # NOQA
+                raise RuntimeError('already waiting for a {} event'.format(event_type))  # NOQA
 
             future = asyncio.Future()
             self.pending_input_events[event_type] = [future, nodes or []]
