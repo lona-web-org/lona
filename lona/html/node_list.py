@@ -167,6 +167,10 @@ class NodeList:
         with self._node.lock:
             return self._nodes.__iter__()
 
+    def __contains__(self, node):
+        with self._node.lock:
+            return node in self._nodes
+
     # serialisation ###########################################################
     def _reset(self, value):
         if not isinstance(value, list):
