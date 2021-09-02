@@ -42,7 +42,9 @@ class InputEvent:
         # node info contains a lona node id
         if self.node_info[0] or self.node_info[1]:
             self.nodes = document.get_node(node_id=self.node_info[1])
-            self.node = self.nodes[0]
+
+            if self.nodes:
+                self.node = self.nodes[0]
 
         self.tag_name = self.node_info[2]
         self.id_list = (self.node_info[3] or '').split(' ')
