@@ -102,7 +102,8 @@ class AbstractNode:
 
     # queries #################################################################
     def iter_nodes(self, node=None):
-        node = node or self
+        if node is None:
+            node = self
 
         if hasattr(node, 'nodes'):
             for child in node.nodes:

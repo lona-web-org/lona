@@ -30,7 +30,7 @@ class Document:
 
                     break
 
-            if not node:
+            if node is None:
                 return []
 
             while node.parent is not None:
