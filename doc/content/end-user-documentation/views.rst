@@ -620,11 +620,11 @@ values of ``AbstractNode.handle_input_event()``,
         def handle_request(self, request):
             button = Button('click me')
 
-            button = self.handle_button_click
+            button.handle_click = self.handle_button_click
 
             html = HTML(
                 H1('Click the button'),
-                Button('click me'),
+                button,
             )
 
             self.show(html)
