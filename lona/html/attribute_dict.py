@@ -17,8 +17,15 @@ class AttributeDict:
         with self._node.lock:
             return self._attributes.items()
 
-    def pop(self, name):
+    def pop(self, name, *default):
+        if len(default) > 1:
+            raise TypeError(f"pop expected at most 2 arguments, "
+                            f"got {1 + len(default)}")
+
         with self._node.lock:
+            if default and name not in self._attributes:
+                return default[0]
+
             attribute = self._attributes.pop(name)
 
             self._node.document.add_patch(
@@ -91,17 +98,7 @@ class AttributeDict:
             )
 
     def __delitem__(self, name):
-        with self._node.lock:
-            del self._attributes[name]
-
-            self._node.document.add_patch(
-                node_id=self._node.id,
-                patch_type=self.PATCH_TYPE,
-                operation=OPERATION.REMOVE,
-                payload=[
-                    name,
-                ],
-            )
+        self.pop(name, None)
 
     def __eq__(self, other):
         with self._node.lock:

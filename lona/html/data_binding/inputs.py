@@ -66,12 +66,11 @@ class TextInput(Node):
 
     @disabled.setter
     def disabled(self, new_value):
-        with self.lock:
-            if new_value:
-                self.attributes['disabled'] = True
+        if new_value:
+            self.attributes['disabled'] = True
 
-            elif 'disabled' in self.attributes:
-                self.attributes.pop('disabled')
+        else:
+            del self.attributes['disabled']
 
 
 class TextArea(TextInput):
