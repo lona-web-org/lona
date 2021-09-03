@@ -6,7 +6,7 @@ class AttributeList:
 
     def __init__(self, node, *args, **kwargs):
         self._node = node
-        self._attributes = list(*args, **kwargs)
+        self._attributes = set(*args, **kwargs)
 
     # list helper #############################################################
     def add(self, attribute):
@@ -17,7 +17,7 @@ class AttributeList:
             if attribute in self._attributes:
                 return
 
-            self._attributes.append(attribute)
+            self._attributes.add(attribute)
 
             self._node.document.add_patch(
                 node_id=self._node.id,
@@ -72,10 +72,7 @@ class AttributeList:
     def extend(self, attributes):
         with self._node.lock:
             for attribute in iter(attributes):
-                if attribute in self._attributes:
-                    continue
-
-                self.append(attribute)
+                self.add(attribute)
 
     def __eq__(self, other):
         with self._node.lock:
@@ -85,11 +82,7 @@ class AttributeList:
             elif not isinstance(other, (list, set, tuple)):
                 return False
 
-            other = set(other)
-            common_attributes = set(self._attributes) & other
-
-            return (len(self._attributes) == len(other) and
-                    len(self._attributes) == len(common_attributes))
+            return self._attributes == set(other)
 
     def __len__(self):
         with self._node.lock:
@@ -107,6 +100,11 @@ class AttributeList:
         with self._node.lock:
             return attribute in self._attributes
 
+    @property
+    def _list(self):
+        with self._node.lock:
+            return list(sorted(self._attributes))
+
     # serialisation ###########################################################
     def _reset(self, value):
         if not isinstance(value, list):
@@ -117,7 +115,7 @@ class AttributeList:
                 raise ValueError('unsupported type: {}'.format(type(value)))
 
         with self._node.lock:
-            self._attributes = value
+            self._attributes = set(value)
 
             self._node.document.add_patch(
                 node_id=self._node.id,
@@ -129,26 +127,25 @@ class AttributeList:
             )
 
     def _serialize(self):
-        return list(self._attributes)
+        return self._list
 
     # string representation ###################################################
     def __str__(self):
-        with self._node.lock:
-            return ' '.join([i for i in self._attributes])
+        return ' '.join(self._list)
 
     def __repr__(self):
-        return '<AttributeList({})>'.format(repr(self._attributes))
+        return '<AttributeList({})>'.format(repr(self._list))
 
 
 class IDList(AttributeList):
     PATCH_TYPE = PATCH_TYPE.ID_LIST
 
     def __repr__(self):
-        return '<IDList({})>'.format(repr(self._attributes))
+        return '<IDList({})>'.format(repr(self._list))
 
 
 class ClassList(AttributeList):
     PATCH_TYPE = PATCH_TYPE.CLASS_LIST
 
     def __repr__(self):
-        return '<ClassList({})>'.format(repr(self._attributes))
+        return '<ClassList({})>'.format(repr(self._list))
