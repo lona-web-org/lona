@@ -44,6 +44,47 @@ def test_attribute_dict():
 
 
 @pytest.mark.dependency()
+def test_attribute_dict_pop():
+    from lona.html import Div
+
+    d = Div(foo='foo-val', bar='bar-val')
+
+    assert 'foo' in d.attributes
+    assert d.attributes.pop('foo') == 'foo-val'
+    assert 'foo' not in d.attributes
+
+    assert 'xxx' not in d.attributes
+    with pytest.raises(KeyError):
+        d.attributes.pop('xxx')
+    assert 'xxx' not in d.attributes
+
+    assert d.attributes.pop('xxx', 'yyy') == 'yyy'
+    assert 'xxx' not in d.attributes
+
+    assert 'bar' in d.attributes
+    assert d.attributes.pop('bar', 'yyy') == 'bar-val'
+    assert 'bar' not in d.attributes
+
+    with pytest.raises(TypeError, match='pop expected at most 2 arguments, got 3'):  # NOQA
+        d.attributes.pop('xxx', 'yyy', 'zzz')
+
+
+@pytest.mark.dependency()
+def test_attribute_dict_del():
+    from lona.html import Div
+
+    d = Div(foo='foo-val', bar='bar-val')
+
+    assert 'foo' in d.attributes
+    del d.attributes['foo']
+    assert 'foo' not in d.attributes
+
+    assert 'xxx' not in d.attributes
+    del d.attributes['xxx']
+    assert 'xxx' not in d.attributes
+
+
+@pytest.mark.dependency()
 def test_attribute_list():
     from lona.html import Div
 

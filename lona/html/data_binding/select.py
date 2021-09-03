@@ -34,12 +34,11 @@ class Select(Node):
 
     @disabled.setter
     def disabled(self, new_value):
-        with self.lock:
-            if new_value:
-                self.attributes['disabled'] = True
+        if new_value:
+            self.attributes['disabled'] = True
 
-            elif 'disabled' in self.attributes:
-                self.attributes.pop('disabled')
+        else:
+            del self.attributes['disabled']
 
     @property
     def values(self):
@@ -102,9 +101,7 @@ class Select(Node):
         with self.lock:
             for option in self.nodes:
                 if option.attributes['value'] in new_value:
-                    if 'selected' not in option.attributes:
-                        option.attributes['selected'] = ''
+                    option.attributes['selected'] = ''
 
                 else:
-                    if 'selected' in option.attributes:
-                        option.attributes.pop('selected')
+                    del option.attributes['selected']
