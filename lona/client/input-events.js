@@ -85,7 +85,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                 };
 
                 input_event_handler.fire_input_event(
-                    undefined,
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.CLICK,
                     event_data,
@@ -121,7 +120,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                             var value = input_event_handler._get_value(node);
 
                             input_event_handler.fire_input_event(
-                                undefined,
                                 node,
                                 Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
                                 value,
@@ -148,7 +146,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
                 var value = input_event_handler._get_value(node);
 
                 input_event_handler.fire_input_event(
-                    undefined,
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
                     value,
@@ -294,7 +291,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         });
     };
 
-    this.fire_input_event = function(widget_id, node, event_type, data) {
+    this.fire_input_event = function(node, event_type, data) {
         var _this = this;
 
         if(this.lona_window._crashed) {
@@ -311,7 +308,10 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         var node_id = undefined;
         var node_class = undefined;
 
-        if(node) {
+        if(typeof node == 'string') {
+            lona_node_id = node;
+
+        } else if(node) {
             lona_node_id = node.getAttribute('data-lona-node-id');
             node_tag_name = node.tagName;
             node_id = node.id || '';
@@ -325,7 +325,6 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             event_id,
             event_type,
             data,
-            widget_id,
             lona_node_id,
             node_tag_name,
             node_id,

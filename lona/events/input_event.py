@@ -40,15 +40,15 @@ class InputEvent:
 
         # find node
         # node info contains a lona node id
-        if self.node_info[0] or self.node_info[1]:
-            self.nodes = document.get_node(node_id=self.node_info[1])
+        if self.node_info[0]:
+            self.nodes = document.get_node(node_id=self.node_info[0])
 
             if self.nodes:
                 self.node = self.nodes[0]
 
-        self.tag_name = self.node_info[2]
-        self.id_list = (self.node_info[3] or '').split(' ')
-        self.class_list = (self.node_info[4] or '').split(' ')
+        self.tag_name = self.node_info[1]
+        self.id_list = (self.node_info[2] or '').split(' ')
+        self.class_list = (self.node_info[3] or '').split(' ')
 
     def node_has_id(self, name):
         if self.node is None:
