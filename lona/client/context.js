@@ -267,6 +267,16 @@ Lona.LonaContext = function(settings) {
     };
 
     this.setup = function() {
-        this.reconnect();
+        var _this = this;
+
+        _this.reconnect();
+
+        // unset websocket.onclose handler when page gets unloaded to
+        // prevent the browser from showing "Server disconnected" when the
+        // user changes the browser URL
+        window.addEventListener('beforeunload', function(event) {
+            _this._ws.onclose = function(event) {};
+            _this._ws.close();
+        });
     };
 };
