@@ -56,6 +56,9 @@ class HTML(Widget):
     def __iter__(self, *args, **kwargs):
         return self.nodes.__iter__(*args, **kwargs)
 
+    def __contains__(self, *args, **kwargs):
+        return self.nodes.__contains__(*args, **kwargs)
+
     def __bool__(self, *args, **kwargs):
         return self.nodes.__bool__(*args, **kwargs)
 

@@ -103,6 +103,10 @@ class AttributeList:
         with self._node.lock:
             return self._attributes.__iter__()
 
+    def __contains__(self, attribute):
+        with self._node.lock:
+            return attribute in self._attributes
+
     # serialisation ###########################################################
     def _reset(self, value):
         if not isinstance(value, list):

@@ -111,6 +111,10 @@ class AttributeDict:
         with self._node.lock:
             return self._attributes.__iter__()
 
+    def __contains__(self, name):
+        with self._node.lock:
+            return name in self._attributes
+
     def __bool__(self):
         with self._node.lock:
             return bool(self._attributes)
