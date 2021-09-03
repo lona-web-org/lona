@@ -4,6 +4,36 @@ toctree: False
 Changelog
 =========
 
+`1.5.1 <https://github.com/lona-web-org/lona/releases/tag/1.5.1>`_ (2021-09-03)
+-------------------------------------------------------------------------------
+
+Bugfixes
+~~~~~~~~
+
+* html
+
+  * ``html.TextInput.disabled``, ``html.Select.disabled``: These values are
+    always bool now
+
+    * Previously these could be a bool or an empty string
+
+  * Unsafe type checks on nodes were fixed
+
+    * This could lead to infinite loops when iterating over nodes before
+
+* input event
+
+  * ``IndexError`` in events, that have no associated node, were fixed
+
+* Javascript client
+
+  * All disconnect hooks are disabled now on page unload
+
+    * Previously all hooks ran when reloading or unloading the page which
+      lead to "Server disconnected" error messages in Firefox when leaving the
+      page
+
+
 `1.5 <https://github.com/lona-web-org/lona/releases/tag/1.5>`_ (2021-09-01)
 ---------------------------------------------------------------------------
 
