@@ -47,14 +47,14 @@ class LonaTemplatesCommand:
             except TemplateNotFound:
                 return 1
 
-            self.repl.write('{}\n'.format(template.filename))
+            self.repl.write(f'{template.filename}\n')
 
             return
 
         # list directories
         if args.list_directories:
             for static_dir in server.templating_engine.template_dirs:
-                self.repl.write('{}\n'.format(static_dir))
+                self.repl.write(f'{static_dir}\n')
 
             return
 
@@ -79,4 +79,4 @@ class LonaTemplatesCommand:
         template_list.sort()
 
         for static_file in template_list:
-            self.repl.write('{}\n'.format(static_file))
+            self.repl.write(f'{static_file}\n')

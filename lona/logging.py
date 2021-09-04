@@ -137,17 +137,12 @@ class LogFormatter(logging.Formatter):
             color = WHITE
 
         if style:
-            color = ';{}'.format(color)
+            color = f';{color}'
 
         if background and color:
-            background = ';{}'.format(background)
+            background = f';{background}'
 
-        return '\033[{}{}{}m{}\033[00m'.format(
-            style,
-            color,
-            background,
-            record_string,
-        )
+        return f'\033[{style}{color}{background}m{record_string}\033[00m'
 
 
 def setup_logging(args, log_formatter=None, log_filter=None):

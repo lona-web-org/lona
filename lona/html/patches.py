@@ -10,11 +10,7 @@ class Patch:
         ]
 
     def __repr__(self):
-        return '<Patch({}, {}, {})>'.format(
-            self.data[0],
-            self.data[1],
-            self.data[2],
-        )
+        return f'<Patch({self.data[0]}, {self.data[1]}, {self.data[2]})>'
 
 
 class PatchStack:

@@ -81,4 +81,4 @@ class ClientPreCompiler:
         return self._get_path()
 
     def __repr__(self):
-        return '<ClientPreCompiler({})>'.format(self._get_path())
+        return f'<ClientPreCompiler({self._get_path()})>'

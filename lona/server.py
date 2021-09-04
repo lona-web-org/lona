@@ -249,7 +249,7 @@ class LonaServer:
             script, attribute_name = import_string.split('::')
             script = self.resolve_path(script)
 
-            import_string = '{}::{}'.format(script, attribute_name)
+            import_string = f'{script}::{attribute_name}'
 
         return _acquire(import_string, *args, **kwargs)
 
@@ -362,7 +362,9 @@ class LonaServer:
         if handled:
             if data:
                 if not isinstance(data, str):
-                    raise RuntimeError('{}.handle_connection returned non string data'.format(middleware))  # NOQA
+                    raise RuntimeError(
+                        f'{middleware}.handle_connection returned non string data',  # NOQA: E501
+                    )
 
                 await connection.send_str(data, wait=False)
 

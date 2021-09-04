@@ -62,7 +62,7 @@ class TextNode(AbstractNode):
         return True
 
     def __repr__(self):
-        return '<TextNode({})>'.format(repr(self._string))
+        return f'<TextNode({self._string!r})>'
 
     # serialisation ###########################################################
     def _serialize(self):

@@ -12,17 +12,14 @@ class Selector:
         self.parse_selector()
 
     def __repr__(self):
-        return '<{}({})>'.format(
-            self.__class__.__name__,
-            repr(self.selectors),
-        )
+        return f'<{self.__class__.__name__}({self.selectors!r})>'
 
     def check_raw_selector_string(self):
         match = UNSUPPORTED_CHARACTERS.search(self.raw_selector_string)
 
         if match:
             raise ValueError(
-                'unsupported selector feature: {}'.format(repr(match.group())),
+                f'unsupported selector feature: {match.group()!r}',
             )
 
     def parse_selector(self):

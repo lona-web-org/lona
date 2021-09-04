@@ -12,11 +12,8 @@ class MiddlewareData:
             setattr(self, key, value)
 
     def __repr__(self):
-        return '<MiddlewareData({})>'.format(
-            ', '.join(
-                ['{}={}'.format(k, repr(v)) for k, v in self.kwargs.items()]
-            )
-        )
+        values = ', '.join(f'{k}={v!r}' for k, v in self.kwargs.items())
+        return f'<MiddlewareData({values})>'
 
 
 class MiddlewareController:
@@ -102,7 +99,7 @@ class MiddlewareController:
 
     def _run_middlewares_sync(self, hook_name, data):
         if hook_name not in self.hooks:
-            raise NotImplementedError("unknown hook '{}'".format(hook_name))
+            raise NotImplementedError(f"unknown hook '{hook_name}'")
 
         logger.debug(
             'running %s with %s',
@@ -149,7 +146,7 @@ class MiddlewareController:
 
     async def _run_middlewares_async(self, hook_name, data):
         if hook_name not in self.hooks:
-            raise NotImplementedError("unknown hook '{}'".format(hook_name))
+            raise NotImplementedError(f"unknown hook '{hook_name}'")
 
         logger.debug(
             'running %s with %s',

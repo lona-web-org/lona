@@ -19,10 +19,7 @@ class LonaView:
         if not is_class:
             view_class = view_class.__class__
 
-        return '{}.{}'.format(
-            view_class.__module__,
-            view_class.__name__,
-        )
+        return f'{view_class.__module__}.{view_class.__name__}'
 
     @classmethod
     def _add_view_to_objects(cls, view_object):

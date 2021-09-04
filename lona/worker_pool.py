@@ -27,14 +27,10 @@ class WorkerPool:
 
     def get_executor(self, name):
         if name not in self._executors:
-            raise RuntimeError(
-                "no executor named '{}'".format(name),
-            )
+            raise RuntimeError(f"no executor named '{name}'")
 
         if not self._executors[name]:
-            raise RuntimeError(
-                "executor '{}' has no threads setup".format(name),
-            )
+            raise RuntimeError(f"executor '{name}' has no threads setup")
 
         return self._executors[name]
 

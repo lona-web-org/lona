@@ -10,8 +10,9 @@ def acquire(import_string, ignore_import_cache=False):
         attributes = runpy.run_path(script, run_name=script)
 
         if attribute_name not in attributes:
-            raise ImportError("script '{}' has no attribute '{}'".format(
-                script, attribute_name))
+            raise ImportError(
+                f"script '{script}' has no attribute '{attribute_name}'",
+            )
 
         return attributes[attribute_name]
 
@@ -24,11 +25,12 @@ def acquire(import_string, ignore_import_cache=False):
         if ignore_import_cache:
             path = inspect.getfile(module)
 
-            return acquire('{}::{}'.format(path, attribute_name))
+            return acquire(f'{path}::{attribute_name}')
 
         if not hasattr(module, attribute_name):
-            raise ImportError("module '{}' has no attribute '{}'".format(
-                module_name, attribute_name))
+            raise ImportError(
+                f"module '{module_name}' has no attribute '{attribute_name}'",
+            )
 
         return getattr(module, attribute_name)
 
@@ -44,7 +46,4 @@ def get_file(obj):
 
 
 def get_object_repr(obj):
-    return '<{} object at {}>'.format(
-        obj.__class__.__name__,
-        hex(id(obj)),
-    )
+    return f'<{obj.__class__.__name__} object at {hex(id(obj))}>'

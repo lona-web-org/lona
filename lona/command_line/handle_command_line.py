@@ -11,11 +11,11 @@ from lona import VERSION_STRING
 
 logger = logging.getLogger('lona')
 
-DESCRIPTION = """
-Lona {}
+DESCRIPTION = f"""
+Lona {VERSION_STRING}
 Documentation: lona-web.org
 Code: github.com/fscherf/lona
-""".format(VERSION_STRING).strip()
+""".strip()
 
 
 def handle_command_line(argv):

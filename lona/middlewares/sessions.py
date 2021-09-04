@@ -36,7 +36,7 @@ class AnonymousUser:
         self.session_key = session_key
 
     def __repr__(self):
-        return '<AnonymousUser({})>'.format(self.session_key)
+        return f'<AnonymousUser({self.session_key})>'
 
     def __eq__(self, other):
         if not isinstance(other, AnonymousUser):

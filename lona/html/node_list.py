@@ -14,7 +14,7 @@ class NodeList:
             node = TextNode(node)
 
         if not isinstance(node, AbstractNode):
-            raise ValueError('unsupported type: {}'.format(type(node)))
+            raise ValueError(f'unsupported type: {type(node)}')
 
         return node
 
@@ -202,4 +202,4 @@ class NodeList:
             return '\n'.join([str(i) for i in self._nodes])
 
     def __repr__(self):
-        return '<NodeList({}))>'.format(repr(self._nodes))
+        return f'<NodeList({self._nodes!r}))>'

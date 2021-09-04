@@ -45,14 +45,14 @@ class LonaStaticFilesCommand:
             if not abs_path:
                 return 1
 
-            self.repl.write('{}\n'.format(abs_path))
+            self.repl.write(f'{abs_path}\n')
 
             return
 
         # list directories
         if args.list_directories:
             for static_dir in server.static_file_loader.static_dirs:
-                self.repl.write('{}\n'.format(static_dir))
+                self.repl.write(f'{static_dir}\n')
 
             return
 
@@ -77,4 +77,4 @@ class LonaStaticFilesCommand:
         static_file_list.sort()
 
         for static_file in static_file_list:
-            self.repl.write('{}\n'.format(static_file))
+            self.repl.write(f'{static_file}\n')

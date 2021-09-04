@@ -216,7 +216,7 @@ to wait for user input and saves resources.
     class MyLonaView(LonaView):
         def handle_request(self, request):
             if request.method == 'POST':
-                return '<h1>Hello {}</h1>'.format(request.POST['name'])
+                return f'<h1>Hello {request.POST["name"]}</h1>'
 
             return HTML(
                 H1('Enter your name'),
@@ -667,9 +667,7 @@ Input events can also be handled in ``handle_input_event()`` when
             if not input_event.node == self.button:
                 return input_event
 
-            self.message.set_text(
-                'Button was clicked at {}'.format(datetime.now())
-            )
+            self.message.set_text(f'Button was clicked at {datetime.now()}')
 
 
 Overriding All Input Event Hooks

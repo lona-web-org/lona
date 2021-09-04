@@ -6,9 +6,7 @@ class MultiUserChat(LonaView):
     def add_message_to_history(self, message, show=True):
         issuer, text = message
 
-        self.history.append(
-            Div('{}: {}'.format(issuer, text))
-        )
+        self.history.append(Div(f'{issuer}: {text}'))
 
         if show:
             self.show()
@@ -19,7 +17,7 @@ class MultiUserChat(LonaView):
             self.user_list.append(Div('User Online: '))
 
             for user in self.state['user']:
-                self.user_list.append(Div('    {}'.format(str(user))))
+                self.user_list.append(Div(f'    {user}'))
 
         self.show()
 
@@ -58,7 +56,7 @@ class MultiUserChat(LonaView):
 
         self.html = HTML(
             H1('Multi User Chat'),
-            H2('Topic: {}'.format(self.topic or '(blank)')),
+            H2(f'Topic: {self.topic or "(blank)"}'),
 
             self.user_list,
             Hr(),

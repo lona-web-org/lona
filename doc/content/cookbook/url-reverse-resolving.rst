@@ -26,9 +26,7 @@ URL Reverse Resolving
 
     class URLArgsView(LonaView):
         def handle_request(self, request):
-            return '<h1>URLArgsView</h1><p>{}</p>'.format(
-                repr(request.match_info),
-            )
+            return f'<h1>URLArgsView</h1><p>{request.match_info!r}</p>'
 
 
     class HomeView(LonaView):
