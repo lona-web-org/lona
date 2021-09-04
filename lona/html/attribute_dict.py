@@ -73,11 +73,16 @@ class AttributeDict:
         if not isinstance(value, (int, bool, float, str)):
             raise ValueError('unsupported type: {}'.format(type(value)))
 
-        if name in ('id', 'class', 'style'):
+        if name in ('id', 'class'):
             raise RuntimeError(
                 "Node.attributes['{}'] is not supported. "
-                'Use Node.{}{} instead.'.format(
-                    name, name, '_list' if name != 'style' else '')
+                'Use Node.{}_list instead.'.format(name, name)
+            )
+
+        if name == 'style':
+            raise RuntimeError(
+                "Node.attributes['{}'] is not supported. "
+                'Use Node.{} instead.'.format(name, name)
             )
 
         with self._node.lock:
@@ -124,15 +129,20 @@ class AttributeDict:
         if not isinstance(value, dict):
             raise ValueError('unsupported type')
 
-        for k, v in value.items():
+        for name, v in value.items():
             if not isinstance(v, (int, bool, float, str)):
                 raise ValueError('unsupported type')
 
-            if k in ('id', 'class', 'style'):
+            if name in ('id', 'class'):
                 raise RuntimeError(
                     "Node.attributes['{}'] is not supported. "
-                    'Use Node.{}{} instead.'.format(
-                        k, k, 'list' if k != 'style' else '')
+                    'Use Node.{}_list instead.'.format(name, name)
+                )
+
+            if name == 'style':
+                raise RuntimeError(
+                    "Node.attributes['{}'] is not supported. "
+                    'Use Node.{} instead.'.format(name, name)
                 )
 
         with self._node.lock:
