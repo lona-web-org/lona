@@ -63,10 +63,10 @@ class StaticFileLoader:
                 # check static file
                 if not isinstance(static_file, StaticFile):
                     logger.error(
-                        '%s::%s: unknown type found: %s',
+                        '%s::%s: unknown type found: %r',
                         node_class_path,
                         node_class.__name__,
-                        repr(static_file),
+                        static_file,
                     )
 
                     continue

@@ -134,7 +134,7 @@ class LonaServer:
 
         static_url = self.settings.STATIC_URL_PREFIX + '{path:.*}'
 
-        server_logger.debug('static url set to %s', repr(static_url))
+        server_logger.debug('static url set to %r', static_url)
 
         self._app.router.add_route(
             '*', static_url, self._handle_static_file_request)
@@ -396,7 +396,7 @@ class LonaServer:
         http_logger.debug('http request incoming')
 
         # resolve path
-        http_logger.debug("resolving path %s", repr(http_request.path))
+        http_logger.debug("resolving path %r", http_request.path)
 
         match, route, match_info = await self.run_function_async(
             self.router.resolve,

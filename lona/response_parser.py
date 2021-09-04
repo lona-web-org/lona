@@ -62,7 +62,7 @@ class ResponseParser:
                     response_dict[key] = value
 
                     logger.debug(
-                        "'%s' sets '%s' to %s", view_name, key, repr(value))
+                        "'%s' sets '%s' to %r", view_name, key, value)
 
         # redirects
         if 'redirect' in raw_response_dict:
