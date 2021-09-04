@@ -1,5 +1,6 @@
 from enum import Enum
 import json
+from typing import Tuple, Optional, Dict, Union
 
 from lona._json import dumps
 
@@ -79,13 +80,24 @@ ENUMS = [
 ]
 
 
-def decode_message(raw_message):
+def decode_message(raw_message: str) -> Tuple[
+    EXIT_CODE,
+    Optional[int],
+    Optional[int],
+    Optional[int],
+    Union[
+        None,
+        Tuple[str, Optional[Dict]],
+        Tuple[int, Union[int, str]],
+        Tuple[str, None],
+    ],
+]:
     """
     returns: (exit_code, window_id, view_runtime_id, method, payload)
 
     """
 
-    def _invalid_message():
+    def _invalid_message() -> Tuple[EXIT_CODE, None, None, None, None]:
         return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
     if not raw_message.startswith(PROTOCOL.MESSAGE_PREFIX.value):

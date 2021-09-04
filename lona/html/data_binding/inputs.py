@@ -1,3 +1,5 @@
+from typing import Dict
+
 from lona.events.event_types import CHANGE
 from lona.html.node import Node
 
@@ -84,7 +86,7 @@ class TextInput(Node):
 class TextArea(TextInput):
     TAG_NAME = 'textarea'
     SELF_CLOSING_TAG = False
-    ATTRIBUTES = {}
+    ATTRIBUTES: Dict[str, str] = {}
 
     def __repr__(self):
         return self.__str__(

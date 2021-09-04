@@ -2,7 +2,7 @@ from lona.protocol import OPERATION, PATCH_TYPE
 
 
 class AttributeList:
-    PATCH_TYPE = None
+    PATCH_TYPE: PATCH_TYPE
 
     def __init__(self, node, *args, **kwargs):
         self._node = node

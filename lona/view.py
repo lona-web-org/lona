@@ -1,12 +1,13 @@
 import threading
 import asyncio
+from typing import Dict, List
 
 from lona.view_runtime import VIEW_RUNTIME_STATE
 from lona.shell.shell import embed_shell
 
 
 class LonaView:
-    _objects = {}
+    _objects: Dict[str, List['LonaView']] = {}
 
     def __init__(self, server, view_runtime, request):
         self._server = server
