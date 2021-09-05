@@ -19,8 +19,9 @@ class AttributeDict:
 
     def pop(self, name, *default):
         if len(default) > 1:
-            raise TypeError(f"pop expected at most 2 arguments, "
-                            f"got {1 + len(default)}")
+            raise TypeError(
+                f'pop expected at most 2 arguments, got {1 + len(default)}',
+            )
 
         with self._node.lock:
             if default and name not in self._attributes:
