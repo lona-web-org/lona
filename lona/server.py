@@ -398,7 +398,7 @@ class LonaServer:
         http_logger.debug('http request incoming')
 
         # resolve path
-        http_logger.debug("resolving path %r", http_request.path)
+        http_logger.debug('resolving path %r', http_request.path)
 
         match, route, match_info = await self.run_function_async(
             self.router.resolve,
