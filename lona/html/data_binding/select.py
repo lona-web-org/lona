@@ -48,6 +48,9 @@ class Select(Node):
 
     @disabled.setter
     def disabled(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('disabled is a boolean property')
+
         if new_value:
             self.attributes['disabled'] = True
 
@@ -60,6 +63,9 @@ class Select(Node):
 
     @multiple.setter
     def multiple(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('multiple is a boolean property')
+
         if new_value:
             self.attributes['multiple'] = True
 

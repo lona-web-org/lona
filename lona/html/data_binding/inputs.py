@@ -78,6 +78,9 @@ class TextInput(Node):
 
     @disabled.setter
     def disabled(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('disabled is a boolean property')
+
         if new_value:
             self.attributes['disabled'] = True
 

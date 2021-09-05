@@ -181,6 +181,9 @@ class Node(AbstractNode):
 
     @ignore.setter
     def ignore(self, value):
+        if not isinstance(value, bool):
+            raise TypeError('ignore is a boolean property')
+
         if value:
             self._attributes['data-lona-ignore'] = 'True'
 
