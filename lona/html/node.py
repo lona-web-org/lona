@@ -185,7 +185,7 @@ class Node(AbstractNode):
             raise TypeError('ignore is a boolean property')
 
         if value:
-            self._attributes['data-lona-ignore'] = 'True'
+            self._attributes['data-lona-ignore'] = ''
 
         else:
             del self._attributes['data-lona-ignore']

@@ -52,7 +52,7 @@ class Select(Node):
             raise TypeError('disabled is a boolean property')
 
         if new_value:
-            self.attributes['disabled'] = True
+            self.attributes['disabled'] = ''
 
         else:
             del self.attributes['disabled']
@@ -67,7 +67,7 @@ class Select(Node):
             raise TypeError('multiple is a boolean property')
 
         if new_value:
-            self.attributes['multiple'] = True
+            self.attributes['multiple'] = ''
 
         else:
             del self.attributes['multiple']

@@ -162,7 +162,7 @@ class Button(Node):
             raise TypeError('disabled is a boolean property')
 
         if new_value:
-            self.attributes['disabled'] = 'True'
+            self.attributes['disabled'] = ''
         else:
             del self.attributes['disabled']
 
