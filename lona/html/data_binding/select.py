@@ -10,8 +10,8 @@ class Select(Node):
     TAG_NAME = 'select'
     EVENTS = [CHANGE]
 
-    def __init__(self, *args, values=None, disabled=None, bubble_up=False,
-                 **kwargs):
+    def __init__(self, *args, values=None, disabled=None, multiple=None,
+                 bubble_up=False, **kwargs):
 
         super().__init__(*args, **kwargs)
 
@@ -22,6 +22,9 @@ class Select(Node):
 
         if disabled is not None:
             self.disabled = disabled
+
+        if multiple is not None:
+            self.multiple = multiple
 
     def handle_input_event(self, input_event):
         if input_event.name == 'change':
@@ -50,6 +53,18 @@ class Select(Node):
 
         else:
             del self.attributes['disabled']
+
+    @property
+    def multiple(self):
+        return 'multiple' in self.attributes
+
+    @multiple.setter
+    def multiple(self, new_value):
+        if new_value:
+            self.attributes['multiple'] = True
+
+        else:
+            del self.attributes['multiple']
 
     @property
     def values(self):
