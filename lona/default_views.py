@@ -34,10 +34,9 @@ class FallbackView(LonaView):
                 return view.handle_request(request, **extra_context)
 
             except Exception:
-                logger.error(
+                logger.exception(
                     "exception raised while running '%s'. running fallback view",  # NOQA: E501
                     view_setting,
-                    exc_info=True,
                 )
 
                 return self.render_default_template(request, **extra_context)

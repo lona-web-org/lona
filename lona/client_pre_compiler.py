@@ -69,10 +69,7 @@ class ClientPreCompiler:
                 f.close()
 
         except Exception:
-            logger.error(
-                'exception raised while pre compiling js client',
-                exc_info=True,
-            )
+            logger.exception('exception raised while pre compiling js client')
 
     def resolve(self):
         if self.server.settings.CLIENT_RECOMPILE:

@@ -80,13 +80,13 @@ def run_server(args, app=None, server=None):
             if exception.errno not in (-2, ):
                 raise
 
-            logger.error('socket.gaierror: ' + exception.args[1])
+            logger.error('socket.gaierror: %s', exception.args[1])
 
         except OSError as exception:
             if exception.errno not in (13, 98):
                 raise
 
-            logger.error('OSError: ' + exception.args[1])
+            logger.error('OSError: %s', exception.args[1])
 
     if args.shell_server_url:
         embed_kwargs = {

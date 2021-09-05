@@ -62,10 +62,7 @@ def _find_node_classes(module):
                 NODE_CLASSES[node_class.TAG_NAME] = node_class
 
     except Exception:
-        logger.error(
-            'Exception occurred while searching for node classes',
-            exc_info=True,
-        )
+        logger.exception('Exception occurred while searching for node classes')
 
 
 def _setup_node_classes_cache():

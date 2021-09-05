@@ -30,10 +30,9 @@ class Settings:
             )
 
         except Exception:
-            logger.error(
+            logger.exception(
                 "exception raised while loading settings '%s'",
                 path,
-                exc_info=True
             )
 
             return
