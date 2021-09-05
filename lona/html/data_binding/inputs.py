@@ -7,6 +7,7 @@ DEFAULT_INPUT_DELAY = 300
 class TextInput(Node):
     TAG_NAME = 'input'
     SELF_CLOSING_TAG = True
+    INPUT_ATTRIBUTE_NAME = 'value'
 
     ATTRIBUTES = {
         'type': 'text',
@@ -25,7 +26,7 @@ class TextInput(Node):
         if value is not None:
             self.value = value
 
-    def handle_change(self, input_event):
+    def handle_input_event(self, input_event):
         # Data binding nodes catch their own change events and synchronize
         # their internal value. When setting their value, a HTML patch,
         # containing the set value, gets created that gets distributed to all
@@ -38,13 +39,20 @@ class TextInput(Node):
         # The solution for this problem is to don't send patches back to users
         # who issued them.
 
-        self.attributes.__setitem__(
-            'value',
-            input_event.data,
-            issuer=(input_event.connection, input_event.window_id),
-        )
+        if input_event.name == 'change':
+            self.attributes.__setitem__(
+                self.INPUT_ATTRIBUTE_NAME,
+                input_event.data,
+                issuer=(input_event.connection, input_event.window_id),
+            )
 
-        self.value = input_event.data
+            input_event = self.handle_change(input_event)
+
+        elif input_event.name == 'click':
+            input_event = self.handle_click(input_event)
+
+        else:
+            return input_event
 
         if self.bubble_up:
             return input_event
@@ -53,11 +61,11 @@ class TextInput(Node):
     # value
     @property
     def value(self):
-        return self.attributes.get('value', '')
+        return self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
 
     @value.setter
     def value(self, new_value):
-        self.attributes['value'] = new_value
+        self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
 
     # disabled
     @property
@@ -86,14 +94,16 @@ class TextArea(TextInput):
 
 
 class CheckBox(TextInput):
+    INPUT_ATTRIBUTE_NAME = 'checked'
+
     ATTRIBUTES = {
         'type': 'checkbox',
     }
 
     @property
     def value(self):
-        return self.attributes.get('checked', False)
+        return self.attributes.get(self.INPUT_ATTRIBUTE_NAME, False)
 
     @value.setter
     def value(self, new_value):
-        self.attributes['checked'] = bool(new_value)
+        self.attributes[self.INPUT_ATTRIBUTE_NAME] = bool(new_value)

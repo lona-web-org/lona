@@ -20,12 +20,20 @@ class Select(Node):
             self.values = values
         self.disabled = disabled
 
-    def handle_change(self, input_event):
-        with self.lock:
+    def handle_input_event(self, input_event):
+        if input_event.name == 'change':
             self.value = input_event.data
 
-            if self.bubble_up:
-                return input_event
+            input_event = self.handle_change(input_event)
+
+        elif input_event.name == 'click':
+            input_event = self.handle_click(input_event)
+
+        else:
+            return input_event
+
+        if self.bubble_up:
+            return input_event
 
     # properties ##############################################################
     @property
