@@ -103,7 +103,7 @@ class AttributeList:
     @property
     def _list(self):
         with self._node.lock:
-            return list(sorted(self._attributes))
+            return sorted(self._attributes)
 
     # serialisation ###########################################################
     def _reset(self, value):
