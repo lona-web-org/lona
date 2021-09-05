@@ -71,13 +71,16 @@ class AttributeDict:
 
     def __setitem__(self, name, value, issuer=None):
         if not isinstance(value, (int, bool, float, str)):
-            raise ValueError('unsupported type: {}'.format(type(value)))
+            raise ValueError(f'unsupported type: {type(value)}')
 
-        if name in ('id', 'class', 'style'):
+        if name in ('id', 'class'):
             raise RuntimeError(
-                "Node.attributes['{}'] is not supported. "
-                'Use Node.{}{} instead.'.format(
-                    name, name, '_list' if name != 'style' else '')
+                f"Node.attributes['{name}'] is not supported. Use Node.{name}_list instead."  # NOQA: E501
+            )
+
+        if name == 'style':
+            raise RuntimeError(
+                f"Node.attributes['{name}'] is not supported. Use Node.{name} instead."  # NOQA: E501
             )
 
         with self._node.lock:
@@ -124,15 +127,18 @@ class AttributeDict:
         if not isinstance(value, dict):
             raise ValueError('unsupported type')
 
-        for k, v in value.items():
+        for name, v in value.items():
             if not isinstance(v, (int, bool, float, str)):
                 raise ValueError('unsupported type')
 
-            if k in ('id', 'class', 'style'):
+            if name in ('id', 'class'):
                 raise RuntimeError(
-                    "Node.attributes['{}'] is not supported. "
-                    'Use Node.{}{} instead.'.format(
-                        k, k, 'list' if k != 'style' else '')
+                    f"Node.attributes['{name}'] is not supported. Use Node.{name}_list instead."  # NOQA: E501
+                )
+
+            if name == 'style':
+                raise RuntimeError(
+                    f"Node.attributes['{name}'] is not supported. Use Node.{name} instead."  # NOQA: E501
                 )
 
         with self._node.lock:
@@ -159,7 +165,7 @@ class AttributeDict:
                 if skip_value and key == 'value':
                     continue
 
-                string.append('{}="{}"'.format(key, value))
+                string.append(f'{key}="{value}"')
 
             return ' '.join(string)
 
@@ -168,12 +174,12 @@ class AttributeDict:
             string = []
 
             for key, value in self._attributes.items():
-                string.append('{}: {}'.format(key, value))
+                string.append(f'{key}: {value}')
 
             return '; '.join(string)
 
     def __repr__(self):
-        return '<AttributeDict({})>'.format(repr(self._attributes))
+        return f'<AttributeDict({self._attributes!r})>'
 
 
 class StyleDict(AttributeDict):
@@ -191,7 +197,7 @@ class StyleDict(AttributeDict):
         self._attributes = dict(*args, **kwargs)
 
     def __repr__(self):
-        return '<StyleDict({})>'.format(repr(self._attributes))
+        return f'<StyleDict({self._attributes!r})>'
 
     def _parse_style_string(self, style_string):
         values = {}
@@ -201,9 +207,7 @@ class StyleDict(AttributeDict):
                 continue
 
             if ':' not in css_rule:
-                raise ValueError(
-                    'Invalid style string: {}'.format(style_string)
-                )
+                raise ValueError(f'Invalid style string: {style_string}')
 
             name, value = css_rule.split(':', 1)
 

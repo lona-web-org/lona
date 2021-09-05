@@ -16,10 +16,9 @@ class WindowTitleView(LonaView):
 
         while True:
             for i in range(3):
-                title = 'Title {}'.format(i)
+                title = f'Title {i}'
 
-                div.set_text(
-                    "Using set_title(); Title should be '{}'".format(title))
+                div.set_text(f"Using set_title(); Title should be '{title}'")
 
                 self.set_title(title)
                 self.show()
@@ -27,9 +26,9 @@ class WindowTitleView(LonaView):
                 self.sleep(1)
 
             for i in range(3):
-                title = 'Title {}'.format(i)
+                title = f'Title {i}'
 
-                div.set_text("using show; Title should be '{}'".format(title))
+                div.set_text(f"using show; Title should be '{title}'")
                 self.show(html, title=title)
 
                 self.sleep(1)

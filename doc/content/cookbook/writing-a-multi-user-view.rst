@@ -18,7 +18,7 @@ user connects or a message was send.
             issuer, text = message
 
             self.history.append(
-                Div('{}: {}'.format(issuer, text))
+                Div(f'{issuer}: {text}')
             )
 
             if show:
@@ -30,7 +30,7 @@ user connects or a message was send.
                 self.user_list.append(Div('User Online: '))
 
                 for user in self.state['user']:
-                    self.user_list.append(Div('    {}'.format(str(user))))
+                    self.user_list.append(Div(f'    {user}'))
 
             self.show()
 
@@ -69,7 +69,7 @@ user connects or a message was send.
 
             self.html = HTML(
                 H1('Multi User Chat'),
-                H2('Topic: {}'.format(self.topic or '(blank)')),
+                H2(f'Topic: {self.topic or "(blank)"}'),
 
                 self.user_list,
                 Hr(),

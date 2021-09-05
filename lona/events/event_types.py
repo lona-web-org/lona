@@ -27,9 +27,9 @@ class ChangeEventType:
 
     def __repr__(self):
         if self._input_delay:
-            return '{}(input_delay={})'.format(self._name, self._input_delay)
+            return f'{self._name}(input_delay={self._input_delay})'
 
-        return '{}'.format(self._name)
+        return self._name
 
     def __call__(self, input_delay=0):
         if not isinstance(input_delay, int):
@@ -43,7 +43,7 @@ class ChangeEventType:
 
     def serialize(self):
         if self._input_delay:
-            return '{}:{}'.format(self._symbol.value, self._input_delay)
+            return f'{self._symbol.value}:{self._input_delay}'
 
         return str(self._symbol.value)
 

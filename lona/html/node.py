@@ -237,20 +237,16 @@ class Node(AbstractNode):
     def __str__(self, node_string=None, skip_value=False):
         with self.lock:
             # opening tag
-            string = '<{} data-lona-node-id="{}"'.format(
-                self.tag_name,
-                self.id,
-            )
+            string = f'<{self.tag_name} data-lona-node-id="{self.id}"'
 
             if self.id_list:
-                string += ' id="{}"'.format(str(self.id_list))
+                string += f' id="{self.id_list}"'
 
             if self.class_list:
-                string += ' class="{}"'.format(str(self.class_list))
+                string += f' class="{self.class_list}"'
 
             if self.style:
-                string += ' style="{}"'.format(
-                    self.style.to_sub_attribute_string())
+                string += f' style="{self.style.to_sub_attribute_string()}"'
 
             if self.attributes:
                 string += ' '
@@ -267,9 +263,9 @@ class Node(AbstractNode):
 
             # nodes
             if node_string:
-                string += '\n{}\n'.format(
-                    indent(node_string, '  '),
-                )
+                string += '\n'
+                string += indent(node_string, '  ')
+                string += '\n'
 
             elif self.nodes:
                 string += '\n'
@@ -278,7 +274,7 @@ class Node(AbstractNode):
 
             # closing tag
             if not self.self_closing_tag:
-                string += '</{}>'.format(self.tag_name)
+                string += f'</{self.tag_name}>'
 
             return string
 

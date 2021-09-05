@@ -11,7 +11,7 @@ class AttributeList:
     # list helper #############################################################
     def add(self, attribute):
         if not isinstance(attribute, (int, bool, float, str)):
-            raise ValueError('unsupported type: {}'.format(type(attribute)))
+            raise ValueError(f'unsupported type: {type(attribute)}')
 
         with self._node.lock:
             if attribute in self._attributes:
@@ -108,11 +108,11 @@ class AttributeList:
     # serialisation ###########################################################
     def _reset(self, value):
         if not isinstance(value, list):
-            raise ValueError('unsupported type: {}'.format(type(value)))
+            raise ValueError(f'unsupported type: {type(value)}')
 
         for i in value:
             if not isinstance(i, (int, bool, float, str)):
-                raise ValueError('unsupported type: {}'.format(type(value)))
+                raise ValueError(f'unsupported type: {type(value)}')
 
         with self._node.lock:
             self._attributes = set(value)
@@ -134,18 +134,18 @@ class AttributeList:
         return ' '.join(self._list)
 
     def __repr__(self):
-        return '<AttributeList({})>'.format(repr(self._list))
+        return f'<AttributeList({self._list!r})>'
 
 
 class IDList(AttributeList):
     PATCH_TYPE = PATCH_TYPE.ID_LIST
 
     def __repr__(self):
-        return '<IDList({})>'.format(repr(self._list))
+        return f'<IDList({self._list!r})>'
 
 
 class ClassList(AttributeList):
     PATCH_TYPE = PATCH_TYPE.CLASS_LIST
 
     def __repr__(self):
-        return '<ClassList({})>'.format(repr(self._list))
+        return f'<ClassList({self._list!r})>'

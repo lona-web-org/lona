@@ -43,10 +43,7 @@ class TocTree:
             anchor = soup.new_tag('a')
             anchor.attrs['class'] = 'anchor'
 
-            anchor.attrs['href'] = '/{}#{}'.format(
-                content['output'],
-                section.attrs['id'],
-            )
+            anchor.attrs['href'] = f"/{content['output']}#{section.attrs['id']}"
 
             header.append(anchor)
 

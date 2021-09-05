@@ -34,10 +34,7 @@ class BubblingWidget(Widget):
 
     def handle_input_event(self, input_event):
         self.view.print(
-            '>> Widget({}).handle_input_event({})'.format(
-                self.text,
-                repr(input_event),
-            )
+            f'>> Widget({self.text}).handle_input_event({input_event!r})'
         )
 
         if self.view.select.value != self.text:
@@ -89,7 +86,7 @@ class EventBubblingView(LonaView):
         while True:
             input_event = self.await_input_event(html=html)
 
-            self.print('>> view.handle_request {}'.format(repr(input_event)))
+            self.print(f'>> view.handle_request {input_event!r}')
 
     def clear(self):
         self.console.nodes.clear()
@@ -103,14 +100,13 @@ class EventBubblingView(LonaView):
     def handle_input_event_root(self, input_event):
         self.clear()
 
-        self.print(
-            '>> view.handle_input_event_root({})'.format(repr(input_event)))
+        self.print(f'>> view.handle_input_event_root({input_event!r})')
 
         if self.select.value != 'handle_input_event_root':
             return input_event
 
     def handle_input_event(self, input_event):
-        self.print('>> view.handle_input_event({})'.format(repr(input_event)))
+        self.print(f'>> view.handle_input_event({input_event!r})')
 
         if self.select.value != 'handle_input_event':
             return input_event

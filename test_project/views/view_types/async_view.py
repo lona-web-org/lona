@@ -55,9 +55,7 @@ class AsyncView(LonaView):
                 )
 
                 html[1].set_text(
-                    'short_running_coroutine() returned {}'.format(
-                        repr(return_value)
-                    )
+                    f'short_running_coroutine() returned {return_value!r}',
                 )
 
                 self.show(html)

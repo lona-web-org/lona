@@ -8,7 +8,7 @@ def check_value(value):
         return
 
     if not isinstance(value, (bool, int, float, str, list, dict)):
-        raise ValueError('unsupported type: {}'.format(type(value)))
+        raise ValueError(f'unsupported type: {type(value)}')
 
     if isinstance(value, list):
         for i in value:
@@ -447,4 +447,4 @@ class WidgetData:
 
     # string representation ###################################################
     def __repr__(self):
-        return '<WidgetData({}))>'.format(repr(self._data))
+        return f'<WidgetData({self._data!r}))>'

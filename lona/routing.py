@@ -99,10 +99,7 @@ class Route:
         if raw_pattern == MATCH_ALL:
             raw_pattern = 'MATCH_ALL'
 
-        return '<Route({}, {})>'.format(
-            raw_pattern,
-            self.view,
-        )
+        return f'<Route({raw_pattern}, {self.view})>'
 
 
 class Router:
@@ -174,7 +171,7 @@ class Router:
                 break
 
         if not route:
-            raise ValueError("no route named '{}' found".format(name))
+            raise ValueError(f"no route named '{name}' found")
 
         if route.path:
             return route.path
@@ -186,7 +183,7 @@ class Router:
             key_error = e
 
         # raise is outside of except block to avoid stacking tracebacks
-        raise ValueError('missing URL arg: {} '.format(key_error.args[0]))
+        raise ValueError(f'missing URL arg: {key_error.args[0]}')
 
     def reverse(self, *args, **kwargs):
         return self._reverse_lru_cache(*args, **kwargs)

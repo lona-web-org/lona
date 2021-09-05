@@ -24,7 +24,7 @@ in ``request.POST``.
     class MyLonaView(LonaView):
         def handle_request(self, request):
             if request.method == 'POST':
-                return '<h1>Hello {}</h1>'.format(request.POST['name'])
+                return f'<h1>Hello {request.POST["name"]}</h1>'
 
             return HTML(
                 H1('Enter your name'),

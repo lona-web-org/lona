@@ -30,13 +30,13 @@ class InteractiveView(LonaView):
             widget.clear()
 
             for i in range(0, 5):
-                widget.append(Div('Div {}'.format(i+1)))
+                widget.append(Div(f'Div {i+1}'))
                 self.show(html)
 
                 self.sleep(float(interval.value))
 
             for i in range(0, 5):
-                widget[i].insert(i+1, Div('Div {}.{}'.format(i+1, i+1)))
+                widget[i].insert(i+1, Div(f'Div {i+1}.{i+1}'))
                 self.show(html)
 
                 self.sleep(float(interval.value))

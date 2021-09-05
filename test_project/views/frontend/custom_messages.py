@@ -16,20 +16,14 @@ class CustomMessagesView(LonaView):
         while True:
             private_message = dumps({
                 'notification': {
-                    'message': '{}: {}'.format(
-                        str(datetime.now()),
-                        'This is a message',
-                    ),
+                    'message': f'{datetime.now()}: This is a message',
                     'timeout': 2000,
                 },
             })
 
             broadcast_message = dumps({
                 'notification': {
-                    'message': '{}: {}'.format(
-                        str(datetime.now()),
-                        'This is a broadcast message',
-                    ),
+                    'message': f'{datetime.now()}: This is a broadcast message',  # NOQA: E501
                     'timeout': 2000,
                 },
             })

@@ -40,4 +40,4 @@ class WidgetEventHandlerView(LonaView):
 
                 return
 
-            message.set_text('Button clicked at {}'.format(datetime.now()))
+            message.set_text(f'Button clicked at {datetime.now()}')

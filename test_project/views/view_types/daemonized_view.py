@@ -10,7 +10,7 @@ class DaemonizedView(LonaView):
         start_daemonized = Button('Start daemonized')
 
         html = Div(
-            H2('Daemonized View (name={})'.format(name)),
+            H2(f'Daemonized View (name={name})'),
             message,
             log,
             start,
@@ -28,7 +28,7 @@ class DaemonizedView(LonaView):
             message.set_text('View started normal')
 
         for i in range(15):
-            log.set_text('Counting ({}/15)'.format(i+1))
+            log.set_text(f'Counting ({i+1}/15)')
             self.show(html)
 
             self.sleep(1)

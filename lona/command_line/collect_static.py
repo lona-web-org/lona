@@ -15,7 +15,7 @@ def collect_static(args):
         print(*print_args, **print_kwargs)
 
     def _rm(path):
-        _print('rm -rf {}'.format(path))
+        _print(f'rm -rf {path}')
 
         if args.dry_run:
             return
@@ -27,7 +27,7 @@ def collect_static(args):
             os.unlink(path)
 
     def _mkdir(path):
-        _print('mkdir -p {}'.format(path))
+        _print(f'mkdir -p {path}')
 
         if args.dry_run:
             return
@@ -42,10 +42,10 @@ def collect_static(args):
         source_is_dir = os.path.isdir(source)
 
         if source_is_dir:
-            _print('cp -r {} {}'.format(source, destination))
+            _print(f'cp -r {source} {destination}')
 
         else:
-            _print('cp {} {}'.format(source, destination))
+            _print(f'cp {source} {destination}')
 
         if args.dry_run:
             return
@@ -70,10 +70,10 @@ def collect_static(args):
 
     # check destination
     if not os.path.exists(args.destination):
-        exit("'{}' does not exist".format(args.destination))
+        exit(f"'{args.destination}' does not exist")
 
     if not os.path.isdir(args.destination):
-        exit("'{}' is no directory".format(args.destination))
+        exit(f"'{args.destination}' is no directory")
 
     # clean
     if args.clean:

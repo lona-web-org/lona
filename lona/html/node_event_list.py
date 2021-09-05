@@ -11,7 +11,7 @@ class NodeEventList:
         self._apply()
 
     def __repr__(self):
-        return '<NodeEventList({})>'.format(self._event_types)
+        return f'<NodeEventList({self._event_types})>'
 
     @property
     def lock(self):
