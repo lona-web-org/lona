@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 
@@ -25,12 +27,18 @@ def test_attribute_dict():
     }
 
     # value errors ############################################################
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="unsupported type: <class 'dict'>"):
         d = Div(foo={})
 
     d = Div()
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(
+            RuntimeError,
+            match=re.escape(
+                "Node.attributes['id'] is not supported. "
+                'Use Node.id_list instead.',
+            ),
+    ):
         d.attributes['id'] = 'foo'
 
     # comparisons #############################################################
@@ -54,7 +62,7 @@ def test_attribute_dict_pop():
     assert 'foo' not in d.attributes
 
     assert 'xxx' not in d.attributes
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match='xxx'):
         d.attributes.pop('xxx')
     assert 'xxx' not in d.attributes
 
@@ -65,7 +73,10 @@ def test_attribute_dict_pop():
     assert d.attributes.pop('bar', 'yyy') == 'bar-val'
     assert 'bar' not in d.attributes
 
-    with pytest.raises(TypeError, match='pop expected at most 2 arguments, got 3'):  # NOQA: E501
+    with pytest.raises(
+            TypeError,
+            match='pop expected at most 2 arguments, got 3'
+    ):
         d.attributes.pop('xxx', 'yyy', 'zzz')
 
 
@@ -139,13 +150,16 @@ def test_attribute_list():
     assert d.class_list == ['foo', 'bar']
 
     # value errors ############################################################
-    with pytest.raises(ValueError):
+    with pytest.raises(
+            ValueError,
+            match='id has to be string or list of strings',
+    ):
         d = Div(_id={})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="unsupported type: <class 'dict'>"):
         d.id_list = {}
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="unsupported type: <class 'list'>"):
         d.id_list = [{}]
 
     # len #####################################################################
@@ -194,7 +208,7 @@ def test_attribute_list():
 
     d = Div()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="unsupported type: <class 'dict'>"):
         d.id_list.add({})
 
     # extend ##################################################################
