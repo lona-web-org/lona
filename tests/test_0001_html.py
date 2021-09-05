@@ -258,3 +258,86 @@ def test_attribute_list():
     d.id_list.toggle('foo')
 
     assert d.id_list == ['foo', 'bar']
+
+
+@pytest.mark.dependency()
+def test_html_strings():
+    from lona.html import HTML, Button
+
+    # empty node ##############################################################
+    node = HTML('<div></div>')[0]
+
+    assert node.tag_name == 'div'
+    assert node.id_list == []
+    assert node.class_list == []
+    assert node.style == {}
+    assert node.attributes == {}
+    assert node.nodes == []
+
+    # node with attributes ####################################################
+    node = HTML("""
+        <div id="foo" class="bar" style="color: black" foo="bar">
+        </div>
+    """)[0]
+
+    assert node.tag_name == 'div'
+    assert node.id_list == ['foo']
+    assert node.class_list == ['bar']
+    assert node.style == {'color': 'black'}
+    assert node.attributes == {'foo': 'bar'}
+    assert node.nodes == []
+
+    # sub nodes ###############################################################
+    node = HTML("""
+        <div>
+            <span></span>
+            <div></div>
+            <h1></h1>
+        </div>
+    """)[0]
+
+    assert node.tag_name == 'div'
+    assert len(node.nodes) == 3
+    assert node.nodes[0].tag_name == 'span'
+    assert node.nodes[1].tag_name == 'div'
+    assert node.nodes[2].tag_name == 'h1'
+
+    # multiple ids ############################################################
+    node = HTML('<div id="foo bar baz"></div>')[0]
+
+    assert node.id_list == ['foo', 'bar', 'baz']
+
+    # multiple classes ########################################################
+    node = HTML('<div class="foo bar baz"></div>')[0]
+
+    assert node.class_list == ['foo', 'bar', 'baz']
+
+    # multiple css rules ######################################################
+    node = HTML('<div style="color: black; display: block"></div>')[0]
+
+    assert node.style == {
+        'color': 'black',
+        'display': 'block',
+    }
+
+    # multiple attributes #####################################################
+    node = HTML('<div foo="bar" bar="baz"></div>')[0]
+
+    assert node.attributes == {
+        'foo': 'bar',
+        'bar': 'baz',
+    }
+
+    # high level nodes ########################################################
+    node = HTML('<button>Click me</button>')[0]
+
+    assert isinstance(node, Button)
+
+    # boolean properties ######################################################
+    node = HTML('<button disabled>Click me</button>')[0]
+
+    assert node.disabled
+
+    node = HTML('<button disabled="true">Click me</button>')[0]
+
+    assert node.disabled
