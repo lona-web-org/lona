@@ -14,7 +14,7 @@ logger = logging.getLogger('lona')
 DESCRIPTION = f"""
 Lona {VERSION_STRING}
 Documentation: lona-web.org
-Code: github.com/fscherf/lona
+Code: https://github.com/lona-web-org/lona
 """.strip()
 
 
