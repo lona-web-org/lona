@@ -15,7 +15,7 @@ class LonaSettingsCommand:
         self.repl = repl
 
     def complete(self, text, state, line_buffer):
-        names = sorted(list(self.repl.locals['server'].settings))
+        names = sorted(self.repl.locals['server'].settings)
         candidates = []
 
         for name in names:
