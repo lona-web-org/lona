@@ -42,8 +42,7 @@ class CustomEventWidget(Widget):
 
     def handle_input_event(self, input_event):
         data = {
-            'node': input_event.node,
-            'node_info': input_event.node_info,
+            'node': input_event.node.id,
             'type': input_event.type,
             'name': input_event.name,
             'data': input_event.data,
