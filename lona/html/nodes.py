@@ -168,16 +168,6 @@ class Submit(Node):
     }
 
 
-class Reset(Node):
-    TAG_NAME = 'input'
-    SELF_CLOSING_TAG = True
-
-    ATTRIBUTES = {
-        'type': 'reset',
-        'value': 'Reset',
-    }
-
-
 # complex html nodes ##########################################################
 class Img(Node):
     TAG_NAME = 'img'
