@@ -5,7 +5,7 @@ PYTHON_ENV_ROOT=envs
 PYTHON_DEV_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-dev
 PYTHON_PACKAGING_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-packaging-env
 
-.PHONY: clean doc sdist test ci-test shell freeze
+.PHONY: clean doc sdist test ci-test lint shell freeze
 
 # development environment #####################################################
 $(PYTHON_DEV_ENV)/.created: REQUIREMENTS.dev.txt
@@ -55,7 +55,7 @@ ci-test: dev-env
 # linting #####################################################################
 lint: dev-env
 	. $(PYTHON_DEV_ENV)/bin/activate && \
-	tox -e lint
+	time tox -e lint
 
 # packaging ###################################################################
 sdist: packaging-env

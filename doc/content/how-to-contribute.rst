@@ -16,6 +16,12 @@ To run the test-suite go to ``lona/`` and run ``make test`` or
 ``make ci-test``.
 
 
+Linters
+-----
+
+To run the linters go to ``lona/`` and run ``make lint``.
+
+
 Test Project
 ------------
 
