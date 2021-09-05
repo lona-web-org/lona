@@ -9,7 +9,7 @@ class NonNodeEventView(LonaView):
             <button id="red-button" data-lona-events="301" style="color: white; background-color: red;">Red Button</button>
             <button id="green-button" data-lona-events="301" style="color: white; background-color: green;">Green Button</button>
 
-        """  # NOQA
+        """  # NOQA: E501
 
         message = 'No button pressed'
 

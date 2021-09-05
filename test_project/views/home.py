@@ -90,4 +90,4 @@ class HomeView(LonaView):
             <ul>
                 <li><a href="/multi-user/multi-user-chat/">Multi User Chat</a></li>
             </ul>
-        """  # NOQA
+        """  # NOQA: E501

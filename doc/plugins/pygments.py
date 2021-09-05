@@ -1,4 +1,4 @@
-# source: https://github.com/pengutronix/flamingo/blob/master/flamingo/plugins/rst/pygments.py
+# source: https://github.com/pengutronix/flamingo/blob/master/flamingo/plugins/rst/pygments.py  # NOQA: E501
 
 from tempfile import TemporaryDirectory
 import os

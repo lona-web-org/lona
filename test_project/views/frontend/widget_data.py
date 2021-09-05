@@ -38,7 +38,7 @@ class WidgetDataView(LonaView):
 
         html = HTML(
             H2('Widget Data'),
-            'This view tests the encoding and decoding of abstract widget data.',  # NOQA
+            'This view tests the encoding and decoding of abstract widget data.',  # NOQA: E501
             Br(),
             Br(),
             'The first value is the state the server has, the second is the '

@@ -55,7 +55,7 @@ ci-test: dev-env
 # linting #####################################################################
 lint: dev-env
 	. $(PYTHON_DEV_ENV)/bin/activate && \
-	flake8 lona tests
+	tox -e lint
 
 # packaging ###################################################################
 sdist: packaging-env

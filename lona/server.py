@@ -288,7 +288,7 @@ class LonaServer:
             text=response_dict['text'],
         )
 
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # NOQA
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # NOQA: E501
 
         return response
 
@@ -302,7 +302,7 @@ class LonaServer:
 
         if not self.settings.STATIC_FILES_SERVE:
             server_logger.warning(
-                'Reverse proxy seems to be misconfigured: a static file request was received but STATIC_FILES_SERVE is disabled',  # NOQA
+                'Reverse proxy seems to be misconfigured: a static file request was received but STATIC_FILES_SERVE is disabled',  # NOQA: E501
             )
 
             return _404()

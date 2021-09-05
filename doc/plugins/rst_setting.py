@@ -1,4 +1,4 @@
-# source: https://github.com/pengutronix/flamingo/blob/master/doc/plugins/rst_setting.py
+# source: https://github.com/pengutronix/flamingo/blob/master/doc/plugins/rst_setting.py  # NOQA: E501
 
 from docutils.parsers.rst import Directive, directives
 from docutils.nodes import raw

@@ -65,7 +65,7 @@ def test_attribute_dict_pop():
     assert d.attributes.pop('bar', 'yyy') == 'bar-val'
     assert 'bar' not in d.attributes
 
-    with pytest.raises(TypeError, match='pop expected at most 2 arguments, got 3'):  # NOQA
+    with pytest.raises(TypeError, match='pop expected at most 2 arguments, got 3'):  # NOQA: E501
         d.attributes.pop('xxx', 'yyy', 'zzz')
 
 
