@@ -104,19 +104,10 @@ class MiddlewareController:
         if hook_name not in self.hooks:
             raise NotImplementedError("unknown hook '{}'".format(hook_name))
 
-        logger.debug(
-            'running %s with %s',
-            hook_name,
-            repr(data),
-        )
+        logger.debug('running %s with %r', hook_name, data)
 
         for middleware, hook in self.hooks[hook_name]:
-            logger.debug(
-                'running %s.%s(%s)',
-                middleware,
-                hook_name,
-                repr(data),
-            )
+            logger.debug('running %s.%s(%r)', middleware, hook_name, data)
 
             # run middleware hook
             return_value = hook(data)
@@ -135,10 +126,10 @@ class MiddlewareController:
                 # is considered as handled
 
                 logger.debug(
-                    'data got handled by %s.%s by returning a custom value: %s',  # NOQA
+                    'data got handled by %s.%s by returning a custom value: %r',  # NOQA: E501
                     middleware,
                     hook_name,
-                    repr(return_value),
+                    return_value,
                 )
 
                 return True, return_value, middleware
@@ -151,27 +142,18 @@ class MiddlewareController:
         if hook_name not in self.hooks:
             raise NotImplementedError("unknown hook '{}'".format(hook_name))
 
-        logger.debug(
-            'running %s with %s',
-            hook_name,
-            repr(data),
-        )
+        logger.debug('running %s with %r', hook_name, data)
 
         for middleware, hook in self.hooks[hook_name]:
-            logger.debug(
-                'running %s.%s(%s)',
-                middleware,
-                hook_name,
-                repr(data),
-            )
+            logger.debug('running %s.%s(%r)', middleware, hook_name, data)
 
             try:
                 await hook(data)
 
             except Exception:
                 logger.error(
-                    'Exception raised while running %s',
-                    repr(hook),
+                    'Exception raised while running %r',
+                    hook,
                     exc_info=True,
                 )
 

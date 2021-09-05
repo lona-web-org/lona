@@ -192,10 +192,7 @@ class ViewRuntimeController:
             )
 
             if running_view_runtime and not running_view_runtime.is_stopped:
-                views_logger.debug(
-                    'reconnecting to %s',
-                    repr(running_view_runtime),
-                )
+                views_logger.debug('reconnecting to %r', running_view_runtime)
 
                 running_view_runtime.reconnect_connection(
                     connection=connection,
@@ -289,7 +286,7 @@ class ViewRuntimeController:
 
         # views
         if method == METHOD.VIEW:
-            views_logger.debug('view message decoded: %s', repr(payload))
+            views_logger.debug('view message decoded: %r', payload)
 
             self.handle_view_message(
                 connection=connection,

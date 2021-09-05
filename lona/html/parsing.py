@@ -43,8 +43,8 @@ def _find_node_classes(module):
             if node_class.TAG_NAME == 'input':
                 if 'type' not in node_class.ATTRIBUTES:
                     logger.warning(
-                        'WARNING: input node %s has no type set',
-                        repr(node_class),
+                        'WARNING: input node %r has no type set',
+                        node_class,
                     )
 
                     continue
