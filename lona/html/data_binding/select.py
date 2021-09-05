@@ -11,7 +11,7 @@ class Select(Node):
     EVENTS = [CHANGE]
 
     def __init__(self, *args, values=None, disabled=None, multiple=None,
-                 bubble_up=False, **kwargs):
+                 readonly=None, bubble_up=False, **kwargs):
 
         super().__init__(*args, **kwargs)
 
@@ -25,6 +25,9 @@ class Select(Node):
 
         if multiple is not None:
             self.multiple = multiple
+
+        if readonly is not None:
+            self.readonly = readonly
 
     def handle_input_event(self, input_event):
         if input_event.name == 'change':
@@ -42,6 +45,7 @@ class Select(Node):
             return input_event
 
     # properties ##############################################################
+    # disabled
     @property
     def disabled(self):
         return 'disabled' in self.attributes
@@ -57,6 +61,7 @@ class Select(Node):
         else:
             del self.attributes['disabled']
 
+    # multiple
     @property
     def multiple(self):
         return 'multiple' in self.attributes
@@ -72,6 +77,23 @@ class Select(Node):
         else:
             del self.attributes['multiple']
 
+    # readonly
+    @property
+    def readonly(self):
+        return 'readonly' in self.attributes
+
+    @readonly.setter
+    def readonly(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('readonly is a boolean property')
+
+        if new_value:
+            self.attributes['readonly'] = ''
+
+        else:
+            del self.attributes['readonly']
+
+    # values
     @property
     def values(self):
         with self.lock:
@@ -103,6 +125,7 @@ class Select(Node):
 
                 self.append(option_node)
 
+    # value
     @property
     def value(self):
         with self.lock:

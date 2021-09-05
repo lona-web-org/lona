@@ -15,8 +15,8 @@ class TextInput(Node):
         'type': 'text',
     }
 
-    def __init__(self, value=None, disabled=None, bubble_up=False,
-                 input_delay=DEFAULT_INPUT_DELAY, **kwargs):
+    def __init__(self, value=None, disabled=None, readonly=None,
+                 bubble_up=False, input_delay=DEFAULT_INPUT_DELAY, **kwargs):
 
         super().__init__(**kwargs)
 
@@ -29,6 +29,9 @@ class TextInput(Node):
 
         if disabled is not None:
             self.disabled = disabled
+
+        if readonly is not None:
+            self.readonly = readonly
 
     def handle_input_event(self, input_event):
         # Data binding nodes catch their own change events and synchronize
@@ -86,6 +89,22 @@ class TextInput(Node):
 
         else:
             del self.attributes['disabled']
+
+    # readonly
+    @property
+    def readonly(self):
+        return 'readonly' in self.attributes
+
+    @readonly.setter
+    def readonly(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('readonly is a boolean property')
+
+        if new_value:
+            self.attributes['readonly'] = ''
+
+        else:
+            del self.attributes['readonly']
 
 
 class TextArea(TextInput):
