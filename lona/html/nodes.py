@@ -161,7 +161,6 @@ class Button(Node):
 class Submit(Node):
     TAG_NAME = 'input'
     SELF_CLOSING_TAG = True
-    EVENTS = [CLICK]
 
     ATTRIBUTES = {
         'type': 'submit',
@@ -172,7 +171,6 @@ class Submit(Node):
 class Reset(Node):
     TAG_NAME = 'input'
     SELF_CLOSING_TAG = True
-    EVENTS = [CLICK]
 
     ATTRIBUTES = {
         'type': 'reset',
