@@ -166,7 +166,11 @@ class AttributeDict:
                 if skip_value and key == 'value':
                     continue
 
-                string.append(f'{key}="{value}"')
+                if value == '':  # boolean properties
+                    string.append(key)
+
+                else:
+                    string.append(f'{key}="{value}"')
 
             return ' '.join(string)
 
