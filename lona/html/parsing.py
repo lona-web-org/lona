@@ -108,22 +108,31 @@ class NodeHTMLParser(HTMLParser):
         return Node
 
     def handle_starttag(self, tag, attrs):
-        node_kwargs = {}
-
         # node attributes
+        node_attributes = {}
+
         for name, value in attrs:
             if value is None:
-                value = 'true'
+                value = ''
 
-            node_kwargs[name] = value
+            node_attributes[name] = value
 
         # tag overrides
+        node_kwargs = {}
+
         node_kwargs['tag_name'] = tag
         node_kwargs['self_closing_tag'] = tag in SELF_CLOSING_TAGS
 
         # setup node
+        for key in ('id', 'class', 'style'):
+            if key in node_attributes:
+                node_kwargs[key] = node_attributes.pop(key)
+
         node_class = self.get_node_class(tag, node_kwargs)
         node = node_class(**node_kwargs)
+
+        # set attributes
+        node.attributes.update(node_attributes)
 
         # setup node
         self._node.append(node)
