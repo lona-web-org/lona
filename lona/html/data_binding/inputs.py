@@ -15,7 +15,7 @@ class TextInput(Node):
         'type': 'text',
     }
 
-    def __init__(self, value=None, disabled=False, bubble_up=False,
+    def __init__(self, value=None, disabled=None, bubble_up=False,
                  input_delay=DEFAULT_INPUT_DELAY, **kwargs):
 
         super().__init__(**kwargs)
@@ -23,10 +23,12 @@ class TextInput(Node):
         self.events.add(CHANGE(input_delay))
 
         self.bubble_up = bubble_up
-        self.disabled = disabled
 
         if value is not None:
             self.value = value
+
+        if disabled is not None:
+            self.disabled = disabled
 
     def handle_input_event(self, input_event):
         # Data binding nodes catch their own change events and synchronize

@@ -146,6 +146,12 @@ class Button(Node):
     TAG_NAME = 'button'
     EVENTS = [CLICK]
 
+    def __init__(self, *args, disabled=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if disabled is not None:
+            self.disabled = disabled
+
     @property
     def disabled(self):
         return 'disabled' in self.attributes

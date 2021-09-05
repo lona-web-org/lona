@@ -10,15 +10,18 @@ class Select(Node):
     TAG_NAME = 'select'
     EVENTS = [CHANGE]
 
-    def __init__(self, *args, values=None, disabled=False, bubble_up=False,
+    def __init__(self, *args, values=None, disabled=None, bubble_up=False,
                  **kwargs):
 
         super().__init__(*args, **kwargs)
 
         self.bubble_up = bubble_up
+
         if values is not None:
             self.values = values
-        self.disabled = disabled
+
+        if disabled is not None:
+            self.disabled = disabled
 
     def handle_input_event(self, input_event):
         if input_event.name == 'change':
