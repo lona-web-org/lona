@@ -123,7 +123,7 @@ class AttributeDict:
         with self._node.lock:
             return bool(self._attributes)
 
-    # serialisation ###########################################################
+    # serialization ###########################################################
     def _reset(self, value):
         if not isinstance(value, dict):
             raise ValueError('unsupported type')
