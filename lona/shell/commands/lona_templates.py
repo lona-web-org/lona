@@ -62,7 +62,7 @@ class LonaTemplatesCommand:
         templates = {}
 
         for template_dir in server.templating_engine.template_dirs:
-            for root, dirs, files in os.walk(template_dir):
+            for root, _dirs, files in os.walk(template_dir):
                 for _file in files:
                     name = os.path.join(root, _file)
 

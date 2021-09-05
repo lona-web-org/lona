@@ -36,7 +36,7 @@ class LonaMiddlewaresCommand:
         for hook_name in hook_names:
             self.repl.write(f'{hook_name}\n')
 
-            for middleware, hook in middleware_controller.hooks[hook_name]:
+            for middleware, _hook in middleware_controller.hooks[hook_name]:
                 self.repl.write(
                     f'    {middleware.__module__}.{middleware.__class__.__name__}\n',  # NOQA: E501
                 )

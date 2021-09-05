@@ -35,7 +35,7 @@ class WorkerPool:
         return self._executors[name]
 
     def shutdown(self):
-        for name, executor in self._executors.items():
+        for executor in self._executors.values():
             if not executor:
                 continue
 

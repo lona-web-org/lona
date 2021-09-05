@@ -17,13 +17,8 @@ REDIRECT_BODY = """
 
 
 def generate_random_string(length):
-    characters = []
     choices = string.ascii_letters + string.digits
-
-    for i in range(length):
-        characters.append(random.choice(choices))
-
-    return ''.join(characters)
+    return ''.join(random.choice(choices) for _ in range(length))
 
 
 def generate_session_key(connection):

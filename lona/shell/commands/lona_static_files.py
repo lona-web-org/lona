@@ -60,7 +60,7 @@ class LonaStaticFilesCommand:
         static_files = {}
 
         for static_dir in server.static_file_loader.static_dirs:
-            for root, dirs, files in os.walk(static_dir):
+            for root, _dirs, files in os.walk(static_dir):
                 for _file in files:
                     name = os.path.join(root, _file)
 
