@@ -458,7 +458,7 @@ class ViewRuntime:
         with self.document.lock:
             connections = connections or self.connections
 
-            for connection, (window_id, url) in connections.items():
+            for connection, (window_id, _url) in connections.items():
                 if not connection.interactive:
                     continue
 
@@ -474,7 +474,7 @@ class ViewRuntime:
         with self.document.lock:
             connections = connections or self.connections
 
-            for connection, (window_id, url) in connections.items():
+            for connection, (window_id, _url) in connections.items():
                 if not connection.interactive:
                     continue
 
@@ -492,7 +492,7 @@ class ViewRuntime:
 
             data_type, patches = data
 
-            for connection, (window_id, url) in connections.items():
+            for connection, (window_id, _url) in connections.items():
                 if not connection.interactive:
                     continue
 
@@ -529,7 +529,7 @@ class ViewRuntime:
             connections = connections or self.connections
 
             # send message
-            for connection, (window_id, url) in connections.items():
+            for connection, (window_id, _url) in connections.items():
                 if not connection.interactive:
                     continue
 
@@ -546,7 +546,7 @@ class ViewRuntime:
         with self.document.lock:
             connections = connections or self.connections
 
-            for connection, (window_id, url) in connections.items():
+            for connection, (window_id, _url) in connections.items():
                 if not connection.interactive:
                     continue
 
@@ -561,7 +561,7 @@ class ViewRuntime:
         with self.document.lock:
             connections = connections or self.connections
 
-            for connection, (window_id, url) in connections.items():
+            for connection, (window_id, _url) in connections.items():
                 if not connection.interactive:
                     continue
 
