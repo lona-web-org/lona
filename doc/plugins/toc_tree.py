@@ -11,7 +11,7 @@ TOC_TREE_TEMPLATE_STRING = """
         <li>{{ indentation * '&nbsp;&nbsp;&nbsp;&nbsp;' }}<a href="#{{ section .attrs['id'] }}">{{ header }}</a></li>
     {% endfor %}
 </ul>
-"""  # NOQA
+"""  # NOQA: E501
 
 _toc_tree_template = Template(TOC_TREE_TEMPLATE_STRING)
 
@@ -43,7 +43,7 @@ class TocTree:
             anchor = soup.new_tag('a')
             anchor.attrs['class'] = 'anchor'
 
-            anchor.attrs['href'] = f"/{content['output']}#{section.attrs['id']}"
+            anchor.attrs['href'] = f"/{content['output']}#{section.attrs['id']}"  # NOQA: E501
 
             header.append(anchor)
 

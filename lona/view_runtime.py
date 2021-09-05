@@ -289,7 +289,9 @@ class ViewRuntime:
                     'json' in raw_response_dict or
                     'file' in raw_response_dict)):
 
-                raise RuntimeError('JSON and file responses are only available in non-interactive mode')  # NOQA
+                raise RuntimeError(
+                    'JSON and file responses are only available in non-interactive mode',  # NOQA: E501
+                )
 
             return self.handle_raw_response_dict(raw_response_dict)
 
@@ -669,7 +671,7 @@ class ViewRuntime:
 
             # input event root handler
             input_events_logger.debug(
-                'runtime #%s: event #%s: running View.handle_input_event_root()',  # NOQA
+                'runtime #%s: event #%s: running View.handle_input_event_root()',  # NOQA: E501
                 self.view_runtime_id,
                 payload[0],
             )
@@ -705,7 +707,7 @@ class ViewRuntime:
 
                 if not nodes or input_event.node in nodes:
                     input_events_logger.debug(
-                        'runtime #%s: event #%s: is handled as pending %s event',  # NOQA
+                        'runtime #%s: event #%s: is handled as pending %s event',  # NOQA: E501
                         self.view_runtime_id,
                         payload[0],
                         input_event.name,
@@ -721,7 +723,7 @@ class ViewRuntime:
 
                 if not nodes or input_event.node in nodes:
                     input_events_logger.debug(
-                        'runtime #%s: event #%s: is handled as pending generic event',  # NOQA
+                        'runtime #%s: event #%s: is handled as pending generic event',  # NOQA: E501
                         self.view_runtime_id,
                         payload[0],
                     )

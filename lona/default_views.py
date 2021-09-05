@@ -35,7 +35,7 @@ class FallbackView(LonaView):
 
             except Exception:
                 logger.error(
-                    "exception raised while running '%s'. running fallback view",  # NOQA
+                    "exception raised while running '%s'. running fallback view",  # NOQA: E501
                     view_setting,
                     exc_info=True,
                 )

@@ -1,9 +1,9 @@
 try:
-    from .routing import Route, MATCH_ALL  # NOQA
-    from .view import LonaView  # NOQA
-    from .app import LonaApp  # NOQA
-    from .exceptions import *  # NOQA
-    from .errors import *  # NOQA
+    from .routing import Route, MATCH_ALL
+    from .view import LonaView
+    from .app import LonaApp
+    from .exceptions import *  # NOQA: F403
+    from .errors import *  # NOQA: F403
 
 except ImportError:
     # this happens while packaging and can be ignored

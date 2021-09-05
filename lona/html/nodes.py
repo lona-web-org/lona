@@ -59,7 +59,7 @@ class P(Node):
     TAG_NAME = 'p'
 
 
-class I(Node):  # NOQA
+class I(Node):  # NOQA: E742
     TAG_NAME = 'i'
 
 
