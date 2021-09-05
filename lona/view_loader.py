@@ -66,11 +66,7 @@ class ViewLoader:
                 view = self.server.acquire(view)
 
             except Exception as exception:
-                logger.error(
-                    "exception raised while importing '%s'",
-                    view,
-                    exc_info=True,
-                )
+                logger.exception("exception raised while importing '%s'", view)
 
                 view = self._generate_acquiring_error_view(exception)
 

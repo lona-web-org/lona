@@ -53,8 +53,7 @@ class MiddlewareController:
                     middleware_class = i
 
             except Exception:
-                logger.error(
-                    'Exception raised while loading %s', i, exc_info=True)
+                logger.exception('Exception raised while loading %s', i)
 
                 continue
 
@@ -62,8 +61,7 @@ class MiddlewareController:
                 self.middlewares.append(middleware_class())
 
             except Exception:
-                logger.error(
-                    'Exception raised while initializing %s', i, exc_info=True)
+                logger.exception('Exception raised while initializing %s', i)
 
         # discover middleware hooks
         logger.debug('discover middleware hooks')
@@ -148,11 +146,7 @@ class MiddlewareController:
                 await hook(data)
 
             except Exception:
-                logger.error(
-                    'Exception raised while running %r',
-                    hook,
-                    exc_info=True,
-                )
+                logger.exception('Exception raised while running %r', hook)
 
     async def run_on_startup(self, *args, **kwargs):
         data = MiddlewareData(

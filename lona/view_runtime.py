@@ -200,10 +200,7 @@ class ViewRuntime:
             return response_dict
 
         except Exception as exception:
-            logger.error(
-                'Exception raised while running middleware hooks',
-                exc_info=True,
-            )
+            logger.exception('Exception raised while running middleware hooks')
 
             self.send_view_start(
                 connections={
@@ -243,10 +240,9 @@ class ViewRuntime:
             self.view.on_shutdown(self.stop_reason)
 
         except Exception:
-            logger.error(
+            logger.exception(
                 'Exception raised while running %s',
                 self.view.on_shutdown,
-                exc_info=True,
             )
 
     def start(self):
@@ -321,11 +317,7 @@ class ViewRuntime:
         except Exception as exception:
             self.stop_reason = exception
 
-            logger.error(
-                'Exception raised while running %s',
-                self.view,
-                exc_info=True,
-            )
+            logger.exception('Exception raised while running %s', self.view)
 
             view_class = self.server.view_loader.load(
                 self.server.settings.CORE_ERROR_500_VIEW,
@@ -754,11 +746,10 @@ class ViewRuntime:
             )
 
         except Exception as exception:
-            input_events_logger.error(
+            input_events_logger.exception(
                 'runtime #%s: event #%s: exception occurred',
                 self.view_runtime_id,
                 payload[0],
-                exc_info=True,
             )
 
             self.issue_500_error(exception)

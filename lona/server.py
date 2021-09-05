@@ -462,9 +462,8 @@ class LonaServer:
             )
 
         except Exception:
-            http_logger.error(
+            http_logger.exception(
                 'Exception occurred while setting connection up',
-                exc_info=True,
             )
 
             return Response(status=500, body='500: Internal Error')

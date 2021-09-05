@@ -2,6 +2,7 @@
 tox
 flake8
 flake8-comprehensions
+flake8-logging-format
 flake8-noqa
 flake8-quotes
 mypy
