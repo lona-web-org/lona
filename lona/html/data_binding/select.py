@@ -10,15 +10,24 @@ class Select(Node):
     TAG_NAME = 'select'
     EVENTS = [CHANGE]
 
-    def __init__(self, *args, values=None, disabled=False, bubble_up=False,
-                 **kwargs):
+    def __init__(self, *args, values=None, disabled=None, multiple=None,
+                 readonly=None, bubble_up=False, **kwargs):
 
         super().__init__(*args, **kwargs)
 
         self.bubble_up = bubble_up
+
         if values is not None:
             self.values = values
-        self.disabled = disabled
+
+        if disabled is not None:
+            self.disabled = disabled
+
+        if multiple is not None:
+            self.multiple = multiple
+
+        if readonly is not None:
+            self.readonly = readonly
 
     def handle_input_event(self, input_event):
         if input_event.name == 'change':
@@ -36,18 +45,55 @@ class Select(Node):
             return input_event
 
     # properties ##############################################################
+    # disabled
     @property
     def disabled(self):
         return 'disabled' in self.attributes
 
     @disabled.setter
     def disabled(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('disabled is a boolean property')
+
         if new_value:
-            self.attributes['disabled'] = True
+            self.attributes['disabled'] = ''
 
         else:
             del self.attributes['disabled']
 
+    # multiple
+    @property
+    def multiple(self):
+        return 'multiple' in self.attributes
+
+    @multiple.setter
+    def multiple(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('multiple is a boolean property')
+
+        if new_value:
+            self.attributes['multiple'] = ''
+
+        else:
+            del self.attributes['multiple']
+
+    # readonly
+    @property
+    def readonly(self):
+        return 'readonly' in self.attributes
+
+    @readonly.setter
+    def readonly(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('readonly is a boolean property')
+
+        if new_value:
+            self.attributes['readonly'] = ''
+
+        else:
+            del self.attributes['readonly']
+
+    # values
     @property
     def values(self):
         with self.lock:
@@ -79,6 +125,7 @@ class Select(Node):
 
                 self.append(option_node)
 
+    # value
     @property
     def value(self):
         with self.lock:

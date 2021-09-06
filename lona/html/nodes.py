@@ -146,14 +146,23 @@ class Button(Node):
     TAG_NAME = 'button'
     EVENTS = [CLICK]
 
+    def __init__(self, *args, disabled=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if disabled is not None:
+            self.disabled = disabled
+
     @property
     def disabled(self):
         return 'disabled' in self.attributes
 
     @disabled.setter
     def disabled(self, new_value):
+        if not isinstance(new_value, bool):
+            raise TypeError('disabled is a boolean property')
+
         if new_value:
-            self.attributes['disabled'] = 'True'
+            self.attributes['disabled'] = ''
         else:
             del self.attributes['disabled']
 

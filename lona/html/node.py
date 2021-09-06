@@ -10,6 +10,23 @@ from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
 
 
+def parse_style_string(style_string: str) -> Dict[str, str]:
+    values = {}
+
+    for css_rule in style_string.split(';'):
+        if not css_rule.strip():
+            continue
+
+        if ':' not in css_rule:
+            raise ValueError(f'Invalid style string: {style_string}')
+
+        name, value = css_rule.split(':', 1)
+
+        values[name.strip()] = value.strip()
+
+    return values
+
+
 class Node(AbstractNode):
     TAG_NAME = 'html'
     SELF_CLOSING_TAG = False
@@ -87,6 +104,9 @@ class Node(AbstractNode):
             elif name == 'style':
                 if not isinstance(value, (dict, str)):
                     raise ValueError('style has to be dict or string')
+
+                if isinstance(value, str):
+                    value = parse_style_string(value)
 
                 self._style.update(value)
 
@@ -181,8 +201,11 @@ class Node(AbstractNode):
 
     @ignore.setter
     def ignore(self, value):
+        if not isinstance(value, bool):
+            raise TypeError('ignore is a boolean property')
+
         if value:
-            self._attributes['data-lona-ignore'] = 'True'
+            self._attributes['data-lona-ignore'] = ''
 
         else:
             del self._attributes['data-lona-ignore']
