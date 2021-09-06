@@ -43,10 +43,10 @@ class InputEventCallbackView(LonaView):
             Div('Nothing was changed yet'),
             Br(),
 
-            Button('Button', _id='button'),
+            Button('Button', handle_click=self.button),
             Br(),
 
-            CheckBox(_id='check-box'),
+            CheckBox(handle_change=self.check_box),
             Br(),
 
             TextInput(_id='text-input'),
@@ -65,8 +65,6 @@ class InputEventCallbackView(LonaView):
             ),
         )
 
-        self.html.query_selector('#button').handle_click = self.button
-        self.html.query_selector('#check-box').handle_change = self.check_box
         self.html.query_selector('#text-input').handle_change = self.text_input
         self.html.query_selector('#text-area').handle_change = self.text_area
         self.html.query_selector('#select').handle_change = self.select

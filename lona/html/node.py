@@ -128,6 +128,18 @@ class Node(AbstractNode):
 
                 self._nodes._reset(value)
 
+            elif name == 'handle-change':  # '_' was replaced to '-' above
+                if not callable(value):
+                    raise TypeError('handle_change has to be a function')
+
+                self.handle_change = value
+
+            elif name == 'handle-click':  # '_' was replaced to '-' above
+                if not callable(value):
+                    raise TypeError('handle_click has to be a function')
+
+                self.handle_click = value
+
             # misc attributes
             else:
                 self._attributes[name] = value
