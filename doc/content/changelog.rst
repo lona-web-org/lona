@@ -4,6 +4,65 @@ toctree: False
 Changelog
 =========
 
+`1.6 <https://github.com/lona-web-org/lona/releases/tag/1.6>`_ (2021-09-06)
+-------------------------------------------------------------------------------
+
+Changes
+~~~~~~~
+
+* html
+
+  * ``Node.handle_change()`` now gets called with ``Node.value`` already
+    changed in input nodes
+
+    * Previously ``Node.handle_input_event()`` didn't set ``Node.value``
+      so a custom ``handle_change()`` handler had to do it itself which
+      produced unnecessary boilerplate code
+
+  * ``lona.html.Reset`` was removed
+
+    * This node never worked as expected, also using reset buttons should be
+      avoided anyways (Source: `developer.mozilla.org <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/reset>`_)
+
+  * All boolean attributes use empty strings instead of ``'true'`` now
+
+  * All boolean attributes raise a ``TypeError`` now if they get initialized
+    with a non-boolean value
+
+  * ``lona.html.Select.multiple`` was added
+
+  * A ``readonly`` property was added to all input nodes
+
+  * ``lona.html.Node`` accepts ``handle_change`` and ``handle_click`` event
+    handler in its constructor now
+
+
+Bugfixes
+~~~~~~~~
+
+* html
+
+  * All Python ``in`` checks are thread safe now
+
+  * All boolean attributes (``disabled``, ``checked``, ``multiple`` etc) were
+    fixed
+
+    * Previously they were treated as string attributes. When initialized with
+      ``False`` (``Button(disabled=False)``) the button was disabled in the
+      browser anyway, because the renderer only checks if ``disabled`` is set,
+      not its value.
+
+  * Handling of ``id``, ``class`` and ``style`` while parsing HTML using
+    ``lona.html.HTML`` was fixed
+
+* client
+
+  * Non node related input events were fixed
+
+
+Changelog
+=========
+
 `1.5.1 <https://github.com/lona-web-org/lona/releases/tag/1.5.1>`_ (2021-09-03)
 -------------------------------------------------------------------------------
 
