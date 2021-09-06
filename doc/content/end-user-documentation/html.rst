@@ -426,6 +426,10 @@ Button
 TextInput / TextArea
 ++++++++++++++++++++
 
+.. note::
+
+    ``readonly`` was added in 1.6
+
 .. code-block:: python
 
     from lona.html import TextInput, TextArea
@@ -441,6 +445,7 @@ TextInput / TextArea
     |value            |None               |(Str,None) Initial value
     |bubble_up        |False              |(Bool) Pass input events further
     |disabled         |False              |(Bool) Accepts input
+    |readonly         |False              |(Bool) Accepts no input, but can be read and selected
     |input_delay      |300                |(Int) Input delay in milliseconds
     |*args            |()                 |Node args
     |**kwargs         |{}                 |Node kwargs
@@ -458,6 +463,7 @@ uses ``oninput`` events with ``input_delay`` as timeout.
     ^Name       ^Description
     |value      |(Str) Currently set value
     |disabled   |(Bool) sets the HTML attribute "disabled"
+    |readonly   |(Bool) Accepts no input, but can be read and selected
     |id_list    |(List) contains all ids
     |class_list |(List) contains all classes
     |style      |(Dict) contains all styling attributes
@@ -489,6 +495,11 @@ CheckBox
 Select
 ++++++
 
+.. note::
+
+    ``multiple`` was added in 1.6
+
+
 .. code-block:: python
 
     from lona.html import Select
@@ -507,6 +518,7 @@ Select
     |values           |None               |(List of Tuples) Initial values
     |bubble_up        |False              |(Bool) Pass input events further
     |disabled         |False              |(Bool) Accepts input
+    |multiple         |False              |(Bool) Enables multi selection
     |*args            |()                 |Node args
     |**kwargs         |{}                 |Node kwargs
 
@@ -518,6 +530,7 @@ Select
     |values     |(List of Tuples) All options
     |value      |Currently set value
     |disabled   |(Bool) sets the HTML attribute "disabled"
+    |multiple   |(Bool) Enables multi selection
     |id_list    |(List) contains all ids
     |class_list |(List) contains all classes
     |style      |(Dict) contains all styling attributes

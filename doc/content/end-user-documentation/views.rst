@@ -598,7 +598,9 @@ Handling Input events In A Callback
 
 .. note::
 
-    Added in 1.5
+    * Callbacks were Added in 1.5
+    * The node keywords ``handle_click`` and ``handle_change`` were added in
+      1.6
 
 Every subclass of ``lona.html.AbstractNode`` can implement
 ``handle_input_event()`` to handle its own input events.
@@ -607,6 +609,9 @@ A callbacks can be implemented using inheritance or by simply resetting the
 values of ``AbstractNode.handle_input_event()``,
 ``AbstractNode.handle_click()`` or ``AbstractNode.handle_change()``.
 
+Callbacks can also be set by passing them directly into nodes, using the
+``handle_change`` or ``handle_click`` keywords.
+
 .. code-block:: python
 
     from lona.html import HTML, H1, Button
@@ -614,17 +619,21 @@ values of ``AbstractNode.handle_input_event()``,
 
 
     class MyLonaView(LonaView):
-        def handle_button_click(self, input_event):
-            print('button was clicked')
+        def handle_button_1_click(self, input_event):
+            print('button 1 was clicked')
+
+        def handle_button_2_click(self, input_event):
+            print('button 2 was clicked')
 
         def handle_request(self, request):
-            button = Button('click me')
+            button_1 = Button('Button 1')
 
-            button.handle_click = self.handle_button_click
+            button_1.handle_click = self.handle_button_1_click
 
             html = HTML(
-                H1('Click the button'),
+                H1('Click the buttons'),
                 button,
+                Button('Button 2', handle_click=self.handle_button_2_click),
             )
 
             self.show(html)
