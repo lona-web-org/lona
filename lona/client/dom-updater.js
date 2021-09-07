@@ -345,7 +345,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
     // patches ----------------------------------------------------------------
     this._apply_patch_to_node = function(patch) {
         var protocol = Lona.protocol;
-        var property_names = ['value', 'checked'];
+        var property_names = ['value', 'checked', 'selected'];
 
         var node_id = patch[0];
         var patch_type = patch[1];
@@ -439,15 +439,20 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
             // SET
             if(operation == protocol.OPERATION.SET) {
                 var name = data[0];
+                var value = data[1];
 
                 // properties
                 if(property_names.indexOf(name) > -1) {
-                    node[data[0]] = data[1];
+                    if(name != 'value') {
+                        value = true;
+                    };
+
+                    node[name] = value;
 
                 // attributes
                 } else {
-                    node.setAttribute(data[0], data[1]);
-                }
+                    node.setAttribute(name, value);
+                };
 
             // RESET
             } else if(operation == protocol.OPERATION.RESET) {
@@ -458,16 +463,43 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
                     };
 
                     node.removeAttribute(name);
-
                 });
 
                 for(var name in data[0]) {
-                    node.setAttribute(name, data[0][name]);
+                    var value = data[0][name];
+
+                    // properties
+                    if(property_names.indexOf(name) > -1) {
+                        if(name != 'value') {
+                            value = true;
+                        };
+
+                        node[name] = value;
+
+                    // attributes
+                    } else {
+                        node.setAttribute(name, value);
+                    };
                 };
 
             // REMOVE
             } else if(operation == protocol.OPERATION.REMOVE) {
-                node.removeAttribute(data[0]);
+                var name = data[0];
+
+                // properties
+                if(property_names.indexOf(name) > -1) {
+                    if(name == 'value') {
+                        node[name] = '';
+
+                    } else {
+                        node[name] = false;
+
+                    };
+
+                // attributes
+                } else {
+                    node.removeAttribute(name);
+                };
 
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
