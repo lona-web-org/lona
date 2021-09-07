@@ -5,7 +5,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
     // html rendering ---------------------------------------------------------
     this._render_node = function(node_spec) {
         var _this = this;
-        var property_names = ['value', 'checked'];
+        var property_names = ['value', 'checked', 'selected'];
 
         var node_list = [];
         var node_type = node_spec[0];
@@ -45,10 +45,15 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
             // attributes
             if(Object.keys(node_attributes).length > 0) {
                 Object.keys(node_attributes).forEach(function(key) {
+                    var value = node_attributes[key];
 
                     // properties
                     if(property_names.indexOf(key) > -1) {
-                        node[key] = node_attributes[key];
+                        if(key != 'value') {
+                            value = true;
+                        };
+
+                        node[key] = value;
 
                     // attributes
                     } else {
