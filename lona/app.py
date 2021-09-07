@@ -1,5 +1,6 @@
 from typing import overload, Optional, Callable, Union, Type, List, Dict, Any
 from tempfile import TemporaryDirectory
+from asyncio import AbstractEventLoop
 from os import PathLike
 import logging
 import os
@@ -9,6 +10,7 @@ from aiohttp.web import Application
 
 from lona.command_line.run_server import run_server
 from lona import default_settings, LonaView
+from lona.worker_pool import WorkerPool
 from lona.logging import setup_logging
 from lona.settings import Settings
 from lona.server import LonaServer
@@ -208,10 +210,40 @@ class LonaApp:
         )
 
     # server ##################################################################
-    def run(self, **args: Any) -> None:
+    def setup_server(
+            self,
+            loop: Union[AbstractEventLoop, None] = None,
+    ) -> None:
+
         # finish settings
         self.settings.CORE_TEMPLATE_DIRS.insert(0, self.template_dir)
         self.settings.STATIC_DIRS.insert(0, self.static_dir)
+
+        # setup server
+        self.aiohttp_app = Application(loop=loop)
+
+        self.server = LonaServer(
+            app=self.aiohttp_app,
+            project_root=self.project_root,
+            settings_post_overrides=self._get_settings_as_dict(),
+            routes=self.routes,
+        )
+
+        # setup worker pool
+        worker_pool = WorkerPool(
+            settings=self.server.settings,
+        )
+
+        self.server.set_loop(loop)
+        self.server.set_worker_pool(worker_pool)
+
+    def run(
+            self,
+            loop: Union[AbstractEventLoop, None] = None,
+            **args: Any,
+    ) -> None:
+
+        self.setup_server(loop=loop)
 
         # setup arguments
         server_args = ServerArgs(
@@ -229,19 +261,9 @@ class LonaApp:
 
         setup_logging(server_args)
 
-        # setup server
-        app = Application()
-
-        server = LonaServer(
-            app=app,
-            project_root=self.project_root,
-            settings_post_overrides=self._get_settings_as_dict(),
-            routes=self.routes,
-        )
-
         # start server
         run_server(
             args=server_args,
-            app=app,
-            server=server,
+            app=self.aiohttp_app,
+            server=self.server,
         )
