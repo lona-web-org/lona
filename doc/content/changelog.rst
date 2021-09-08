@@ -4,8 +4,19 @@ toctree: False
 Changelog
 =========
 
-`1.6 <https://github.com/lona-web-org/lona/releases/tag/1.6>`_ (2021-09-06)
+`1.6.1 <https://github.com/lona-web-org/lona/releases/tag/1.6.1>`_ (2021-09-08)
 -------------------------------------------------------------------------------
+
+Bugfixes
+~~~~~~~~
+
+* client
+
+  * Handling of boolean attributes was fixed
+
+
+`1.6 <https://github.com/lona-web-org/lona/releases/tag/1.6>`_ (2021-09-06)
+---------------------------------------------------------------------------
 
 Changes
 ~~~~~~~
