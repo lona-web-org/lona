@@ -51,7 +51,7 @@ class TocTree:
             header_string = FUNCTION_RE.sub('()', header.text)
 
             toc_tree_data.append(
-                (section, header_string, indentation, )
+                (section, header_string, indentation),
             )
 
         # render html with anchors

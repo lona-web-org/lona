@@ -101,7 +101,7 @@ class LonaApp:
                     interactive=interactive,
                     http_pass_through=http_pass_through,
                     frontend_view=frontend_view,
-                )
+                ),
             )
 
         return decorator

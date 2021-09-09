@@ -64,7 +64,7 @@ class ClickEventView(LonaView):
                 'event_id': input_event.event_id,
                 'node': input_event.node._id,
                 'tag_name': input_event.node.tag_name,
-                'event_data': input_event.data
+                'event_data': input_event.data,
             }
 
             pre.set_text(pformat(data))

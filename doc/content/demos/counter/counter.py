@@ -28,13 +28,13 @@ class CounterView(LonaView):
             # increase
             if input_event.node_has_id('increase'):
                 counter.set_text(
-                    int(counter.get_text()) + 1
+                    int(counter.get_text()) + 1,
                 )
 
             # decrease
             elif input_event.node_has_id('decrease'):
                 counter.set_text(
-                    int(counter.get_text()) - 1
+                    int(counter.get_text()) - 1,
                 )
 
             # set

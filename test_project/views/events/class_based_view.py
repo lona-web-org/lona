@@ -14,7 +14,7 @@ class ClassBasedView(LonaView):
             Button('handle_input_event()', _id='handle_input_event'),
             Button('handle_request()', _id='handle_request'),
             Br(),
-            Button('Stop View', _id='stop_view')
+            Button('Stop View', _id='stop_view'),
         )
 
         while True:

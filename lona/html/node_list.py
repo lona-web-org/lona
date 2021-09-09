@@ -10,7 +10,7 @@ class NodeList:
 
     # list helper #############################################################
     def _check_node(self, node):
-        if isinstance(node, (str, int, float, bool, )):
+        if isinstance(node, (str, int, float, bool)):
             node = TextNode(node)
 
         if not isinstance(node, AbstractNode):

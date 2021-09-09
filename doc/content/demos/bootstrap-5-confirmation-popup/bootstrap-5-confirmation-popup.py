@@ -62,7 +62,7 @@ class LonaBootstrap5PopupView(LonaView):
             # modal buttons
             self.modal.set_buttons(
                 DangerButton('Delete', handle_click=self.delete),
-                SecondaryButton('Cancel', handle_click=self.close_popup)
+                SecondaryButton('Cancel', handle_click=self.close_popup),
             )
 
             # show popup
@@ -82,7 +82,7 @@ class LonaBootstrap5PopupView(LonaView):
                     'float': 'left',
                     'margin-top': '0.5em',
                     'margin-right': '1em',
-                }
+                },
             ),
 
             PrimaryButton('Generate Name List', _id='generate'),
@@ -94,10 +94,10 @@ class LonaBootstrap5PopupView(LonaView):
                         Tr(
                             Th('Name', width='50%'),
                             Th('Action', width='50%'),
-                        )
+                        ),
                     ),
-                    TBody()
-                ]
+                    TBody(),
+                ],
             ),
 
             self.modal,
@@ -122,8 +122,8 @@ class LonaBootstrap5PopupView(LonaView):
                             'Delete',
                             handle_click=self.open_delete_popup,
                         ),
-                    )
-                )
+                    ),
+                ),
             )
 
             self.show()

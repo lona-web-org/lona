@@ -51,7 +51,7 @@ class AsyncView(LonaView):
 
             elif input_event.node_has_id('await-short-running-coroutine'):
                 return_value = self.await_sync(
-                    short_running_coroutine()
+                    short_running_coroutine(),
                 )
 
                 html[1].set_text(

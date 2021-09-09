@@ -56,7 +56,7 @@ def raw_setting(context):
                         description=parse_rst(description, context),
                     ),
                     format='html',
-                )
+                ),
             ]
 
     return RawSetting
@@ -88,7 +88,7 @@ def setting(context):
                 context.logger.error(
                     '%s: unable to import %s',
                     context.content['path'],
-                    self.options['path']
+                    self.options['path'],
                 )
 
                 return []
@@ -103,10 +103,10 @@ def setting(context):
                     SETTING_TEMPLATE.format(
                         name=self.options['name'],
                         value=html,
-                        description=parse_rst(self.content, context)
+                        description=parse_rst(self.content, context),
                     ),
                     format='html',
-                )
+                ),
             ]
 
     return Setting

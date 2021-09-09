@@ -96,7 +96,7 @@ class Select(Node):
                 values.append(
                     (node.attributes.get('value', ''),
                      node.get_text(),
-                     'selected' in node.attributes, )
+                     'selected' in node.attributes),
                 )
 
             return values

@@ -71,7 +71,7 @@ def code_block(context):
             )
 
             return [
-                raw('', node_content, format='html')
+                raw('', node_content, format='html'),
             ]
 
     return CodeBlock
@@ -80,17 +80,17 @@ def code_block(context):
 class rstPygments:
     def get_options(self):
         options = [
-            ('theme', [(i, i == self.theme_name, )
-                       for i in get_all_styles()], ),
+            ('theme', [(i, i == self.theme_name)
+                       for i in get_all_styles()]),
 
-            ('background color', self.style.background_color, ),
+            ('background color', self.style.background_color),
         ]
 
         styles = []
 
         for key, value in self.style.styles.items():
             styles.append(
-                (str(key), str(value), ),
+                (str(key), str(value)),
             )
 
         styles = sorted(styles, key=lambda v: v[0])
@@ -145,7 +145,7 @@ class rstPygments:
 
             styles = {
                 **parent_class.styles,
-                **self.overrides
+                **self.overrides,
             }
 
         self.style = Style

@@ -106,7 +106,7 @@ class TestAttributeDict:
 
         with pytest.raises(
                 TypeError,
-                match='pop expected at most 2 arguments, got 3'
+                match='pop expected at most 2 arguments, got 3',
         ):
             d.attributes.pop('xxx', 'yyy', 'zzz')
 

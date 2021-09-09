@@ -28,7 +28,7 @@ def pytest_runtest_makereport(item, call):
             # store in _test_failed_incremental
             # the original name of the failed test
             _test_failed_incremental.setdefault(cls_name, {}).setdefault(
-                parametrize_index, test_name
+                parametrize_index, test_name,
             )
 
 

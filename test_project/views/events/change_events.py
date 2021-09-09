@@ -10,7 +10,7 @@ class ChangeEventsView(LonaView):
             'nothing changed',
             style={
                 'background-color': 'lightgrey',
-            }
+            },
         )
 
         html = Div(
@@ -23,7 +23,7 @@ class ChangeEventsView(LonaView):
                             value='Change me',
                             input_delay=0,
                             bubble_up=True,
-                        )
+                        ),
                     ),
                     style={
                         'float': 'left',

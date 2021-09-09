@@ -54,7 +54,7 @@ class Route:
                 return
 
             pattern_names = [i[0] for i in groups]
-            patterns = [(i[0], i[2] or DEFAULT_PATTERN, ) for i in groups]
+            patterns = [(i[0], i[2] or DEFAULT_PATTERN) for i in groups]
             cleaned_pattern = ABSTRACT_ROUTE_RE.sub('{}', self.raw_pattern)
 
             # setup format string
@@ -66,11 +66,11 @@ class Route:
                 r'^{}{}$'.format(
                     cleaned_pattern.format(
                         *[ROUTE_PART_FORMAT_STRING.format(*i)
-                          for i in patterns]
+                          for i in patterns],
                     ),
                     (OPTIONAL_TRAILING_SLASH_PATTERN
                         if self.optional_trailing_slash else ''),
-                )
+                ),
             )
 
     def match(self, path):

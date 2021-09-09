@@ -60,7 +60,7 @@ class InputEventCallbackView(LonaView):
                     ('option-1', 'Option 1'),
                     ('option-2', 'Option 2'),
                     ('option-3', 'Option 3'),
-                ]
+                ],
             ),
         )
 
