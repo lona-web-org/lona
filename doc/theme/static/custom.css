@@ -59,6 +59,10 @@ div.wy-menu.wy-menu-vertical p.caption:first-child {
     display: none;
 }
 
+div.ps-gallery {
+    margin-bottom: 1.5em;
+}
+
 /* anchors ----------------------------------------------------------------- */
 a.anchor {
     font-size: 80%;

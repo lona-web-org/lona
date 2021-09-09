@@ -36,6 +36,16 @@ MENU = [
         ['Stickers', 'stickers.rst'],
     ]],
 
+    ['Demos', [
+        ['Counter', 'demos/counter/index.rst'],
+
+        ['Bootstrap 5 Confirmation Popup',
+         'demos/bootstrap-5-confirmation-popup/index.rst'],
+
+        ['Chart.js Click Analyzer', 'demos/chartjs-click-analyzer/index.rst'],
+        ['Game Of Life', 'demos/game-of-life/index.rst'],
+    ]],
+
     ['End User Documentation', [
         ['Getting Started', 'end-user-documentation/getting-started.rst'],
         ['Lona Scripts', 'end-user-documentation/lona-scripts.rst'],
