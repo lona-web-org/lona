@@ -3,7 +3,6 @@ import re
 import pytest
 
 
-@pytest.mark.dependency()
 def test_attribute_dict():
     from lona.html import Div
 
@@ -51,7 +50,6 @@ def test_attribute_dict():
     assert bool(d.attributes)
 
 
-@pytest.mark.dependency()
 def test_attribute_dict_pop():
     from lona.html import Div
 
@@ -80,7 +78,6 @@ def test_attribute_dict_pop():
         d.attributes.pop('xxx', 'yyy', 'zzz')
 
 
-@pytest.mark.dependency()
 def test_attribute_dict_del():
     from lona.html import Div
 
@@ -95,7 +92,6 @@ def test_attribute_dict_del():
     assert 'xxx' not in d.attributes
 
 
-@pytest.mark.dependency()
 def test_attribute_list():
     from lona.html import Div
 
@@ -260,7 +256,6 @@ def test_attribute_list():
     assert d.id_list == ['foo', 'bar']
 
 
-@pytest.mark.dependency()
 def test_html_strings():
     from lona.html import HTML, Button
 
