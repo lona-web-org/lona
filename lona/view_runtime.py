@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING, Container, Awaitable, Optional
 from concurrent.futures import CancelledError
 from datetime import datetime
 from enum import Enum
@@ -6,6 +7,7 @@ import logging
 import asyncio
 import time
 
+from typing_extensions import Literal
 from yarl import URL
 
 from lona.protocol import (
@@ -25,6 +27,11 @@ from lona.events.input_event import InputEvent
 from lona.imports import get_object_repr
 from lona.html.document import Document
 from lona.request import Request
+
+# avoid import cycles
+if TYPE_CHECKING:
+    from lona.server import LonaServer
+
 
 logger = logging.getLogger('lona.view_runtime')
 input_events_logger = logging.getLogger('lona.input_events')
@@ -48,7 +55,7 @@ class ViewRuntime:
     def __init__(self, server, url, route, match_info, post_data=None,
                  frontend=False, start_connection=None):
 
-        self.server = server
+        self.server: 'LonaServer' = server
         self.url = URL(url or '')
         self.route = route
         self.match_info = match_info
@@ -92,7 +99,7 @@ class ViewRuntime:
 
         self.document = Document()
 
-        self.stopped = asyncio.Future(loop=self.server.loop)
+        self.stopped: asyncio.Future[Literal[True]] = asyncio.Future(loop=self.server.loop)  # NOQA: E501
         self.is_stopped = False
         self.stop_reason = None
         self.is_daemon = False
@@ -597,12 +604,16 @@ class ViewRuntime:
         return response_dict
 
     # input events ############################################################
-    def await_input_event(self, nodes=None, event_type='event'):
-        async def _await_input_event():
+    def await_input_event(
+            self,
+            nodes: Optional[Container[AbstractNode]] = None,
+            event_type: str = 'event',
+    ) -> InputEvent:
+        async def _await_input_event() -> InputEvent:
             if self.pending_input_events[event_type] is not None:
                 raise RuntimeError(f'already waiting for a {event_type} event')
 
-            future = asyncio.Future()
+            future: Awaitable[InputEvent] = asyncio.Future()
             self.pending_input_events[event_type] = [future, nodes or []]
 
             return await future

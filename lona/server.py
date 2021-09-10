@@ -1,3 +1,5 @@
+from typing import Awaitable, overload, Optional, TypeVar, Union
+from concurrent.futures import Future
 from functools import reduce
 import operator
 import logging
@@ -6,6 +8,7 @@ import asyncio
 import os
 
 from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
+from typing_extensions import Literal
 from aiohttp import WSMsgType
 
 from lona.view_runtime_controller import ViewRuntimeController
@@ -31,6 +34,8 @@ DEFAULT_SETTINGS = os.path.join(
 server_logger = logging.getLogger('lona.server')
 http_logger = logging.getLogger('lona.server.http')
 websockets_logger = logging.getLogger('lona.server.websockets')
+
+_T = TypeVar('_T')
 
 
 class LonaServer:
@@ -212,7 +217,27 @@ class LonaServer:
                 pass
 
     # asyncio helper ##########################################################
-    def run_coroutine_sync(self, coroutine, wait=True):
+    @overload
+    def run_coroutine_sync(
+            self,
+            coroutine: Awaitable[_T],
+            wait: Optional[Literal[True]] = True,
+    ) -> _T:
+        ...
+
+    @overload
+    def run_coroutine_sync(
+            self,
+            coroutine: Awaitable[_T],
+            wait: Literal[False],
+    ) -> 'Future[_T]':
+        ...
+
+    def run_coroutine_sync(
+            self,
+            coroutine: Awaitable[_T],
+            wait: Optional[bool] = True,
+    ) -> Union['Future[_T]', _T]:
         future = asyncio.run_coroutine_threadsafe(coroutine, loop=self._loop)
 
         if wait:
