@@ -171,7 +171,7 @@ class NodeList:
         with self._node.lock:
             return node in self._nodes
 
-    # serialisation ###########################################################
+    # serialization ###########################################################
     def _reset(self, value):
         if not isinstance(value, list):
             value = [value]
