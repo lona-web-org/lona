@@ -70,7 +70,7 @@ class AbstractNode:
 
     def _set_document(self, document):
         if self.parent:
-            raise RuntimeError('node is no rooot node')
+            raise RuntimeError('node is no root node')
 
         self._document = document
 
