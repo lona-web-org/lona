@@ -227,13 +227,13 @@ class LonaServer:
         return future
 
     def run_function_async(self, function, *args,
-                           excutor_name='worker', **kwargs):
+                           executor_name='worker', **kwargs):
 
         def _function():
             return function(*args, **kwargs)
 
         return self._loop.run_in_executor(
-            self._worker_pool.get_executor(excutor_name),
+            self._worker_pool.get_executor(executor_name),
             _function,
         )
 
@@ -312,7 +312,7 @@ class LonaServer:
         abs_path = await self.run_function_async(
             self.static_file_loader.resolve_path,
             rel_path,
-            excutor_name='static_worker',
+            executor_name='static_worker',
         )
 
         if not abs_path:
@@ -433,7 +433,7 @@ class LonaServer:
                 response = await self.run_function_async(
                     view,
                     http_request,
-                    excutor_name='runtime_worker',
+                    executor_name='runtime_worker',
                 )
 
             if asyncio.iscoroutine(response):
@@ -489,7 +489,7 @@ class LonaServer:
             view_runtime_id=None,
             method=METHOD.VIEW,
             payload=[str(http_request.url), post_data],
-            excutor_name='runtime_worker',
+            executor_name='runtime_worker',
         )
 
         return self._render_response(response_dict)

@@ -269,7 +269,7 @@ class ViewRuntimeController:
 
             self.server.run_function_async(
                 view_runtime.start,
-                excutor_name='runtime_worker',
+                executor_name='runtime_worker',
             )
 
         else:
