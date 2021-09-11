@@ -36,6 +36,17 @@ MENU = [
         ['Stickers', 'stickers.rst'],
     ]],
 
+    ['Demos', [
+        ['Counter', 'demos/counter/index.rst'],
+
+        ['Bootstrap 5 Confirmation Popup',
+         'demos/bootstrap-5-confirmation-popup/index.rst'],
+
+        ['Chart.js Click Analyzer', 'demos/chartjs-click-analyzer/index.rst'],
+        ['Daemonized View', 'demos/daemonized-view/index.rst'],
+        ['Game Of Life', 'demos/game-of-life/index.rst'],
+    ]],
+
     ['End User Documentation', [
         ['Getting Started', 'end-user-documentation/getting-started.rst'],
         ['Lona Scripts', 'end-user-documentation/lona-scripts.rst'],
@@ -63,8 +74,6 @@ MENU = [
 
         ['Writing A Traditional Form',
          'cookbook/writing-a-traditional-form.rst'],
-
-        ['Writing A Daemon View', 'cookbook/writing-a-daemon-view.rst'],
 
         ['Writing A Multi User View',
          'cookbook/writing-a-multi-user-view.rst'],
