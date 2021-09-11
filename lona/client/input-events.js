@@ -165,7 +165,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             event.preventDefault();
 
             try {
-                // find muliple selects
+                // find multiple selects
                 var multi_selects = {};
 
                 this.querySelectorAll('select[multiple]').forEach(
