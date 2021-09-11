@@ -38,8 +38,6 @@ your view.
 
     app = LonaApp(__file__)
 
-    app.settings.CLIENT_RECOMPILE = True
-
     BAR_CHART_DATA = {
         # Taken from https://www.chartjs.org/docs/latest/getting-started/usage.html
 
