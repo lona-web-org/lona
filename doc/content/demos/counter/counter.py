@@ -1,4 +1,4 @@
-from lona.html import HTML, H1, Span, TextInput, Button
+from lona.html import HTML, H1, Span, NumberInput, Button
 from lona import LonaApp, LonaView
 
 app = LonaApp(__file__)
@@ -8,12 +8,12 @@ app = LonaApp(__file__)
 class CounterView(LonaView):
     def handle_request(self, request):
         counter = Span('0')
-        text_input = TextInput(value='10', _style={'width': '3em'})
+        number_input = NumberInput(value=10, _style={'width': '3em'})
 
         html = HTML(
             H1('Counter: ', counter),
 
-            text_input,
+            number_input,
             Button('Set', _id='set'),
 
             Button('Decrease', _id='decrease', _style={'margin-left': '1em'}),
@@ -40,7 +40,7 @@ class CounterView(LonaView):
             # set
             elif input_event.node_has_id('set'):
                 try:
-                    counter.set_text(int(text_input.value))
+                    counter.set_text(int(number_input.value))
 
                 except TypeError:
                     pass

@@ -1,6 +1,6 @@
 import numpy
 
-from lona.html import HTML, H1, Div, TextInput, Button, CLICK, Span
+from lona.html import HTML, H1, Div, NumberInput, Button, CLICK, Span
 from lona import LonaApp, LonaView
 
 app = LonaApp(__file__)
@@ -10,8 +10,8 @@ app.add_static_file('lona/style.css', """
         font-family: sans-serif;
     }
 
-    input[type=text] {
-        width: 3em;
+    input[type=number] {
+        width: 4em;
     }
 
     button#resize {
@@ -187,15 +187,15 @@ class GameOfLiveView(LonaView):
 
             # controls
             'Width: ',
-            TextInput(
+            NumberInput(
                 _id='width',
-                value='60',
+                value=60,
             ),
 
             ' Height: ',
-            TextInput(
+            NumberInput(
                 _id='height',
-                value='40',
+                value=40,
             ),
 
             Button(

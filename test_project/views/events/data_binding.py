@@ -3,6 +3,7 @@ from pprint import pformat
 from lona.view import LonaView
 
 from lona.html import (
+    NumberInput,
     TextInput,
     CheckBox,
     TextArea,
@@ -19,6 +20,7 @@ class DataBindingView(LonaView):
     def handle_request(self, request):
         check_box = CheckBox(bubble_up=True)
         text_input = TextInput(bubble_up=True)
+        number_input = NumberInput(bubble_up=True, value=12.3, step=0.1)
 
         select = Select(
             values=[
@@ -54,6 +56,7 @@ class DataBindingView(LonaView):
                 Div(
                     Div(check_box),
                     Div(text_input),
+                    Div(number_input),
                     Div(select),
                     Div(select_multiple),
                     Div(text_area),
@@ -95,6 +98,7 @@ class DataBindingView(LonaView):
                     pformat({
                         'check_box': check_box.value,
                         'text_input': text_input.value,
+                        'number_input': number_input.value,
                         'select': select.value,
                         'select_multiple': select_multiple.value,
                         'text_area': text_area.value,

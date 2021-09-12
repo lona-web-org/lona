@@ -258,11 +258,13 @@ def test_attribute_list():
 
 def test_html_strings():
     from lona.html import (
+        NumberInput,
         TextInput,
         CheckBox,
         TextArea,
         Button,
         Select,
+        Submit,
         HTML,
         Node,
     )
@@ -346,7 +348,7 @@ def test_html_strings():
     assert node.disabled
 
     # data binding nodes ######################################################
-    node = HTML('<input value="abc"/>')[0]
+    node = HTML('<input value="abc"/>')[0]  # default type is text
 
     assert type(node) is TextInput
     assert node.value == 'abc'
@@ -358,9 +360,38 @@ def test_html_strings():
     assert node.value == 'xyz'
     assert node.disabled is True
 
-    node = HTML('<input type="number" value="123"/>')[0]
+    node = HTML('<input type="unknown"/>')[0]
 
     assert type(node) is Node
+
+    not_implemented_types = [
+        'button',
+        'color',
+        'date',
+        'datetime-local',
+        'email',
+        'file',
+        'hidden',
+        'image',
+        'month',
+        'password',
+        'radio',
+        'range',
+        'reset',  # intentionally, see 575dcf635180 ("html: remove Reset node")
+        'search',
+        'tel',
+        'time',
+        'url',
+        'week',
+    ]
+
+    for tp in not_implemented_types:
+        assert type(HTML(f'<input type="{tp}"/>')[0]) is Node
+
+    node = HTML('<input type="number" value="123.5"/>')[0]
+
+    assert type(node) is NumberInput
+    assert node.value == 123.5
 
     node = HTML('<input type="checkbox"/>')[0]
 
@@ -371,6 +402,10 @@ def test_html_strings():
 
     assert type(node) is CheckBox
     assert node.value is True
+
+    node = HTML('<input type="submit"/>')[0]
+
+    assert type(node) is Submit
 
     node = HTML('<textarea>abc</textarea>')[0]
 
