@@ -97,15 +97,15 @@ class ViewLoader:
             self.server.settings.CORE_FRONTEND_VIEW,
             self.server.settings.FRONTEND_VIEW,
 
-            # erorr 403
+            # error 403
             self.server.settings.CORE_ERROR_403_VIEW,
             self.server.settings.ERROR_403_VIEW,
 
-            # erorr 404
+            # error 404
             self.server.settings.CORE_ERROR_404_VIEW,
             self.server.settings.ERROR_404_VIEW,
 
-            # erorr 500
+            # error 500
             self.server.settings.CORE_ERROR_500_VIEW,
             self.server.settings.ERROR_500_VIEW,
         ]

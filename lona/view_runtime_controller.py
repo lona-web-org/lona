@@ -184,7 +184,7 @@ class ViewRuntimeController:
                 window_id=window_id,
             )
 
-            # search for a runnnig view runtime to reconnect to
+            # search for a running view runtime to reconnect to
             views_logger.debug('searching for running view runtime')
 
             running_view_runtime = self.get_running_view_runtime(
@@ -269,7 +269,7 @@ class ViewRuntimeController:
 
             self.server.run_function_async(
                 view_runtime.start,
-                excutor_name='runtime_worker',
+                executor_name='runtime_worker',
             )
 
         else:

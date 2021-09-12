@@ -165,7 +165,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             event.preventDefault();
 
             try {
-                // find muliple selects
+                // find multiple selects
                 var multi_selects = {};
 
                 this.querySelectorAll('select[multiple]').forEach(
@@ -260,7 +260,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         var event_types = this._parse_data_lona_events(node);
 
         // links
-        if(node.tagName == 'A' && 
+        if(node.tagName == 'A' &&
            !(Lona.protocol.INPUT_EVENT_TYPE.CLICK in event_types)) {
 
             return this._patch_link(node);

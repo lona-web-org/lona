@@ -407,7 +407,7 @@ class WidgetData:
             *dir(self._overlay),
         ]
 
-    # serialisation ###########################################################
+    # serialization ###########################################################
     def _reset(self, value, initial=False):
         if not isinstance(value, (dict, list)):
             raise ValueError('widget state has to be dict or list')

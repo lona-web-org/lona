@@ -1,6 +1,6 @@
+from typing import Tuple, Optional, Dict, Union
 from enum import Enum
 import json
-from typing import Tuple, Optional, Dict, Union
 
 from lona._json import dumps
 

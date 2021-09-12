@@ -105,7 +105,7 @@ class AttributeList:
         with self._node.lock:
             return sorted(self._attributes)
 
-    # serialisation ###########################################################
+    # serialization ###########################################################
     def _reset(self, value):
         if not isinstance(value, list):
             raise ValueError(f'unsupported type: {type(value)}')
