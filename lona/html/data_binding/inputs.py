@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional, Any
 
 from lona.events.event_types import CHANGE
 from lona.html.node import Node
@@ -144,3 +144,118 @@ class CheckBox(TextInput):
         # it is a special property and is handled differently by js client
         # (search for `property_names` in /lona/client)
         self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
+
+
+class NumberInput(TextInput):
+    ATTRIBUTES = {
+        'type': 'number',
+    }
+
+    def __init__(
+            self,
+            value: Optional[float] = None,
+            min: Optional[float] = None,
+            max: Optional[float] = None,
+            step: Optional[float] = None,
+            disabled: Optional[bool] = None,
+            readonly: Optional[bool] = None,
+            bubble_up: bool = False,
+            input_delay: int = DEFAULT_INPUT_DELAY,
+            **kwargs: Any,
+    ) -> None:
+        super().__init__(
+            value,
+            disabled,
+            readonly,
+            bubble_up,
+            input_delay,
+            **kwargs,
+        )
+        self.min = min
+        self.max = max
+        self.step = step
+
+    # properties ##############################################################
+    # value
+    @property
+    def value(self) -> Optional[float]:
+        value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
+        if value != '':
+            try:
+                return float(value)
+            except ValueError:
+                pass
+        return None
+
+    @value.setter
+    def value(self, new_value: Optional[float]) -> None:
+        if new_value is not None and not isinstance(new_value, (int, float)):
+            raise TypeError('value should be None, int or float')
+
+        if new_value is None:
+            self.attributes[self.INPUT_ATTRIBUTE_NAME] = ''
+        else:
+            self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
+
+    # min
+    @property
+    def min(self) -> Optional[float]:
+        value = self.attributes.get('min', None)
+        if value is not None:
+            try:
+                return float(value)
+            except ValueError:
+                pass
+        return None
+
+    @min.setter
+    def min(self, new_value: Optional[float]) -> None:
+        if new_value is not None and not isinstance(new_value, (int, float)):
+            raise TypeError('min should be None, int or float')
+
+        if new_value is None:
+            del self.attributes['min']
+        else:
+            self.attributes['min'] = new_value
+
+    # max
+    @property
+    def max(self) -> Optional[float]:
+        value = self.attributes.get('max', None)
+        if value is not None:
+            try:
+                return float(value)
+            except ValueError:
+                pass
+        return None
+
+    @max.setter
+    def max(self, new_value: Optional[float]) -> None:
+        if new_value is not None and not isinstance(new_value, (int, float)):
+            raise TypeError('max should be None, int or float')
+
+        if new_value is None:
+            del self.attributes['max']
+        else:
+            self.attributes['max'] = new_value
+
+    # step
+    @property
+    def step(self) -> Optional[float]:
+        value = self.attributes.get('step', None)
+        if value is not None:
+            try:
+                return float(value)
+            except ValueError:
+                pass
+        return None
+
+    @step.setter
+    def step(self, new_value: Optional[float]) -> None:
+        if new_value is not None and not isinstance(new_value, (int, float)):
+            raise TypeError('step should be None, int or float')
+
+        if new_value is None:
+            del self.attributes['step']
+        else:
+            self.attributes['step'] = new_value
