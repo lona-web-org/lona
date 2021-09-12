@@ -128,7 +128,7 @@ class NodeHTMLParser(HTMLParser):
             if key in node_attributes:
                 node_kwargs[key] = node_attributes.pop(key)
 
-        node_class = self.get_node_class(tag, node_kwargs)
+        node_class = self.get_node_class(tag, node_attributes)
         node = node_class(**node_kwargs)
 
         # set attributes
