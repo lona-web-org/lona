@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Union, TypeVar, Generic
 
 from lona.events.event_types import CHANGE
 from lona.html.node import Node
@@ -146,7 +146,10 @@ class CheckBox(TextInput):
         self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
 
 
-class NumberInput(TextInput):
+_T = TypeVar('_T', int, float)
+
+
+class NumberInput(TextInput, Generic[_T]):
     ATTRIBUTES = {
         'type': 'number',
     }
@@ -156,7 +159,7 @@ class NumberInput(TextInput):
             value: Optional[float] = None,
             min: Optional[float] = None,
             max: Optional[float] = None,
-            step: Optional[float] = None,
+            step: Optional[_T] = None,
             disabled: Optional[bool] = None,
             readonly: Optional[bool] = None,
             bubble_up: bool = False,
@@ -164,98 +167,124 @@ class NumberInput(TextInput):
             **kwargs: Any,
     ) -> None:
         super().__init__(
-            value,
+            None,  # need to set step before value
             disabled,
             readonly,
             bubble_up,
             input_delay,
             **kwargs,
         )
-        self.min = min
-        self.max = max
-        self.step = step
+
+        if step is not None:
+            self.step = step
+
+        if value is not None:
+            self.value = value  # type: ignore[assignment]
+
+        if min is not None:
+            self.min = min  # type: ignore[assignment]
+
+        if max is not None:
+            self.max = max  # type: ignore[assignment]
+
+    def _convert(self, value: Union[None, str, _T]) -> Optional[_T]:
+        if value is None:
+            return None
+
+        try:
+            value = float(value)  # type: ignore[assignment]
+        except ValueError:
+            return None
+
+        try:
+            return type(self.step)(value)  # type: ignore[return-value]
+        except ValueError:
+            return None
+
+    def _validate(self, name: str, value: Any) -> None:
+        if value is None:
+            return
+
+        if type(self.step) is int:
+            if not isinstance(value, int):
+                raise TypeError(f'{name} should be None or int')
+
+        else:
+            if not isinstance(value, (int, float)):
+                raise TypeError(f'{name} should be None, int or float')
 
     # properties ##############################################################
     # value
     @property
-    def value(self) -> Optional[float]:
-        value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
-        if value != '':
-            try:
-                return float(value)
-            except ValueError:
-                pass
-        return None
+    def value(self) -> Optional[_T]:
+        with self.lock:
+            value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
+            if value == '':
+                return None
+            return self._convert(value)
 
     @value.setter
-    def value(self, new_value: Optional[float]) -> None:
-        if new_value is not None and not isinstance(new_value, (int, float)):
-            raise TypeError('value should be None, int or float')
+    def value(self, new_value: Optional[_T]) -> None:
+        with self.lock:
+            self._validate('value', new_value)
 
-        if new_value is None:
-            self.attributes[self.INPUT_ATTRIBUTE_NAME] = ''
-        else:
-            self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
+            if new_value is None:
+                self.attributes[self.INPUT_ATTRIBUTE_NAME] = ''
+            else:
+                self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
 
     # min
     @property
-    def min(self) -> Optional[float]:
-        value = self.attributes.get('min', None)
-        if value is not None:
-            try:
-                return float(value)
-            except ValueError:
-                pass
-        return None
+    def min(self) -> Optional[_T]:
+        with self.lock:
+            return self._convert(self.attributes.get('min', None))
 
     @min.setter
-    def min(self, new_value: Optional[float]) -> None:
-        if new_value is not None and not isinstance(new_value, (int, float)):
-            raise TypeError('min should be None, int or float')
+    def min(self, new_value: Optional[_T]) -> None:
+        with self.lock:
+            self._validate('min', new_value)
 
-        if new_value is None:
-            del self.attributes['min']
-        else:
-            self.attributes['min'] = new_value
+            if new_value is None:
+                del self.attributes['min']
+            else:
+                self.attributes['min'] = new_value
 
     # max
     @property
-    def max(self) -> Optional[float]:
-        value = self.attributes.get('max', None)
-        if value is not None:
-            try:
-                return float(value)
-            except ValueError:
-                pass
-        return None
+    def max(self) -> Optional[_T]:
+        with self.lock:
+            return self._convert(self.attributes.get('max', None))
 
     @max.setter
-    def max(self, new_value: Optional[float]) -> None:
-        if new_value is not None and not isinstance(new_value, (int, float)):
-            raise TypeError('max should be None, int or float')
+    def max(self, new_value: Optional[_T]) -> None:
+        with self.lock:
+            self._validate('max', new_value)
 
-        if new_value is None:
-            del self.attributes['max']
-        else:
-            self.attributes['max'] = new_value
+            if new_value is None:
+                del self.attributes['max']
+            else:
+                self.attributes['max'] = new_value
 
     # step
     @property
-    def step(self) -> Optional[float]:
-        value = self.attributes.get('step', None)
-        if value is not None:
+    def step(self) -> Union[int, float]:
+        with self.lock:
+            value = self.attributes.get('step', '')
+
             try:
-                return float(value)
+                value = float(value)
             except ValueError:
-                pass
-        return None
+                return 1
+
+            if value.is_integer():
+                return int(value)
+
+            return value  # type: ignore[no-any-return]
 
     @step.setter
-    def step(self, new_value: Optional[float]) -> None:
-        if new_value is not None and not isinstance(new_value, (int, float)):
-            raise TypeError('step should be None, int or float')
+    def step(self, new_value: Union[int, float]) -> None:
+        if not isinstance(new_value, (int, float)):
+            raise TypeError('step should be int or float')
 
-        if new_value is None:
-            del self.attributes['step']
-        else:
+        with self.lock:
             self.attributes['step'] = new_value

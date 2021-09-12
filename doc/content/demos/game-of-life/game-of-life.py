@@ -153,8 +153,8 @@ class GameOfLiveView(LonaView):
     def setup_board(self):
         with self.html.lock:
             try:
-                self.width = int(self.html.query_selector('#width').value)
-                self.height = int(self.html.query_selector('#height').value)
+                self.width = self.html.query_selector('#width').value
+                self.height = self.html.query_selector('#height').value
 
             except ValueError:
                 return

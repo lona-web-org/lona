@@ -388,10 +388,10 @@ def test_html_strings():
     for tp in not_implemented_types:
         assert type(HTML(f'<input type="{tp}"/>')[0]) is Node
 
-    node = HTML('<input type="number" value="123.5"/>')[0]
+    node = HTML('<input type="number" value="123"/>')[0]
 
     assert type(node) is NumberInput
-    assert node.value == 123.5
+    assert node.value == 123
 
     node = HTML('<input type="checkbox"/>')[0]
 
@@ -422,3 +422,126 @@ def test_html_strings():
 
     assert type(node) == Select
     assert node.value == '2'
+
+
+def test_number_input():
+    from lona.html import NumberInput, HTML
+
+    # default properties ######################################################
+
+    node = NumberInput()
+
+    assert node.value is None
+    assert node.min is None
+    assert node.max is None
+    assert node.step == 1
+    assert type(node.step) is int
+
+    # default value type is int ###############################################
+
+    node = NumberInput(value=123)
+
+    assert node.value == 123
+    assert type(node.value) is int
+
+    # initial float step means float value type ###############################
+
+    node = NumberInput(value=123, step=0.1)
+
+    assert node.value == 123
+    assert type(node.value) is float
+    assert node.step == 0.1
+
+    # initial int step means int value type ###################################
+
+    node = NumberInput(value=123, step=3)
+
+    assert node.value == 123
+    assert type(node.value) is int
+
+    # new float step changes value type to float ##############################
+
+    node = NumberInput(value=123)
+    node.step = 0.1
+
+    assert node.value == 123
+    assert type(node.value) is float
+
+    # new int step changes value type to int ##################################
+
+    node = NumberInput(value=123, step=0.1)
+    node.step = 3
+
+    assert node.value == 123
+    assert type(node.value) is int
+
+    # initial float value is not acceptable with default step #################
+
+    with pytest.raises(TypeError, match='value should be None or int'):
+        NumberInput(value=123.5)
+
+    # float value is not acceptable with default step #########################
+
+    node = NumberInput()
+
+    with pytest.raises(TypeError, match='value should be None or int'):
+        node.value = 123.5
+
+    # parsing without step and int value ######################################
+
+    node = HTML('<input type="number" value="123"/>')[0]
+
+    assert node.value == 123
+    assert type(node.value) is int
+    assert node.min is None
+    assert node.max is None
+    assert node.step == 1
+
+    # parsing without step and float value ####################################
+
+    node = HTML('<input type="number" value="123.8"/>')[0]
+
+    assert node.value == 123
+    assert type(node.value) is int
+    assert node.step == 1
+
+    # parsing with broken step ####################################
+
+    node = HTML('<input type="number" value="123" step="abc"/>')[0]
+
+    assert node.value == 123
+    assert type(node.value) is int
+    assert node.step == 1
+
+    # parsing with int step ###################################################
+
+    node = HTML('<input type="number" value="123" step="3"/>')[0]
+
+    assert node.value == 123
+    assert type(node.value) is int
+    assert node.step == 3
+    assert type(node.step) is int
+
+    # parsing with float step #################################################
+
+    node = HTML('<input type="number" value="123" step="0.1"/>')[0]
+
+    assert node.value == 123
+    assert type(node.value) is float
+    assert node.step == 0.1
+    assert type(node.step) is float
+
+    # parsing with float step and value #######################################
+
+    node = HTML('<input type="number" value="123.8" step="0.1"/>')[0]
+
+    assert node.value == 123.8
+    assert type(node.value) is float
+    assert node.step == 0.1
+    assert type(node.step) is float
+
+    # parsing broken value #######################################
+
+    node = HTML('<input type="number" value="abc" step="0.1"/>')[0]
+
+    assert node.value is None

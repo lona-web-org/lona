@@ -40,7 +40,7 @@ class CounterView(LonaView):
             # set
             elif input_event.node_has_id('set'):
                 try:
-                    counter.set_text(int(number_input.value))
+                    counter.set_text(number_input.value)
 
                 except TypeError:
                     pass
