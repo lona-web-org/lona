@@ -257,7 +257,15 @@ def test_attribute_list():
 
 
 def test_html_strings():
-    from lona.html import HTML, Button
+    from lona.html import (
+        TextInput,
+        CheckBox,
+        TextArea,
+        Button,
+        Select,
+        HTML,
+        Node,
+    )
 
     # empty node ##############################################################
     node = HTML('<div></div>')[0]
@@ -326,7 +334,7 @@ def test_html_strings():
     # high level nodes ########################################################
     node = HTML('<button>Click me</button>')[0]
 
-    assert isinstance(node, Button)
+    assert type(node) is Button
 
     # boolean properties ######################################################
     node = HTML('<button disabled>Click me</button>')[0]
@@ -336,3 +344,47 @@ def test_html_strings():
     node = HTML('<button disabled="true">Click me</button>')[0]
 
     assert node.disabled
+
+    # data binding nodes ######################################################
+    node = HTML('<input value="abc"/>')[0]
+
+    assert type(node) is TextInput
+    assert node.value == 'abc'
+    assert node.disabled is False
+
+    node = HTML('<input type="text" value="xyz" disabled/>')[0]
+
+    assert type(node) is TextInput
+    assert node.value == 'xyz'
+    assert node.disabled is True
+
+    node = HTML('<input type="number" value="123"/>')[0]
+
+    assert type(node) is Node
+
+    node = HTML('<input type="checkbox"/>')[0]
+
+    assert type(node) is CheckBox
+    assert node.value is False
+
+    node = HTML('<input type="checkbox" checked/>')[0]
+
+    assert type(node) is CheckBox
+    assert node.value == ''
+    # assert node.value is True  # TODO: fix in the next PR
+
+    node = HTML('<textarea>abc</textarea>')[0]
+
+    assert type(node) is TextArea
+    assert node.value == ''
+    # assert node.value == 'abc'  # TODO: fix in the next PR
+
+    node = HTML("""
+        <select>
+            <option value="1">a</option>
+            <option value="2" selected>b</option>
+        </select>
+    """)[0]
+
+    assert type(node) == Select
+    assert node.value == '2'
