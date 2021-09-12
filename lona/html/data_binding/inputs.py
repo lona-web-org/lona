@@ -127,9 +127,20 @@ class CheckBox(TextInput):
     }
 
     @property
-    def value(self):
-        return self.attributes.get(self.INPUT_ATTRIBUTE_NAME, False)
+    def value(self) -> bool:
+        value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, False)
+
+        if value == '':  # is possible after parsing HTML string
+            return True
+
+        return bool(value)
 
     @value.setter
-    def value(self, new_value):
-        self.attributes[self.INPUT_ATTRIBUTE_NAME] = bool(new_value)
+    def value(self, new_value: bool) -> None:
+        if not isinstance(new_value, bool):
+            raise TypeError('value is a boolean property')
+
+        # Don't need to remove `checked` attribute if False because
+        # it is a special property and is handled differently by js client
+        # (search for `property_names` in /lona/client)
+        self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value

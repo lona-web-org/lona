@@ -370,8 +370,7 @@ def test_html_strings():
     node = HTML('<input type="checkbox" checked/>')[0]
 
     assert type(node) is CheckBox
-    assert node.value == ''
-    # assert node.value is True  # TODO: fix in the next PR
+    assert node.value is True
 
     node = HTML('<textarea>abc</textarea>')[0]
 
