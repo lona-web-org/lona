@@ -171,8 +171,12 @@ class NumberInput(TextInput):
             input_delay,
             **kwargs,
         )
-        self.min = min
-        self.max = max
+
+        if min is not None:
+            self.min = min
+
+        if max is not None:
+            self.max = max
 
         if step is not None:
             self.step = step

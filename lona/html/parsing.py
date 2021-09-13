@@ -1,4 +1,5 @@
 from html.parser import HTMLParser
+from typing import Dict, Type
 import inspect
 import logging
 
@@ -7,8 +8,8 @@ from lona.html.node import Node
 
 logger = logging.getLogger('lona')
 
-NODE_CLASSES = {}
-INPUT_NODE_CLASSES = {}
+NODE_CLASSES: Dict[str, Type[Node]] = {}
+INPUT_NODE_CLASSES: Dict[str, Type[Node]] = {}
 
 SELF_CLOSING_TAGS = [
     'area',
@@ -49,14 +50,24 @@ def _find_node_classes(module):
 
                     continue
 
+                if node_class.ATTRIBUTES['type'] in INPUT_NODE_CLASSES:
+                    logger.warning(
+                        'WARNING: Two input Node classes with the same type=%s were found: %r and %r',  # NOQA: E501
+                        node_class.ATTRIBUTES['type'],
+                        INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']],
+                        node_class,
+                    )
+
                 INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']] = node_class
 
             # nodes
             else:
                 if node_class.TAG_NAME in NODE_CLASSES:
                     logger.warning(
-                        'WARNING: Two Node classes with the same tag name were found: %s',  # NOQA: E501
+                        'WARNING: Two Node classes with the same tag name %s were found: %r and %r',  # NOQA: E501
                         node_class.TAG_NAME,
+                        NODE_CLASSES[node_class.TAG_NAME],
+                        node_class,
                     )
 
                 NODE_CLASSES[node_class.TAG_NAME] = node_class
@@ -129,10 +140,7 @@ class NodeHTMLParser(HTMLParser):
                 node_kwargs[key] = node_attributes.pop(key)
 
         node_class = self.get_node_class(tag, node_attributes)
-        node = node_class(**node_kwargs)
-
-        # set attributes
-        node.attributes.update(node_attributes)
+        node = node_class(**node_kwargs, attributes=node_attributes)
 
         # setup node
         self._node.append(node)
