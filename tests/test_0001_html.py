@@ -388,10 +388,10 @@ def test_html_strings():
     for tp in not_implemented_types:
         assert type(HTML(f'<input type="{tp}"/>')[0]) is Node
 
-    node = HTML('<input type="number" value="123.5"/>')[0]
+    node = HTML('<input type="number" value="123"/>')[0]
 
     assert type(node) is NumberInput
-    assert node.value == 123.5
+    assert node.value == 123
 
     node = HTML('<input type="checkbox"/>')[0]
 
@@ -422,3 +422,91 @@ def test_html_strings():
 
     assert type(node) == Select
     assert node.value == '2'
+
+
+def test_number_input():
+    from lona.html import NumberInput, HTML
+
+    # default properties ######################################################
+
+    node = NumberInput()
+
+    assert node.value is None
+    assert node.min is None
+    assert node.max is None
+    assert node.step is None
+
+    # can set initial value ###################################################
+
+    node = NumberInput(value=12.3)
+
+    assert node.value == 12.3
+
+    # can change value ########################################################
+
+    node = NumberInput()
+    node.value = 12.3
+
+    assert node.value == 12.3
+
+    # parsing without attributes ##############################################
+
+    node = HTML('<input type="number"/>')[0]
+
+    assert node.value is None
+    assert node.min is None
+    assert node.max is None
+    assert node.step is None
+
+    # parsing without step and int value ######################################
+
+    node = HTML('<input type="number" value="123"/>')[0]
+
+    assert node.value == 123
+    assert node.min is None
+    assert node.max is None
+    assert node.step is None
+
+    # parsing without step and float value ####################################
+
+    node = HTML('<input type="number" value="12.3"/>')[0]
+
+    assert node.value == 12.3
+
+    # parsing with broken step ################################################
+
+    node = HTML('<input type="number" value="123" step="abc"/>')[0]
+
+    assert node.value == 123
+    assert node.step is None
+
+    # parsing with int step ###################################################
+
+    node = HTML('<input type="number" value="12.3" step="3"/>')[0]
+
+    assert node.value == 12.3
+    assert node.step == 3
+
+    # parsing with float step #################################################
+
+    node = HTML('<input type="number" value="12.3" step="0.1"/>')[0]
+
+    assert node.value == 12.3
+    assert node.step == 0.1
+
+    # parsing broken value ####################################################
+
+    node = HTML('<input type="number" value="abc" step="0.1"/>')[0]
+
+    assert node.value is None
+
+    # parsing with min, max and step ##########################################
+
+    node = HTML(
+        '<input type="number" value="12.3" min="15.3" max="20.5" step="0.2"/>',
+    )[0]
+
+    assert node.value == 12.3
+    assert node.min == 15.3
+    assert node.max == 20.5
+    assert node.step == 0.2
