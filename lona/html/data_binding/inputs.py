@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Union
 
 from lona.events.event_types import CHANGE
 from lona.html.node import Node
@@ -173,19 +173,18 @@ class NumberInput(TextInput):
         )
         self.min = min
         self.max = max
-        self.step = step
+
+        if step is not None:
+            self.step = step
 
     # properties ##############################################################
     # value
     @property
     def value(self) -> Optional[float]:
         value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
-        if value != '':
-            try:
-                return float(value)
-            except ValueError:
-                pass
-        return None
+        if value == '':
+            return None
+        return self._convert(value)
 
     @value.setter
     def value(self, new_value: Optional[float]) -> None:
@@ -200,13 +199,7 @@ class NumberInput(TextInput):
     # min
     @property
     def min(self) -> Optional[float]:
-        value = self.attributes.get('min', None)
-        if value is not None:
-            try:
-                return float(value)
-            except ValueError:
-                pass
-        return None
+        return self._convert(self.attributes.get('min', None))
 
     @min.setter
     def min(self, new_value: Optional[float]) -> None:
@@ -221,13 +214,7 @@ class NumberInput(TextInput):
     # max
     @property
     def max(self) -> Optional[float]:
-        value = self.attributes.get('max', None)
-        if value is not None:
-            try:
-                return float(value)
-            except ValueError:
-                pass
-        return None
+        return self._convert(self.attributes.get('max', None))
 
     @max.setter
     def max(self, new_value: Optional[float]) -> None:
@@ -241,21 +228,25 @@ class NumberInput(TextInput):
 
     # step
     @property
-    def step(self) -> Optional[float]:
-        value = self.attributes.get('step', None)
+    def step(self) -> float:
+        value = self.attributes.get('step', '')
+        try:
+            return float(value)
+        except ValueError:
+            return 1.0
+
+    @step.setter
+    def step(self, new_value: float) -> None:
+        if not isinstance(new_value, (int, float)):
+            raise TypeError('step should be int or float')
+
+        self.attributes['step'] = new_value
+
+    @staticmethod
+    def _convert(value: Union[None, str, float]) -> Optional[float]:
         if value is not None:
             try:
                 return float(value)
             except ValueError:
                 pass
         return None
-
-    @step.setter
-    def step(self, new_value: Optional[float]) -> None:
-        if new_value is not None and not isinstance(new_value, (int, float)):
-            raise TypeError('step should be None, int or float')
-
-        if new_value is None:
-            del self.attributes['step']
-        else:
-            self.attributes['step'] = new_value
