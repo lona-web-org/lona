@@ -1,3 +1,4 @@
+search_index_weight: 15
 
 
 Lona Scripts

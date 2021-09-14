@@ -1,4 +1,5 @@
 toctree: False
+search_index_weight: -10
 
 
 Changelog

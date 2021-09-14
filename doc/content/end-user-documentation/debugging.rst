@@ -1,3 +1,4 @@
+search_index_weight: 10
 
 
 Debugging

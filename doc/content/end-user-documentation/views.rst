@@ -1,4 +1,5 @@
 is_template: False
+search_index_weight: 15
 
 
 Views

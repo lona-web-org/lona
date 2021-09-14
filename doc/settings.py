@@ -22,6 +22,7 @@ PLUGINS = [
     'plugins/toc_tree.py::TocTree',
     'plugins/rst_setting.py::rstSetting',
     'plugins/pygments.py::rstPygments',
+    'plugins/fix_search.py::FixSearch',
 ]
 
 MENU = [
