@@ -509,3 +509,76 @@ class TestHTMLFromStr:
 
         assert type(node) == Select
         assert node.value == '2'
+
+
+@pytest.mark.incremental()
+class TestNumberInput:
+    def test_default_properties(self):
+        node = NumberInput()
+
+        assert node.value is None
+        assert node.min is None
+        assert node.max is None
+        assert node.step is None
+
+    def test_initial_value(self):
+        node = NumberInput(value=12.3)
+
+        assert node.value == 12.3
+
+    def test_change_value(self):
+        node = NumberInput()
+        node.value = 12.3
+
+        assert node.value == 12.3
+
+    def test_parsing_no_attributes(self):
+        node = HTML('<input type="number"/>')[0]
+
+        assert node.value is None
+        assert node.min is None
+        assert node.max is None
+        assert node.step is None
+
+    def test_parsing_int_value(self):
+        node = HTML('<input type="number" value="123"/>')[0]
+
+        assert node.value == 123
+
+    def test_parsing_float_value(self):
+        node = HTML('<input type="number" value="12.3"/>')[0]
+
+        assert node.value == 12.3
+
+    def test_parsing_broken_step(self):
+        node = HTML('<input type="number" value="123" step="abc"/>')[0]
+
+        assert node.value == 123
+        assert node.step is None
+
+    def test_parsing_int_step(self):
+        node = HTML('<input type="number" value="12.3" step="3"/>')[0]
+
+        assert node.value == 12.3
+        assert node.step == 3
+
+    def test_parsing_float_step(self):
+        node = HTML('<input type="number" value="12.3" step="0.1"/>')[0]
+
+        assert node.value == 12.3
+        assert node.step == 0.1
+
+    def test_parsing_broken_value(self):
+        node = HTML('<input type="number" value="abc" step="0.1"/>')[0]
+
+        assert node.value is None
+
+    def test_parsing_all_attributes(self):
+        node = HTML(
+            '<input type="number" value="12.3" min="15.3" max="20.5" step="0.2"/>',  # NOQA: E501
+        )[0]
+
+        assert node.value == 12.3
+        assert node.min == 15.3
+        assert node.max == 20.5
+        assert node.step == 0.2
