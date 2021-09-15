@@ -410,8 +410,7 @@ def test_html_strings():
     node = HTML('<textarea>abc</textarea>')[0]
 
     assert type(node) is TextArea
-    assert node.value == ''
-    # assert node.value == 'abc'  # TODO: fix in the next PR
+    assert node.value == 'abc'
 
     node = HTML("""
         <select>
@@ -422,3 +421,15 @@ def test_html_strings():
 
     assert type(node) == Select
     assert node.value == '2'
+
+
+def test_textarea_strings():
+    from lona.html import HTML
+
+    textarea = HTML('<textarea>abc<br/>xyz</textarea>')[0]
+
+    assert textarea.value == 'abc<br/>xyz'
+
+    textarea = HTML('<textarea>aaa <b>bbb</b> ccc</textarea>')[0]
+
+    assert textarea.value == 'aaa <b>bbb</b> ccc'
