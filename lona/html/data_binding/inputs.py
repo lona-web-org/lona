@@ -15,23 +15,14 @@ class TextInput(Node):
         'type': 'text',
     }
 
-    def __init__(self, value=None, disabled=None, readonly=None,
+    def __init__(self, value='', disabled=False, readonly=False,
                  bubble_up=False, input_delay=DEFAULT_INPUT_DELAY, **kwargs):
-
         super().__init__(**kwargs)
-
-        self.events.add(CHANGE(input_delay))
-
+        self.value = value
+        self.disabled = disabled
+        self.readonly = readonly
         self.bubble_up = bubble_up
-
-        if value is not None:
-            self.value = value
-
-        if disabled is not None:
-            self.disabled = disabled
-
-        if readonly is not None:
-            self.readonly = readonly
+        self.events.add(CHANGE(input_delay))
 
     def handle_input_event(self, input_event):
         # Data binding nodes catch their own change events and synchronize
@@ -121,10 +112,14 @@ class TextArea(TextInput):
 
 class CheckBox(TextInput):
     INPUT_ATTRIBUTE_NAME = 'checked'
-
     ATTRIBUTES = {
         'type': 'checkbox',
     }
+
+    def __init__(self, value=False, disabled=False, readonly=False,
+                 bubble_up=False, input_delay=0, **kwargs):
+        super().__init__(value, disabled, readonly,
+                         bubble_up, input_delay, **kwargs)
 
     @property
     def value(self) -> bool:
@@ -157,8 +152,8 @@ class NumberInput(TextInput):
             min: Optional[float] = None,
             max: Optional[float] = None,
             step: Optional[float] = None,
-            disabled: Optional[bool] = None,
-            readonly: Optional[bool] = None,
+            disabled: bool = False,
+            readonly: bool = False,
             bubble_up: bool = False,
             input_delay: int = DEFAULT_INPUT_DELAY,
             **kwargs: Any,

@@ -146,11 +146,9 @@ class Button(Node):
     TAG_NAME = 'button'
     EVENTS = [CLICK]
 
-    def __init__(self, *args, disabled=None, **kwargs):
+    def __init__(self, *args, disabled=False, **kwargs):
         super().__init__(*args, **kwargs)
-
-        if disabled is not None:
-            self.disabled = disabled
+        self.disabled = disabled
 
     @property
     def disabled(self):
@@ -186,11 +184,9 @@ class Img(Node):
 class A(Node):
     TAG_NAME = 'a'
 
-    def __init__(self, *args, interactive=None, **kwargs):
+    def __init__(self, *args, interactive=False, **kwargs):
         super().__init__(*args, **kwargs)
-
-        if interactive is not None:
-            self.interactive = interactive
+        self.interactive = interactive
 
     @property
     def interactive(self):
