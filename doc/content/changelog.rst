@@ -1,3 +1,4 @@
+title: Changelog
 toctree: False
 search_index_weight: -10
 
