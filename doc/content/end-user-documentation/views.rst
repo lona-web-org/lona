@@ -439,8 +439,13 @@ Input Events
 
 .. note::
 
-    Changed in 1.5: In all versions prior to 1.5, only widgets could handle
+    **Changed in 1.5:** In all versions prior to 1.5, only widgets could handle
     their own events. In versions after 1.5 all node classes can.
+
+    **Changed in 1.7:** In all versions prior to 1.7, ``==`` checked if two
+    nodes have equal attributes, but did not check if node A is the same node
+    as node B.  To check if node A is node B is ``is`` instead of ``==`` was
+    required.
 
 Input events get handled in a chain of hooks. Every hook is required to return
 the given input event, to pass it down the chain, or return ``None`` to mark
@@ -456,14 +461,6 @@ If the event got returned by the last widget in the chain, Lona checks if
 
 Input events can, but don't have to, contain a node that issued the event in
 ``input_event.node``.
-
-.. note::
-
-    Be careful when comparing ``input_event.node`` with another node.
-    ``==`` checks if two nodes have equal attributes, bot does not check if
-    node A is the same node as node B.
-
-    To check if node A is node B us ``is`` instead of ``==``.
 
 
 Input Event types
