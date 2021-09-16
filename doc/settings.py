@@ -23,6 +23,7 @@ PLUGINS = [
     'plugins/rst_setting.py::rstSetting',
     'plugins/pygments.py::rstPygments',
     'plugins/fix_search.py::FixSearch',
+    'plugins/changelog.py::Changelog',
 ]
 
 MENU = [

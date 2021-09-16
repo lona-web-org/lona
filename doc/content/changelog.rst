@@ -1,4 +1,3 @@
-title: Changelog
 toctree: False
 search_index_weight: -10
 
@@ -6,8 +5,7 @@ search_index_weight: -10
 Changelog
 =========
 
-`1.6.1 <https://github.com/lona-web-org/lona/releases/tag/1.6.1>`_ (2021-09-08)
--------------------------------------------------------------------------------
+.. changelog-header:: 1.6.1 (2021-09-08)
 
 Bugfixes
 ~~~~~~~~
@@ -17,8 +15,7 @@ Bugfixes
   * Handling of boolean attributes was fixed
 
 
-`1.6 <https://github.com/lona-web-org/lona/releases/tag/1.6>`_ (2021-09-06)
----------------------------------------------------------------------------
+.. changelog-header:: 1.6 (2021-09-06)
 
 Changes
 ~~~~~~~
@@ -49,7 +46,6 @@ Changes
   * ``lona.html.Node`` accepts ``handle_change`` and ``handle_click`` event
     handler in its constructor now
 
-
 Bugfixes
 ~~~~~~~~
 
@@ -73,11 +69,7 @@ Bugfixes
   * Non node related input events were fixed
 
 
-Changelog
-=========
-
-`1.5.1 <https://github.com/lona-web-org/lona/releases/tag/1.5.1>`_ (2021-09-03)
--------------------------------------------------------------------------------
+.. changelog-header:: 1.5.1 (2021-09-03)
 
 Bugfixes
 ~~~~~~~~
@@ -106,8 +98,7 @@ Bugfixes
       page
 
 
-`1.5 <https://github.com/lona-web-org/lona/releases/tag/1.5>`_ (2021-09-01)
----------------------------------------------------------------------------
+.. changelog-header:: 1.5 (2021-09-01)
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
@@ -121,7 +112,6 @@ Breaking Changes
     ``handle_input_event()`` now
 
     * Previously only ``lona.html.Widget`` classes could
-
 
 Changes
 ~~~~~~~
@@ -162,8 +152,7 @@ Bugfixes
     using ``lona.html.HTML``
 
 
-`1.4.1 <https://github.com/lona-web-org/lona/releases/tag/1.4.1>`_ (2021-08-27)
--------------------------------------------------------------------------------
+.. changelog-header:: 1.4.1 (2021-08-27)
 
 Changes
 ~~~~~~~
@@ -176,8 +165,7 @@ Changes
 * support for ``python -m lona`` was added
 
 
-`1.4 <https://github.com/lona-web-org/lona/releases/tag/1.4>`_ (2021-08-26)
----------------------------------------------------------------------------
+.. changelog-header:: 1.4 (2021-08-26)
 
 Changes
 ~~~~~~~
@@ -226,8 +214,7 @@ Bugfixes
   * color palette were fixed for light terminals
 
 
-`1.3 <https://github.com/lona-web-org/lona/releases/tag/1.3>`_ (2021-08-22)
----------------------------------------------------------------------------
+.. changelog-header:: 1.3 (2021-08-22)
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
@@ -256,8 +243,7 @@ Bugfixes
   ``''`` or ``None`` was fixed
 
 
-`1.2 <https://github.com/lona-web-org/lona/releases/tag/1.2>`_ (2021-08-19)
----------------------------------------------------------------------------
+.. changelog-header:: 1.2 (2021-08-19)
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
@@ -291,8 +277,7 @@ Bugfixes
     ``--memory`` is set.
 
 
-`1.1.1 <https://github.com/lona-web-org/lona/releases/tag/1.1.1>`_ (2021-08-15)
--------------------------------------------------------------------------------
+.. changelog-header:: 1.1.1 (2021-08-15)
 
 Bugfixes
 ~~~~~~~~
@@ -300,8 +285,7 @@ Bugfixes
 * html: nodes: Button: fix ``disabled`` property
 
 
-`1.1 <https://github.com/lona-web-org/lona/releases/tag/1.1>`_ (2021-08-13)
----------------------------------------------------------------------------
+.. changelog-header:: 1.1 (2021-08-13)
 
 Changes
 ~~~~~~~
@@ -312,8 +296,7 @@ Changes
   ``ForbiddenError``, ``ClientError``, ``UserAbort`` and ``ServerStop``
 
 
-`1.0.2 <https://github.com/lona-web-org/lona/releases/tag/1.0.2>`_ (2021-08-12)
--------------------------------------------------------------------------------
+.. changelog-header:: 1.0.2 (2021-08-12)
 
 Bugfixes
 ~~~~~~~~
@@ -324,8 +307,7 @@ Bugfixes
     copy a directory
 
 
-`1.0.1 <https://github.com/lona-web-org/lona/releases/tag/1.0.1>`_ (2021-08-10)
--------------------------------------------------------------------------------
+.. changelog-header:: 1.0.1 (2021-08-10)
 
 Bugfixes
 ~~~~~~~~
@@ -335,7 +317,7 @@ Bugfixes
   * Previously ``TextInput`` and ``Select`` catched all input events and
     handled them as ``CHANGE`` event. Now unknown events get bubbled up.
 
-`1.0 <https://github.com/lona-web-org/lona/releases/tag/1.0>`_ (2021-08-09)
----------------------------------------------------------------------------
+
+.. changelog-header:: 1.0 (2021-08-09)
 
 Initial stable release
