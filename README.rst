@@ -10,6 +10,9 @@
 .. image:: https://img.shields.io/pypi/v/lona.svg
     :alt: pypi.org
     :target: https://pypi.org/project/lona
+.. image:: https://github.com/lona-web-org/lona/actions/workflows/ci.yml/badge.svg
+    :alt: ci status
+    :target: https://github.com/lona-web-org/lona/actions/workflows/ci.yml
 .. image:: https://img.shields.io/codecov/c/github/lona-web-org/lona.svg
     :alt: codecov.io
     :target: https://codecov.io/gh/lona-web-org/lona/
