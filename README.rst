@@ -1,20 +1,21 @@
 .. image:: doc/content/logo.svg
+    :alt: Lona logo
     :height: 200px
     :width: 200px
 .. image:: https://img.shields.io/pypi/l/lona.svg
-    :alt: pypi.org
+    :alt: license MIT
     :target: https://pypi.org/project/lona
 .. image:: https://img.shields.io/pypi/pyversions/lona.svg
-    :alt: pypi.org
+    :alt: python 3
     :target: https://pypi.org/project/lona
 .. image:: https://img.shields.io/pypi/v/lona.svg
-    :alt: pypi.org
+    :alt: latest version
     :target: https://pypi.org/project/lona
 .. image:: https://github.com/lona-web-org/lona/actions/workflows/ci.yml/badge.svg
     :alt: ci status
     :target: https://github.com/lona-web-org/lona/actions/workflows/ci.yml
 .. image:: https://img.shields.io/codecov/c/github/lona-web-org/lona.svg
-    :alt: codecov.io
+    :alt: code coverage
     :target: https://codecov.io/gh/lona-web-org/lona/
 
 
