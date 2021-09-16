@@ -83,6 +83,8 @@ def _setup_node_classes_cache():
 
 
 class NodeHTMLParser(HTMLParser):
+    CDATA_CONTENT_ELEMENTS = HTMLParser.CDATA_CONTENT_ELEMENTS + ('textarea',)
+
     def __init__(self, *args, use_high_level_nodes=True, node_classes=None,
                  **kwargs):
 
@@ -149,9 +151,6 @@ class NodeHTMLParser(HTMLParser):
         self._node.append(node)
         self.set_current_node(node)
 
-    def handle_endtag(self, tag):
-        self.set_current_node(self._node.parent)
-
     def handle_data(self, data):
         text = data
 
@@ -161,7 +160,16 @@ class NodeHTMLParser(HTMLParser):
             if not text:
                 return
 
-        self._node.append(TextNode(text))
+        # textareas
+        if self._node.tag_name == 'textarea':
+            self._node.value = data
+
+        # normal nodes
+        else:
+            self._node.append(TextNode(text))
+
+    def handle_endtag(self, tag):
+        self.set_current_node(self._node.parent)
 
 
 def html_string_to_node_list(html_string, use_high_level_nodes=True,
