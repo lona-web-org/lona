@@ -5,6 +5,31 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.7 (2021-09-16)
+
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+* html
+
+  * ``==`` now checks if node A ``is`` node B
+
+    * Previously ``==`` checked if node A had equal attributes as node B,
+      This caused problems with builtin methods like ``list.index``, which
+      resulted in rendering bugs
+
+
+Bugfixes
+~~~~~~~~
+
+* html
+
+  * Parsing of input types was fixed
+  * ``Checkbox.value`` has always the type ``bool`` now
+  * Parsing of ``TextArea.value`` was fixed
+
+
 .. changelog-header:: 1.6.1 (2021-09-08)
 
 Bugfixes
