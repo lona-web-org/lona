@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from lona.html import Widget, Button, Div, Br, HTML, H2
+from lona.html import Widget, Button, HTML, Div, H2, Br
 from lona.view import LonaView
 
 

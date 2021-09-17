@@ -4,10 +4,10 @@ from lona.html import (
     CheckBox,
     Select,
     Button,
-    Div,
-    Br,
     HTML,
+    Div,
     H2,
+    Br,
 )
 from lona import LonaView
 

@@ -7,9 +7,9 @@ from lona.html import (
     CheckBox,
     Select,
     Button,
+    HTML,
     Pre,
     Div,
-    HTML,
     H2,
 )
 from lona.view import LonaView

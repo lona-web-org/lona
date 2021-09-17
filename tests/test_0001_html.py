@@ -11,8 +11,8 @@ from lona.html import (
     Select,
     Button,
     Node,
-    Div,
     HTML,
+    Div,
 )
 
 

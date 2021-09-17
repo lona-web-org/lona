@@ -1,4 +1,4 @@
-from lona.html import Widget, Select, Button, Pre, Div, P, HTML, H2
+from lona.html import Widget, Select, Button, HTML, Pre, Div, H2, P
 from lona.view import LonaView
 
 

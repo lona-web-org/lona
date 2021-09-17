@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import Pre, Div, Br, A, H2
+from lona.html import Pre, Div, H2, Br, A
 from lona.view import LonaView
 from lona.events import CLICK
 
