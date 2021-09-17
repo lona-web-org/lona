@@ -18,6 +18,7 @@ setup(
         'aiohttp>=3,<4',
         'jinja2',
         'rlpython',
+        'typing-extensions',
     ],
     scripts=[
         'bin/lona',
