@@ -1,143 +1,140 @@
 import pytest
 
-
-def test_basic_routing():
-    from lona.routing import Router, Route
-
-    router = Router()
-
-    routes = [
-        Route('/foo/<arg>/', None),
-        Route('/foo/', None),
-        Route('/bar/<arg>/', None),
-        Route('/', None),
-    ]
-
-    router.add_routes(*routes)
-
-    # /foo/
-    match, route, match_info = router.resolve('/foo/')
-
-    assert match
-    assert route == routes[1]
-    assert match_info == {}
-
-    # /foo/bar/
-    match, route, match_info = router.resolve('/foo/bar/')
-
-    assert match
-    assert route == routes[0]
-    assert match_info == {'arg': 'bar'}
-
-    # /bar/foo/
-    match, route, match_info = router.resolve('/bar/foo/')
-
-    assert match
-    assert route == routes[2]
-    assert match_info == {'arg': 'foo'}
-
-    # /
-    match, route, match_info = router.resolve('/')
-
-    assert match
-    assert route == routes[3]
-    assert match_info == {}
-
-    # /foobar/
-    match, route, match_info = router.resolve('/foobar/')
-
-    assert not match
+from lona.routing import Router, Route
 
 
-def test_routes_with_regexes():
-    from lona.routing import Router, Route
+@pytest.mark.incremental()
+class TestBasicRouting:
+    def setup(self):
+        self.routes = [
+            Route('/foo/<arg>/', None),
+            Route('/foo/', None),
+            Route('/bar/<arg>/', None),
+            Route('/', None),
+        ]
 
-    router = Router()
+        self.router = Router()
+        self.router.add_routes(*self.routes)
 
-    routes = [
-        Route('/number/<number:[0-9]+>/', None),
-    ]
+    def test_resolve_without_arguments(self):
+        match, route, match_info = self.router.resolve('/foo/')
 
-    router.add_routes(*routes)
+        assert match
+        assert route == self.routes[1]
+        assert match_info == {}
 
-    # /number/14/
-    match, route, match_info = router.resolve('/number/14/')
+    def test_resolve_with_argument(self):
+        match, route, match_info = self.router.resolve('/foo/bar/')
 
-    assert match
-    assert route == routes[0]
-    assert match_info == {'number': '14'}
+        assert match
+        assert route == self.routes[0]
+        assert match_info == {'arg': 'bar'}
 
-    # /number/14a/
-    match, route, match_info = router.resolve('/number/14a/')
+    def test_resolve_with_argument_2(self):
+        match, route, match_info = self.router.resolve('/bar/foo/')
 
-    assert not match
+        assert match
+        assert route == self.routes[2]
+        assert match_info == {'arg': 'foo'}
 
+    def test_resolve_root(self):
+        match, route, match_info = self.router.resolve('/')
 
-def test_optional_trailing_slash():
-    from lona.routing import Router, Route
+        assert match
+        assert route == self.routes[3]
+        assert match_info == {}
 
-    router = Router()
+    def test_cant_resolve_unknown_route(self):
+        match, route, match_info = self.router.resolve('/foobar/')
 
-    routes = [
-        Route('/foo(/)', None),
-        Route('/bar/', None),
-    ]
-
-    router.add_routes(*routes)
-
-    # /foo
-    match, route, match_info = router.resolve('/foo')
-
-    assert match
-    assert route == routes[0]
-    assert match_info == {}
-
-    # /foo/
-    match, route, match_info = router.resolve('/foo/')
-
-    assert match
-    assert route == routes[0]
-    assert match_info == {}
-
-    # /bar
-    match, route, match_info = router.resolve('/bar')
-
-    assert not match
-
-    # /bar/
-    match, route, match_info = router.resolve('/bar/')
-
-    assert match
-    assert route == routes[1]
-    assert match_info == {}
+        assert not match
 
 
-def test_reverse_matching():
-    from lona.routing import Router, Route
+@pytest.mark.incremental()
+class TestRoutesWithRegex:
+    def setup(self):
+        self.routes = [
+            Route('/number/<number:[0-9]+>/', None),
+        ]
 
-    router = Router()
+        self.router = Router()
+        self.router.add_routes(*self.routes)
 
-    routes = [
-        Route('/foo/<arg>/', None, name='foo'),
-        Route('/bar/', None, name='bar'),
-    ]
+    def test_match_regex(self):
+        match, route, match_info = self.router.resolve('/number/14/')
 
-    router.add_routes(*routes)
+        assert match
+        assert route == self.routes[0]
+        assert match_info == {'number': '14'}
 
-    # /foo/bar/
-    url = router.reverse('foo', arg='bar')
+    def test_doesnt_match_regex(self):
+        match, route, match_info = self.router.resolve('/number/14a/')
 
-    assert url == '/foo/bar/'
+        assert not match
 
-    # /bar/
-    url = router.reverse('bar')
 
-    assert url == '/bar/'
+@pytest.mark.incremental()
+class TestOptionalTrailingSlash:
+    def setup(self):
+        self.routes = [
+            Route('/foo(/)', None),
+            Route('/bar/', None),
+        ]
 
-    # /foo/bar/ but wrongly named arg
-    with pytest.raises(ValueError, match='missing URL arg: arg'):
-        url = router.reverse('foo', foo='bar')
+        self.router = Router()
+        self.router.add_routes(*self.routes)
 
-    # unknown name
-    with pytest.raises(ValueError, match="no route named 'baz' found"):
-        url = router.reverse('baz')
+    def test_optional_slash_resolves_without_slash(self):
+        match, route, match_info = self.router.resolve('/foo')
+
+        assert match
+        assert route == self.routes[0]
+        assert match_info == {}
+
+    def test_optional_slash_resolves_with_slash(self):
+        match, route, match_info = self.router.resolve('/foo/')
+
+        assert match
+        assert route == self.routes[0]
+        assert match_info == {}
+
+    def test_required_slash_doesnt_resolve_without_slash(self):
+        match, route, match_info = self.router.resolve('/bar')
+
+        assert not match
+
+    def test_required_slash_resolves_with_slash(self):
+        match, route, match_info = self.router.resolve('/bar/')
+
+        assert match
+        assert route == self.routes[1]
+        assert match_info == {}
+
+
+@pytest.mark.incremental()
+class TestReverseMatching:
+    def setup(self):
+        routes = [
+            Route('/foo/<arg>/', None, name='foo'),
+            Route('/bar/', None, name='bar'),
+        ]
+        self.router = Router()
+        self.router.add_routes(*routes)
+
+    def test_reverse_with_arg(self):
+        url = self.router.reverse('foo', arg='bar')
+
+        assert url == '/foo/bar/'
+
+    def test_reverse_without_arg(self):
+        url = self.router.reverse('bar')
+
+        assert url == '/bar/'
+
+    def test_reverse_unknown_arg(self):
+        with pytest.raises(ValueError, match='missing URL arg: arg'):
+            self.router.reverse('foo', foo='bar')
+
+    def test_reverse_unknown_name(self):
+        with pytest.raises(ValueError, match="no route named 'baz' found"):
+            self.router.reverse('baz')

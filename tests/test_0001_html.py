@@ -2,434 +2,510 @@ import re
 
 import pytest
 
+from lona.html import (
+    NumberInput,
+    TextInput,
+    CheckBox,
+    TextArea,
+    Button,
+    Select,
+    Submit,
+    HTML,
+    Node,
+    Div,
+)
 
-def test_attribute_dict():
-    from lona.html import Div
+
+@pytest.mark.incremental()
+class TestAttributeDict:
+    def test_get_initial_values(self):
+        d = Div(foo='foo', bar='bar')
 
-    # init ####################################################################
-    d = Div(foo='foo', bar='bar')
+        assert d.attributes['foo'] == 'foo'
+        assert d.attributes['bar'] == 'bar'
 
-    assert d.attributes['foo'] == 'foo'
-    assert d.attributes['bar'] == 'bar'
+    def test_set_attributes(self):
+        d = Div()
 
-    # reset ###################################################################
-    d = Div()
+        d.attributes = {
+            'foo': 'foo',
+            'bar': 'bar',
+        }
 
-    d.attributes = {
-        'foo': 'foo',
-        'bar': 'bar',
-    }
+        assert d.attributes == {
+            'foo': 'foo',
+            'bar': 'bar',
+        }
 
-    assert d.attributes == {
-        'foo': 'foo',
-        'bar': 'bar',
-    }
+    def test_value_cant_be_dict(self):
+        with pytest.raises(
+                ValueError,
+                match="unsupported type: <class 'dict'>",
+        ):
+            Div(foo={})
 
-    # value errors ############################################################
-    with pytest.raises(ValueError, match="unsupported type: <class 'dict'>"):
-        d = Div(foo={})
+    def test_cant_use_id_key(self):
+        d = Div()
 
-    d = Div()
+        with pytest.raises(
+                RuntimeError,
+                match=re.escape(
+                    "Node.attributes['id'] is not supported. "
+                    'Use Node.id_list instead.',
+                ),
+        ):
+            d.attributes['id'] = 'foo'
 
-    with pytest.raises(
-            RuntimeError,
-            match=re.escape(
-                "Node.attributes['id'] is not supported. "
-                'Use Node.id_list instead.',
-            ),
-    ):
-        d.attributes['id'] = 'foo'
+    def test_empty_dict_is_false(self):
+        d = Div()
 
-    # comparisons #############################################################
-    d = Div()
+        assert not bool(d.attributes)
 
-    assert not bool(d.attributes)
+    def test_non_empty_dict_is_true(self):
+        d = Div(foo='foo')
 
-    d.attributes['foo'] = 'foo'
+        assert bool(d.attributes)
 
-    assert bool(d.attributes)
+    def test_pop_existing_key(self):
+        d = Div(foo='foo-val', bar='bar-val')
+        assert 'foo' in d.attributes
 
+        val = d.attributes.pop('foo')
 
-def test_attribute_dict_pop():
-    from lona.html import Div
+        assert val == 'foo-val'
+        assert 'foo' not in d.attributes
 
-    d = Div(foo='foo-val', bar='bar-val')
+    def test_pop_unknown_key(self):
+        d = Div(foo='foo-val', bar='bar-val')
+        assert 'xxx' not in d.attributes
 
-    assert 'foo' in d.attributes
-    assert d.attributes.pop('foo') == 'foo-val'
-    assert 'foo' not in d.attributes
+        with pytest.raises(KeyError, match='xxx'):
+            d.attributes.pop('xxx')
+        assert 'xxx' not in d.attributes
 
-    assert 'xxx' not in d.attributes
-    with pytest.raises(KeyError, match='xxx'):
-        d.attributes.pop('xxx')
-    assert 'xxx' not in d.attributes
+    def test_pop_unknown_key_with_default(self):
+        d = Div(foo='foo-val', bar='bar-val')
+        assert 'xxx' not in d.attributes
 
-    assert d.attributes.pop('xxx', 'yyy') == 'yyy'
-    assert 'xxx' not in d.attributes
+        val = d.attributes.pop('xxx', 'yyy')
 
-    assert 'bar' in d.attributes
-    assert d.attributes.pop('bar', 'yyy') == 'bar-val'
-    assert 'bar' not in d.attributes
+        assert val == 'yyy'
+        assert 'xxx' not in d.attributes
 
-    with pytest.raises(
-            TypeError,
-            match='pop expected at most 2 arguments, got 3'
-    ):
-        d.attributes.pop('xxx', 'yyy', 'zzz')
+    def test_pop_existing_key_with_default(self):
+        d = Div(foo='foo-val', bar='bar-val')
+        assert 'bar' in d.attributes
 
+        val = d.attributes.pop('bar', 'yyy')
 
-def test_attribute_dict_del():
-    from lona.html import Div
+        assert val == 'bar-val'
+        assert 'bar' not in d.attributes
 
-    d = Div(foo='foo-val', bar='bar-val')
+    def test_pop_expects_at_most_2_arguments(self):
+        d = Div(foo='foo-val', bar='bar-val')
 
-    assert 'foo' in d.attributes
-    del d.attributes['foo']
-    assert 'foo' not in d.attributes
+        with pytest.raises(
+                TypeError,
+                match='pop expected at most 2 arguments, got 3'
+        ):
+            d.attributes.pop('xxx', 'yyy', 'zzz')
 
-    assert 'xxx' not in d.attributes
-    del d.attributes['xxx']
-    assert 'xxx' not in d.attributes
+    def test_del_existing_key(self):
+        d = Div(foo='foo-val', bar='bar-val')
+        assert 'foo' in d.attributes
 
+        del d.attributes['foo']
 
-def test_attribute_list():
-    from lona.html import Div
+        assert 'foo' not in d.attributes
 
-    # init ####################################################################
-    # id
-    d = Div()
+    def test_del_unknown_key(self):
+        d = Div(foo='foo-val', bar='bar-val')
+        assert 'xxx' not in d.attributes
 
-    assert d.id_list == []
+        del d.attributes['xxx']
 
-    d = Div(_id=['foo', 'bar'])
+        assert 'xxx' not in d.attributes
 
-    assert d.id_list == ['foo', 'bar']
 
-    d = Div(_id='foo bar')
+@pytest.mark.incremental()
+class TestAttributeList:
+    def test_default_id_list_is_empty(self):
+        d = Div()
 
-    assert d.id_list == ['foo', 'bar']
+        assert d.id_list == []
 
-    d = Div(**{'id': 'foo bar'})
+    def test_initial_id_can_be_list(self):
+        d = Div(_id=['foo', 'bar'])
 
-    assert d.id_list == ['foo', 'bar']
+        assert d.id_list == ['foo', 'bar']
 
-    # class
-    d = Div()
+    def test_initial_id_can_be_space_separated_str(self):
+        d = Div(_id='foo bar')
 
-    assert d.class_list == []
+        assert d.id_list == ['foo', 'bar']
 
-    d = Div(_class=['foo', 'bar'])
+    def test_initial_id_can_be_passed_via_kwargs(self):
+        d = Div(**{'id': 'foo bar'})
 
-    assert d.class_list == ['foo', 'bar']
+        assert d.id_list == ['foo', 'bar']
 
-    d = Div(_class='foo bar')
+    def test_default_class_list_is_empty(self):
+        d = Div()
 
-    assert d.class_list == ['foo', 'bar']
+        assert d.class_list == []
 
-    d = Div(**{'class': 'foo bar'})
+    def test_initial_class_can_be_list(self):
+        d = Div(_class=['foo', 'bar'])
 
-    assert d.class_list == ['foo', 'bar']
+        assert d.class_list == ['foo', 'bar']
 
-    # reset ###################################################################
-    # id
-    d = Div()
+    def test_initial_class_can_be_space_separated_str(self):
+        d = Div(_class='foo bar')
 
-    d.id_list = ['foo', 'bar']
+        assert d.class_list == ['foo', 'bar']
 
-    assert d.id_list == ['foo', 'bar']
+    def test_initial_class_can_be_passed_via_kwargs(self):
+        d = Div(**{'class': 'foo bar'})
 
-    # class
-    d = Div()
+        assert d.class_list == ['foo', 'bar']
 
-    d.class_list = ['foo', 'bar']
+    def test_set_id_list(self):
+        d = Div()
 
-    assert d.class_list == ['foo', 'bar']
+        d.id_list = ['foo', 'bar']
 
-    # value errors ############################################################
-    with pytest.raises(
-            ValueError,
-            match='id has to be string or list of strings',
-    ):
-        d = Div(_id={})
+        assert d.id_list == ['foo', 'bar']
 
-    with pytest.raises(ValueError, match="unsupported type: <class 'dict'>"):
-        d.id_list = {}
+    def test_set_class_list(self):
+        d = Div()
 
-    with pytest.raises(ValueError, match="unsupported type: <class 'list'>"):
-        d.id_list = [{}]
+        d.class_list = ['foo', 'bar']
 
-    # len #####################################################################
-    d = Div()
+        assert d.class_list == ['foo', 'bar']
 
-    assert len(d.id_list) == 0
+    def test_initial_id_cant_be_dict(self):
+        with pytest.raises(
+                ValueError,
+                match='id has to be string or list of strings',
+        ):
+            Div(_id={})
 
-    d = Div(_id='foo bar')
+    def test_cant_set_dict(self):
+        d = Div()
 
-    assert len(d.id_list) == 2
+        with pytest.raises(
+                ValueError,
+                match="unsupported type: <class 'dict'>",
+        ):
+            d.id_list = {}
 
-    # comparisons #############################################################
-    d = Div(_id='foo bar')
+    def test_cant_set_list_with_dict(self):
+        d = Div()
 
-    assert d.id_list != []
-    assert d.id_list != ['foo', 'bar', 'baz']
-    assert d.id_list == ['foo', 'bar']
-    assert d.id_list == ['bar', 'foo']
-    assert d.id_list == ['foo', 'bar', 'foo', 'bar']
+        with pytest.raises(
+                ValueError,
+                match="unsupported type: <class 'list'>",  # TODO: fix typo in the next PR should be 'dict'  # NOQA: E501
+        ):
+            d.id_list = [{}]
 
-    assert 'foo' in d.id_list
-    assert 'bar' in d.id_list
-    assert 'baz' not in d.id_list
+    def test_default_list_has_zero_len(self):
+        d = Div()
 
-    d = Div(_id='foo')
+        assert len(d.id_list) == 0
 
-    assert bool(d.id_list)
+    def test_len_returns_number_of_elements(self):
+        d = Div(_id='foo bar')
 
-    d = Div()
+        assert len(d.id_list) == 2
 
-    assert not bool(d.id_list)
+    def test_non_equality(self):
+        d = Div(_id='foo bar')
 
-    # add #####################################################################
-    d = Div()
+        assert d.id_list != []
+        assert d.id_list != ['foo', 'bar', 'baz']
 
-    d.id_list.add('foo')
+    def test_equality_ignores_order(self):
+        d = Div(_id='foo bar')
 
-    assert d.id_list == ['foo']
+        assert d.id_list == ['bar', 'foo']
 
-    d = Div()
+    def test_equality_ignored_duplicates(self):
+        d = Div(_id='foo bar')
 
-    d.id_list.add('foo')
-    d.id_list.add('foo')
+        assert d.id_list == ['foo', 'bar', 'foo', 'bar']
 
-    assert d.id_list == ['foo']
+    def test_in_keyword(self):
+        d = Div(_id='foo bar')
 
-    d = Div()
+        assert 'foo' in d.id_list
+        assert 'bar' in d.id_list
+        assert 'baz' not in d.id_list
 
-    with pytest.raises(ValueError, match="unsupported type: <class 'dict'>"):
-        d.id_list.add({})
+    def test_non_empty_list_is_true(self):
+        d = Div(_id='foo')
 
-    # extend ##################################################################
-    d = Div(_id='foo')
+        assert bool(d.id_list)
 
-    d.id_list.extend(['bar', 'baz'])
+    def test_empty_list_is_false(self):
+        d = Div()
 
-    assert d.id_list == ['foo', 'bar', 'baz']
+        assert not bool(d.id_list)
 
-    d = Div(_id='foo')
+    def test_add_one_element(self):
+        d = Div()
 
-    d.id_list.extend(['foo', 'bar', 'baz'])
+        d.id_list.add('foo')
 
-    assert d.id_list == ['foo', 'bar', 'baz']
+        assert d.id_list == ['foo']
 
-    # remove ##################################################################
-    d = Div(_id='foo bar')
+    def test_add_existing_element_does_nothing(self):
+        d = Div()
+        d.id_list.add('foo')
 
-    d.id_list.remove('foo')
+        d.id_list.add('foo')
 
-    assert d.id_list == ['bar']
+        assert d.id_list == ['foo']
 
-    d.id_list.remove('foo')
+    def test_cant_add_dict(self):
+        d = Div()
 
-    assert d.id_list == ['bar']
+        with pytest.raises(
+                ValueError,
+                match="unsupported type: <class 'dict'>",
+        ):
+            d.id_list.add({})
 
-    # clear ###################################################################
-    d = Div(_id='foo bar')
+    def test_extend(self):
+        d = Div(_id='foo')
 
-    d.id_list.clear()
+        d.id_list.extend(['bar', 'baz'])
 
-    assert d.id_list == []
+        assert d.id_list == ['foo', 'bar', 'baz']
 
-    d = Div()
+    def test_extend_ignores_duplicates(self):
+        d = Div(_id='foo')
 
-    d.id_list.clear()
+        d.id_list.extend(['foo', 'bar', 'baz'])
 
-    assert d.id_list == []
+        assert d.id_list == ['foo', 'bar', 'baz']
 
-    # toggle ##################################################################
-    d = Div(_id='foo bar')
+    def test_remove_existing_element(self):
+        d = Div(_id='foo bar')
 
-    d.id_list.toggle('foo')
+        d.id_list.remove('foo')
 
-    assert d.id_list == ['bar']
+        assert d.id_list == ['bar']
 
-    d.id_list.toggle('foo')
+    def test_remove_unknown_element(self):
+        d = Div(_id='bar')
 
-    assert d.id_list == ['foo', 'bar']
+        d.id_list.remove('foo')
 
+        assert d.id_list == ['bar']
 
-def test_html_strings():
-    from lona.html import (
-        NumberInput,
-        TextInput,
-        CheckBox,
-        TextArea,
-        Button,
-        Select,
-        Submit,
-        HTML,
-        Node,
+    def test_clear(self):
+        d = Div(_id='foo bar')
+
+        d.id_list.clear()
+
+        assert d.id_list == []
+
+    def test_clear_empty_list(self):
+        d = Div()
+
+        d.id_list.clear()
+
+        assert d.id_list == []
+
+    def test_toggle_existing_element(self):
+        d = Div(_id='foo bar')
+
+        d.id_list.toggle('foo')
+
+        assert d.id_list == ['bar']
+
+    def test_toggle_unknown_element(self):
+        d = Div(_id='bar')
+
+        d.id_list.toggle('foo')
+
+        assert d.id_list == ['foo', 'bar']
+
+
+@pytest.mark.incremental()
+class TestHTMLFromStr:
+    def test_empty_node(self):
+        node = HTML('<div></div>')[0]
+
+        assert node.tag_name == 'div'
+        assert node.id_list == []
+        assert node.class_list == []
+        assert node.style == {}
+        assert node.attributes == {}
+        assert node.nodes == []
+
+    def test_node_with_attributes(self):
+        node = HTML("""
+            <div id="foo" class="bar" style="color: black" foo="bar">
+            </div>
+        """)[0]
+
+        assert node.tag_name == 'div'
+        assert node.id_list == ['foo']
+        assert node.class_list == ['bar']
+        assert node.style == {'color': 'black'}
+        assert node.attributes == {'foo': 'bar'}
+        assert node.nodes == []
+
+    def test_sub_nodes(self):
+        node = HTML("""
+            <div>
+                <span></span>
+                <div></div>
+                <h1></h1>
+            </div>
+        """)[0]
+
+        assert node.tag_name == 'div'
+        assert len(node.nodes) == 3
+        assert node.nodes[0].tag_name == 'span'
+        assert node.nodes[1].tag_name == 'div'
+        assert node.nodes[2].tag_name == 'h1'
+
+    def test_multiple_ids(self):
+        node = HTML('<div id="foo bar baz"></div>')[0]
+
+        assert node.id_list == ['foo', 'bar', 'baz']
+
+    def test_multiple_classes(self):
+        node = HTML('<div class="foo bar baz"></div>')[0]
+
+        assert node.class_list == ['foo', 'bar', 'baz']
+
+    def test_multiple_styles(self):
+        node = HTML('<div style="color: black; display: block"></div>')[0]
+
+        assert node.style == {
+            'color': 'black',
+            'display': 'block',
+        }
+
+    def test_multiple_attributes(self):
+        node = HTML('<div foo="bar" bar="baz"></div>')[0]
+
+        assert node.attributes == {
+            'foo': 'bar',
+            'bar': 'baz',
+        }
+
+    def test_high_level_nodes(self):
+        node = HTML('<button>Click me</button>')[0]
+
+        assert type(node) is Button
+
+    def test_boolean_property_without_value(self):
+        node = HTML('<button disabled>Click me</button>')[0]
+
+        assert node.disabled
+
+    def test_boolean_property_with_value(self):
+        node = HTML('<button disabled="true">Click me</button>')[0]
+
+        assert node.disabled
+
+    def test_default_input_type_is_text(self):
+        node = HTML('<input value="abc"/>')[0]
+
+        assert type(node) is TextInput
+        assert node.value == 'abc'
+        assert node.disabled is False
+
+    def test_input_type_text(self):
+        node = HTML('<input type="text" value="xyz" disabled/>')[0]
+
+        assert type(node) is TextInput
+        assert node.value == 'xyz'
+        assert node.disabled is True
+
+    def test_input_type_unknown(self):
+        node = HTML('<input type="unknown"/>')[0]
+
+        assert type(node) is Node
+
+    @pytest.mark.parametrize(
+        'tp',
+        [
+            'button',
+            'color',
+            'date',
+            'datetime-local',
+            'email',
+            'file',
+            'hidden',
+            'image',
+            'month',
+            'password',
+            'radio',
+            'range',
+            'reset',  # intentionally, see 575dcf635180 ("html: remove Reset node")  # NOQA: E501
+            'search',
+            'tel',
+            'time',
+            'url',
+            'week',
+        ],
     )
+    def test_not_implemented_input_types(self, tp):
+        node = HTML(f'<input type="{tp}"/>')[0]
 
-    # empty node ##############################################################
-    node = HTML('<div></div>')[0]
+        assert type(node) is Node
 
-    assert node.tag_name == 'div'
-    assert node.id_list == []
-    assert node.class_list == []
-    assert node.style == {}
-    assert node.attributes == {}
-    assert node.nodes == []
+    def test_input_type_number(self):
+        node = HTML('<input type="number" value="123.5"/>')[0]
 
-    # node with attributes ####################################################
-    node = HTML("""
-        <div id="foo" class="bar" style="color: black" foo="bar">
-        </div>
-    """)[0]
+        assert type(node) is NumberInput
+        assert node.value == 123.5
 
-    assert node.tag_name == 'div'
-    assert node.id_list == ['foo']
-    assert node.class_list == ['bar']
-    assert node.style == {'color': 'black'}
-    assert node.attributes == {'foo': 'bar'}
-    assert node.nodes == []
+    def test_input_type_checkbox(self):
+        node = HTML('<input type="checkbox"/>')[0]
 
-    # sub nodes ###############################################################
-    node = HTML("""
-        <div>
-            <span></span>
-            <div></div>
-            <h1></h1>
-        </div>
-    """)[0]
+        assert type(node) is CheckBox
+        assert node.value is False
 
-    assert node.tag_name == 'div'
-    assert len(node.nodes) == 3
-    assert node.nodes[0].tag_name == 'span'
-    assert node.nodes[1].tag_name == 'div'
-    assert node.nodes[2].tag_name == 'h1'
+    def test_input_type_checkbox_checked(self):
+        node = HTML('<input type="checkbox" checked/>')[0]
 
-    # multiple ids ############################################################
-    node = HTML('<div id="foo bar baz"></div>')[0]
+        assert type(node) is CheckBox
+        assert node.value is True
 
-    assert node.id_list == ['foo', 'bar', 'baz']
+    def test_input_type_submit(self):
+        node = HTML('<input type="submit"/>')[0]
 
-    # multiple classes ########################################################
-    node = HTML('<div class="foo bar baz"></div>')[0]
+        assert type(node) is Submit
 
-    assert node.class_list == ['foo', 'bar', 'baz']
+    def test_textarea(self):
+        node = HTML('<textarea>abc</textarea>')[0]
 
-    # multiple css rules ######################################################
-    node = HTML('<div style="color: black; display: block"></div>')[0]
+        assert type(node) is TextArea
+        assert node.value == 'abc'
 
-    assert node.style == {
-        'color': 'black',
-        'display': 'block',
-    }
+    def test_textarea_with_self_closing_tag_inside(self):
+        textarea = HTML('<textarea>abc<br/>xyz</textarea>')[0]
 
-    # multiple attributes #####################################################
-    node = HTML('<div foo="bar" bar="baz"></div>')[0]
+        assert textarea.value == 'abc<br/>xyz'
 
-    assert node.attributes == {
-        'foo': 'bar',
-        'bar': 'baz',
-    }
+    def test_textarea_with_pair_tag_inside(self):
+        textarea = HTML('<textarea>aaa <b>bbb</b> ccc</textarea>')[0]
 
-    # high level nodes ########################################################
-    node = HTML('<button>Click me</button>')[0]
+        assert textarea.value == 'aaa <b>bbb</b> ccc'
 
-    assert type(node) is Button
+    def test_select(self):
+        node = HTML("""
+            <select>
+                <option value="1">a</option>
+                <option value="2" selected>b</option>
+            </select>
+        """)[0]
 
-    # boolean properties ######################################################
-    node = HTML('<button disabled>Click me</button>')[0]
-
-    assert node.disabled
-
-    node = HTML('<button disabled="true">Click me</button>')[0]
-
-    assert node.disabled
-
-    # data binding nodes ######################################################
-    node = HTML('<input value="abc"/>')[0]  # default type is text
-
-    assert type(node) is TextInput
-    assert node.value == 'abc'
-    assert node.disabled is False
-
-    node = HTML('<input type="text" value="xyz" disabled/>')[0]
-
-    assert type(node) is TextInput
-    assert node.value == 'xyz'
-    assert node.disabled is True
-
-    node = HTML('<input type="unknown"/>')[0]
-
-    assert type(node) is Node
-
-    not_implemented_types = [
-        'button',
-        'color',
-        'date',
-        'datetime-local',
-        'email',
-        'file',
-        'hidden',
-        'image',
-        'month',
-        'password',
-        'radio',
-        'range',
-        'reset',  # intentionally, see 575dcf635180 ("html: remove Reset node")
-        'search',
-        'tel',
-        'time',
-        'url',
-        'week',
-    ]
-
-    for tp in not_implemented_types:
-        assert type(HTML(f'<input type="{tp}"/>')[0]) is Node
-
-    node = HTML('<input type="number" value="123.5"/>')[0]
-
-    assert type(node) is NumberInput
-    assert node.value == 123.5
-
-    node = HTML('<input type="checkbox"/>')[0]
-
-    assert type(node) is CheckBox
-    assert node.value is False
-
-    node = HTML('<input type="checkbox" checked/>')[0]
-
-    assert type(node) is CheckBox
-    assert node.value is True
-
-    node = HTML('<input type="submit"/>')[0]
-
-    assert type(node) is Submit
-
-    node = HTML('<textarea>abc</textarea>')[0]
-
-    assert type(node) is TextArea
-    assert node.value == 'abc'
-
-    node = HTML("""
-        <select>
-            <option value="1">a</option>
-            <option value="2" selected>b</option>
-        </select>
-    """)[0]
-
-    assert type(node) == Select
-    assert node.value == '2'
-
-
-def test_textarea_strings():
-    from lona.html import HTML
-
-    textarea = HTML('<textarea>abc<br/>xyz</textarea>')[0]
-
-    assert textarea.value == 'abc<br/>xyz'
-
-    textarea = HTML('<textarea>aaa <b>bbb</b> ccc</textarea>')[0]
-
-    assert textarea.value == 'aaa <b>bbb</b> ccc'
+        assert type(node) == Select
+        assert node.value == '2'
