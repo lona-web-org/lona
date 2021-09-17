@@ -1,4 +1,4 @@
-import __main__
+import __main__  # isort: skip
 
 from pprint import pformat
 import traceback
