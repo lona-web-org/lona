@@ -3,17 +3,15 @@
 from tempfile import TemporaryDirectory
 import os
 
-from docutils.parsers.rst import Directive, directives
-from docutils.nodes import raw
-
+from pygments.styles import get_style_by_name, get_all_styles
 from pygments.lexers import get_lexer_by_name, guess_lexer
-from pygments.styles import get_all_styles, get_style_by_name
+from docutils.parsers.rst import directives, Directive
+from flamingo.plugins.rst import register_directive
 from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
 from pygments.token import Token
 from pygments import highlight
-
-from flamingo.plugins.rst import register_directive
+from docutils.nodes import raw
 
 
 def code_block(context):

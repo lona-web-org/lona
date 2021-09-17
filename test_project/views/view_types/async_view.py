@@ -1,6 +1,6 @@
 import asyncio
 
-from lona.html import HTML, Br, H2, Div, Button
+from lona.html import Button, Div, Br, HTML, H2
 from lona.view import LonaView
 
 

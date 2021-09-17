@@ -1,7 +1,7 @@
 import random
 
-from lona.html import HTML, H1, Button
-from lona import LonaApp, LonaView
+from lona.html import Button, HTML, H1
+from lona import LonaView, LonaApp
 
 from lona_chartjs import Chart
 

@@ -1,6 +1,6 @@
+from typing import List, Dict
 import threading
 import asyncio
-from typing import Dict, List
 
 from lona.view_runtime import VIEW_RUNTIME_STATE
 from lona.shell.shell import embed_shell

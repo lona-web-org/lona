@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from lona.html import HTML, H2
 from lona.view import LonaView
+from lona.html import HTML, H2
 from lona._json import dumps
 
 

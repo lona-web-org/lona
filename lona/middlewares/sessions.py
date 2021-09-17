@@ -1,5 +1,5 @@
-import random
 import string
+import random
 
 from aiohttp.web import Response
 

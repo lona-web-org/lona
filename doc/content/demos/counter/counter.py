@@ -1,5 +1,5 @@
-from lona.html import HTML, H1, Span, NumberInput, Button
-from lona import LonaApp, LonaView
+from lona.html import NumberInput, Button, Span, HTML, H1
+from lona import LonaView, LonaApp
 
 app = LonaApp(__file__)
 

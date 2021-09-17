@@ -1,5 +1,5 @@
 from lona.html.abstract_node import AbstractNode
-from lona.protocol import OPERATION, PATCH_TYPE
+from lona.protocol import PATCH_TYPE, OPERATION
 from lona.html.text_node import TextNode
 
 

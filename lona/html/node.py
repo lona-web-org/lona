@@ -1,10 +1,10 @@
+from typing import Union, List, Dict
 from textwrap import indent
-from typing import List, Dict, Union
 
-from lona.events import EventType, ChangeEventType
 from lona.html.attribute_dict import AttributeDict, StyleDict
-from lona.html.attribute_list import IDList, ClassList
+from lona.html.attribute_list import ClassList, IDList
 from lona.html.node_event_list import NodeEventList
+from lona.events import ChangeEventType, EventType
 from lona.html.abstract_node import AbstractNode
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE

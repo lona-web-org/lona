@@ -1,12 +1,12 @@
-import asyncio
 import logging
-import signal
+import asyncio
 import socket
+import signal
 import os
 
-from aiohttp.web import Application, run_app
+from aiohttp.web import run_app, Application
 
-from lona.shell.shell import embed_shell, generate_shell_server
+from lona.shell.shell import generate_shell_server, embed_shell
 from lona.worker_pool import WorkerPool
 from lona.logging import setup_logging
 from lona.server import LonaServer

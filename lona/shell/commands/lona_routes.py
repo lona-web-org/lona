@@ -1,6 +1,6 @@
+from rlpython.utils.attribute_table import write_attribute_table
 from rlpython.utils.argument_parser import ReplArgumentParser
 from rlpython.utils.table import write_table
-from rlpython.utils.attribute_table import write_attribute_table
 
 
 class LonaRoutesCommand:

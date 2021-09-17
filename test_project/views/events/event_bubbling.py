@@ -1,15 +1,5 @@
+from lona.html import Widget, Select, Button, Pre, Div, P, HTML, H2
 from lona.view import LonaView
-
-from lona.html import (
-    Select,
-    Widget,
-    Button,
-    HTML,
-    Div,
-    Pre,
-    H2,
-    P,
-)
 
 
 class BubblingWidget(Widget):

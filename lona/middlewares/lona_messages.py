@@ -1,6 +1,6 @@
 import logging
 
-from lona.protocol import PROTOCOL, EXIT_CODE, decode_message
+from lona.protocol import decode_message, EXIT_CODE, PROTOCOL
 
 logger = logging.getLogger('lona.protocol')
 

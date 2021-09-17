@@ -1,4 +1,5 @@
-from typing import Dict, Tuple
+from typing import Tuple, Dict
+
 import pytest
 
 # see https://docs.pytest.org/en/latest/example/simple.html#incremental-testing-test-steps  # NOQA: E501

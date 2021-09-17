@@ -2,7 +2,7 @@ import builtins
 import logging
 import os
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import FileSystemLoader, Environment
 
 logger = logging.getLogger('lona.templating')
 

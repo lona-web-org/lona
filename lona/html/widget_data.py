@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from lona.protocol import OPERATION, PATCH_TYPE
+from lona.protocol import PATCH_TYPE, OPERATION
 
 
 def check_value(value):

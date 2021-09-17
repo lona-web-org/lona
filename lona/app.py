@@ -2,14 +2,14 @@ from tempfile import TemporaryDirectory
 import logging
 import os
 
+from aiohttp.web import Application
+
 from lona.command_line.run_server import run_server
 from lona.logging import setup_logging
 from lona.settings import Settings
 from lona.server import LonaServer
 from lona import default_settings
 from lona.routing import Route
-
-from aiohttp.web import Application
 
 logger = logging.getLogger('lona.app')
 

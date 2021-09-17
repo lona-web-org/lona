@@ -1,15 +1,13 @@
 # source: https://github.com/pengutronix/flamingo/blob/master/doc/plugins/rst_setting.py  # NOQA: E501
 
-from docutils.parsers.rst import Directive, directives
-from docutils.nodes import raw
-
-from pygments.formatters import HtmlFormatter
-from pygments.lexers import get_lexer_by_name
-from pygments import highlight
-
+from docutils.parsers.rst import directives, Directive
 from flamingo.core.utils.imports import acquire
 from flamingo.core.utils.pprint import pformat
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters import HtmlFormatter
 from flamingo.plugins.rst import parse_rst
+from pygments import highlight
+from docutils.nodes import raw
 
 RAW_SETTING_TEMPLATE = """
 <div class="raw-setting">

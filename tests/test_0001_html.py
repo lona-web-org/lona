@@ -5,14 +5,14 @@ import pytest
 from lona.html import (
     NumberInput,
     TextInput,
-    CheckBox,
     TextArea,
-    Button,
-    Select,
+    CheckBox,
     Submit,
-    HTML,
+    Select,
+    Button,
     Node,
     Div,
+    HTML,
 )
 
 

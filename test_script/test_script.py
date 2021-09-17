@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from lona.html import HTML, H1, Div, A
-from lona import LonaApp, LonaView
+from lona.html import Div, A, HTML, H1
+from lona import LonaView, LonaApp
 
 app = LonaApp(__file__)
 

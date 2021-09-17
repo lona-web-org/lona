@@ -1,4 +1,4 @@
-from typing import Tuple, Optional, Dict, Union
+from typing import Optional, Union, Tuple, Dict
 from enum import Enum
 import json
 

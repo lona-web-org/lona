@@ -1,7 +1,6 @@
+from flamingo.plugins.rst import register_directive
 from docutils.parsers.rst import Directive
 from docutils.nodes import raw
-
-from flamingo.plugins.rst import register_directive
 
 GITHUB_RELEASES_BASE_URL = 'https://github.com/lona-web-org/lona/releases/tag/'
 

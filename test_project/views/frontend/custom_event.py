@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import HTML, Div, H2, Widget, Button, Pre, A
+from lona.html import Widget, Button, Pre, Div, A, HTML, H2
 from lona.static_files import Script
 from lona.view import LonaView
 

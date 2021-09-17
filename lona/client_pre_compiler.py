@@ -2,7 +2,7 @@ from tempfile import TemporaryDirectory
 import logging
 import os
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import FileSystemLoader, Environment
 
 from lona.protocol import ENUMS
 from lona._json import dumps

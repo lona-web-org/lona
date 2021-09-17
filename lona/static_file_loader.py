@@ -2,7 +2,7 @@ from copy import copy
 import logging
 import os
 
-from lona.static_files import StaticFile, StyleSheet, Script
+from lona.static_files import StyleSheet, StaticFile, Script
 from lona.html.abstract_node import AbstractNode
 from lona.imports import get_file
 
