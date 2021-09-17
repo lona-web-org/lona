@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import HTML, H2, Br, Div, Pre, Form, TextInput, Button, Submit
+from lona.html import TextInput, Submit, Button, Form, Pre, Div, Br, HTML, H2
 from lona.view import LonaView
 
 

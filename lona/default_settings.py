@@ -1,5 +1,5 @@
-import os
 from typing import List, Dict, Any
+import os
 
 MAX_WORKER_THREADS = 4
 MAX_STATIC_THREADS = 4

@@ -1,19 +1,18 @@
 from pprint import pformat
 
-from lona.view import LonaView
-
 from lona.html import (
     NumberInput,
     TextInput,
-    CheckBox,
     TextArea,
-    Button,
+    CheckBox,
     Select,
-    HTML,
-    Div,
-    H2,
+    Button,
     Pre,
+    Div,
+    HTML,
+    H2,
 )
+from lona.view import LonaView
 
 
 class DataBindingView(LonaView):

@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from lona.html import TextInput, CheckBox, Div, H2, Pre
+from lona.html import TextInput, CheckBox, Pre, Div, H2
 from lona.view import LonaView
 
 

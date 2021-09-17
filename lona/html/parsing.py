@@ -1,7 +1,7 @@
 from html.parser import HTMLParser
-from typing import Dict, Type
-import inspect
+from typing import Type, Dict
 import logging
+import inspect
 
 from lona.html.text_node import TextNode
 from lona.html.node import Node

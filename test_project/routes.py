@@ -1,6 +1,5 @@
 from lona.routing import Route
 
-
 routes = [
     # view types
     Route('/view-types/interactive-view/',

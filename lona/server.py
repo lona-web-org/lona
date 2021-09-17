@@ -1,18 +1,12 @@
 from functools import reduce
 import operator
-import asyncio
 import logging
 import inspect
+import asyncio
 import os
 
+from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
 from aiohttp import WSMsgType
-
-from aiohttp.web import (
-    WebSocketResponse,
-    FileResponse,
-    HTTPFound,
-    Response,
-)
 
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController

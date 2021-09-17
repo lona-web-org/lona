@@ -8,16 +8,6 @@ import time
 
 from yarl import URL
 
-from lona.exceptions import StopReason, ServerStop, UserAbort
-from lona.html.abstract_node import AbstractNode
-from lona.events.input_event import InputEvent
-from lona.unique_ids import generate_unique_id
-from lona.imports import get_object_repr
-from lona.html.document import Document
-from lona.errors import ForbiddenError
-from lona.errors import ClientError
-from lona.request import Request
-
 from lona.protocol import (
     encode_input_event_ack,
     encode_http_redirect,
@@ -27,7 +17,14 @@ from lona.protocol import (
     encode_data,
     DATA_TYPE,
 )
-
+from lona.exceptions import StopReason, ServerStop, UserAbort
+from lona.errors import ForbiddenError, ClientError
+from lona.html.abstract_node import AbstractNode
+from lona.unique_ids import generate_unique_id
+from lona.events.input_event import InputEvent
+from lona.imports import get_object_repr
+from lona.html.document import Document
+from lona.request import Request
 
 logger = logging.getLogger('lona.view_runtime')
 input_events_logger = logging.getLogger('lona.input_events')

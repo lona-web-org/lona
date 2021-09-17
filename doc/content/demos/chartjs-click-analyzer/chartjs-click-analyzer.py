@@ -1,5 +1,5 @@
-from lona.html import HTML, H1, Div, Strong, Button, CLICK
-from lona import LonaApp, LonaView
+from lona.html import Strong, Button, Div, CLICK, HTML, H1
+from lona import LonaView, LonaApp
 
 from lona_chartjs import Chart
 

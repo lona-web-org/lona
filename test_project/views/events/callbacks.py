@@ -1,15 +1,14 @@
 from lona.html import (
+    TextInput,
     TextArea,
     CheckBox,
-    TextInput,
-    Button,
     Select,
-    HTML,
+    Button,
     Div,
-    H2,
     Br,
+    HTML,
+    H2,
 )
-
 from lona import LonaView
 
 

@@ -1,5 +1,5 @@
-import asyncio
 import logging
+import asyncio
 
 logger = logging.getLogger('lona.middlewares')
 

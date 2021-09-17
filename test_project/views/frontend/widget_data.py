@@ -1,4 +1,4 @@
-from lona.html import HTML, Div, H2, Br, Widget, Select, Strong
+from lona.html import Widget, Strong, Select, Div, Br, HTML, H2
 from lona.static_files import Script
 from lona.view import LonaView
 from lona._json import dumps

@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, RawTextHelpFormatter
+from argparse import RawTextHelpFormatter, ArgumentParser
 import logging
 import sys
 import os

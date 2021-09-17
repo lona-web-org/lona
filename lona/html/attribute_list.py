@@ -1,4 +1,4 @@
-from lona.protocol import OPERATION, PATCH_TYPE
+from lona.protocol import PATCH_TYPE, OPERATION
 
 
 class AttributeList:

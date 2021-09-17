@@ -1,6 +1,6 @@
-import asyncio
 import logging
 import inspect
+import asyncio
 
 from lona.view import LonaView
 

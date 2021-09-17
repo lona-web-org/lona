@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any
+from typing import Optional, Dict, Any
 
 from lona.events.event_types import CHANGE
 from lona.html.node import Node
