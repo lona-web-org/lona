@@ -4,7 +4,7 @@ import socket
 import signal
 import os
 
-from aiohttp.web import run_app, Application
+from aiohttp.web import Application, run_app
 
 from lona.shell.shell import generate_shell_server, embed_shell
 from lona.worker_pool import WorkerPool

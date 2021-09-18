@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from lona.html import Div, A, HTML, H1
+from lona.html import HTML, Div, H1, A
 from lona import LonaView, LonaApp
 
 app = LonaApp(__file__)

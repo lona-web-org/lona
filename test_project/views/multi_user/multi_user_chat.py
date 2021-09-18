@@ -1,4 +1,4 @@
-from lona.html import TextArea, Button, Div, Hr, HTML, H2, H1
+from lona.html import TextArea, Button, HTML, Div, Hr, H2, H1
 from lona.view import LonaView
 
 

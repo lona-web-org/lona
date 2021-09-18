@@ -1,6 +1,6 @@
 import numpy
 
-from lona.html import NumberInput, Button, Span, Div, CLICK, HTML, H1
+from lona.html import NumberInput, Button, CLICK, Span, HTML, Div, H1
 from lona import LonaView, LonaApp
 
 app = LonaApp(__file__)

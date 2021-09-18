@@ -1,4 +1,4 @@
-from lona.html import Strong, THead, TBody, Table, Tr, Th, Td, HTML, H1
+from lona.html import Strong, THead, TBody, Table, HTML, Tr, Th, Td, H1
 from lona import LonaView, LonaApp
 
 from lona_bootstrap_5 import (

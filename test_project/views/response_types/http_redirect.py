@@ -1,4 +1,4 @@
-from lona.html import Strong, Div, P, H2
+from lona.html import Strong, Div, H2, P
 from lona.view import LonaView
 
 
