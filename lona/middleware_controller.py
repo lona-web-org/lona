@@ -90,7 +90,7 @@ class MiddlewareController:
                     )
 
                 self.hooks[hook_name].append(
-                    (middleware, hook, ),
+                    (middleware, hook),
                 )
 
                 logger.debug('%s.%s discovered', middleware, hook_name)

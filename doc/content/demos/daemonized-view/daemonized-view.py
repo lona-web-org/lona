@@ -30,11 +30,11 @@ class DaemonView(LonaView):
                         'backgroundColor': 'red',
                         'borderColor': 'red',
                     },
-                ]
+                ],
             },
             'options': {
                 'responsive': False,
-            }
+            },
         })
 
         points = chart.data['data']['datasets'][0]['data']

@@ -65,7 +65,7 @@ class MultiUserChat(LonaView):
             Hr(),
 
             self.text_area,
-            Button('Send', _id='send')
+            Button('Send', _id='send'),
         )
 
         for view_object in self.iter_objects():
@@ -79,7 +79,7 @@ class MultiUserChat(LonaView):
             self.show(self.html)
             self.await_click()
 
-            message = (str(self.request.user), self.text_area.value, )
+            message = (str(self.request.user), self.text_area.value)
 
             with self.state.lock:
                 self.state['messages'].append(

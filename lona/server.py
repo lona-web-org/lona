@@ -64,7 +64,7 @@ class LonaServer:
             self.settings_paths.append(
                 os.path.normpath(
                     os.path.join(self.project_root, path),
-                )
+                ),
             )
 
         self.settings = Settings()

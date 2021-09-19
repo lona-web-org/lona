@@ -307,7 +307,7 @@ class ViewRuntime:
                 view.handle_request(
                     self.request,
                     exception=exception,
-                )
+                ),
             )
 
         # 500 Internal Error
@@ -330,7 +330,7 @@ class ViewRuntime:
                 view.handle_request(
                     self.request,
                     exception=exception,
-                )
+                ),
             )
 
         finally:
@@ -395,7 +395,7 @@ class ViewRuntime:
             view.handle_request(
                 self.request,
                 exception=exception,
-            )
+            ),
         )
 
         self.send_view_stop()
@@ -403,7 +403,7 @@ class ViewRuntime:
     # connection management ###################################################
     def add_connection(self, connection, window_id, url):
         with self.document.lock:
-            self.connections[connection] = (window_id, url, )
+            self.connections[connection] = (window_id, url)
 
             data_type, data = self.document.serialize()
 
@@ -412,17 +412,17 @@ class ViewRuntime:
 
             self.send_data(
                 data=[data_type, data],
-                connections={connection: (window_id, url, )},
+                connections={connection: (window_id, url)},
             )
 
     def reconnect_connection(self, connection, window_id, url):
         with self.document.lock:
-            self.connections[connection] = (window_id, url, )
+            self.connections[connection] = (window_id, url)
 
             self.send_view_start(
                 connections={
                     connection: (window_id, url),
-                }
+                },
             )
 
             data_type, data = self.document.serialize()
@@ -432,7 +432,7 @@ class ViewRuntime:
 
             self.send_data(
                 data=[data_type, data],
-                connections={connection: (window_id, url, )},
+                connections={connection: (window_id, url)},
             )
 
     def remove_connection(self, connection, window_id=None):
@@ -655,7 +655,7 @@ class ViewRuntime:
                     window_id=self.connections[connection][0],
                     view_runtime_id=self.view_runtime_id,
                     input_event_id=payload[0],
-                )
+                ),
             )
 
             # input event root handler

@@ -24,7 +24,7 @@ class BubblingWidget(Widget):
 
     def handle_input_event(self, input_event):
         self.view.print(
-            f'>> Widget({self.text}).handle_input_event({input_event!r})'
+            f'>> Widget({self.text}).handle_input_event({input_event!r})',
         )
 
         if self.view.select.value != self.text:
@@ -44,7 +44,7 @@ class EventBubblingView(LonaView):
                         ('Widget 1', 'Widget 1'),
                         ('Widget 2', 'Widget 2'),
                         ('Widget 3', 'Widget 3'),
-                    ]
+                    ],
                 ),
             ),
 
@@ -65,9 +65,9 @@ class EventBubblingView(LonaView):
                     BubblingWidget(
                         self,
                         'Widget 3',
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         )
 
         self.select = html.query_selector('select')

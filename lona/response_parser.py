@@ -52,7 +52,7 @@ class ResponseParser:
                 raise RuntimeError(
                     'response dicts have to contain exactly one keyword of: {}'.format(  # NOQA: E501
                         ', '.join(key_words),
-                    )
+                    ),
                 )
 
             # find keys

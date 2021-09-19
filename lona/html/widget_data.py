@@ -424,7 +424,7 @@ class WidgetData:
                     operation=OPERATION.RESET,
                     payload=[
                         [],
-                        deepcopy(value)
+                        deepcopy(value),
                     ],
                 )
 
@@ -432,14 +432,14 @@ class WidgetData:
                 self._overlay = ListOverlay(
                     widget_data=self,
                     key_path=[],
-                    original_data=self._data
+                    original_data=self._data,
                 )
 
             elif isinstance(value, dict):
                 self._overlay = DictOverlay(
                     widget_data=self,
                     key_path=[],
-                    original_data=self._data
+                    original_data=self._data,
                 )
 
     def _serialize(self):

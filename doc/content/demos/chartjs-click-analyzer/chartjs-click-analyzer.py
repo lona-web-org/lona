@@ -31,7 +31,7 @@ class ChartjsClickAnalyzerView(LonaView):
                             'background-color': 'lightgrey',
                         },
                         events=[CLICK],
-                    )
+                    ),
                 ],
             ),
 
@@ -81,16 +81,16 @@ class ChartjsClickAnalyzerView(LonaView):
                             'backgroundColor': 'blue',
                             'borderColor': 'blue',
                         },
-                    ]
+                    ],
                 },
                 'options': {
                     'responsive': False,
                     'scales': {
                         'y': {
                             'beginAtZero': True,
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             })
 
             chart.width = '500px'

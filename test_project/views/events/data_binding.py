@@ -101,5 +101,5 @@ class DataBindingView(LonaView):
                         'select': select.value,
                         'select_multiple': select_multiple.value,
                         'text_area': text_area.value,
-                    })
+                    }),
                 )

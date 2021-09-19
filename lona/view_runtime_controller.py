@@ -212,7 +212,7 @@ class ViewRuntimeController:
             views_logger.debug('removing previous runtime')
 
             self.server.view_runtime_controller.remove_view_runtime(
-                view_runtime=running_view_runtime
+                view_runtime=running_view_runtime,
             )
 
         # start nev runtime

@@ -167,7 +167,7 @@ class StaticFileLoader:
             self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
             {
                 'stylesheets': [i for i in self.node_stylesheets if i.enabled],
-            }
+            },
         )
 
         # scripts
@@ -175,7 +175,7 @@ class StaticFileLoader:
             self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
                 'scripts': [i for i in self.node_scripts if i.enabled],
-            }
+            },
         )
 
     def resolve_path(self, path):
