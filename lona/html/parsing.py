@@ -185,4 +185,9 @@ def html_string_to_node_list(html_string, use_high_level_nodes=True,
     html_parser.set_current_node(root_node)
     html_parser.feed(html_string)
 
+    if html_parser._node is not root_node:
+        raise ValueError(
+            f'Invalid html: missing end tag </{html_parser._node.tag_name}>',
+        )
+
     return list(root_node.nodes)

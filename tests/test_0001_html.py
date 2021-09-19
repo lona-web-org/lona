@@ -413,6 +413,13 @@ class TestHTMLFromStr:
 
         assert node.disabled
 
+    def test_missing_end_tag(self):
+        with pytest.raises(
+                ValueError,
+                match='Invalid html: missing end tag </span>',
+        ):
+            HTML('<span>')
+
     def test_default_input_type_is_text(self):
         node = HTML('<input value="abc"/>')[0]
 
