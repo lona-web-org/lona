@@ -120,7 +120,12 @@ class NodeHTMLParser(HTMLParser):
         # generic nodes
         return Node
 
-    def handle_starttag(self, tag, attrs):
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs, self_closing=True)
+
+    def handle_starttag(self, tag, attrs, self_closing=False):
+        self_closing = self_closing or tag in SELF_CLOSING_TAGS
+
         # node attributes
         node_attributes = {}
 
@@ -134,7 +139,7 @@ class NodeHTMLParser(HTMLParser):
         node_kwargs = {}
 
         node_kwargs['tag_name'] = tag
-        node_kwargs['self_closing_tag'] = tag in SELF_CLOSING_TAGS
+        node_kwargs['self_closing_tag'] = self_closing
 
         # setup node
         for key in ('id', 'class', 'style'):
@@ -149,7 +154,8 @@ class NodeHTMLParser(HTMLParser):
 
         # setup node
         self._node.append(node)
-        self.set_current_node(node)
+        if not self_closing:
+            self.set_current_node(node)
 
     def handle_data(self, data):
         text = data

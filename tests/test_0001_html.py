@@ -441,6 +441,30 @@ class TestHTMLFromStr:
         ):
             HTML('</span>')
 
+    def test_self_closing_tag_with_slash(self):
+        img = HTML('<div><img src="abc"/></div>')[0].nodes[0]
+
+        assert img.tag_name == 'img'
+        assert img.self_closing_tag is True
+
+    def test_self_closing_tag_without_slash(self):
+        img = HTML('<div><img src="abc"></div>')[0].nodes[0]
+
+        assert img.tag_name == 'img'
+        assert img.self_closing_tag is True
+
+    def test_non_self_closing_tag(self):
+        div = HTML('<div></div>')[0]
+
+        assert div.tag_name == 'div'
+        assert div.self_closing_tag is False
+
+    def test_non_self_closing_tag_with_slash(self):
+        span = HTML('<div><span/></div>')[0].nodes[0]
+
+        assert span.tag_name == 'span'
+        assert span.self_closing_tag is True
+
     def test_default_input_type_is_text(self):
         node = HTML('<input value="abc"/>')[0]
 
