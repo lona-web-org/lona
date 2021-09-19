@@ -413,6 +413,27 @@ class TestHTMLFromStr:
 
         assert node.disabled
 
+    def test_wrong_end_tag(self):
+        with pytest.raises(
+                ValueError,
+                match='Invalid html: </div> expected, </span> received',
+        ):
+            HTML('<p><div>abc</span></p>')
+
+    def test_end_tag_without_start_tag(self):
+        with pytest.raises(
+                ValueError,
+                match='Invalid html: missing start tag for </span>',
+        ):
+            HTML('<div>abc</div></span>')
+
+    def test_missing_start_tag(self):
+        with pytest.raises(
+                ValueError,
+                match='Invalid html: missing start tag for </span>',
+        ):
+            HTML('</span>')
+
     def test_default_input_type_is_text(self):
         node = HTML('<input value="abc"/>')[0]
 

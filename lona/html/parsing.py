@@ -169,6 +169,15 @@ class NodeHTMLParser(HTMLParser):
             self._node.append(TextNode(text))
 
     def handle_endtag(self, tag):
+        if self._node.parent is None:
+            raise ValueError(
+                f'Invalid html: missing start tag for </{tag}>',
+            )
+        if tag != self._node.tag_name:
+            raise ValueError(
+                f'Invalid html: </{self._node.tag_name}> expected, </{tag}> received',  # NOQA: E501
+            )
+
         self.set_current_node(self._node.parent)
 
 
