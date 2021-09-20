@@ -184,17 +184,22 @@ class Img(Node):
 class A(Node):
     TAG_NAME = 'a'
 
-    def __init__(self, *args, interactive=False, **kwargs):
+    def __init__(self, *args, interactive=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.interactive = interactive
+
+        # This is necessary because 'interactive' uses 'ignore' internally.
+        # If interactive were set to True by default ignore=True wouldn't
+        # work as expected.
+        if interactive is not None:
+            self.interactive = interactive
 
     @property
     def interactive(self):
-        return self.ignore
+        return not self.ignore
 
     @interactive.setter
     def interactive(self, value):
-        self.ignore = value
+        self.ignore = not value
 
     def set_href(self, href):
         self.attributes['href'] = str(href)
