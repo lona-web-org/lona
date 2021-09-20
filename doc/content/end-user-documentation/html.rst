@@ -271,6 +271,20 @@ Node.get_text()
     Returns a concatenated string of all sub nodes, without HTML syntax.
 
 
+Links
+~~~~~
+
+.. code-block:: python
+
+    from lona.html import A
+
+    # internal link
+    A('Internal Link', href='/internal-link/')
+
+    # external link
+    A('Lona Documentation', href='https://lona-web.org/', interactive=False)
+
+
 Adding Custom Nodes
 ~~~~~~~~~~~~~~~~~~~
 
