@@ -24,7 +24,7 @@ To run the linters go to ``lona/`` and run ``make lint``.
 
 
 Sort Imports
--------
+------------
 
 To keep imports consistent run ``make isort`` in repo's root.
 It automatically sorts imports in all files.
