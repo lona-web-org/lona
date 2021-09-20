@@ -112,7 +112,7 @@ class AttributeList:
 
         for i in value:
             if not isinstance(i, (int, bool, float, str)):
-                raise ValueError(f'unsupported type: {type(value)}')
+                raise ValueError(f'unsupported type: {type(i)}')
 
         with self._node.lock:
             self._attributes = set(value)
