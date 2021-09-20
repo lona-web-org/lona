@@ -2,14 +2,9 @@ from typing import overload, Optional, Callable, Union, Type, List, Dict, Any
 from tempfile import TemporaryDirectory
 from os import PathLike
 import logging
-import sys
 import os
 
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
+from typing_extensions import Literal
 from aiohttp.web import Application
 
 from lona.command_line.run_server import run_server
