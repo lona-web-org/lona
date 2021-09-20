@@ -610,3 +610,13 @@ class TestNumberInput:
         assert node.min == 15.3
         assert node.max == 20.5
         assert node.step == 0.2
+
+    def test_attribute_escaping(self):
+        node = Div(style='font-family: "Times New Roman"')
+
+        assert node.style['font-family'] == '"Times New Roman"'
+        assert node.style.to_sub_attribute_string() == 'font-family: &quot;Times New Roman&quot;'  # NOQA: E501
+
+        node = HTML(str(node))[0]
+
+        assert node.style['font-family'] == '"Times New Roman"'
