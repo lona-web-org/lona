@@ -307,7 +307,7 @@ class LonaServer:
             text=response_dict['text'],
         )
 
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # NOQA: E501
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
 
         return response
 
@@ -321,7 +321,7 @@ class LonaServer:
 
         if not self.settings.STATIC_FILES_SERVE:
             server_logger.warning(
-                'Reverse proxy seems to be misconfigured: a static file request was received but STATIC_FILES_SERVE is disabled',  # NOQA: E501
+                'Reverse proxy seems to be misconfigured: a static file request was received but STATIC_FILES_SERVE is disabled',
             )
 
             return _404()
@@ -382,7 +382,7 @@ class LonaServer:
             if data:
                 if not isinstance(data, str):
                     raise RuntimeError(
-                        f'{middleware}.handle_connection returned non string data',  # NOQA: E501
+                        f'{middleware}.handle_connection returned non string data',
                     )
 
                 await connection.send_str(data, wait=False)

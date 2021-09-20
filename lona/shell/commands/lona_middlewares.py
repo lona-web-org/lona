@@ -38,7 +38,7 @@ class LonaMiddlewaresCommand:
 
             for middleware, _hook in middleware_controller.hooks[hook_name]:
                 self.repl.write(
-                    f'    {middleware.__module__}.{middleware.__class__.__name__}\n',  # NOQA: E501
+                    f'    {middleware.__module__}.{middleware.__class__.__name__}\n',
                 )
 
             self.repl.write('\n')

@@ -2,7 +2,7 @@ from typing import Tuple, Dict
 
 import pytest
 
-# see https://docs.pytest.org/en/latest/example/simple.html#incremental-testing-test-steps  # NOQA: E501
+# see https://docs.pytest.org/en/latest/example/simple.html#incremental-testing-test-steps
 
 # store history of failures per test class name
 # and per index in parametrize (if parametrize used)

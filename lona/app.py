@@ -109,7 +109,7 @@ class LonaApp:
     def middleware(self, middleware_class: Type) -> None:
         ...
 
-    def middleware(self, middleware_class: Optional[Type] = None) -> Optional[Callable[[Type], None]]:  # NOQA: E501
+    def middleware(self, middleware_class: Optional[Type] = None) -> Optional[Callable[[Type], None]]:  # NOQA: LN001
         def decorator(middleware_class: Type) -> None:
             self.settings.MIDDLEWARES.append(middleware_class)
 
@@ -128,7 +128,7 @@ class LonaApp:
     def frontend_view(self, view_class: Type[LonaView]) -> None:
         ...
 
-    def frontend_view(self, view_class: Optional[Type[LonaView]] = None) -> Optional[Callable[[Type[LonaView]], None]]:  # NOQA: E501
+    def frontend_view(self, view_class: Optional[Type[LonaView]] = None) -> Optional[Callable[[Type[LonaView]], None]]:  # NOQA: LN001
         def decorator(view_class: Type[LonaView]) -> None:
             self.settings.FRONTEND_VIEW = view_class
 

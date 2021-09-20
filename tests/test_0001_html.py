@@ -475,7 +475,7 @@ class TestHTMLFromStr:
             'password',
             'radio',
             'range',
-            'reset',  # intentionally, see 575dcf635180 ("html: remove Reset node")  # NOQA: E501
+            'reset',  # intentionally, see 575dcf635180 ("html: remove Reset node")  # NOQA: LN001
             'search',
             'tel',
             'time',
@@ -603,7 +603,7 @@ class TestNumberInput:
 
     def test_parsing_all_attributes(self):
         node = HTML(
-            '<input type="number" value="12.3" min="15.3" max="20.5" step="0.2"/>',  # NOQA: E501
+            '<input type="number" value="12.3" min="15.3" max="20.5" step="0.2"/>',
         )[0]
 
         assert node.value == 12.3

@@ -273,11 +273,11 @@ class LonaView:
             self._view_runtime.state = VIEW_RUNTIME_STATE.RUNNING
 
     @overload
-    def await_input_event(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: E501
+    def await_input_event(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: LN001
         ...
 
     @overload
-    def await_input_event(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: E501
+    def await_input_event(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: LN001
         ...
 
     def await_input_event(self, *nodes, html=None):
@@ -288,11 +288,11 @@ class LonaView:
         )
 
     @overload
-    def await_click(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: E501
+    def await_click(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: LN001
         ...
 
     @overload
-    def await_click(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: E501
+    def await_click(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: LN001
         ...
 
     def await_click(self, *nodes, html=None):
@@ -303,11 +303,11 @@ class LonaView:
         )
 
     @overload
-    def await_change(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: E501
+    def await_change(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: LN001
         ...
 
     @overload
-    def await_change(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: E501
+    def await_change(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: LN001
         ...
 
     def await_change(self, *nodes, html=None):
@@ -355,13 +355,13 @@ class LonaView:
         embed_shell(server=self.server, locals=_locals)
 
     # hooks ###################################################################
-    def handle_request(self, request: Request) -> Union[None, str, AbstractNode, dict]:  # NOQA: E501
+    def handle_request(self, request: Request) -> Union[None, str, AbstractNode, dict]:  # NOQA: LN001
         return ''
 
-    def handle_input_event_root(self, input_event: InputEvent) -> Optional[InputEvent]:  # NOQA: E501
+    def handle_input_event_root(self, input_event: InputEvent) -> Optional[InputEvent]:  # NOQA: LN001
         return input_event
 
-    def handle_input_event(self, input_event: InputEvent) -> Optional[InputEvent]:  # NOQA: E501
+    def handle_input_event(self, input_event: InputEvent) -> Optional[InputEvent]:  # NOQA: LN001
         return input_event
 
     def on_shutdown(

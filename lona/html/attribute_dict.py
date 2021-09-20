@@ -76,12 +76,12 @@ class AttributeDict:
 
         if name in ('id', 'class'):
             raise RuntimeError(
-                f"Node.attributes['{name}'] is not supported. Use Node.{name}_list instead.",  # NOQA: E501
+                f"Node.attributes['{name}'] is not supported. Use Node.{name}_list instead.",
             )
 
         if name == 'style':
             raise RuntimeError(
-                f"Node.attributes['{name}'] is not supported. Use Node.{name} instead.",  # NOQA: E501
+                f"Node.attributes['{name}'] is not supported. Use Node.{name} instead.",
             )
 
         with self._node.lock:
@@ -134,12 +134,12 @@ class AttributeDict:
 
             if name in ('id', 'class'):
                 raise RuntimeError(
-                    f"Node.attributes['{name}'] is not supported. Use Node.{name}_list instead.",  # NOQA: E501
+                    f"Node.attributes['{name}'] is not supported. Use Node.{name}_list instead.",
                 )
 
             if name == 'style':
                 raise RuntimeError(
-                    f"Node.attributes['{name}'] is not supported. Use Node.{name} instead.",  # NOQA: E501
+                    f"Node.attributes['{name}'] is not supported. Use Node.{name} instead.",
                 )
 
         with self._node.lock:
