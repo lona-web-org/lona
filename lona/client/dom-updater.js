@@ -443,7 +443,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
                 // properties
                 if(property_names.indexOf(name) > -1) {
-                    if(name != 'value') {
+                    if(name != 'value' && value !== false) {
                         value = true;
                     };
 
@@ -470,7 +470,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
                     // properties
                     if(property_names.indexOf(name) > -1) {
-                        if(name != 'value') {
+                        if(name != 'value' && value !== false) {
                             value = true;
                         };
 

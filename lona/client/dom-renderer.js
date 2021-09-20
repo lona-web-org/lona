@@ -49,7 +49,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
 
                     // properties
                     if(property_names.indexOf(key) > -1) {
-                        if(key != 'value') {
+                        if(key != 'value' && node_attributes[key] !== false) {
                             value = true;
                         };
 
