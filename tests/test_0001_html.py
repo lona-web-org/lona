@@ -204,7 +204,7 @@ class TestAttributeList:
 
         with pytest.raises(
                 ValueError,
-                match="unsupported type: <class 'list'>",  # TODO: fix typo in the next PR should be 'dict'  # NOQA: E501
+                match="unsupported type: <class 'dict'>",
         ):
             d.id_list = [{}]
 
