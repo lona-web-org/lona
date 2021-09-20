@@ -24,7 +24,7 @@ class StaticFile:
         self.static_url_prefix = ''
 
     def __repr__(self):
-        return '<{}({}, sort_order={}, enabled={}, {}{} -> {})>'.format(
+        return '<{}({}, sort_order={}, enabled={}, {}{} -> {})>'.format(  # NOQA: FS002
             self.__class__.__name__,
             self.name,
             repr(self.sort_order),

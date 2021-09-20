@@ -78,7 +78,7 @@ class LogFormatter(logging.Formatter):
         time_stamp = datetime.datetime.fromtimestamp(record.created)
         time_stamp_str = time_stamp.strftime('%H:%M:%S.%f')
 
-        record_string = '{}{} {}{} {} {} {}'.format(
+        record_string = '{}{} {}{} {} {} {}'.format(  # NOQA: FS002
             current_thread_name,
             (30 - len(current_thread_name)) * ' ',
 
@@ -92,7 +92,7 @@ class LogFormatter(logging.Formatter):
 
         # format exc_info
         if record.exc_info:
-            record_string = '{}\n{}'.format(
+            record_string = '{}\n{}'.format(  # NOQA: FS002
                 record_string,
                 indent(
                     ''.join(format_exception(*record.exc_info))[:-1],
