@@ -30,13 +30,18 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._crashed = false;
     this._view_running = false;
     this._view_runtime_id = undefined;
-    this._url = '';
+    this._url = undefined;
     this._nodes = {};
     this._widget_marker = {};
     this._widget_data = {};
     this._widgets = {};
     this._widgets_to_setup = [];
     this._widgets_to_update = [];
+
+    // helper -----------------------------------------------------------------
+    this.get_url = function() {
+        return this._url.pathname + this._url.search + this._url.hash;
+    };
 
     // html rendering helper --------------------------------------------------
     this._clear = function() {
@@ -246,8 +251,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             this._view_runtime_id = view_runtime_id;
             this._view_running = true;
 
-            if (this.lona_context.settings.update_address_bar) {
-                history.pushState({}, '', this._url);
+            if(this.lona_context.settings.update_address_bar) {
+                history.pushState({}, '', this.get_url());
             };
 
             this._clear();
@@ -342,7 +347,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // reset state
         this._view_running = false;
         this._view_runtime_id = undefined;
-        this._url = url;
+        this._url = new URL(url);
 
         // reset view start timeout
         if(this._view_start_timeout != undefined) {
@@ -355,7 +360,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             this._window_id,
             this._view_runtime_id,
             Lona.protocol.METHOD.VIEW,
-            [url, post_data],
+            [this.get_url(), post_data],
         ];
 
         // update html title
