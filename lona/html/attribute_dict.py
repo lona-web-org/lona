@@ -2,6 +2,31 @@ import html
 
 from lona.protocol import PATCH_TYPE, OPERATION
 
+BOOLEAN_ATTRIBUTES = [
+    'allowfullscreen',
+    'async',
+    'autofocus',
+    'autoplay',
+    'checked',
+    'controls',
+    'default',
+    'disabled',
+    'formnovalidate',
+    'hidden',
+    'ismap',
+    'itemscope',
+    'loop',
+    'multiple',
+    'muted',
+    'novalidate',
+    'open',
+    'playsinline',
+    'readonly',
+    'required',
+    'reversed',
+    'selected',
+]
+
 
 class AttributeDict:
     PATCH_TYPE = PATCH_TYPE.ATTRIBUTES
@@ -168,8 +193,10 @@ class AttributeDict:
                 if skip_value and key == 'value':
                     continue
 
-                if value == '':  # boolean properties
-                    string.append(key)
+                # boolean properties
+                if key in BOOLEAN_ATTRIBUTES:
+                    if value is not False:
+                        string.append(key)
 
                 else:
                     string.append(f'{key}="{value}"')
