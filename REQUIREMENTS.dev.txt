@@ -1,13 +1,2 @@
 -e .
 tox
-pytest
-pytest-cov
-pytest-dependency
-flake8
-flake8-bugbear
-flake8-comprehensions
-flake8-logging-format
-flake8-noqa
-flake8-pytest-style
-flake8-quotes
-mypy

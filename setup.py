@@ -23,4 +23,9 @@ setup(
     scripts=[
         'bin/lona',
     ],
+    entry_points={
+        'pytest11': [
+            'lona = lona.pytest',
+        ],
+    },
 )
