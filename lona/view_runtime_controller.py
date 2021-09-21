@@ -1,3 +1,4 @@
+import contextlib
 import logging
 
 from yarl import URL
@@ -27,11 +28,7 @@ class ViewRuntimeController:
 
     # helper ##################################################################
     def get_view_runtime(self, view_runtime_id):
-        try:
-            return self._view_runtimes[view_runtime_id]
-
-        except KeyError:
-            return None
+        return self._view_runtimes.get(view_runtime_id, None)
 
     def get_running_view_runtime(self, user, route, match_info):
         for view_runtime in self.iter_view_runtimes():
@@ -43,11 +40,8 @@ class ViewRuntimeController:
                 return view_runtime
 
     def remove_view_runtime(self, view_runtime):
-        try:
+        with contextlib.suppress(KeyError):
             self._view_runtimes.pop(view_runtime.view_runtime_id)
-
-        except KeyError:
-            pass
 
         view_runtime.view_class._remove_view_from_objects(view_runtime.view)
 

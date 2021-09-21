@@ -1,3 +1,6 @@
+import contextlib
+
+
 class NotInteractiveError(Exception):
     pass
 
@@ -24,17 +27,12 @@ class Connection:
         if not self.interactive:
             raise NotInteractiveError
 
-        try:
+        # this exception gets handled by aiohttp internally and can be ignored
+        with contextlib.suppress(ConnectionResetError):
             return self.server.run_coroutine_sync(
                 self.websocket.send_str(string),
                 wait=wait,
             )
-
-        except ConnectionResetError:
-            # this exception gets handled by aiohttp internally and
-            # can be ignored
-
-            pass
 
     async def close(self):
         if not self.interactive:
