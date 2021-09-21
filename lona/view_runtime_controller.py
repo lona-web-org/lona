@@ -96,7 +96,7 @@ class ViewRuntimeController:
 
         if connection.user != view_runtime.start_connection.user:
             input_events_logger.debug(
-                'event #%s: connection.user is not authorized. event is skipped',  # NOQA: E501
+                'event #%s: connection.user is not authorized. event is skipped',
                 payload[0],
             )
 
@@ -129,7 +129,7 @@ class ViewRuntimeController:
 
         if connection.user != view_runtime.start_connection.user:
             views_logger.debug(
-                'connection.user is not authorized. client error is skipped',  # NOQA: E501
+                'connection.user is not authorized. client error is skipped',
             )
 
             return

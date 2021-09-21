@@ -52,7 +52,7 @@ def _find_node_classes(module):
 
                 if node_class.ATTRIBUTES['type'] in INPUT_NODE_CLASSES:
                     logger.warning(
-                        "WARNING: Two input Node classes with type '%s' were found: %r and %r",  # NOQA: E501
+                        "WARNING: Two input Node classes with type '%s' were found: %r and %r",
                         node_class.ATTRIBUTES['type'],
                         INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']],
                         node_class,
@@ -64,7 +64,7 @@ def _find_node_classes(module):
             else:
                 if node_class.TAG_NAME in NODE_CLASSES:
                     logger.warning(
-                        "WARNING: Two Node classes with tag name '%s' were found: %r and %r",  # NOQA: E501
+                        "WARNING: Two Node classes with tag name '%s' were found: %r and %r",
                         node_class.TAG_NAME,
                         NODE_CLASSES[node_class.TAG_NAME],
                         node_class,
@@ -175,7 +175,7 @@ class NodeHTMLParser(HTMLParser):
             )
         if tag != self._node.tag_name:
             raise ValueError(
-                f'Invalid html: </{self._node.tag_name}> expected, </{tag}> received',  # NOQA: E501
+                f'Invalid html: </{self._node.tag_name}> expected, </{tag}> received',
             )
 
         self.set_current_node(self._node.parent)

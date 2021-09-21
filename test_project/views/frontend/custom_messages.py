@@ -23,7 +23,7 @@ class CustomMessagesView(LonaView):
 
             broadcast_message = dumps({
                 'notification': {
-                    'message': f'{datetime.now()}: This is a broadcast message',  # NOQA: E501
+                    'message': f'{datetime.now()}: This is a broadcast message',
                     'timeout': 2000,
                 },
             })

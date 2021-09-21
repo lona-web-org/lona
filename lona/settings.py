@@ -14,7 +14,7 @@ class Settings:
     def add(self, path):
         if not path.endswith('.py'):
             logger.error(
-                "'%s' does not look like python script (modules are not supported)",  # NOQA: E501
+                "'%s' does not look like python script (modules are not supported)",
                 path,
             )
 

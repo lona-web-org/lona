@@ -121,7 +121,7 @@ class MiddlewareController:
                 # is considered as handled
 
                 logger.debug(
-                    'data got handled by %s.%s by returning a custom value: %r',  # NOQA: E501
+                    'data got handled by %s.%s by returning a custom value: %r',
                     middleware,
                     hook_name,
                     return_value,

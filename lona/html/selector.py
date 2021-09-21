@@ -1,6 +1,6 @@
 import re
 
-SELECTOR_RE = re.compile(r'([#.])?(([^#.\[\]]+)|(\[([^=\[\]]+)=([^=\[\]]+)\]))')  # NOQA: E501
+SELECTOR_RE = re.compile(r'([#.])?(([^#.\[\]]+)|(\[([^=\[\]]+)=([^=\[\]]+)\]))')
 UNSUPPORTED_CHARACTERS = re.compile(r'([ $|!~>+])')
 
 

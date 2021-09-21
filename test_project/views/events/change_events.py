@@ -46,5 +46,5 @@ class ChangeEventsView(LonaView):
             input_event = self.await_change(html=html)
 
             pre.set_text(
-                f'changed node: {input_event.node._id}\nvalue: {pformat(input_event.data)}',  # NOQA: E501
+                f'changed node: {input_event.node._id}\nvalue: {pformat(input_event.data)}',
             )

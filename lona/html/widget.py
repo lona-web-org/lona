@@ -57,7 +57,7 @@ class Widget(AbstractNode):
 
     # string representation ###################################################
     def __str__(self):
-        return f'<!--lona-widget:{self.id}-->\n{self.nodes}\n<!--end-lona-widget:{self.id}-->'  # NOQA: E501
+        return f'<!--lona-widget:{self.id}-->\n{self.nodes}\n<!--end-lona-widget:{self.id}-->'
 
     def __repr__(self):
         return self.__str__()

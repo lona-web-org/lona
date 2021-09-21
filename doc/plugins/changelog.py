@@ -22,7 +22,7 @@ class ChanglogHeader(Directive):
                         {date_string}
                         <a class="anchor" href="/changelog.html#{release_name}"></a>
                     </h2>
-                """,  # NOQA: E501
+                """,
                 format='html',
             ),
         ]
