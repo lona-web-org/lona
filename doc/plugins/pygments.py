@@ -41,7 +41,8 @@ def code_block(context):
                     self.options['include'],
                 )
 
-                content += open(path, 'r').read()
+                with open(path, 'r') as f:
+                    content += f.read()
 
             try:
                 if self.arguments:
