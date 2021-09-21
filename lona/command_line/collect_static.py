@@ -1,3 +1,4 @@
+import contextlib
 import shutil
 import os
 
@@ -32,11 +33,8 @@ def collect_static(args):
         if args.dry_run:
             return
 
-        try:
+        with contextlib.suppress(FileExistsError):
             os.makedirs(path)
-
-        except FileExistsError:
-            pass
 
     def _cp(source, destination):
         source_is_dir = os.path.isdir(source)

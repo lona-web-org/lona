@@ -2,6 +2,7 @@ from typing import overload, Optional, Callable, Union, Type, List, Dict, Any
 from tempfile import TemporaryDirectory
 from asyncio import AbstractEventLoop
 from os import PathLike
+import contextlib
 import logging
 import os
 
@@ -157,11 +158,8 @@ class LonaApp:
             os.path.dirname(name),
         )
 
-        try:
+        with contextlib.suppress(FileExistsError):
             os.makedirs(dirname)
-
-        except FileExistsError:
-            pass
 
         full_name = os.path.join(
             dirname,

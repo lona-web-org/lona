@@ -1,6 +1,7 @@
 from typing import Awaitable, overload, Optional, TypeVar, Union
 from concurrent.futures import Future
 from functools import reduce
+import contextlib
 import operator
 import logging
 import inspect
@@ -210,11 +211,8 @@ class LonaServer:
         await self.run_function_async(self.view_runtime_controller.stop)
 
         for connection in self.websocket_connections.copy():
-            try:
+            with contextlib.suppress(Exception):
                 await connection.websocket.close()
-
-            except Exception:
-                pass
 
     # asyncio helper ##########################################################
     @overload

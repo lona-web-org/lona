@@ -1,3 +1,5 @@
+import contextlib
+
 from lona.html import NumberInput, Button, Span, HTML, H1
 from lona import LonaView, LonaApp
 
@@ -39,11 +41,8 @@ class CounterView(LonaView):
 
             # set
             elif input_event.node_has_id('set'):
-                try:
+                with contextlib.suppress(TypeError):
                     counter.set_text(int(number_input.value))
-
-                except TypeError:
-                    pass
 
 
 app.run(port=8080)

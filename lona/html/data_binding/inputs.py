@@ -1,4 +1,5 @@
 from typing import Optional, Dict, Any
+import contextlib
 
 from lona.events.event_types import CHANGE
 from lona.html.node import Node
@@ -176,10 +177,8 @@ class NumberInput(TextInput):
     def value(self) -> Optional[float]:
         value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
         if value != '':
-            try:
+            with contextlib.suppress(ValueError):
                 return float(value)
-            except ValueError:
-                pass
         return None
 
     @value.setter
@@ -197,10 +196,8 @@ class NumberInput(TextInput):
     def min(self) -> Optional[float]:
         value = self.attributes.get('min', None)
         if value is not None:
-            try:
+            with contextlib.suppress(ValueError):
                 return float(value)
-            except ValueError:
-                pass
         return None
 
     @min.setter
@@ -218,10 +215,8 @@ class NumberInput(TextInput):
     def max(self) -> Optional[float]:
         value = self.attributes.get('max', None)
         if value is not None:
-            try:
+            with contextlib.suppress(ValueError):
                 return float(value)
-            except ValueError:
-                pass
         return None
 
     @max.setter
@@ -239,10 +234,8 @@ class NumberInput(TextInput):
     def step(self) -> Optional[float]:
         value = self.attributes.get('step', None)
         if value is not None:
-            try:
+            with contextlib.suppress(ValueError):
                 return float(value)
-            except ValueError:
-                pass
         return None
 
     @step.setter
