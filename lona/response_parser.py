@@ -50,7 +50,7 @@ class ResponseParser:
             # check keys
             if len(set(raw_response_dict) & key_words) != 1:
                 raise RuntimeError(
-                    'response dicts have to contain exactly one keyword of: {}'.format(  # NOQA: LN001
+                    'response dicts have to contain exactly one keyword of: {}'.format(  # NOQA: LN001,FS002
                         ', '.join(key_words),
                     ),
                 )

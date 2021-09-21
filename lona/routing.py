@@ -63,7 +63,7 @@ class Route:
 
             # compile pattern
             self.pattern = re.compile(
-                r'^{}{}$'.format(
+                r'^{}{}$'.format(  # NOQA: FS002
                     cleaned_pattern.format(
                         *[ROUTE_PART_FORMAT_STRING.format(*i)
                           for i in patterns],
