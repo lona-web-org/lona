@@ -1,3 +1,5 @@
+import html
+
 from lona.protocol import PATCH_TYPE, OPERATION
 
 
@@ -172,7 +174,7 @@ class AttributeDict:
                 else:
                     string.append(f'{key}="{value}"')
 
-            return ' '.join(string)
+            return html.escape(' '.join(string))
 
     def to_sub_attribute_string(self):
         with self._node.lock:
@@ -181,7 +183,7 @@ class AttributeDict:
             for key, value in self._attributes.items():
                 string.append(f'{key}: {value}')
 
-            return '; '.join(string)
+            return html.escape('; '.join(string))
 
     def __repr__(self):
         return f'<AttributeDict({self._attributes!r})>'
