@@ -5,6 +5,60 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.7.1 (2021-09-21)
+
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+* Support for Python3.6 was dropped
+
+  * Lona uses playwright for testing now and playwright is Python3.7+
+
+
+Changes
+~~~~~~~
+
+* html
+
+  * ``lona.html.HTML`` raises a ``ValueError`` on missing or unexpected end
+    tags, while parsing HTML strings, now
+
+* testing
+
+  * The fixtures ``lona_app_context`` and ``lona_project_context`` were added
+
+
+Bugfixes
+~~~~~~~~
+
+* html
+
+  * Typos in ``AttributeList`` error messages were fixed
+  * HTML escaping in attributes was fixed
+
+    * Previously values like ``"Times New Roman"`` lead to invalid HTML
+
+  * Handling of boolean attributes in node string representations were fixed
+
+  * Handling of ``interactive`` and ``ignore`` keywords in ``lona.html.A``
+    was fixed
+
+  * Parsing of slashes in self closing tags was fixed
+
+* client
+
+  * Rendering of boolean attributes was fixed
+
+    * Previously ``checked=False`` resulted in ``checked`` set to ``true``
+      in the browser
+
+  * Handling of external links was fixed
+
+    * Previously external link targets that were used like internal links
+      crashed the client and resulted in redirect loop
+
+
 .. changelog-header:: 1.7 (2021-09-16)
 
 
