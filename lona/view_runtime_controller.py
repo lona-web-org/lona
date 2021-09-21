@@ -28,11 +28,7 @@ class ViewRuntimeController:
 
     # helper ##################################################################
     def get_view_runtime(self, view_runtime_id):
-        try:
-            return self._view_runtimes[view_runtime_id]
-
-        except KeyError:
-            return None
+        return self._view_runtimes.get(view_runtime_id, None)
 
     def get_running_view_runtime(self, user, route, match_info):
         for view_runtime in self.iter_view_runtimes():
