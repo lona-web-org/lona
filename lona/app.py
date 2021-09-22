@@ -1,5 +1,5 @@
 from typing import overload, Optional, Callable, Union, Type, List, Dict, Any
-from argparse import RawTextHelpFormatter, ArgumentParser
+from argparse import RawTextHelpFormatter, ArgumentParser, Namespace
 from tempfile import TemporaryDirectory
 from asyncio import AbstractEventLoop
 from os import PathLike
@@ -19,15 +19,6 @@ from lona.server import LonaServer
 from lona.routing import Route
 
 logger = logging.getLogger('lona.app')
-
-
-class ServerArgs:
-    def __init__(self, **args):
-        self.add(**args)
-
-    def add(self, **args):
-        for key, value in args.items():
-            setattr(self, key, value)
 
 
 class LonaApp:
@@ -337,7 +328,7 @@ class LonaApp:
     ) -> None:
 
         # setup arguments
-        server_args = ServerArgs(
+        server_args = Namespace(
             host='localhost',
             port=8080,
             shell_server_url='',
@@ -350,10 +341,14 @@ class LonaApp:
             settings_post_overrides=None,
         )
 
-        server_args.add(**args)
+        for key, value in args.items():
+            setattr(server_args, key, value)
 
         if parse_command_line:
-            server_args.add(**self.parse_command_line())
+            command_line_args = self.parse_command_line()
+
+            for key, value in command_line_args.items():
+                setattr(server_args, key, value)
 
         setup_logging(server_args)
 
