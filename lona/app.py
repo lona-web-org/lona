@@ -82,6 +82,7 @@ class LonaApp:
             http_pass_through: bool = False,
             frontend_view: Union[None, str, LonaView] = None,
     ) -> Callable[[Type[LonaView]], None]:
+
         def decorator(view_class: Type[LonaView]) -> None:
             self.routes.append(
                 Route(
@@ -96,6 +97,7 @@ class LonaApp:
 
         return decorator
 
+    # middleware
     @overload
     def middleware(self) -> Callable[[Type], None]:
         ...
@@ -110,11 +112,13 @@ class LonaApp:
 
         if callable(middleware_class):
             decorator(middleware_class)
+
             return None
 
         else:
             return decorator
 
+    # frontend
     @overload
     def frontend_view(self) -> Callable[[Type[LonaView]], None]:
         ...
@@ -129,6 +133,7 @@ class LonaApp:
 
         if callable(view_class):
             decorator(view_class)
+
             return None
 
         else:
@@ -142,6 +147,7 @@ class LonaApp:
             string: str = '',
             path: str = '',
     ) -> None:
+
         if name.startswith('/'):
             name = name[1:]
 
@@ -179,6 +185,7 @@ class LonaApp:
             string: str = '',
             path: str = '',
     ) -> None:
+
         return self._add_file(
             temp_dir=self.template_dir,
             name=name,
@@ -192,6 +199,7 @@ class LonaApp:
             string: str = '',
             path: str = '',
     ) -> None:
+
         return self._add_file(
             temp_dir=self.static_dir,
             name=name,
