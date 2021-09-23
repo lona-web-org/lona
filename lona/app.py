@@ -1,4 +1,5 @@
 from typing import overload, Optional, Callable, Union, Type, List, Dict, Any
+from argparse import RawTextHelpFormatter, ArgumentParser, Namespace
 from tempfile import TemporaryDirectory
 from asyncio import AbstractEventLoop
 from os import PathLike
@@ -18,15 +19,6 @@ from lona.server import LonaServer
 from lona.routing import Route
 
 logger = logging.getLogger('lona.app')
-
-
-class ServerArgs:
-    def __init__(self, **args):
-        self.add(**args)
-
-    def add(self, **args):
-        for key, value in args.items():
-            setattr(self, key, value)
 
 
 class LonaApp:
@@ -90,6 +82,7 @@ class LonaApp:
             http_pass_through: bool = False,
             frontend_view: Union[None, str, LonaView] = None,
     ) -> Callable[[Type[LonaView]], None]:
+
         def decorator(view_class: Type[LonaView]) -> None:
             self.routes.append(
                 Route(
@@ -104,6 +97,7 @@ class LonaApp:
 
         return decorator
 
+    # middleware
     @overload
     def middleware(self) -> Callable[[Type], None]:
         ...
@@ -118,11 +112,13 @@ class LonaApp:
 
         if callable(middleware_class):
             decorator(middleware_class)
+
             return None
 
         else:
             return decorator
 
+    # frontend
     @overload
     def frontend_view(self) -> Callable[[Type[LonaView]], None]:
         ...
@@ -137,6 +133,7 @@ class LonaApp:
 
         if callable(view_class):
             decorator(view_class)
+
             return None
 
         else:
@@ -150,6 +147,7 @@ class LonaApp:
             string: str = '',
             path: str = '',
     ) -> None:
+
         if name.startswith('/'):
             name = name[1:]
 
@@ -187,6 +185,7 @@ class LonaApp:
             string: str = '',
             path: str = '',
     ) -> None:
+
         return self._add_file(
             temp_dir=self.template_dir,
             name=name,
@@ -200,6 +199,7 @@ class LonaApp:
             string: str = '',
             path: str = '',
     ) -> None:
+
         return self._add_file(
             temp_dir=self.static_dir,
             name=name,
@@ -207,10 +207,97 @@ class LonaApp:
             path=path,
         )
 
+    # command line ############################################################
+    def parse_command_line(self) -> Dict:
+        from lona.command_line.handle_command_line import (
+            parse_overrides,
+            DESCRIPTION,
+        )
+
+        parser = ArgumentParser(
+            prog=str(self.script_path),
+            formatter_class=RawTextHelpFormatter,
+            description=DESCRIPTION,
+        )
+
+        parser.add_argument(
+            '-l',
+            '--log-level',
+            choices=['debug', 'info', 'warn', 'error', 'critical'],
+        )
+
+        parser.add_argument(
+            '--loggers',
+            type=str,
+            nargs='+',
+        )
+
+        parser.add_argument(
+            '--debug-mode',
+            choices=['messages', 'views', 'input-events'],
+        )
+
+        parser.add_argument(
+            '-o',
+            '--settings-pre-overrides',
+            nargs='+',
+        )
+
+        parser.add_argument(
+            '-O',
+            '--settings-post-overrides',
+            nargs='+',
+        )
+
+        parser.add_argument(
+            '--host',
+            type=str,
+        )
+
+        parser.add_argument(
+            '--port',
+            type=int,
+        )
+
+        parser.add_argument(
+            '--shutdown-timeout',
+            type=float,
+        )
+
+        parser.add_argument(
+            '--shell',
+            action='store_true',
+        )
+
+        parser.add_argument(
+            '--shell-server-url',
+            type=str,
+        )
+
+        args = vars(parser.parse_args())
+
+        for key, value in args.copy().items():
+            if not value:
+                args.pop(key)
+
+        if 'settings_pre_overrides' in args:
+            args['settings_pre_overrides'] = parse_overrides(
+                args['settings_pre_overrides'],
+            )
+
+        if 'settings_post_overrides' in args:
+            args['settings_post_overrides'] = parse_overrides(
+                args['settings_post_overrides'],
+            )
+
+        return args
+
     # server ##################################################################
     def setup_server(
             self,
             loop: Union[AbstractEventLoop, None] = None,
+            settings_pre_overrides: Optional[Dict[str, Any]] = None,
+            settings_post_overrides: Optional[Dict[str, Any]] = None,
     ) -> None:
 
         # finish settings
@@ -220,10 +307,16 @@ class LonaApp:
         # setup server
         self.aiohttp_app = Application(loop=loop)
 
+        settings_post_overrides = {
+            **self._get_settings_as_dict(),
+            **(settings_post_overrides or {}),
+        }
+
         self.server = LonaServer(
             app=self.aiohttp_app,
             project_root=self.project_root,
-            settings_post_overrides=self._get_settings_as_dict(),
+            settings_pre_overrides=settings_pre_overrides,
+            settings_post_overrides=settings_post_overrides,
             routes=self.routes,
         )
 
@@ -238,13 +331,12 @@ class LonaApp:
     def run(
             self,
             loop: Union[AbstractEventLoop, None] = None,
+            parse_command_line: bool = True,
             **args: Any,
     ) -> None:
 
-        self.setup_server(loop=loop)
-
         # setup arguments
-        server_args = ServerArgs(
+        server_args = Namespace(
             host='localhost',
             port=8080,
             shell_server_url='',
@@ -253,11 +345,27 @@ class LonaApp:
             loggers=[],
             debug_mode='',
             shell=False,
+            settings_pre_overrides=None,
+            settings_post_overrides=None,
         )
 
-        server_args.add(**args)
+        for key, value in args.items():
+            setattr(server_args, key, value)
+
+        if parse_command_line:
+            command_line_args = self.parse_command_line()
+
+            for key, value in command_line_args.items():
+                setattr(server_args, key, value)
 
         setup_logging(server_args)
+
+        # setup server
+        self.setup_server(
+            loop=loop,
+            settings_pre_overrides=server_args.settings_pre_overrides,
+            settings_post_overrides=server_args.settings_post_overrides,
+        )
 
         # start server
         run_server(

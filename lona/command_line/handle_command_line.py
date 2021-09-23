@@ -18,6 +18,25 @@ Code: https://github.com/lona-web-org/lona
 """.strip()
 
 
+def parse_overrides(raw_overrides):
+    environment = Environment()
+    overrides = {}
+
+    for override in raw_overrides:
+        if '=' not in override:
+            logger.error(
+                "settings overrides: invalid format: '%s'", override)
+
+            continue
+
+        name, value = override.split('=', 1)
+        value = environment.compile_expression(value)()
+
+        overrides[name] = value
+
+    return overrides
+
+
 def handle_command_line(argv):
     parser = ArgumentParser(
         prog='lona',
@@ -200,24 +219,6 @@ def handle_command_line(argv):
     # this can happen on python versions lower than 3.7
     if not args.command:
         exit('no sub command was given')
-
-    def parse_overrides(raw_overrides):
-        environment = Environment()
-        overrides = {}
-
-        for override in raw_overrides:
-            if '=' not in override:
-                logger.error(
-                    "settings overrides: invalid format: '%s'", override)
-
-                continue
-
-            name, value = override.split('=', 1)
-            value = environment.compile_expression(value)()
-
-            overrides[name] = value
-
-        return overrides
 
     args.settings_pre_overrides = parse_overrides(
         args.settings_pre_overrides,
