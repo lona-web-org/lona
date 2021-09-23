@@ -199,4 +199,4 @@ need to implement cascading callbacks. This does not mean you cant use
 `LonaView.await_sync() </end-user-documentation/views.html#lonaview-await-sync-awaitable>`_
 
 **More information on resource management:**
-`Resource Management </end-user-documentation/views.html#resource-management>`_
+`Resource Management </end-user-documentation/deployment.html#resource-management>`_
