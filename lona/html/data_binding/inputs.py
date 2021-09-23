@@ -118,9 +118,9 @@ class CheckBox(TextInput):
     }
 
     def __init__(self, value=False, disabled=False, readonly=False,
-                 bubble_up=False, input_delay=0, **kwargs):
-        super().__init__(value, disabled, readonly,
-                         bubble_up, input_delay, **kwargs)
+                 bubble_up=False, **kwargs):
+
+        super().__init__(value, disabled, readonly, bubble_up, **kwargs)
 
     @property
     def value(self) -> bool:
