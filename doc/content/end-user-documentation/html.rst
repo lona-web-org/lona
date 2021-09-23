@@ -410,7 +410,16 @@ Button
     Button('Click me!')
     Button('Click me!', _id='foo', _style={'color': 'red'})
 
-**Button Attributes:**
+**Init Arguments:**
+
+.. table::
+
+    ^Name             ^Default Value      ^Description
+    |disabled         |False              |(Bool) sets the HTML attribute "disabled"
+    |*args            |()                 |Node args
+    |**kwargs         |{}                 |Node kwargs
+
+**Attributes:**
 
 .. table::
 
@@ -443,7 +452,7 @@ TextInput / TextArea
     ^Name             ^Default Value      ^Description
     |value            |None               |(Str,None) Initial value
     |bubble_up        |False              |(Bool) Pass input events further
-    |disabled         |False              |(Bool) Accepts input
+    |disabled         |False              |(Bool) sets the HTML attribute "disabled"
     |readonly         |False              |(Bool) Accepts no input, but can be read and selected
     |input_delay      |300                |(Int) Input delay in milliseconds
     |*args            |()                 |Node args
@@ -478,6 +487,16 @@ CheckBox
     CheckBox()
     CheckBox(value=True, _id='bar')
 
+**Init Arguments:**
+
+.. table::
+
+    ^Name             ^Default Value      ^Description
+    |value            |False              |(Bool) Initial value
+    |bubble_up        |False              |(Bool) Pass input events further
+    |disabled         |False              |(Bool) sets the HTML attribute "disabled"
+    |*args            |()                 |Node args
+    |**kwargs         |{}                 |Node kwargs
 
 **Attributes:**
 
@@ -516,7 +535,7 @@ Select
     ^Name             ^Default Value      ^Description
     |values           |None               |(List of Tuples) Initial values
     |bubble_up        |False              |(Bool) Pass input events further
-    |disabled         |False              |(Bool) Accepts input
+    |disabled         |False              |(Bool) sets the HTML attribute "disabled"
     |multiple         |False              |(Bool) Enables multi selection
     |*args            |()                 |Node args
     |**kwargs         |{}                 |Node kwargs
