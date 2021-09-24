@@ -24,6 +24,8 @@ Lona is a web application framework, designed to write responsive web apps in
 
 **Demos:** `lona-web.org/demos <https://lona-web.org/demos/index.html>`_
 
+**FAQ:** `lona-web.org/faq <http://lona-web.org/faq.html>`_
+
 **Documentation:** `lona-web.org <http://lona-web.org>`_
 
 **Changelog:** `lona-web.org/changelog <http://lona-web.org/changelog.html>`_
