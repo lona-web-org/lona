@@ -1,23 +1,55 @@
-from lona.html import Strong, Div, H2, P
+from lona.html import Button, HTML, H2, Br, A
 from lona.view import LonaView
 
 
 class RedirectView(LonaView):
     def handle_request(self, request):
-        s = Strong()
-
-        html = Div(
+        html = HTML(
             H2('Redirect'),
-            P('You will be redirected in ', s, ' seconds'),
+            Button('Absolute URI', _id='redirect-to-absolute-uri'),
+            Button('Redirect to root', _id='redirect-to-root'),
+            Button('Redirect to this URL', _id='redirect-to-this-url'),
+
+            H2('Links'),
+            A(
+                '(interactive) /view-types/interactive-view/',
+                href='/view-types/interactive-view/',
+            ),
+
+            Br(),
+
+            A(
+                '(non-interactive) /view-types/interactive-view/',
+                href='/view-types/interactive-view/',
+                interactive=False,
+            ),
+
+            Br(),
+
+            A('www.example.org/foo/bar', href='www.example.org/foo/bar'),
+            Br(),
+
+            A(
+                'http://www.example.org/foo/bar',
+                href='http://www.example.org/foo/bar',
+            ),
         )
 
-        for i in [3, 2, 1]:
-            s.set_text(str(i))
+        self.show(html)
 
-            self.show(html)
+        input_event = self.await_click()
 
-            self.sleep(1)
+        if input_event.node_has_id('redirect-to-absolute-uri'):
+            return {
+                'redirect': '/view-types/interactive-view/',
+            }
 
-        return {
-            'redirect': '/',
-        }
+        elif input_event.node_has_id('redirect-to-root'):
+            return {
+                'redirect': '/',
+            }
+
+        elif input_event.node_has_id('redirect-to-this-url'):
+            return {
+                'redirect': '.',
+            }
