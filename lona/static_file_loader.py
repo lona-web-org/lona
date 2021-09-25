@@ -50,9 +50,6 @@ class StaticFileLoader:
         discovered_names = []
 
         for node_class in self.node_classes:
-            if not hasattr(node_class, 'STATIC_FILES'):
-                continue
-
             for static_file in node_class.STATIC_FILES:
                 if static_file.name in discovered_names:
                     continue
