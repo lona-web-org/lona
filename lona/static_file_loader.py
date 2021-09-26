@@ -4,8 +4,8 @@ import logging
 import os
 
 from lona.static_files import StyleSheet, StaticFile, Script
+from lona.imports import get_all_subclasses, get_file
 from lona.html.abstract_node import AbstractNode
-from lona.imports import get_file
 
 # avoid import cycles
 if TYPE_CHECKING:
@@ -31,20 +31,6 @@ class StaticFileLoader:
         logger.debug('static dirs %s loaded', repr(self.static_dirs)[1:-1])
 
         self.discover()
-
-    def discover_node_classes(self) -> List[Type[AbstractNode]]:
-        self.node_classes: List[Type[AbstractNode]] = [AbstractNode]
-
-        while True:
-            count = len(self.node_classes)
-
-            for node_class in list(self.node_classes):
-                for sub_class in node_class.__subclasses__():
-                    if sub_class not in self.node_classes:
-                        self.node_classes.append(sub_class)
-
-            if len(self.node_classes) == count:
-                return self.node_classes
 
     def discover_node_static_files(self) -> None:
         self.node_stylesheets: List[StyleSheet] = []
@@ -150,7 +136,7 @@ class StaticFileLoader:
     def discover(self) -> None:
         logger.debug('discover node classes')
 
-        self.discover_node_classes()
+        self.node_classes: List[Type[AbstractNode]] = [AbstractNode] + list(get_all_subclasses(AbstractNode))  # NOQA: LN001
         self.discover_node_static_files()
 
         logger.debug('%s node classes discovered', len(self.node_classes))

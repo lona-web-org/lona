@@ -1,6 +1,9 @@
+from typing import TypeVar, Type, Set
 import importlib
 import inspect
 import runpy
+
+T = TypeVar('T')
 
 
 def acquire(import_string, ignore_import_cache=False):
@@ -47,3 +50,8 @@ def get_file(obj):
 
 def get_object_repr(obj):
     return f'<{obj.__class__.__name__} object at {hex(id(obj))}>'
+
+
+def get_all_subclasses(cls: Type[T]) -> Set[Type[T]]:
+    subs = cls.__subclasses__()
+    return set(subs).union(s for c in subs for s in get_all_subclasses(c))
