@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Type, List
+from typing import TYPE_CHECKING, Optional, Type, List, Set
 from copy import copy
 import logging
 import os
@@ -53,7 +53,7 @@ class StaticFileLoader:
         self.static_files: List[StaticFile] = []
 
         # discover
-        discovered_names = []
+        discovered_names: Set[str] = set()
 
         for node_class in self.node_classes:
             for file_declaration in node_class.STATIC_FILES:
@@ -120,7 +120,7 @@ class StaticFileLoader:
                 else:
                     self.node_static_files.append(static_file)
 
-                discovered_names.append(static_file.name)
+                discovered_names.add(static_file.name)
 
         # sort
         self.node_stylesheets.sort(key=lambda x: x.sort_order.value)
