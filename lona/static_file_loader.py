@@ -146,6 +146,10 @@ class StaticFileLoader:
             if static_file.name in self.server.settings.STATIC_FILES_DISABLED:
                 static_file.enabled = False
 
+            # disable static files that are flaged as to be not linked
+            if not static_file.link:
+                static_file.enabled = False
+
     def discover(self):
         logger.debug('discover node classes')
 
