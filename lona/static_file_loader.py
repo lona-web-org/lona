@@ -110,6 +110,18 @@ class StaticFileLoader:
 
                 static_file.url = url
 
+                # disable static files that are not enabled by default and
+                # are not configured to be enabled
+                if(not static_file.enabled_by_default and
+                   static_file.name not in
+                   self.server.settings.STATIC_FILES_ENABLED):
+
+                    static_file.enabled = False
+
+                # disable static files that are disabled explicitly
+                if static_file.name in self.server.settings.STATIC_FILES_DISABLED:  # NOQA: LN001
+                    static_file.enabled = False
+
                 # sort static file into the right cache
                 if isinstance(static_file, StyleSheet):
                     self.node_stylesheets.append(static_file)
@@ -127,25 +139,11 @@ class StaticFileLoader:
         self.node_scripts.sort(key=lambda x: x.sort_order.value)
         self.node_static_files.sort(key=lambda x: x.sort_order.value)
 
-        # enable or disable static files
         self.static_files = [
             *self.node_stylesheets,
             *self.node_scripts,
             *self.node_static_files,
         ]
-
-        for static_file in self.static_files:
-            # disable static files that are not enabled by default and
-            # are not configured to be enabled
-            if(not static_file.enabled_by_default and
-               static_file.name not in
-               self.server.settings.STATIC_FILES_ENABLED):
-
-                static_file.enabled = False
-
-            # disable static files that are disabled explicitly
-            if static_file.name in self.server.settings.STATIC_FILES_DISABLED:
-                static_file.enabled = False
 
     def discover(self) -> None:
         logger.debug('discover node classes')
