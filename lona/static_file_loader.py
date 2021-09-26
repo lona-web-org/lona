@@ -123,11 +123,9 @@ class StaticFileLoader:
                 discovered_names.append(static_file.name)
 
         # sort
-        self.node_stylesheets = sorted(
-            self.node_stylesheets, key=lambda x: x.sort_order.value)
-
-        self.node_scripts = sorted(
-            self.node_scripts, key=lambda x: x.sort_order.value)
+        self.node_stylesheets.sort(key=lambda x: x.sort_order.value)
+        self.node_scripts.sort(key=lambda x: x.sort_order.value)
+        self.node_static_files.sort(key=lambda x: x.sort_order.value)
 
         # enable or disable static files
         self.static_files = [
