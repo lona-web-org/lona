@@ -30,7 +30,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._crashed = false;
     this._view_running = false;
     this._view_runtime_id = undefined;
-    this._url = undefined;
+    this._url = '';
     this._nodes = {};
     this._widget_marker = {};
     this._widget_data = {};
@@ -38,9 +38,46 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._widgets_to_setup = [];
     this._widgets_to_update = [];
 
-    // helper -----------------------------------------------------------------
+    // urls -------------------------------------------------------------------
+    this._set_url = function(raw_url) {
+        // parse pathname, search and hash
+        _raw_url = new URL(raw_url, window.location.origin);
+        _raw_url = _raw_url.pathname + _raw_url.search + _raw_url.hash;
+
+        if(raw_url.startsWith('..')) {
+            _raw_url = '..' + _raw_url;
+
+        } else if(raw_url.startsWith('.')) {
+            _raw_url = '.' + _raw_url;
+
+        };
+
+        if(!raw_url.startsWith('http://') && !raw_url.startsWith('https://')) {
+            if(_raw_url.startsWith('/') && !raw_url.startsWith('/')) {
+                _raw_url = _raw_url.substr(1);
+            }
+        };
+
+        raw_url = _raw_url;
+
+        // handle relative URLs
+        if(!raw_url.startsWith('/')) {
+            var current_url = this._url;
+
+            if(!current_url.endsWith('/')) {
+                current_url = current_url + '/';
+            };
+
+            raw_url = current_url + raw_url;
+        };
+
+        var url = new URL(raw_url, window.location.origin);
+
+        this._url = url.pathname + url.search + url.hash;
+    };
+
     this.get_url = function() {
-        return this._url.pathname + this._url.search + this._url.hash;
+        return this._url;
     };
 
     // html rendering helper --------------------------------------------------
@@ -347,7 +384,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // reset state
         this._view_running = false;
         this._view_runtime_id = undefined;
-        this._url = new URL(url);
+        this._set_url(url);
 
         // reset view start timeout
         if(this._view_start_timeout != undefined) {
