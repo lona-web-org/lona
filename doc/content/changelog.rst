@@ -5,6 +5,34 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.7.2 (2021-09-28)
+
+
+Changes
+~~~~~~~
+
+* scripts
+
+  * Command line argument parsing was added
+
+
+Bugfixes
+~~~~~~~~
+
+* static files
+
+  * Handling of ``linked=False`` was fixed
+
+    * Previously this flag had no effect
+
+* client
+
+  * Handling of internal links and redirects was fixed
+
+    * Previously link targets like ``.``, ``..`` ``./foo`` or ``foo`` didn't
+      work as expected
+
+
 .. changelog-header:: 1.7.1 (2021-09-21)
 
 
