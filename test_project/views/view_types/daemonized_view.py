@@ -3,7 +3,9 @@ from lona.view import LonaView
 
 
 class DaemonizedView(LonaView):
-    def handle_request(self, request, name='blank'):
+    def handle_request(self, request):
+        name = request.match_info.get('name', 'blank')
+
         message = Div('View not started yet')
         log = Div()
         start = Button('Start')
