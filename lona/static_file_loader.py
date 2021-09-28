@@ -146,10 +146,6 @@ class StaticFileLoader:
             if static_file.name in self.server.settings.STATIC_FILES_DISABLED:
                 static_file.enabled = False
 
-            # disable static files that are flaged as to be not linked
-            if not static_file.link:
-                static_file.enabled = False
-
     def discover(self):
         logger.debug('discover node classes')
 
@@ -170,7 +166,8 @@ class StaticFileLoader:
         self.style_tags_html = self.server.templating_engine.render_template(
             self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
             {
-                'stylesheets': [i for i in self.node_stylesheets if i.enabled],
+                'stylesheets': [i for i in self.node_stylesheets
+                                if i.enabled and i.link],
             },
         )
 
@@ -178,7 +175,8 @@ class StaticFileLoader:
         self.script_tags_html = self.server.templating_engine.render_template(
             self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
-                'scripts': [i for i in self.node_scripts if i.enabled],
+                'scripts': [i for i in self.node_scripts
+                            if i.enabled and i.link],
             },
         )
 
