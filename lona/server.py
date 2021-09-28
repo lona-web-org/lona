@@ -29,6 +29,7 @@ from lona.connection import Connection
 from lona.settings import Settings
 from lona.protocol import METHOD
 from lona.routing import Router
+from lona.view import LonaView
 
 DEFAULT_SETTINGS = os.path.join(
     os.path.dirname(__file__),
@@ -597,3 +598,16 @@ class LonaServer:
 
     def reverse(self, *args, **kwargs):
         return self.router.reverse(*args, **kwargs)
+
+    def fire_view_event(
+            self,
+            name: str,
+            data: dict | None = None,
+            view_classes: type[LonaView] | list[type[LonaView]] | None = None,
+    ) -> None:
+
+        self.view_runtime_controller.fire_view_event(
+            name=name,
+            data=data,
+            view_classes=view_classes,
+        )
