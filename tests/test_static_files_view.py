@@ -3,38 +3,11 @@ import os.path
 from playwright.async_api import async_playwright
 
 from lona.static_files import StyleSheet, Script
-from lona.html import Widget
 from lona import LonaView
 
 
 def setup_app(app):
     some_existing_file = os.path.basename(__file__)
-
-    class MyWidget(Widget):
-        STATIC_FILES = [
-            StyleSheet(
-                name='my-widget-style',
-                path=some_existing_file,
-                url='widget.css',
-            ),
-            Script(
-                name='my-widget-script',
-                path=some_existing_file,
-                url='widget.js',
-            ),
-            Script(
-                name='my-widget-map',
-                path=some_existing_file,
-                url='widget.map',
-                link=False,
-            ),
-            StyleSheet(
-                name='disabled-widget',
-                path=some_existing_file,
-                url='widget.disabled',
-                enabled_by_default=False,
-            ),
-        ]
 
     @app.route('/')
     class MyLonaView(LonaView):
@@ -67,13 +40,8 @@ def setup_app(app):
             return 'SUCCESS'
 
 
-async def test_static_files(lona_app_context):
+async def test_static_files_view(lona_app_context):
     context = await lona_app_context(setup_app)
-
-    assert (await context.client.get('/static/widget.css')).status == 200
-    assert (await context.client.get('/static/widget.js')).status == 200
-    assert (await context.client.get('/static/widget.map')).status == 200
-    assert (await context.client.get('/static/widget.disabled')).status == 404
 
     assert (await context.client.get('/static/view.css')).status == 200
     assert (await context.client.get('/static/view.js')).status == 200
@@ -93,11 +61,6 @@ async def test_static_files(lona_app_context):
         style_urls = [await x.get_attribute('href') for x in links]
         script_urls = [await x.get_attribute('src') for x in scripts]
         html = await page.inner_html('html')
-
-        assert '/static/widget.css' in style_urls
-        assert '/static/widget.js' in script_urls
-        assert 'widget.map' not in html
-        assert 'widget.disabled' not in html
 
         assert '/static/view.css' in style_urls
         assert '/static/view.js' in script_urls
