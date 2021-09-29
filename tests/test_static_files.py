@@ -8,16 +8,8 @@ from lona import LonaView
 
 
 def setup_app(app):
-    @app.route('/')
-    class MyLonaView(LonaView):
-        def handle_request(self, request):
-            return 'SUCCESS'
-
-
-async def test_static_files(lona_app_context):
     some_existing_file = os.path.basename(__file__)
 
-    # FIXME: if put widget into setup_app(), lona won't discover static files
     class MyWidget(Widget):
         STATIC_FILES = [
             StyleSheet(
@@ -44,6 +36,13 @@ async def test_static_files(lona_app_context):
             ),
         ]
 
+    @app.route('/')
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return 'SUCCESS'
+
+
+async def test_static_files(lona_app_context):
     context = await lona_app_context(setup_app)
 
     assert (await context.client.get('/static/widget.css')).status == 200
