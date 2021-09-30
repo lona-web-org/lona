@@ -56,26 +56,26 @@ class StaticFileLoader:
         discovered_names = []
 
         for node_class in self.node_classes:
-            for static_file in node_class.STATIC_FILES:
-                if static_file.name in discovered_names:
+            for file_declaration in node_class.STATIC_FILES:
+                if file_declaration.name in discovered_names:
                     continue
 
                 node_class_path = get_file(node_class)
                 node_class_dirname = os.path.dirname(node_class_path)
 
                 # check static file
-                if not isinstance(static_file, StaticFile):
+                if not isinstance(file_declaration, StaticFile):
                     logger.error(
                         '%s::%s: unknown type found: %r',
                         node_class_path,
                         node_class.__name__,
-                        static_file,
+                        file_declaration,
                     )
 
                     continue
 
                 # create a local copy
-                static_file = copy(static_file)
+                static_file = copy(file_declaration)
 
                 static_file.static_url_prefix = \
                     self.server.settings.STATIC_URL_PREFIX
