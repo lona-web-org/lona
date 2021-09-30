@@ -57,9 +57,6 @@ class StaticFileLoader:
 
         for node_class in self.node_classes:
             for file_declaration in node_class.STATIC_FILES:
-                if file_declaration.name in discovered_names:
-                    continue
-
                 node_class_path = get_file(node_class)
                 node_class_dirname = os.path.dirname(node_class_path)
 
@@ -72,6 +69,9 @@ class StaticFileLoader:
                         file_declaration,
                     )
 
+                    continue
+
+                if file_declaration.name in discovered_names:
                     continue
 
                 # create a local copy
