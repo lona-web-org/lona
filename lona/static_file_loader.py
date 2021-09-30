@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING, Optional, Type, List
 from copy import copy
 import logging
 import os
@@ -6,14 +7,19 @@ from lona.static_files import StyleSheet, StaticFile, Script
 from lona.html.abstract_node import AbstractNode
 from lona.imports import get_file
 
+# avoid import cycles
+if TYPE_CHECKING:
+    from lona.server import LonaServer
+
+
 logger = logging.getLogger('lona.static_file_loader')
 
 
 class StaticFileLoader:
-    def __init__(self, server):
-        self.server = server
+    def __init__(self, server: 'LonaServer') -> None:
+        self.server: 'LonaServer' = server
 
-        self.static_dirs = [
+        self.static_dirs: List[str] = [
             *self.server.settings.STATIC_DIRS,
             *self.server.settings.CORE_STATIC_DIRS,
         ]
@@ -26,8 +32,8 @@ class StaticFileLoader:
 
         self.discover()
 
-    def discover_node_classes(self):
-        self.node_classes = [AbstractNode]
+    def discover_node_classes(self) -> List[Type[AbstractNode]]:
+        self.node_classes: List[Type[AbstractNode]] = [AbstractNode]
 
         while True:
             count = len(self.node_classes)
@@ -40,11 +46,11 @@ class StaticFileLoader:
             if len(self.node_classes) == count:
                 return self.node_classes
 
-    def discover_node_static_files(self):
-        self.node_stylesheets = []
-        self.node_scripts = []
-        self.node_static_files = []
-        self.static_files = []
+    def discover_node_static_files(self) -> None:
+        self.node_stylesheets: List[StyleSheet] = []
+        self.node_scripts: List[Script] = []
+        self.node_static_files: List[StaticFile] = []
+        self.static_files: List[StaticFile] = []
 
         # discover
         discovered_names = []
@@ -143,7 +149,7 @@ class StaticFileLoader:
             if static_file.name in self.server.settings.STATIC_FILES_DISABLED:
                 static_file.enabled = False
 
-    def discover(self):
+    def discover(self) -> None:
         logger.debug('discover node classes')
 
         self.discover_node_classes()
@@ -160,7 +166,7 @@ class StaticFileLoader:
         logger.debug('rendering html files')
 
         # stylesheets
-        self.style_tags_html = self.server.templating_engine.render_template(
+        self.style_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
             self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
             {
                 'stylesheets': [i for i in self.node_stylesheets
@@ -169,7 +175,7 @@ class StaticFileLoader:
         )
 
         # scripts
-        self.script_tags_html = self.server.templating_engine.render_template(
+        self.script_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
             self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
                 'scripts': [i for i in self.node_scripts
@@ -177,7 +183,7 @@ class StaticFileLoader:
             },
         )
 
-    def resolve_path(self, path):
+    def resolve_path(self, path: str) -> Optional[str]:
         logger.debug("resolving '%s'", path)
 
         rel_path = path
@@ -207,7 +213,7 @@ class StaticFileLoader:
                     logger.debug(
                         "'%s' is directory. resolving stopped", abs_path)
 
-                    return
+                    return None
 
                 logger.debug("returning '%s'", abs_path)
 
@@ -222,3 +228,5 @@ class StaticFileLoader:
                 return static_file.path
 
         logger.debug("'%s' was not found", path)
+
+        return None
