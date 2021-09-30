@@ -44,83 +44,20 @@ class StaticFileLoader:
         visited_declarations: List[StaticFile] = []
 
         for node_class in self.node_classes:
+            node_class_path = get_file(node_class)
+            node_class_dirname = os.path.dirname(node_class_path)
+            context = f'{node_class_path}::{node_class.__name__}'
             for file_declaration in node_class.STATIC_FILES:
-                node_class_path = get_file(node_class)
-                node_class_dirname = os.path.dirname(node_class_path)
+                static_file = self._process_declaration(
+                    file_declaration,
+                    context,
+                    node_class_dirname,
+                    visited_declarations,
+                    discovered_names,
+                )
 
-                # check static file
-                if not isinstance(file_declaration, StaticFile):
-                    logger.error(
-                        '%s::%s: unknown type found: %r',
-                        node_class_path,
-                        node_class.__name__,
-                        file_declaration,
-                    )
-
+                if static_file is None:
                     continue
-
-                if file_declaration in visited_declarations:
-                    continue
-
-                visited_declarations.append(file_declaration)
-
-                if file_declaration.name in discovered_names:
-                    logger.error(
-                        "%s::%s: static file with name '%s' already used",
-                        node_class_path,
-                        node_class.__name__,
-                        file_declaration.name,
-                    )
-
-                    continue
-
-                # create a local copy
-                static_file = copy(file_declaration)
-
-                static_file.static_url_prefix = \
-                    self.server.settings.STATIC_URL_PREFIX
-
-                # patch path
-                static_file_rel_path = static_file.path
-
-                static_file_abs_path = os.path.join(
-                    node_class_dirname, static_file_rel_path)
-
-                if not os.path.exists(static_file_abs_path):
-                    logger.error(
-                        "%s::%s: path '%s' does not exist",
-                        node_class_path,
-                        node_class.__name__,
-                        static_file_abs_path,
-                    )
-
-                    continue
-
-                static_file.path = static_file_abs_path
-
-                # patch url
-                if not static_file.url:
-                    url = static_file_rel_path
-
-                else:
-                    url = static_file.url
-
-                if url.startswith('/'):
-                    url = url[1:]
-
-                static_file.url = url
-
-                # disable static files that are not enabled by default and
-                # are not configured to be enabled
-                if(not static_file.enabled_by_default and
-                   static_file.name not in
-                   self.server.settings.STATIC_FILES_ENABLED):
-
-                    static_file.enabled = False
-
-                # disable static files that are disabled explicitly
-                if static_file.name in self.server.settings.STATIC_FILES_DISABLED:  # NOQA: LN001
-                    static_file.enabled = False
 
                 # sort static file into the right cache
                 if isinstance(static_file, StyleSheet):
@@ -132,8 +69,6 @@ class StaticFileLoader:
                 else:
                     self.node_static_files.append(static_file)
 
-                discovered_names.add(static_file.name)
-
         # sort
         self.node_stylesheets.sort(key=lambda x: x.sort_order.value)
         self.node_scripts.sort(key=lambda x: x.sort_order.value)
@@ -144,6 +79,84 @@ class StaticFileLoader:
             *self.node_scripts,
             *self.node_static_files,
         ]
+
+    def _process_declaration(
+            self,
+            file_declaration: StaticFile,
+            context: str,
+            dirname: str,
+            visited: List[StaticFile],
+            discovered_names: Set[str],
+    ) -> Optional[StaticFile]:
+        if not isinstance(file_declaration, StaticFile):
+            logger.error(
+                '%s: unknown type found: %r',
+                context,
+                file_declaration,
+            )
+
+            return None
+
+        if file_declaration in visited:
+            return None
+
+        visited.append(file_declaration)
+
+        if file_declaration.name in discovered_names:
+            logger.error(
+                "%s: static file with name '%s' already used",
+                context,
+                file_declaration.name,
+            )
+
+            return None
+
+        # create a local copy
+        static_file = copy(file_declaration)
+
+        static_file.static_url_prefix = self.server.settings.STATIC_URL_PREFIX
+
+        # patch path
+        static_file_rel_path = static_file.path
+
+        static_file_abs_path = os.path.join(dirname, static_file_rel_path)
+
+        if not os.path.exists(static_file_abs_path):
+            logger.error(
+                "%s: path '%s' does not exist",
+                context,
+                static_file_abs_path,
+            )
+
+            return None
+
+        static_file.path = static_file_abs_path
+
+        # patch url
+        if not static_file.url:
+            url = static_file_rel_path
+
+        else:
+            url = static_file.url
+
+        if url.startswith('/'):
+            url = url[1:]
+
+        static_file.url = url
+
+        # disable static files that are not enabled by default and
+        # are not configured to be enabled
+        if(not static_file.enabled_by_default and
+           static_file.name not in self.server.settings.STATIC_FILES_ENABLED):
+            static_file.enabled = False
+
+        # disable static files that are disabled explicitly
+        if static_file.name in self.server.settings.STATIC_FILES_DISABLED:
+            static_file.enabled = False
+
+        discovered_names.add(static_file.name)
+
+        return static_file
 
     def discover(self) -> None:
         logger.debug('discover node classes')
