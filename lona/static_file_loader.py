@@ -40,6 +40,8 @@ class StaticFileLoader:
 
         # discover
         discovered_names: Set[str] = set()
+        # can't use set because StaticFileDecl is unhashable
+        visited_declarations: List[StaticFile] = []
 
         for node_class in self.node_classes:
             for file_declaration in node_class.STATIC_FILES:
@@ -57,7 +59,19 @@ class StaticFileLoader:
 
                     continue
 
+                if file_declaration in visited_declarations:
+                    continue
+
+                visited_declarations.append(file_declaration)
+
                 if file_declaration.name in discovered_names:
+                    logger.error(
+                        "%s::%s: static file with name '%s' already used",
+                        node_class_path,
+                        node_class.__name__,
+                        file_declaration.name,
+                    )
+
                     continue
 
                 # create a local copy
