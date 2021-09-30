@@ -38,6 +38,31 @@ def setup_app(app):
 
     @app.route('/')
     class MyLonaView(LonaView):
+        STATIC_FILES = [
+            StyleSheet(
+                name='my-view-style',
+                path=some_existing_file,
+                url='view.css',
+            ),
+            Script(
+                name='my-view-script',
+                path=some_existing_file,
+                url='view.js',
+            ),
+            Script(
+                name='my-view-map',
+                path=some_existing_file,
+                url='view.map',
+                link=False,
+            ),
+            StyleSheet(
+                name='my-view-disabled',
+                path=some_existing_file,
+                url='view.disabled',
+                enabled_by_default=False,
+            ),
+        ]
+
         def handle_request(self, request):
             return 'SUCCESS'
 
@@ -49,6 +74,11 @@ async def test_static_files(lona_app_context):
     assert (await context.client.get('/static/widget.js')).status == 200
     assert (await context.client.get('/static/widget.map')).status == 200
     assert (await context.client.get('/static/widget.disabled')).status == 404
+
+    assert (await context.client.get('/static/view.css')).status == 200
+    assert (await context.client.get('/static/view.js')).status == 200
+    assert (await context.client.get('/static/view.map')).status == 200
+    assert (await context.client.get('/static/view.disabled')).status == 404
 
     async with async_playwright() as p:
         browser = await p.chromium.launch()
@@ -68,3 +98,8 @@ async def test_static_files(lona_app_context):
         assert '/static/widget.js' in script_urls
         assert 'widget.map' not in html
         assert 'widget.disabled' not in html
+
+        assert '/static/view.css' in style_urls
+        assert '/static/view.js' in script_urls
+        assert 'view.map' not in html
+        assert 'view.disabled' not in html

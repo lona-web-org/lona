@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Type, List, Set
+from typing import TYPE_CHECKING, Optional, Iterator, Tuple, Type, List, Set
 from copy import copy
 import logging
 import os
@@ -30,28 +30,65 @@ class StaticFileLoader:
 
         logger.debug('static dirs %s loaded', repr(self.static_dirs)[1:-1])
 
-        self.discover()
-
-    def discover_node_static_files(self) -> None:
-        self.node_stylesheets: List[StyleSheet] = []
-        self.node_scripts: List[Script] = []
-        self.node_static_files: List[StaticFile] = []
-        self.static_files: List[StaticFile] = []
-
         # discover
+        self.stylesheets: List[StyleSheet] = []
+        self.scripts: List[Script] = []
+        self.others: List[StaticFile] = []
+        self.static_files: List[StaticFile] = self._discover_static_files()
+
+        logger.debug('%d stylesheets discovered', len(self.stylesheets))
+        logger.debug('%d scripts discovered', len(self.scripts))
+
+        # render html files
+        logger.debug('rendering html files')
+
+        # stylesheets
+        self.style_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
+            self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
+            {
+                'stylesheets': [i for i in self.stylesheets
+                                if i.enabled and i.link],
+            },
+        )
+
+        # scripts
+        self.script_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
+            self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
+            {
+                'scripts': [i for i in self.scripts
+                            if i.enabled and i.link],
+            },
+        )
+
+    def _iter_all_declarations(self) -> Iterator[Tuple[Type, Iterator[StaticFile]]]:  # NOQA: LN001
+        logger.debug('discover node classes')
+        node_classes = [AbstractNode] + list(get_all_subclasses(AbstractNode))
+        logger.debug('%d node classes discovered', len(node_classes))
+
+        for node_class in node_classes:
+            yield node_class, iter(node_class.STATIC_FILES)
+
+        logger.debug('discover view classes')
+        view_classes = self.server.view_loader.get_all_views()
+        logger.debug('%d view classes discovered', len(view_classes))
+
+        for view_class in view_classes:
+            yield view_class, iter(view_class.STATIC_FILES)
+
+    def _discover_static_files(self) -> List[StaticFile]:
         discovered_names: Set[str] = set()
         # can't use set because StaticFileDecl is unhashable
         visited_declarations: List[StaticFile] = []
 
-        for node_class in self.node_classes:
-            node_class_path = get_file(node_class)
-            node_class_dirname = os.path.dirname(node_class_path)
-            context = f'{node_class_path}::{node_class.__name__}'
-            for file_declaration in node_class.STATIC_FILES:
+        for cls, declarations in self._iter_all_declarations():
+            class_path = get_file(cls)
+            class_dirname = os.path.dirname(class_path)
+            context = f'{class_path}::{cls.__name__}'
+            for file_declaration in declarations:
                 static_file = self._process_declaration(
                     file_declaration,
                     context,
-                    node_class_dirname,
+                    class_dirname,
                     visited_declarations,
                     discovered_names,
                 )
@@ -61,23 +98,23 @@ class StaticFileLoader:
 
                 # sort static file into the right cache
                 if isinstance(static_file, StyleSheet):
-                    self.node_stylesheets.append(static_file)
+                    self.stylesheets.append(static_file)
 
                 elif isinstance(static_file, Script):
-                    self.node_scripts.append(static_file)
+                    self.scripts.append(static_file)
 
                 else:
-                    self.node_static_files.append(static_file)
+                    self.others.append(static_file)
 
         # sort
-        self.node_stylesheets.sort(key=lambda x: x.sort_order.value)
-        self.node_scripts.sort(key=lambda x: x.sort_order.value)
-        self.node_static_files.sort(key=lambda x: x.sort_order.value)
+        self.stylesheets.sort(key=lambda x: x.sort_order.value)
+        self.scripts.sort(key=lambda x: x.sort_order.value)
+        self.others.sort(key=lambda x: x.sort_order.value)
 
-        self.static_files = [
-            *self.node_stylesheets,
-            *self.node_scripts,
-            *self.node_static_files,
+        return [
+            *self.stylesheets,
+            *self.scripts,
+            *self.others,
         ]
 
     def _process_declaration(
@@ -157,40 +194,6 @@ class StaticFileLoader:
         discovered_names.add(static_file.name)
 
         return static_file
-
-    def discover(self) -> None:
-        logger.debug('discover node classes')
-
-        self.node_classes: List[Type[AbstractNode]] = [AbstractNode] + list(get_all_subclasses(AbstractNode))  # NOQA: LN001
-        self.discover_node_static_files()
-
-        logger.debug('%s node classes discovered', len(self.node_classes))
-
-        logger.debug('%s node stylesheets discovered',
-                     len(self.node_stylesheets))
-
-        logger.debug('%s node scripts discovered', len(self.node_scripts))
-
-        # render html files
-        logger.debug('rendering html files')
-
-        # stylesheets
-        self.style_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
-            self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
-            {
-                'stylesheets': [i for i in self.node_stylesheets
-                                if i.enabled and i.link],
-            },
-        )
-
-        # scripts
-        self.script_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
-            self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
-            {
-                'scripts': [i for i in self.node_scripts
-                            if i.enabled and i.link],
-            },
-        )
 
     def resolve_path(self, path: str) -> Optional[str]:
         logger.debug("resolving '%s'", path)
