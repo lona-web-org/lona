@@ -1,4 +1,7 @@
+from typing import List
+
 from lona.unique_ids import generate_unique_id
+from lona.static_files import StaticFile
 from lona.html.selector import Selector
 
 
@@ -20,6 +23,8 @@ class DummyDocument:
 
 
 class AbstractNode:
+    STATIC_FILES: List[StaticFile] = []
+
     def __copy__(self, *args, **kwargs):
         raise RuntimeError('copy is not supported')
 

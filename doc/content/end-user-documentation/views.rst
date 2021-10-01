@@ -693,6 +693,70 @@ to override even widget event handler.
             print(input_event)
 
 
+Adding Javascript And CSS To View
+---------------------------------
+
+Views can include stylesheets and javascript files in ``STATIC_FILES``.
+Such files will be automatically served and included in html.
+
+Static file's ``name`` must be unique in the whole project
+(including static files in nodes and widgets).
+
+To control the include order, ``sort_order`` is used. ``sort_order`` is a
+simple integer, but to make the code more readable
+``lona.static_files.SORT_ORDER`` is used.
+
+
+.. code-block:: python
+
+    from lona.static_files import StyleSheet, Script, SORT_ORDER
+    from lona import LonaView
+
+    class MyView(LonaView):
+        STATIC_FILES = [
+            # styesheets
+            StyleSheet(
+                name='chart_css_min',
+                path='static/Chart.min.css',
+                url='Chart.min.css',
+                sort_order=SORT_ORDER.FRAMEWORK,
+            ),
+            StyleSheet(
+                name='chart_css',
+                path='static/Chart.css',
+                url='Chart.css',
+                sort_order=SORT_ORDER.FRAMEWORK,
+                link=False,  # When link is set to False the given file
+                             # gets collected, but not linked. That's necessary
+                             # to make map files possible.
+            ),
+
+            # scripts
+            Script(
+                name='chart_bundle_js_min',
+                path='static/Chart.bundle.min.js',
+                url='Chart.bundle.min.js',
+                sort_order=SORT_ORDER.FRAMEWORK,
+            ),
+            Script(
+                name='chart_bundle_js',
+                path='static/Chart.bundle.js',
+                url='Chart.bundle.js',
+                sort_order=SORT_ORDER.FRAMEWORK,
+                link=False,
+            ),
+            Script(
+                name='chart_js_widget_js',
+                path='static/chart-js-widget.js',
+                url='chart-js-widget.js',
+                sort_order=SORT_ORDER.LIBRARY,
+            ),
+        ]
+
+        def handle_request(self, request):
+            return 'SUCCESS'
+
+
 View Methods
 ------------
 

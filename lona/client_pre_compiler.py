@@ -24,7 +24,7 @@ class ClientPreCompiler:
 
         self.compile()
 
-    def _get_path(self):
+    def _get_path(self) -> str:
         return os.path.join(self.tmp_dir.name, 'lona.js')
 
     def get_settings(self):
@@ -71,7 +71,7 @@ class ClientPreCompiler:
         except Exception:
             logger.exception('exception raised while pre compiling js client')
 
-    def resolve(self):
+    def resolve(self) -> str:
         if self.server.settings.CLIENT_RECOMPILE:
             self.compile()
 

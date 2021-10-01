@@ -24,6 +24,7 @@ from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.exceptions import ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
+from lona.static_files import StaticFile
 from lona.shell.shell import embed_shell
 from lona.connection import Connection
 from lona.errors import ClientError
@@ -40,6 +41,8 @@ _HTML = Union[None, AbstractNode, str]
 
 
 class LonaView:
+    STATIC_FILES: List[StaticFile] = []
+
     _objects: Dict[str, List['LonaView']] = {}
 
     def __init__(
