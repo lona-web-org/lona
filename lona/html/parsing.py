@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from html.parser import HTMLParser
-from typing import Type, Dict
 import logging
 import inspect
 
@@ -8,8 +9,8 @@ from lona.html.node import Node
 
 logger = logging.getLogger('lona')
 
-NODE_CLASSES: Dict[str, Type[Node]] = {}
-INPUT_NODE_CLASSES: Dict[str, Type[Node]] = {}
+NODE_CLASSES: dict[str, type[Node]] = {}
+INPUT_NODE_CLASSES: dict[str, type[Node]] = {}
 
 SELF_CLOSING_TAGS = [
     'area',

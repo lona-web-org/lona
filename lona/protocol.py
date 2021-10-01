@@ -1,4 +1,6 @@
-from typing import Optional, Union, Tuple, Dict
+from __future__ import annotations
+
+from typing import Union
 from enum import Enum
 import json
 
@@ -80,16 +82,16 @@ ENUMS = [
 ]
 
 
-def decode_message(raw_message: str) -> Tuple[
+def decode_message(raw_message: str) -> tuple[
     EXIT_CODE,
-    Optional[int],
-    Optional[int],
-    Optional[int],
+    None | int,
+    None | int,
+    None | int,
     Union[
         None,
-        Tuple[str, Optional[Dict]],
-        Tuple[int, Union[int, str]],
-        Tuple[str, None],
+        tuple[str, None | dict],
+        tuple[int, int | str],
+        tuple[str, None],
     ],
 ]:
     """
@@ -97,7 +99,7 @@ def decode_message(raw_message: str) -> Tuple[
 
     """
 
-    def _invalid_message() -> Tuple[EXIT_CODE, None, None, None, None]:
+    def _invalid_message() -> tuple[EXIT_CODE, None, None, None, None]:
         return EXIT_CODE.INVALID_MESSAGE, None, None, None, None
 
     if not raw_message.startswith(PROTOCOL.MESSAGE_PREFIX.value):

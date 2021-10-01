@@ -1,18 +1,7 @@
-from typing import (
-    TYPE_CHECKING,
-    Awaitable,
-    overload,
-    Optional,
-    Iterator,
-    Callable,
-    TypeVar,
-    Union,
-    Tuple,
-    Type,
-    List,
-    Dict,
-    cast,
-)
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
+from collections import Awaitable, Iterator, Callable
 from concurrent.futures import CancelledError
 import threading
 import asyncio
@@ -35,23 +24,23 @@ if TYPE_CHECKING:
     from lona.server import LonaServer
 
 
-_T = TypeVar('_T')
-_V = TypeVar('_V', bound='LonaView')
-_HTML = Union[None, AbstractNode, str]
+T = TypeVar('T')
+V = TypeVar('V', bound='LonaView')
+H = Union[None, AbstractNode, str]
 
 
 class LonaView:
-    STATIC_FILES: List[StaticFile] = []
+    STATIC_FILES: list[StaticFile] = []
 
-    _objects: Dict[str, List['LonaView']] = {}
+    _objects: dict[str, list[LonaView]] = {}
 
     def __init__(
             self,
-            server: 'LonaServer',
+            server: LonaServer,
             view_runtime: ViewRuntime,
             request: Request,
     ) -> None:
-        self._server: 'LonaServer' = server
+        self._server: LonaServer = server
         self._view_runtime: ViewRuntime = view_runtime
         self._request: Request = request
 
@@ -60,7 +49,7 @@ class LonaView:
     @classmethod
     def _get_objects_key(
             cls,
-            view_class: Type['LonaView'],
+            view_class: type[LonaView],
             is_class: Literal[True],
     ) -> str:
         ...
@@ -69,7 +58,7 @@ class LonaView:
     @classmethod
     def _get_objects_key(
             cls,
-            view_class: 'LonaView',
+            view_class: LonaView,
             is_class: Literal[False],
     ) -> str:
         ...
@@ -82,7 +71,7 @@ class LonaView:
         return f'{view_class.__module__}.{view_class.__name__}'
 
     @classmethod
-    def _add_view_to_objects(cls, view_object: 'LonaView') -> None:
+    def _add_view_to_objects(cls, view_object: LonaView) -> None:
         objects_key = cls._get_objects_key(view_object, is_class=False)
 
         if objects_key not in cls._objects:
@@ -91,7 +80,7 @@ class LonaView:
         cls._objects[objects_key].append(view_object)
 
     @classmethod
-    def _remove_view_from_objects(cls, view_object: 'LonaView') -> None:
+    def _remove_view_from_objects(cls, view_object: LonaView) -> None:
         objects_key = cls._get_objects_key(view_object, is_class=False)
 
         if(objects_key in cls._objects and
@@ -100,14 +89,14 @@ class LonaView:
             cls._objects[objects_key].remove(view_object)
 
     @classmethod
-    def iter_objects(cls: Type[_V]) -> Iterator[_V]:
+    def iter_objects(cls: type[V]) -> Iterator[V]:
         objects_key = cls._get_objects_key(cls, is_class=True)
         view_objects = cls._objects.get(objects_key, []).copy()
         yield from view_objects  # type: ignore
 
     # properties ##############################################################
     @property
-    def server(self) -> 'LonaServer':
+    def server(self) -> LonaServer:
         return self._server
 
     @property
@@ -130,8 +119,8 @@ class LonaView:
             raise self._view_runtime.stop_reason
 
     # asyncio #################################################################
-    def _await_sync(self, awaitable: Awaitable[_T]) -> _T:
-        async def await_awaitable() -> _T:
+    def _await_sync(self, awaitable: Awaitable[T]) -> T:
+        async def await_awaitable() -> T:
             finished, pending = await asyncio.wait(
                 [
                     cast(Awaitable, self._view_runtime.stopped),
@@ -156,7 +145,7 @@ class LonaView:
             loop=self._server.loop,
         ).result()
 
-    def await_sync(self, awaitable: Awaitable[_T]) -> _T:
+    def await_sync(self, awaitable: Awaitable[T]) -> T:
         self._view_runtime.state = VIEW_RUNTIME_STATE.WAITING_FOR_IOLOOP
 
         try:
@@ -168,11 +157,11 @@ class LonaView:
     # html ####################################################################
     def show(
             self,
-            html: _HTML = None,
-            template: Union[None, str, Template] = None,
-            template_string: Union[None, str, Template] = None,
-            title: Optional[str] = None,
-            template_context: Optional[dict] = None,
+            html: H = None,
+            template: None | str | Template = None,
+            template_string: None | str | Template = None,
+            title: None | str = None,
+            template_context: None | dict = None,
     ) -> None:
         self._assert_not_main_thread()
         self._assert_view_is_interactive()
@@ -248,9 +237,9 @@ class LonaView:
     # input events ############################################################
     def _await_specific_input_event(
             self,
-            *nodes: Union[AbstractNode, List[AbstractNode]],
+            *nodes: AbstractNode | list[AbstractNode],
             event_type: str = '',
-            html: _HTML = None,
+            html: H = None,
     ) -> InputEvent:
         self._view_runtime.state = VIEW_RUNTIME_STATE.WAITING_FOR_INPUT
 
@@ -262,7 +251,7 @@ class LonaView:
             if len(nodes) == 1 and isinstance(nodes[0], list):
                 nodes = tuple(nodes[0])
 
-            nodes = cast(Tuple[AbstractNode], nodes)
+            nodes = cast('tuple[AbstractNode]', nodes)
 
             if html is not None:
                 self.show(html=html)
@@ -276,11 +265,11 @@ class LonaView:
             self._view_runtime.state = VIEW_RUNTIME_STATE.RUNNING
 
     @overload
-    def await_input_event(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: LN001
+    def await_input_event(self, *nodes: AbstractNode, html: H = None) -> InputEvent:  # NOQA: LN001
         ...
 
     @overload
-    def await_input_event(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: LN001
+    def await_input_event(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
         ...
 
     def await_input_event(self, *nodes, html=None):
@@ -291,11 +280,11 @@ class LonaView:
         )
 
     @overload
-    def await_click(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: LN001
+    def await_click(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
         ...
 
     @overload
-    def await_click(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: LN001
+    def await_click(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
         ...
 
     def await_click(self, *nodes, html=None):
@@ -306,11 +295,11 @@ class LonaView:
         )
 
     @overload
-    def await_change(self, *nodes: AbstractNode, html: _HTML = None) -> InputEvent:  # NOQA: LN001
+    def await_change(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
         ...
 
     @overload
-    def await_change(self, __nodes: List[AbstractNode], html: _HTML = None) -> InputEvent:  # NOQA: LN001
+    def await_change(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
         ...
 
     def await_change(self, *nodes, html=None):
@@ -326,10 +315,10 @@ class LonaView:
         ...
 
     @overload
-    def sleep(self, delay: float, result: _T) -> _T:
+    def sleep(self, delay: float, result: T) -> T:
         ...
 
-    def sleep(self, delay: float, result: Optional[_T] = None) -> Optional[_T]:
+    def sleep(self, delay: float, result: None | T = None) -> None | T:
         self._view_runtime.state = VIEW_RUNTIME_STATE.SLEEPING
 
         try:
@@ -350,7 +339,7 @@ class LonaView:
         return 'pong'
 
     # helper ##################################################################
-    def embed_shell(self, _locals: Optional[dict] = None) -> None:
+    def embed_shell(self, _locals: None | dict = None) -> None:
         if _locals is None:
             _locals = {}
         _locals['self'] = self
@@ -358,13 +347,13 @@ class LonaView:
         embed_shell(server=self.server, locals=_locals)
 
     # hooks ###################################################################
-    def handle_request(self, request: Request) -> Union[None, str, AbstractNode, dict]:  # NOQA: LN001
+    def handle_request(self, request: Request) -> None | str | AbstractNode | dict:  # NOQA: LN001
         return ''
 
-    def handle_input_event_root(self, input_event: InputEvent) -> Optional[InputEvent]:  # NOQA: LN001
+    def handle_input_event_root(self, input_event: InputEvent) -> None | InputEvent:  # NOQA: LN001
         return input_event
 
-    def handle_input_event(self, input_event: InputEvent) -> Optional[InputEvent]:  # NOQA: LN001
+    def handle_input_event(self, input_event: InputEvent) -> None | InputEvent:
         return input_event
 
     def on_shutdown(

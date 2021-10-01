@@ -1,4 +1,5 @@
-from typing import Type, List
+from __future__ import annotations
+
 import logging
 import inspect
 import asyncio
@@ -126,5 +127,5 @@ class ViewLoader:
 
         return self._cache[cache_key]
 
-    def get_all_views(self) -> List[Type[LonaView]]:
+    def get_all_views(self) -> list[type[LonaView]]:
         return list(self._cache.values())

@@ -1,5 +1,5 @@
-from typing import List
+from __future__ import annotations
 
 from lona import Route
 
-routes: List[Route] = []
+routes: list[Route] = []

@@ -1,5 +1,7 @@
-from typing import overload, Optional, Callable, Union, Type, List, Dict, Any
+from __future__ import annotations
+
 from argparse import RawTextHelpFormatter, ArgumentParser, Namespace
+from typing import overload, Callable, Any
 from tempfile import TemporaryDirectory
 from asyncio import AbstractEventLoop
 from os import PathLike
@@ -26,8 +28,8 @@ class LonaApp:
         self.script_path: PathLike = script_path
         self.project_root: str = os.path.dirname(self.script_path)
 
-        self.aiohttp_app: Optional[Application] = None
-        self.server: Optional[LonaServer] = None
+        self.aiohttp_app: None | Application = None
+        self.server: None | LonaServer = None
 
         # setup tempdir
         self.temp_dir: TemporaryDirectory = TemporaryDirectory()
@@ -46,14 +48,14 @@ class LonaApp:
         os.makedirs(self.static_dir)
 
         # setup routes
-        self.routes: List[Route] = []
+        self.routes: list[Route] = []
 
         # setup settings
         self.settings: Settings = Settings()
         self.settings.add(default_settings.__file__)
 
     # helper ##################################################################
-    def _get_settings_as_dict(self) -> Dict[str, Any]:
+    def _get_settings_as_dict(self) -> dict[str, Any]:
         settings = {}
 
         for name in self.settings:
@@ -76,14 +78,14 @@ class LonaApp:
     def route(
             self,
             # 1 = lona.MATCH_ALL  https://github.com/python/mypy/issues/10026
-            raw_pattern: Union[str, Literal[1]],
+            raw_pattern: str | Literal[1],
             name: str = '',
             interactive: bool = True,
             http_pass_through: bool = False,
-            frontend_view: Union[None, str, LonaView] = None,
-    ) -> Callable[[Type[LonaView]], None]:
+            frontend_view: None | str | LonaView = None,
+    ) -> Callable[[type[LonaView]], None]:
 
-        def decorator(view_class: Type[LonaView]) -> None:
+        def decorator(view_class: type[LonaView]) -> None:
             self.routes.append(
                 Route(
                     raw_pattern=raw_pattern,
@@ -99,15 +101,15 @@ class LonaApp:
 
     # middleware
     @overload
-    def middleware(self) -> Callable[[Type], None]:
+    def middleware(self) -> Callable[[type], None]:
         ...
 
     @overload
-    def middleware(self, middleware_class: Type) -> None:
+    def middleware(self, middleware_class: type) -> None:
         ...
 
-    def middleware(self, middleware_class: Optional[Type] = None) -> Optional[Callable[[Type], None]]:  # NOQA: LN001
-        def decorator(middleware_class: Type) -> None:
+    def middleware(self, middleware_class: None | type = None) -> None | Callable[[type], None]:  # NOQA: LN001
+        def decorator(middleware_class: type) -> None:
             self.settings.MIDDLEWARES.append(middleware_class)
 
         if callable(middleware_class):
@@ -120,15 +122,15 @@ class LonaApp:
 
     # frontend
     @overload
-    def frontend_view(self) -> Callable[[Type[LonaView]], None]:
+    def frontend_view(self) -> Callable[[type[LonaView]], None]:
         ...
 
     @overload
-    def frontend_view(self, view_class: Type[LonaView]) -> None:
+    def frontend_view(self, view_class: type[LonaView]) -> None:
         ...
 
-    def frontend_view(self, view_class: Optional[Type[LonaView]] = None) -> Optional[Callable[[Type[LonaView]], None]]:  # NOQA: LN001
-        def decorator(view_class: Type[LonaView]) -> None:
+    def frontend_view(self, view_class: None | type[LonaView] = None) -> None | Callable[[type[LonaView]], None]:  # NOQA: LN001
+        def decorator(view_class: type[LonaView]) -> None:
             self.settings.FRONTEND_VIEW = view_class
 
         if callable(view_class):
@@ -208,7 +210,7 @@ class LonaApp:
         )
 
     # command line ############################################################
-    def parse_command_line(self) -> Dict:
+    def parse_command_line(self) -> dict:
         from lona.command_line.handle_command_line import (
             parse_overrides,
             DESCRIPTION,
@@ -295,9 +297,9 @@ class LonaApp:
     # server ##################################################################
     def setup_server(
             self,
-            loop: Union[AbstractEventLoop, None] = None,
-            settings_pre_overrides: Optional[Dict[str, Any]] = None,
-            settings_post_overrides: Optional[Dict[str, Any]] = None,
+            loop: None | AbstractEventLoop = None,
+            settings_pre_overrides: None | dict[str, Any] = None,
+            settings_post_overrides: None | dict[str, Any] = None,
     ) -> None:
 
         # finish settings
@@ -330,7 +332,7 @@ class LonaApp:
 
     def run(
             self,
-            loop: Union[AbstractEventLoop, None] = None,
+            loop: None | AbstractEventLoop = None,
             parse_command_line: bool = True,
             **args: Any,
     ) -> None:

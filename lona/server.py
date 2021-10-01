@@ -1,5 +1,8 @@
-from typing import Awaitable, overload, Optional, TypeVar, Union
+from __future__ import annotations
+
 from concurrent.futures import Future
+from typing import overload, TypeVar
+from collections import Awaitable
 from functools import reduce
 import contextlib
 import operator
@@ -36,7 +39,7 @@ server_logger = logging.getLogger('lona.server')
 http_logger = logging.getLogger('lona.server.http')
 websockets_logger = logging.getLogger('lona.server.websockets')
 
-_T = TypeVar('_T')
+T = TypeVar('T')
 
 
 class LonaServer:
@@ -218,24 +221,24 @@ class LonaServer:
     @overload
     def run_coroutine_sync(
             self,
-            coroutine: Awaitable[_T],
-            wait: Optional[Literal[True]] = True,
-    ) -> _T:
+            coroutine: Awaitable[T],
+            wait: None | Literal[True] = True,
+    ) -> T:
         ...
 
     @overload
     def run_coroutine_sync(
             self,
-            coroutine: Awaitable[_T],
+            coroutine: Awaitable[T],
             wait: Literal[False],
-    ) -> 'Future[_T]':
+    ) -> Future[T]:
         ...
 
     def run_coroutine_sync(
             self,
-            coroutine: Awaitable[_T],
-            wait: Optional[bool] = True,
-    ) -> Union['Future[_T]', _T]:
+            coroutine: Awaitable[T],
+            wait: None | bool = True,
+    ) -> Future[T] | T:
         future = asyncio.run_coroutine_threadsafe(coroutine, loop=self._loop)
 
         if wait:

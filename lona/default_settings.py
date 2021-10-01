@@ -1,4 +1,6 @@
-from typing import List, Dict, Any
+from __future__ import annotations
+
+from typing import Any
 import os
 
 MAX_WORKER_THREADS = 4
@@ -15,27 +17,27 @@ CORE_TEMPLATE_DIRS = [
     os.path.join(os.path.dirname(__file__), 'templates'),
 ]
 
-TEMPLATE_DIRS: List[str] = []
+TEMPLATE_DIRS: list[str] = []
 
 FRONTEND_TEMPLATE = 'lona/frontend.html'
 ERROR_403_TEMPLATE = 'lona/403.html'
 ERROR_404_TEMPLATE = 'lona/404.html'
 ERROR_500_TEMPLATE = 'lona/500.html'
 
-TEMPLATE_EXTRA_CONTEXT: Dict[str, Any] = {}
+TEMPLATE_EXTRA_CONTEXT: dict[str, Any] = {}
 
 # static files
 CORE_STATIC_DIRS = [
     os.path.join(os.path.dirname(__file__), 'static'),
 ]
 
-STATIC_DIRS: List[str] = []
+STATIC_DIRS: list[str] = []
 STATIC_URL_PREFIX = '/static/'
 STATIC_FILES_SERVE = True
 STATIC_FILES_STYLE_TAGS_TEMPLATE = 'lona/style_tags.html'
 STATIC_FILES_SCRIPT_TAGS_TEMPLATE = 'lona/script_tags.html'
-STATIC_FILES_ENABLED: List[str] = []
-STATIC_FILES_DISABLED: List[str] = []
+STATIC_FILES_ENABLED: list[str] = []
+STATIC_FILES_DISABLED: list[str] = []
 STATIC_FILES_CLIENT_URL = '/lona/lona.js'
 
 # client
@@ -68,7 +70,7 @@ CORE_MIDDLEWARES = [
     'lona.middlewares.lona_messages.LonaMessageMiddleware',
 ]
 
-MIDDLEWARES: List[str] = []
+MIDDLEWARES: list[str] = []
 
 # shell
 CORE_COMMANDS = [
@@ -83,7 +85,7 @@ CORE_COMMANDS = [
     'lona.shell.commands.lona_info.LonaInfoCommand',
 ]
 
-COMMANDS: List[str] = []
+COMMANDS: list[str] = []
 
 # testing
 TEST_VIEW_START_TIMEOUT = False

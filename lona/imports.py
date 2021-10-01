@@ -1,4 +1,6 @@
-from typing import TypeVar, Type, Set
+from __future__ import annotations
+
+from typing import TypeVar
 import importlib
 import inspect
 import runpy
@@ -52,6 +54,6 @@ def get_object_repr(obj):
     return f'<{obj.__class__.__name__} object at {hex(id(obj))}>'
 
 
-def get_all_subclasses(cls: Type[T]) -> Set[Type[T]]:
+def get_all_subclasses(cls: type[T]) -> set[type[T]]:
     subs = cls.__subclasses__()
     return set(subs).union(s for c in subs for s in get_all_subclasses(c))
