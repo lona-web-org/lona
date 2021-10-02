@@ -1,4 +1,5 @@
-from typing import Union, List, Dict
+from __future__ import annotations
+
 from textwrap import indent
 
 from lona.html.attribute_dict import AttributeDict, StyleDict
@@ -10,7 +11,7 @@ from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
 
 
-def parse_style_string(style_string: str) -> Dict[str, str]:
+def parse_style_string(style_string: str) -> dict[str, str]:
     values = {}
 
     for css_rule in style_string.split(';'):
@@ -30,11 +31,11 @@ def parse_style_string(style_string: str) -> Dict[str, str]:
 class Node(AbstractNode):
     TAG_NAME = 'html'
     SELF_CLOSING_TAG = False
-    ID_LIST: List[str] = []
-    CLASS_LIST: List[str] = []
-    STYLE: Union[Dict[str, str], str] = {}
-    ATTRIBUTES: Dict[str, str] = {}
-    EVENTS: List[Union[EventType, ChangeEventType]] = []
+    ID_LIST: list[str] = []
+    CLASS_LIST: list[str] = []
+    STYLE: dict[str, str] | str = {}
+    ATTRIBUTES: dict[str, str] = {}
+    EVENTS: list[EventType | ChangeEventType] = []
 
     def __init__(self, *args, tag_name=None, self_closing_tag=None, **kwargs):
         self._id_list = IDList(self, self.ID_LIST)

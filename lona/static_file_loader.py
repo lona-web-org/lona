@@ -1,4 +1,7 @@
-from typing import TYPE_CHECKING, Optional, Iterator, Tuple, Type, List, Set
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from collections import Iterator
 from copy import copy
 import logging
 import os
@@ -16,10 +19,10 @@ logger = logging.getLogger('lona.static_file_loader')
 
 
 class StaticFileLoader:
-    def __init__(self, server: 'LonaServer') -> None:
-        self.server: 'LonaServer' = server
+    def __init__(self, server: LonaServer) -> None:
+        self.server: LonaServer = server
 
-        self.static_dirs: List[str] = [
+        self.static_dirs: list[str] = [
             *self.server.settings.STATIC_DIRS,
             *self.server.settings.CORE_STATIC_DIRS,
         ]
@@ -31,10 +34,10 @@ class StaticFileLoader:
         logger.debug('static dirs %s loaded', repr(self.static_dirs)[1:-1])
 
         # discover
-        self.stylesheets: List[StyleSheet] = []
-        self.scripts: List[Script] = []
-        self.others: List[StaticFile] = []
-        self.static_files: List[StaticFile] = self._discover_static_files()
+        self.stylesheets: list[StyleSheet] = []
+        self.scripts: list[Script] = []
+        self.others: list[StaticFile] = []
+        self.static_files: list[StaticFile] = self._discover_static_files()
 
         logger.debug('%d stylesheets discovered', len(self.stylesheets))
         logger.debug('%d scripts discovered', len(self.scripts))
@@ -60,7 +63,7 @@ class StaticFileLoader:
             },
         )
 
-    def _iter_all_declarations(self) -> Iterator[Tuple[Type, Iterator[StaticFile]]]:  # NOQA: LN001
+    def _iter_all_declarations(self) -> Iterator[tuple[type, Iterator[StaticFile]]]:  # NOQA: LN001
         logger.debug('discover node classes')
         node_classes = [AbstractNode] + list(get_all_subclasses(AbstractNode))
         logger.debug('%d node classes discovered', len(node_classes))
@@ -75,10 +78,10 @@ class StaticFileLoader:
         for view_class in view_classes:
             yield view_class, iter(view_class.STATIC_FILES)
 
-    def _discover_static_files(self) -> List[StaticFile]:
-        discovered_names: Set[str] = set()
+    def _discover_static_files(self) -> list[StaticFile]:
+        discovered_names: set[str] = set()
         # can't use set because StaticFileDecl is unhashable
-        visited_declarations: List[StaticFile] = []
+        visited_declarations: list[StaticFile] = []
 
         for cls, declarations in self._iter_all_declarations():
             class_path = get_file(cls)
@@ -122,9 +125,9 @@ class StaticFileLoader:
             file_declaration: StaticFile,
             context: str,
             dirname: str,
-            visited: List[StaticFile],
-            discovered_names: Set[str],
-    ) -> Optional[StaticFile]:
+            visited: list[StaticFile],
+            discovered_names: set[str],
+    ) -> None | StaticFile:
         if not isinstance(file_declaration, StaticFile):
             logger.error(
                 '%s: unknown type found: %r',
@@ -195,7 +198,7 @@ class StaticFileLoader:
 
         return static_file
 
-    def resolve_path(self, path: str) -> Optional[str]:
+    def resolve_path(self, path: str) -> None | str:
         logger.debug("resolving '%s'", path)
 
         rel_path = path

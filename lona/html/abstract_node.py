@@ -1,4 +1,4 @@
-from typing import List
+from __future__ import annotations
 
 from lona.unique_ids import generate_unique_id
 from lona.static_files import StaticFile
@@ -23,7 +23,7 @@ class DummyDocument:
 
 
 class AbstractNode:
-    STATIC_FILES: List[StaticFile] = []
+    STATIC_FILES: list[StaticFile] = []
 
     def __copy__(self, *args, **kwargs):
         raise RuntimeError('copy is not supported')

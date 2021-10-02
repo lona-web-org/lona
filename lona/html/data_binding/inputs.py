@@ -1,4 +1,6 @@
-from typing import Optional, Dict, Any
+from __future__ import annotations
+
+from typing import Any
 import contextlib
 
 from lona.events.event_types import CHANGE
@@ -102,7 +104,7 @@ class TextInput(Node):
 class TextArea(TextInput):
     TAG_NAME = 'textarea'
     SELF_CLOSING_TAG = False
-    ATTRIBUTES: Dict[str, str] = {}
+    ATTRIBUTES: dict[str, str] = {}
 
     def __repr__(self):
         return self.__str__(
@@ -149,10 +151,10 @@ class NumberInput(TextInput):
 
     def __init__(
             self,
-            value: Optional[float] = None,
-            min: Optional[float] = None,
-            max: Optional[float] = None,
-            step: Optional[float] = None,
+            value: None | float = None,
+            min: None | float = None,
+            max: None | float = None,
+            step: None | float = None,
             disabled: bool = False,
             readonly: bool = False,
             bubble_up: bool = False,
@@ -174,7 +176,7 @@ class NumberInput(TextInput):
     # properties ##############################################################
     # value
     @property
-    def value(self) -> Optional[float]:
+    def value(self) -> None | float:
         value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
         if value != '':
             with contextlib.suppress(ValueError):
@@ -182,7 +184,7 @@ class NumberInput(TextInput):
         return None
 
     @value.setter
-    def value(self, new_value: Optional[float]) -> None:
+    def value(self, new_value: None | float) -> None:
         if new_value is not None and not isinstance(new_value, (int, float)):
             raise TypeError('value should be None, int or float')
 
@@ -193,7 +195,7 @@ class NumberInput(TextInput):
 
     # min
     @property
-    def min(self) -> Optional[float]:
+    def min(self) -> None | float:
         value = self.attributes.get('min', None)
         if value is not None:
             with contextlib.suppress(ValueError):
@@ -201,7 +203,7 @@ class NumberInput(TextInput):
         return None
 
     @min.setter
-    def min(self, new_value: Optional[float]) -> None:
+    def min(self, new_value: None | float) -> None:
         if new_value is not None and not isinstance(new_value, (int, float)):
             raise TypeError('min should be None, int or float')
 
@@ -212,7 +214,7 @@ class NumberInput(TextInput):
 
     # max
     @property
-    def max(self) -> Optional[float]:
+    def max(self) -> None | float:
         value = self.attributes.get('max', None)
         if value is not None:
             with contextlib.suppress(ValueError):
@@ -220,7 +222,7 @@ class NumberInput(TextInput):
         return None
 
     @max.setter
-    def max(self, new_value: Optional[float]) -> None:
+    def max(self, new_value: None | float) -> None:
         if new_value is not None and not isinstance(new_value, (int, float)):
             raise TypeError('max should be None, int or float')
 
@@ -231,7 +233,7 @@ class NumberInput(TextInput):
 
     # step
     @property
-    def step(self) -> Optional[float]:
+    def step(self) -> None | float:
         value = self.attributes.get('step', None)
         if value is not None:
             with contextlib.suppress(ValueError):
@@ -239,7 +241,7 @@ class NumberInput(TextInput):
         return None
 
     @step.setter
-    def step(self, new_value: Optional[float]) -> None:
+    def step(self, new_value: None | float) -> None:
         if new_value is not None and not isinstance(new_value, (int, float)):
             raise TypeError('step should be None, int or float')
 

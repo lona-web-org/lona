@@ -1,5 +1,8 @@
-from typing import TYPE_CHECKING, Container, Awaitable, Optional
+from __future__ import annotations
+
 from concurrent.futures import CancelledError
+from collections import Container, Awaitable
+from typing import TYPE_CHECKING
 from datetime import datetime
 from enum import Enum
 import threading
@@ -55,7 +58,7 @@ class ViewRuntime:
     def __init__(self, server, url, route, match_info, post_data=None,
                  frontend=False, start_connection=None):
 
-        self.server: 'LonaServer' = server
+        self.server: LonaServer = server
         self.url = URL(url or '')
         self.route = route
         self.match_info = match_info
@@ -606,7 +609,7 @@ class ViewRuntime:
     # input events ############################################################
     def await_input_event(
             self,
-            nodes: Optional[Container[AbstractNode]] = None,
+            nodes: None | Container[AbstractNode] = None,
             event_type: str = 'event',
     ) -> InputEvent:
         async def _await_input_event() -> InputEvent:
