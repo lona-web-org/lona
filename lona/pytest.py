@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from asyncio import AbstractEventLoop
+from collections import AsyncIterator, Iterator, Callable
+from typing import AsyncContextManager, cast
+from asyncio import AbstractEventLoop, sleep
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from collections import Callable
-from typing import cast
+import time
 
 from aiohttp.test_utils import TestClient
 from aiohttp.web import Application
@@ -91,3 +93,53 @@ def lona_project_context(request, aiohttp_client):
         )
 
     return setup_lona_project_context
+
+
+def eventually(timeout: float = 5, interval: float = 1) -> Iterator[AsyncContextManager]:  # NOQA: LN001
+    """
+    Wait for expected state in async test.
+
+    The function is meant to be iterated. Each time it returns new attempt.
+    Attempt is an async context manager to wrap assertions.
+    It suppresses all exceptions until time is out.
+    If no exception is raised iteration stops.
+
+    Example::
+
+        counter = 0
+        for attempt in eventually():
+            async with attempt:
+                counter += 1
+                assert counter > 3
+
+    :param timeout: time in seconds during which it produces new attempts
+    :param interval: seconds to sleep between attempts
+    """
+
+    end_time = time.time() + timeout
+    success = False
+
+    while not success:
+        context_manager_was_used = False
+
+        @asynccontextmanager
+        async def attempt() -> AsyncIterator[None]:
+            nonlocal context_manager_was_used, success
+            context_manager_was_used = True
+
+            try:
+                yield  # execute assertions
+
+            except Exception:
+                if time.time() > end_time:
+                    raise
+                else:
+                    await sleep(interval)
+
+            else:
+                success = True
+
+        yield attempt()
+
+        if not context_manager_was_used:
+            raise SyntaxError('context manager must be used')
