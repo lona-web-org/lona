@@ -24,8 +24,8 @@ logger = logging.getLogger('lona.app')
 
 
 class LonaApp:
-    def __init__(self, script_path: PathLike) -> None:
-        self.script_path: PathLike = script_path
+    def __init__(self, script_path: PathLike | str) -> None:
+        self.script_path: PathLike | str = script_path
         self.project_root: str = os.path.dirname(self.script_path)
 
         self.aiohttp_app: None | Application = None
