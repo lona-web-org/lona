@@ -54,6 +54,17 @@ def lona_app_context(request, aiohttp_client):
 
 
 @pytest.fixture()
+def lona_view_context(lona_app_context):
+    async def setup_lona_view_context(view_class):
+        def setup_app(app: LonaApp) -> None:
+            app.route('/')(view_class)
+
+        return await lona_app_context(setup_app)
+
+    return setup_lona_view_context
+
+
+@pytest.fixture()
 def lona_project_context(request, aiohttp_client):
     async def setup_lona_project_context(
         project_root: str = '',

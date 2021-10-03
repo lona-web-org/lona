@@ -6,10 +6,9 @@ from lona.static_files import StyleSheet, Script
 from lona import LonaView
 
 
-def setup_app(app):
+async def test_static_files_view(lona_view_context):
     some_existing_file = os.path.basename(__file__)
 
-    @app.route('/')
     class MyLonaView(LonaView):
         STATIC_FILES = [
             StyleSheet(
@@ -39,9 +38,7 @@ def setup_app(app):
         def handle_request(self, request):
             return 'SUCCESS'
 
-
-async def test_static_files_view(lona_app_context):
-    context = await lona_app_context(setup_app)
+    context = await lona_view_context(MyLonaView)
 
     assert (await context.client.get('/static/view.css')).status == 200
     assert (await context.client.get('/static/view.js')).status == 200

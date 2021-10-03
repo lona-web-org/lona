@@ -7,7 +7,7 @@ from lona.html import Widget
 from lona import LonaView
 
 
-def setup_app(app):
+async def test_static_files_widget(lona_view_context):
     some_existing_file = os.path.basename(__file__)
 
     class MyWidget(Widget):
@@ -36,14 +36,11 @@ def setup_app(app):
             ),
         ]
 
-    @app.route('/')
     class MyLonaView(LonaView):
         def handle_request(self, request):
             return 'SUCCESS'
 
-
-async def test_static_files_widget(lona_app_context):
-    context = await lona_app_context(setup_app)
+    context = await lona_view_context(MyLonaView)
 
     assert (await context.client.get('/static/widget.css')).status == 200
     assert (await context.client.get('/static/widget.js')).status == 200
