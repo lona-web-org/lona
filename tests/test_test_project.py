@@ -1,9 +1,9 @@
-async def test_test_project(lona_project_context):
+async def test_test_project(request, lona_project_context):
     import os
 
     from playwright.async_api import async_playwright
 
-    TEST_PROJECT_PATH = os.path.join(__file__, '../../test_project')
+    TEST_PROJECT_PATH = os.path.join(request.fspath, '../../test_project')
 
     context = await lona_project_context(
         project_root=TEST_PROJECT_PATH,

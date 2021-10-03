@@ -7,8 +7,8 @@ from lona.html import Widget
 from lona import LonaView
 
 
-async def test_static_files_widget(lona_view_context):
-    some_existing_file = os.path.basename(__file__)
+async def test_static_files_widget(request, lona_view_context):
+    some_existing_file = os.path.basename(request.fspath)
 
     class MyWidget(Widget):
         STATIC_FILES = [

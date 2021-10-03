@@ -6,8 +6,8 @@ from lona.static_files import StyleSheet, Script
 from lona import LonaView
 
 
-async def test_static_files_view(lona_view_context):
-    some_existing_file = os.path.basename(__file__)
+async def test_static_files_view(request, lona_view_context):
+    some_existing_file = os.path.basename(request.fspath)
 
     class MyLonaView(LonaView):
         STATIC_FILES = [
