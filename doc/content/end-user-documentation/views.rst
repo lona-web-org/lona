@@ -705,6 +705,10 @@ to override even widget event handler.
 Adding Javascript And CSS To View
 ---------------------------------
 
+.. note::
+
+    Added in 1.7.3
+
 Views can include stylesheets and javascript files in ``STATIC_FILES``.
 Such files will be automatically served and included in html.
 
