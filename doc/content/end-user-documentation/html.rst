@@ -554,6 +554,75 @@ Select
     |style      |(Dict) contains all styling attributes
 
 
+Adding Javascript And CSS To HTML Nodes
+---------------------------------------
+
+HTML nodes can include stylesheets and javascript files in ``STATIC_FILES``.
+This makes packaging of widgets and nodes possible.
+
+To control the include order, ``sort_order`` is used. ``sort_order`` is a
+simple integer, but to make the code more readable
+``lona.static_files.SORT_ORDER`` is used.
+
+
+.. code-block:: python
+
+    from lona.static_files import StyleSheet, Script, SORT_ORDER
+    from lona.html import Widget, Div
+
+    class ChartJsWidget(Widget):
+        STATIC_FILES = [
+            # styesheets
+            StyleSheet(
+                name='chart_css_min',
+                path='static/Chart.min.css',
+                url='Chart.min.css',
+                sort_order=SORT_ORDER.FRAMEWORK,
+            ),
+            StyleSheet(
+                name='chart_css',
+                path='static/Chart.css',
+                url='Chart.css',
+                sort_order=SORT_ORDER.FRAMEWORK,
+                link=False,  # When link is set to False the given file
+                             # gets collected, but not linked. Thats necessary
+                             # to make map files possible.
+            ),
+
+            # scripts
+            Script(
+                name='chart_bundle_js_min',
+                path='static/Chart.bundle.min.js',
+                url='Chart.bundle.min.js',
+                sort_order=SORT_ORDER.FRAMEWORK,
+            ),
+            Script(
+                name='chart_bundle_js',
+                path='static/Chart.bundle.js',
+                url='Chart.bundle.js',
+                sort_order=SORT_ORDER.FRAMEWORK,
+                link=False,
+            ),
+            Script(
+                name='chart_js_widget_js',
+                path='static/chart-js-widget.js',
+                url='chart-js-widget.js',
+                sort_order=SORT_ORDER.LIBRARY,
+            ),
+        ]
+
+Static files, included in HTML nodes, get included in the frontend template
+with template tags.
+
+.. code-block:: django
+
+    {{ Lona.load_scripts() }}
+    {{ Lona.load_stylesheets() }}
+
+
+**More information:** `Frontends </end-user-documentation/frontends.html>`_
+
+
 Widgets
 -------
 
@@ -711,72 +780,3 @@ Firing Custom Input Events
                 lona_window.fire_input_event(this.nodes[0], 'custom-event', {foo: 'bar'});
             };
         };
-
-
-Adding Javascript And CSS To Frontend Widgets
-+++++++++++++++++++++++++++++++++++++++++++++
-
-Widgets can include stylesheets and javascript files in ``STATIC_FILES``. This
-makes packaging of widgets possible.
-
-To control the include order, ``sort_order`` is used. ``sort_order`` is a
-simple integer, but to make the code more readable
-``lona.static_files.SORT_ORDER`` is used.
-
-
-.. code-block:: python
-
-    from lona.static_files import StyleSheet, Script, SORT_ORDER
-    from lona.html import Widget, Div
-
-    class ChartJsWidget(Widget):
-        STATIC_FILES = [
-            # styesheets
-            StyleSheet(
-                name='chart_css_min',
-                path='static/Chart.min.css',
-                url='Chart.min.css',
-                sort_order=SORT_ORDER.FRAMEWORK,
-            ),
-            StyleSheet(
-                name='chart_css',
-                path='static/Chart.css',
-                url='Chart.css',
-                sort_order=SORT_ORDER.FRAMEWORK,
-                link=False,  # When link is set to False the given file
-                             # gets collected, but not linked. Thats necessary
-                             # to make map files possible.
-            ),
-
-            # scripts
-            Script(
-                name='chart_bundle_js_min',
-                path='static/Chart.bundle.min.js',
-                url='Chart.bundle.min.js',
-                sort_order=SORT_ORDER.FRAMEWORK,
-            ),
-            Script(
-                name='chart_bundle_js',
-                path='static/Chart.bundle.js',
-                url='Chart.bundle.js',
-                sort_order=SORT_ORDER.FRAMEWORK,
-                link=False,
-            ),
-            Script(
-                name='chart_js_widget_js',
-                path='static/chart-js-widget.js',
-                url='chart-js-widget.js',
-                sort_order=SORT_ORDER.LIBRARY,
-            ),
-        ]
-
-Static files, included in widgets, get included in the frontend template with
-template tags.
-
-.. code-block:: django
-
-    {{ Lona.load_scripts() }}
-    {{ Lona.load_stylesheets() }}
-
-
-**More information:** `Frontends </end-user-documentation/frontends.html>`_
