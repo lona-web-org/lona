@@ -83,6 +83,10 @@ MENU = [
         ['Auto-Reconnect', 'cookbook/auto-reconnect.rst'],
         ['URL Reverse Resolving', 'cookbook/url-reverse-resolving.rst'],
         ['Using Server State', 'cookbook/using-server-state.rst'],
+
+        ['Integrating A Frontend Library',
+         'cookbook/integrating-a-frontend-library.rst'],
+
         ['Integrating Django', 'cookbook/integrating-django.rst'],
         ['Limit Concurrent Views', 'cookbook/limit-concurrent-views.rst'],
 
