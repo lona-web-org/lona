@@ -344,6 +344,12 @@ JSON Responses
 View Hooks
 ----------
 
+All entry points for user code in Lona views are callbacks in the ``LonaView``
+class. If a hook name starts with ``handle_`` it means that the view can stop
+the event handler chain for the incoming event. If a hook name starts with
+``on_`` the view gets only notified of the event. It can't control further
+handling of the event.
+
 .. code-block:: python
 
     from lona import LonaView
@@ -358,6 +364,9 @@ View Hooks
 
         def handle_input_event(self, input_event):
             return input_event
+
+        def on_view_event(self, view_event):
+            pass
 
         def on_shutdown(self, reason):
             pass
@@ -757,6 +766,36 @@ simple integer, but to make the code more readable
             return 'SUCCESS'
 
 
+View Events
+-----------
+
+.. note::
+
+    Added in 1.7.3
+
+Views can communicate with each other by sending events using
+``LonaView.fire_view_event()``. A view event consists of a name and data.
+The name is mandatory and has to be a string, the data is optional but if set
+has to be a dict.
+
+When a event is send using ``LonaView.fire_view_event()`` it is send to every
+object of the same view class. To send events to multiple view classes
+``Server.fire_input_event()`` can be used. Incoming view events are getting
+handled by ``LonaView.on_view_event()``.
+
+.. code-block:: python
+
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def on_view_event(self, view_event):
+            print(view_event.name, view_event.data)
+
+        def handle_request(self, request):
+            self.fire_view_event('my-event-name', {'foo': 'bar'})
+
+
 View Methods
 ------------
 
@@ -790,7 +829,7 @@ LonaView.set_title(title)
 LonaView.await_input_event\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes the next incoming input event.
+    Returns the next incoming input event.
 
     When ``nodes`` is set, the next input event issued by one of the given
     nodes is returned.
@@ -802,7 +841,7 @@ LonaView.await_input_event\(\*nodes, html=None\)
 LonaView.await_click\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes the next incoming click event.
+    Returns the next incoming click event.
 
     When ``nodes`` is set, the next input event issued by one of the given
     nodes is returned.
@@ -814,7 +853,7 @@ LonaView.await_click\(\*nodes, html=None\)
 LonaView.await_change\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes the next incoming change event.
+    Returns the next incoming change event.
 
     When ``nodes`` is set, the next input event issued by one of the given
     nodes is returned.
@@ -832,8 +871,23 @@ LonaView.daemonize\(\)
 LonaView.iter_objects\(\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes a generator over all objects of the view class. This is useful
+    Returns a generator over all objects of the view class. This is useful
     to build multi user views.
+
+
+LonaView.fire_view_event\(name, data=None\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        Added in 1.7.3
+
+    Sends a view event to all objects of its class. ``name`` has to be a
+    ``str``, ``data`` is optional but has to be a ``dict`` if set.
+
+    To send a view event to multiple view classes use
+    ``Server.fire_view_event()`` instead.
+
 
 
 LonaView.send_str\(string, broadcast=False, filter_connections=lambda connection: True, wait=True\)
@@ -848,16 +902,26 @@ LonaView.send_str\(string, broadcast=False, filter_connections=lambda connection
 
     .. code-block:: python
 
-        def filter_admins(connection):
-            if connection.user.is_admin:
-                return True
+        from lona import LonaView
 
-            return False
 
-        send_str('message only for admins', broadcast=True, filter_connections=filter_admins)
+        class MyLonaView(LonaView):
+            def filter_admins(self, connection):
+                if connection.user.is_admin:
+                    return True
+
+                return False
+
+            def handle_request(self, request):
+                self.send_str(
+                    'message only for admins',
+                    broadcast=True,
+                    filter_connections=self.filter_admins,
+                )
+
 
     The method returns when the message got send. When ``wait`` is set to
-    False, the method returnes immediately after the string got written to the
+    False, the method returns immediately after the string got written to the
     connection message queues.
 
     **More information:**
@@ -870,7 +934,7 @@ LonaView.sleep\(\*\*args, \*\*kwargs\)
     Calls ``asyncio.sleep()``, but is abortable.
 
     When using ``asyncio.sleep()`` or ``time.sleep()`` directly, the server
-    cannot shutdown til the call returnes.
+    cannot shutdown til the call returns.
 
     When using ``LonaView.sleep()`` the Lona server can the abort the call when
     shutting down.
@@ -887,7 +951,7 @@ LonaView.await_sync\(awaitable\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Takes a asyncio awaitable and schedules it to ``server.loop``. The method
-    returnes the return value of the ``awaitable``, raises its exception or
+    returns the return value of the ``awaitable``, raises its exception or
     raises ``lona.exception.UserAbort`` or ``lona.exceptions.ServerStop`` if
     the server stopped while waiting on ``awaitable`` or the user left.
 
@@ -906,49 +970,49 @@ Server Methods
 Server.get_running_views_count\(user\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes the count of running views for the given user as integer.
+    Returns the count of running views for the given user as integer.
 
 
 Server.view_is_already_running\(request\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes if a view for the given request is already running as boolean.
+    Returns if a view for the given request is already running as boolean.
 
 
 Server.get_connection_count\(user\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes the count of connections for the given user as integer.
+    Returns the count of connections for the given user as integer.
 
 
 Server.get_connected_user_count\(\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes the count of connected users as integer.
+    Returns the count of connected users as integer.
 
 
 Server.get_template\(template_name\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes a Jinja2 template object associated with the given template name
+    Returns a Jinja2 template object associated with the given template name
 
 
 Server.render_string\(template_string, \*\*template_context\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes a rendered Jinja2 template string as string.
+    Returns a rendered Jinja2 template string as string.
 
 
 Server.render_template\(template_name, \*\*template_context\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes a rendered Jinja2 template as string.
+    Returns a rendered Jinja2 template as string.
 
 
 Server.get_view_class\(route=None, import_string=None, url=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes the ``lona.view.LonaView`` subclass associated with the given
+    Returns the ``lona.view.LonaView`` subclass associated with the given
     route, import string or url.
 
     Only one argument can be set at a time.
@@ -957,7 +1021,36 @@ Server.get_view_class\(route=None, import_string=None, url=None\)
 Server.reverse\(url_name, \*\*url_args\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returnes a routing reverse match as string.
+    Returns a routing reverse match as string.
+
+
+Server.fire_view_event\(name, data=None, view_classes=None\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        Added in 1.7.3
+
+    Sends a view event to all objects of the given ``LonaView`` class.
+    ``name`` has to be a ``str``, ``data`` is optional but has to be a ``dict``
+    if set.
+
+    ``view_classes`` can be a single view class or a list of view classes.
+
+    If ``view_classes`` is not set, the event becomes a broadcast event
+    and gets send to all view classes.
+
+    .. code-block:: python
+
+        # broadcast event
+        server.fire_view_event('foo', {'foo': 'bar'})
+
+        # event for all view objects behind the URL '/foo'
+        server.fire_view_event(
+            'foo',
+            {'foo': 'bar'},
+            view_classes=server.get_view_class(url='/foo'),
+        )
 
 
 Server.embed_shell\(\)
