@@ -21,8 +21,8 @@ from lona.request import Request
 
 # avoid import cycles
 if TYPE_CHECKING:
+    from lona.events.view_event import ViewEvent
     from lona.server import LonaServer
-
 
 T = TypeVar('T')
 V = TypeVar('V', bound='LonaView')
@@ -309,6 +309,14 @@ class LonaView:
             html=html,
         )
 
+    # view events #############################################################
+    def fire_view_event(self, name: str, data: dict | None = None) -> None:
+        self.server.view_runtime_controller.fire_view_event(
+            name=name,
+            data=data,
+            view_classes=[self.__class__],
+        )
+
     # runtime #################################################################
     @overload
     def sleep(self, delay: float) -> None:
@@ -355,6 +363,9 @@ class LonaView:
 
     def handle_input_event(self, input_event: InputEvent) -> None | InputEvent:
         return input_event
+
+    def on_view_event(self, view_event: 'ViewEvent') -> None:
+        pass
 
     def on_shutdown(
             self,

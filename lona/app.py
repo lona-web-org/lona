@@ -236,7 +236,7 @@ class LonaApp:
 
         parser.add_argument(
             '--debug-mode',
-            choices=['messages', 'views', 'input-events'],
+            choices=['messages', 'views', 'input-events', 'view-events'],
         )
 
         parser.add_argument(

@@ -15,6 +15,10 @@ class Document:
     def lock(self):
         return self._lock
 
+    @property
+    def is_dirty(self):
+        return self._patch_stack.has_patches()
+
     def add_patch(self, *args, **kwargs):
         self._patch_stack.add_patch(*args, **kwargs)
 

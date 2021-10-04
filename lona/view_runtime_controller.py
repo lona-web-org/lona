@@ -1,13 +1,18 @@
+from __future__ import annotations
+
 import contextlib
 import logging
 
 from yarl import URL
 
 from lona.protocol import encode_http_redirect, METHOD
+from lona.events.view_event import ViewEvent
 from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
+from lona.view import LonaView
 
 input_events_logger = logging.getLogger('lona.input_events')
+view_events_logger = logging.getLogger('lona.view_events')
 views_logger = logging.getLogger('lona.views')
 
 
@@ -314,4 +319,78 @@ class ViewRuntimeController:
                 view_runtime_id=view_runtime_id,
                 method=method,
                 payload=payload,
+            )
+
+    # events ##################################################################
+    def run_view_event_hook(
+            self,
+            view_runtime: ViewRuntime,
+            view_event: ViewEvent,
+    ) -> None:
+
+        try:
+            view_events_logger.debug(
+                'running %r with %r',
+                view_runtime.view.on_view_event,
+                view_event,
+            )
+
+            view_runtime.view.on_view_event(view_event)
+
+        except Exception:
+            view_events_logger.exception(
+                'Exception raised while running %r',
+                view_runtime.view.on_view_event,
+            )
+
+            return
+
+        # send html updates if necessary
+        if view_runtime.document.is_dirty:
+            view_runtime.view.show()
+
+    def fire_view_event(
+            self,
+            name: str,
+            data: dict | None = None,
+            view_classes: type[LonaView] | list[type[LonaView]] | None = None,
+    ) -> None:
+
+        data = data or {}
+        view_classes = view_classes or []
+
+        if not isinstance(view_classes, list):
+            view_classes = [view_classes]
+
+        view_events_logger.debug(
+            'sending ViewEvent(name=%r, data=%r, view_classes=%r)',
+            name,
+            data,
+            view_classes,
+        )
+
+        for view_runtime in self.iter_view_runtimes():
+            if view_classes and view_runtime.view_class not in view_classes:
+                continue
+
+            # if on_view_event is not defined by the view class
+            # it is unnecessary to start a thread
+            if view_runtime.view_class.on_view_event == LonaView.on_view_event:
+                view_events_logger.debug(
+                    '%r skipped (view class does not implement on_view_event())',
+                    view_runtime.view,
+                )
+
+                continue
+
+            view_event = ViewEvent(
+                name=name,
+                data=data.copy(),
+                view_classes=view_classes.copy(),
+            )
+
+            self.server.run_function_async(
+                self.run_view_event_hook,
+                view_runtime,
+                view_event,
             )

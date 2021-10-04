@@ -179,6 +179,9 @@ def setup_logging(args, log_formatter=None, log_filter=None):
         elif args.debug_mode == 'input-events':
             log_filter.include('lona.input_events')
 
+        elif args.debug_mode == 'view-events':
+            log_filter.include('lona.view_events')
+
     elif args.loggers:
         for logger_name in args.loggers:
             if logger_name.startswith('_'):
