@@ -54,7 +54,7 @@ to make calls like ``python your-script.py --port=8081`` work.
     ^Option           ^Description
     |-l / --log-level |Set log level to [debug,info,warn,error,critical]
     |--loggers        |Enable or disable a given list of loggers <br> To include a logger use "+{LOGGER_NAME}", to exclude "_{LOGGER_NAME}"
-    |--debug-mode     |Enable debug log for {messages,views,input-events}
+    |--debug-mode     |Enable debug log for {messages,views,input-events,view-events}
     |--shell          |Embed a shell in the same process as the server
     |--shell-server   |Starts rlpython shell server containing a Lona shell <br> More Information: <a href="#lona-shell">Lona Shell</a>
     |-o               |Set setting to value before settings.py got loaded <br> example "-o MY_FEATURE=True"
