@@ -5,6 +5,38 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.7.3 (2021-10-08)
+
+
+Changes
+~~~~~~~
+
+* views
+
+  * View events were added
+
+* static files
+
+  * Lona now logs an error if static file names are not unique
+  * ``LonaView`` classes can define ``STATIC_FILES`` now
+
+* command line
+
+  * Debug mode ``input-events`` was added
+
+* testing
+
+  * ``lona.pytest.eventually`` was added
+
+
+Bugfixes
+~~~~~~~~
+
+* static files
+
+  * All static files are properly sorted now
+
+
 .. changelog-header:: 1.7.2 (2021-09-28)
 
 
