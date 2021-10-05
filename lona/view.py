@@ -91,9 +91,13 @@ class LonaView:
 
     @classmethod
     def iter_objects(cls: type[V]) -> Iterator[V]:
-        objects_key = cls._get_objects_key(cls, is_class=True)
-        view_objects = cls._objects.get(objects_key, []).copy()
-        yield from view_objects  # type: ignore
+        view_runtime_controller = cls._server.view_runtime_controller
+
+        for view_runtime in view_runtime_controller.iter_view_runtimes():
+            if view_runtime.view_class != cls:
+                continue
+
+            yield view_runtime.view
 
     # properties ##############################################################
     @property
