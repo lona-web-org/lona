@@ -46,6 +46,7 @@ MENU = [
 
         ['Chart.js Click Analyzer', 'demos/chartjs-click-analyzer/index.rst'],
         ['Daemonized View', 'demos/daemonized-view/index.rst'],
+        ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
         ['Game Of Life', 'demos/game-of-life/index.rst'],
     ]],
 
