@@ -32,7 +32,6 @@ H = Union[None, AbstractNode, str]
 class LonaView:
     STATIC_FILES: list[StaticFile] = []
 
-    _objects: dict[str, list[LonaView]] = {}
     _server: LonaServer
 
     def __init__(
@@ -46,49 +45,6 @@ class LonaView:
         self._request: Request = request
 
     # objects #################################################################
-    @overload
-    @classmethod
-    def _get_objects_key(
-            cls,
-            view_class: type[LonaView],
-            is_class: Literal[True],
-    ) -> str:
-        ...
-
-    @overload
-    @classmethod
-    def _get_objects_key(
-            cls,
-            view_class: LonaView,
-            is_class: Literal[False],
-    ) -> str:
-        ...
-
-    @classmethod
-    def _get_objects_key(cls, view_class, is_class):
-        if not is_class:
-            view_class = view_class.__class__
-
-        return f'{view_class.__module__}.{view_class.__name__}'
-
-    @classmethod
-    def _add_view_to_objects(cls, view_object: LonaView) -> None:
-        objects_key = cls._get_objects_key(view_object, is_class=False)
-
-        if objects_key not in cls._objects:
-            cls._objects[objects_key] = []
-
-        cls._objects[objects_key].append(view_object)
-
-    @classmethod
-    def _remove_view_from_objects(cls, view_object: LonaView) -> None:
-        objects_key = cls._get_objects_key(view_object, is_class=False)
-
-        if(objects_key in cls._objects and
-           view_object in cls._objects[objects_key]):
-
-            cls._objects[objects_key].remove(view_object)
-
     @classmethod
     def iter_objects(cls: type[V]) -> Iterator[V]:
         view_runtime_controller = cls._server.view_runtime_controller
