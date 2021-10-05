@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Container, Awaitable
 from concurrent.futures import CancelledError
-from collections import Container, Awaitable
 from typing import TYPE_CHECKING
 from datetime import datetime
 from enum import Enum

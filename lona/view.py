@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
-from collections import Awaitable, Iterator, Callable
+from collections.abc import Awaitable, Iterator, Callable
 from concurrent.futures import CancelledError
 import threading
 import asyncio

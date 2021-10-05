@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from concurrent.futures import Future
+from collections.abc import Awaitable
 from typing import overload, TypeVar
-from collections import Awaitable
 from functools import reduce
 import contextlib
 import operator

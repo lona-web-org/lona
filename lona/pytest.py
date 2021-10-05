@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import AsyncIterator, Iterator, Callable
+from collections.abc import AsyncIterator, Iterator, Callable
 from typing import AsyncContextManager, cast
 from asyncio import AbstractEventLoop, sleep
 from contextlib import asynccontextmanager
