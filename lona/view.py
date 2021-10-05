@@ -33,6 +33,7 @@ class LonaView:
     STATIC_FILES: list[StaticFile] = []
 
     _objects: dict[str, list[LonaView]] = {}
+    _server: LonaServer
 
     def __init__(
             self,

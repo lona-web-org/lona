@@ -82,6 +82,7 @@ class ViewLoader:
     ) -> None:
 
         view_class = self._acquire(view)
+        view_class._server = self.server
 
         if route:
             self._run_checks(route, view_class)
