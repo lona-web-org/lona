@@ -5,6 +5,7 @@ import inspect
 import asyncio
 
 from lona.view import LonaView
+from lona.routing import Route
 
 logger = logging.getLogger('lona.view_loader')
 
@@ -74,6 +75,20 @@ class ViewLoader:
 
         return view
 
+    def _cache_view(
+            self,
+            route: Route | None,
+            view: type[LonaView] | str,
+    ) -> None:
+
+        view_class = self._acquire(view)
+
+        if route:
+            self._run_checks(route, view_class)
+
+        cache_key = self._gen_cache_key(view)
+        self._cache[cache_key] = view_class
+
     def setup(self):
         # views
         logger.debug('loading views from routes')
@@ -81,17 +96,16 @@ class ViewLoader:
         self._cache = {}
 
         for route in self.server.router.routes:
-            view = self._acquire(route.view)
-
-            self._run_checks(route, view)
-
-            cache_key = self._gen_cache_key(route.view)
-            self._cache[cache_key] = view
+            self._cache_view(
+                route=route,
+                view=route.view,
+            )
 
             if route.frontend_view:
-                view = self._acquire(route.frontend_view)
-                cache_key = self._gen_cache_key(route.frontend_view)
-                self._cache[cache_key] = view
+                self._cache_view(
+                    route=None,
+                    view=route.frontend_view,
+                )
 
         # special views
         import_strings = [
@@ -116,11 +130,10 @@ class ViewLoader:
             if not import_string:
                 continue
 
-            # FIXME: run self._run_checks
-
-            view = self._acquire(import_string)
-            cache_key = self._gen_cache_key(import_string)
-            self._cache[cache_key] = view
+            self._cache_view(
+                route=None,
+                view=import_string,
+            )
 
     def load(self, view):
         cache_key = self._gen_cache_key(view)
