@@ -41,10 +41,11 @@ class ViewLoader:
 
         # check if lona specific hooks are coroutine functions
         hook_names = [
-            'handle_user_enter',
             'handle_request',
             'handle_input_event_root',
             'handle_input_event',
+            'on_view_event',
+            'on_shutdown',
         ]
 
         for hook_name in hook_names:
