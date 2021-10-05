@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from textwrap import indent
 
 from lona.html.attribute_dict import AttributeDict, StyleDict
@@ -56,7 +57,7 @@ class Node(AbstractNode):
 
         # args (nodes)
         for arg in args:
-            if isinstance(arg, (list, tuple)):
+            if isinstance(arg, Iterable) and not isinstance(arg, str):
                 for node in list(arg):
                     self.append(node)
 
