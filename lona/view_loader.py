@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Type, cast
 import logging
 import inspect
 import asyncio
@@ -16,7 +17,11 @@ class ViewLoader:
 
         self.setup()
 
-    def _gen_cache_key(self, view):
+    def _gen_cache_key(
+            self,
+            view: type[LonaView] | str,
+    ) -> type[LonaView] | str | int:
+
         try:
             hash(view)
 
@@ -25,7 +30,7 @@ class ViewLoader:
         except TypeError:
             return id(view)
 
-    def _run_checks(self, route, view):
+    def _run_checks(self, route: Route, view: type[LonaView]) -> None:
         # check if view is instance of lona.views.LonaView
         if(not route.http_pass_through and
            (not inspect.isclass(view) or not issubclass(view, LonaView))):
@@ -54,14 +59,18 @@ class ViewLoader:
                     hook_name,
                 )
 
-    def _generate_acquiring_error_view(self, exception):
+    def _generate_acquiring_error_view(
+            self,
+            exception: Exception,
+    ) -> type[LonaView]:
+
         class AcquiringErrorView(LonaView):
             def handle_request(self, request):
                 raise exception
 
         return AcquiringErrorView
 
-    def _acquire(self, view):
+    def _acquire(self, view: type[LonaView] | str) -> type[LonaView]:
         logger.debug('loading %s', view)
 
         if isinstance(view, str):
@@ -73,7 +82,7 @@ class ViewLoader:
 
                 view = self._generate_acquiring_error_view(exception)
 
-        return view
+        return cast('type[LonaView]', view)
 
     def _cache_view(
             self,
@@ -136,10 +145,10 @@ class ViewLoader:
                 view=import_string,
             )
 
-    def load(self, view):
+    def load(self, view: type[LonaView] | str) -> type[LonaView]:
         cache_key = self._gen_cache_key(view)
 
-        return self._cache[cache_key]
+        return cast(Type[LonaView], self._cache[cache_key])
 
     def get_all_views(self) -> list[type[LonaView]]:
         return list(self._cache.values())
