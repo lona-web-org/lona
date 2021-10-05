@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from typing import TYPE_CHECKING
-from collections import Iterator
 from copy import copy
 import logging
 import os
