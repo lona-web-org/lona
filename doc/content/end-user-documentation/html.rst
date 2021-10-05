@@ -460,9 +460,12 @@ TextInput / TextArea
 
 **input_delay:** When ``input_delay`` is set to ``0``, the Javascript client
 uses ``onchange`` events. This means the change event gets send when the text
-input looses focus or the user hits enter after changing the input. When
-``input_delay`` is set to an integer higher than ``0`` the Javascript client
-uses ``oninput`` events with ``input_delay`` as timeout.
+input loses focus or the user hits enter after changing the input. When
+``input_delay`` is set to an integer greater than ``0``, the Javascript client
+uses ``oninput`` events with ``input_delay`` as timeout. The Javascript client
+then delays sending input events by ``input_delay`` ms, and newer input events
+cancel older, pendings events. This is also known as *debouncing* of input events
+in reactive programming.
 
 **Attributes:**
 
