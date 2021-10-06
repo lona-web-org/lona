@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
 from collections.abc import Awaitable, Iterator, Callable
 from concurrent.futures import CancelledError
 import threading
+import warnings
 import asyncio
 
 from typing_extensions import Literal
@@ -47,6 +48,11 @@ class LonaView:
     # objects #################################################################
     @classmethod
     def iter_objects(cls: type[V]) -> Iterator[V]:
+        warnings.warn(
+            'LonaView.iter_objects() will be removed in 1.8',
+            category=DeprecationWarning,
+        )
+
         view_runtime_controller = cls._server.view_runtime_controller
 
         for view_runtime in view_runtime_controller.iter_view_runtimes():

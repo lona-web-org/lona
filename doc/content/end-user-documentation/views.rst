@@ -881,6 +881,12 @@ LonaView.daemonize\(\)
 LonaView.iter_objects\(\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    .. warning::
+
+        ``LonaView.iter_objects()`` is deprecated and will be removed in 1.8.
+        Use `view events <#view-events>`_ instead.
+
+
     Returns a generator over all objects of the view class. This is useful
     to build multi user views.
 
