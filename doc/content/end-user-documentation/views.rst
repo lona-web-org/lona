@@ -401,6 +401,12 @@ This hook is gets called for every input event that is not awaited in
 ``handle_request()`` or handled by a widget.
 
 
+LonaView.on_view_event\(view_event\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This hook gets called for every incoming `view event <#view-events>`_.
+
+
 LonaView.on_shutdown\(reason\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
