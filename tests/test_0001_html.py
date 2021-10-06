@@ -333,6 +333,56 @@ class TestAttributeList:
 
 
 @pytest.mark.incremental()
+class TestHTMLSubnodes:
+    def test_nodes_in_nodes(self):
+        div1 = Div()
+
+        div2 = Div(
+            div1,
+        )
+
+        assert len(div2) == 1
+        assert div2[0] is div1
+
+    def test_text_nodes_in_nodes(self):
+        div = Div('foo')
+
+        assert len(div) == 1
+        assert str(div[0]) == 'foo'
+
+    def test_mixed_nodes(self):
+        sub_node1 = Div()
+        sub_node2 = Div()
+
+        div = Div(
+            sub_node1,
+            'foo',
+            sub_node2,
+            'bar',
+        )
+
+        assert len(div) == 4
+        assert div[0] is sub_node1
+        assert str(div[1]) == 'foo'
+        assert div[2] is sub_node2
+        assert str(div[3]) == 'bar'
+
+    def test_generator(self):
+        div = Div(
+            (Div() for i in range(10)),
+        )
+
+        assert len(div) == 10
+
+    def test_list(self):
+        div = Div(
+            [Div() for i in range(10)],
+        )
+
+        assert len(div) == 10
+
+
+@pytest.mark.incremental()
 class TestHTMLFromStr:
     def test_empty_node(self):
         node = HTML('<div></div>')[0]
