@@ -57,7 +57,10 @@ class Node(AbstractNode):
 
         # args (nodes)
         for arg in args:
-            if isinstance(arg, Iterable) and not isinstance(arg, str):
+            if isinstance(arg, (AbstractNode, str)):
+                self.append(arg)
+
+            elif isinstance(arg, Iterable):
                 for node in list(arg):
                     self.append(node)
 
