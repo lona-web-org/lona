@@ -368,6 +368,9 @@ handling of the event.
         def on_view_event(self, view_event):
             pass
 
+        def on_stop(self, reason):
+            pass
+
         def on_shutdown(self, reason):
             pass
 
@@ -405,6 +408,22 @@ LonaView.on_view_event\(view_event\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This hook gets called for every incoming `view event <#view-events>`_.
+
+
+LonaView.on_stop\(reason\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This hook gets called after ``handle_request()`` stops. ``reason`` is either
+``None`` if ``handle_request()`` finished normally, or an exception if
+``handle_request()`` was interrupted or crashed. If it crashed, ``reason``
+contains the original exception.
+
+If the ``handle_request()`` was interrupted by the server shutting down,
+``reason`` contains a ``lona.exceptions.ServerStop`` exception.
+
+If the ``handle_request()`` was interrupted by the user by closing the
+connection, either intentionally or due connection loss, ``reason`` contains
+a ``lona.exceptions.UserAbort`` exception.
 
 
 LonaView.on_shutdown\(reason\)

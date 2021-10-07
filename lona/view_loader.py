@@ -46,6 +46,7 @@ class ViewLoader:
             'handle_input_event',
             'on_view_event',
             'on_shutdown',
+            'on_stop',
         ]
 
         for hook_name in hook_names:

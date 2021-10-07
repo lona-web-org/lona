@@ -348,3 +348,6 @@ class LonaView:
             ],
     ) -> None:
         pass
+
+    def on_stop(self, reason: Exception | None) -> None:
+        pass
