@@ -284,6 +284,14 @@ Links
     # external link
     A('Lona Documentation', href='https://lona-web.org/', interactive=False)
 
+    # internal link to a non-interactive (or HTTP-pass-through) view that
+    # serves a downloadable file. Without "target='_blank'", the browser would
+    # try to download the file in the current browser tab, terminating the
+    # websocket connection, which would break the currently opened,
+    # interactive view.
+    A('Internal Download Link', href='/foo.pdf',
+      interactive=False, target='_blank')
+
 
 Adding Custom Nodes
 ~~~~~~~~~~~~~~~~~~~
