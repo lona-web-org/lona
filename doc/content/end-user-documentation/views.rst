@@ -414,6 +414,9 @@ This hook gets called after the view is stopped. The stop reason is ``None``
 if the view finished normally or contains a ``lona.exceptions.ServerStop`` or
 ``lona.exceptions.UserAbort`` if the connected user closed the browser.
 
+It does not run if the view ran into a ``403`` error, a ``500`` error or
+returned a response dict.
+
 
 View Attributes
 ---------------
