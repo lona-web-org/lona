@@ -371,6 +371,9 @@ handling of the event.
         def on_stop(self, reason):
             pass
 
+        def on_cleanup(self):
+            pass
+
         def on_shutdown(self, reason):
             pass
 
@@ -424,6 +427,13 @@ If the ``handle_request()`` was interrupted by the server shutting down,
 If the ``handle_request()`` was interrupted by the user by closing the
 connection, either intentionally or due connection loss, ``reason`` contains
 a ``lona.exceptions.UserAbort`` exception.
+
+
+LonaView.on_cleanup\(\)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This hook gets called after the view is fully shutdown and gets removed from
+the server.
 
 
 LonaView.on_shutdown\(reason\)

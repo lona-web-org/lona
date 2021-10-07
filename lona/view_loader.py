@@ -47,6 +47,7 @@ class ViewLoader:
             'on_view_event',
             'on_shutdown',
             'on_stop',
+            'on_cleanup',
         ]
 
         for hook_name in hook_names:
