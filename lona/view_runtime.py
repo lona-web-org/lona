@@ -237,6 +237,8 @@ class ViewRuntime:
 
     # start and stop ##########################################################
     def run_shutdown_hook(self):
+        # TODO: remove after 1.8
+
         logger.debug(
             'running %s with stop reason %s',
             self.view.on_shutdown,

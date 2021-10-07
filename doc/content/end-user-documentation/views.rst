@@ -439,6 +439,11 @@ the server.
 LonaView.on_shutdown\(reason\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning::
+
+    ``LonaView.on_shutdown()`` is deprecated and will be removed in 1.8.
+    Use `LonaView.on_stop() <#lonaview-on-stop-reason>`_ instead.
+
 This hook gets called after the view is stopped. The stop reason is ``None``
 if the view finished normally or contains a ``lona.exceptions.ServerStop`` or
 ``lona.exceptions.UserAbort`` if the connected user closed the browser.
