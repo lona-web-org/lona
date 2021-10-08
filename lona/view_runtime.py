@@ -269,9 +269,6 @@ class ViewRuntime:
             # start view
             self.send_view_start()
 
-            # add view object to View._objects
-            self.view_class._add_view_to_objects(self.view)
-
             # run view
             raw_response_dict = self.view.handle_request(self.request) or ''
 

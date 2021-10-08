@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Type, cast
 import logging
 import inspect
 import asyncio
 
 from lona.view import LonaView
+from lona.routing import Route
 
 logger = logging.getLogger('lona.view_loader')
 
@@ -15,7 +17,11 @@ class ViewLoader:
 
         self.setup()
 
-    def _gen_cache_key(self, view):
+    def _gen_cache_key(
+            self,
+            view: type[LonaView] | str,
+    ) -> type[LonaView] | str | int:
+
         try:
             hash(view)
 
@@ -24,7 +30,7 @@ class ViewLoader:
         except TypeError:
             return id(view)
 
-    def _run_checks(self, route, view):
+    def _run_checks(self, route: Route, view: type[LonaView]) -> None:
         # check if view is instance of lona.views.LonaView
         if(not route.http_pass_through and
            (not inspect.isclass(view) or not issubclass(view, LonaView))):
@@ -35,10 +41,11 @@ class ViewLoader:
 
         # check if lona specific hooks are coroutine functions
         hook_names = [
-            'handle_user_enter',
             'handle_request',
             'handle_input_event_root',
             'handle_input_event',
+            'on_view_event',
+            'on_shutdown',
         ]
 
         for hook_name in hook_names:
@@ -53,14 +60,18 @@ class ViewLoader:
                     hook_name,
                 )
 
-    def _generate_acquiring_error_view(self, exception):
+    def _generate_acquiring_error_view(
+            self,
+            exception: Exception,
+    ) -> type[LonaView]:
+
         class AcquiringErrorView(LonaView):
             def handle_request(self, request):
                 raise exception
 
         return AcquiringErrorView
 
-    def _acquire(self, view):
+    def _acquire(self, view: type[LonaView] | str) -> type[LonaView]:
         logger.debug('loading %s', view)
 
         if isinstance(view, str):
@@ -72,7 +83,22 @@ class ViewLoader:
 
                 view = self._generate_acquiring_error_view(exception)
 
-        return view
+        return cast('type[LonaView]', view)
+
+    def _cache_view(
+            self,
+            route: Route | None,
+            view: type[LonaView] | str,
+    ) -> None:
+
+        view_class = self._acquire(view)
+        view_class._server = self.server
+
+        if route:
+            self._run_checks(route, view_class)
+
+        cache_key = self._gen_cache_key(view)
+        self._cache[cache_key] = view_class
 
     def setup(self):
         # views
@@ -81,17 +107,16 @@ class ViewLoader:
         self._cache = {}
 
         for route in self.server.router.routes:
-            view = self._acquire(route.view)
-
-            self._run_checks(route, view)
-
-            cache_key = self._gen_cache_key(route.view)
-            self._cache[cache_key] = view
+            self._cache_view(
+                route=route,
+                view=route.view,
+            )
 
             if route.frontend_view:
-                view = self._acquire(route.frontend_view)
-                cache_key = self._gen_cache_key(route.frontend_view)
-                self._cache[cache_key] = view
+                self._cache_view(
+                    route=None,
+                    view=route.frontend_view,
+                )
 
         # special views
         import_strings = [
@@ -116,16 +141,15 @@ class ViewLoader:
             if not import_string:
                 continue
 
-            # FIXME: run self._run_checks
+            self._cache_view(
+                route=None,
+                view=import_string,
+            )
 
-            view = self._acquire(import_string)
-            cache_key = self._gen_cache_key(import_string)
-            self._cache[cache_key] = view
-
-    def load(self, view):
+    def load(self, view: type[LonaView] | str) -> type[LonaView]:
         cache_key = self._gen_cache_key(view)
 
-        return self._cache[cache_key]
+        return cast(Type[LonaView], self._cache[cache_key])
 
     def get_all_views(self) -> list[type[LonaView]]:
         return list(self._cache.values())

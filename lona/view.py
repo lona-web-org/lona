@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
 from collections.abc import Awaitable, Iterator, Callable
 from concurrent.futures import CancelledError
 import threading
+import warnings
 import asyncio
 
 from typing_extensions import Literal
@@ -32,7 +33,7 @@ H = Union[None, AbstractNode, str]
 class LonaView:
     STATIC_FILES: list[StaticFile] = []
 
-    _objects: dict[str, list[LonaView]] = {}
+    _server: LonaServer
 
     def __init__(
             self,
@@ -45,54 +46,20 @@ class LonaView:
         self._request: Request = request
 
     # objects #################################################################
-    @overload
-    @classmethod
-    def _get_objects_key(
-            cls,
-            view_class: type[LonaView],
-            is_class: Literal[True],
-    ) -> str:
-        ...
-
-    @overload
-    @classmethod
-    def _get_objects_key(
-            cls,
-            view_class: LonaView,
-            is_class: Literal[False],
-    ) -> str:
-        ...
-
-    @classmethod
-    def _get_objects_key(cls, view_class, is_class):
-        if not is_class:
-            view_class = view_class.__class__
-
-        return f'{view_class.__module__}.{view_class.__name__}'
-
-    @classmethod
-    def _add_view_to_objects(cls, view_object: LonaView) -> None:
-        objects_key = cls._get_objects_key(view_object, is_class=False)
-
-        if objects_key not in cls._objects:
-            cls._objects[objects_key] = []
-
-        cls._objects[objects_key].append(view_object)
-
-    @classmethod
-    def _remove_view_from_objects(cls, view_object: LonaView) -> None:
-        objects_key = cls._get_objects_key(view_object, is_class=False)
-
-        if(objects_key in cls._objects and
-           view_object in cls._objects[objects_key]):
-
-            cls._objects[objects_key].remove(view_object)
-
     @classmethod
     def iter_objects(cls: type[V]) -> Iterator[V]:
-        objects_key = cls._get_objects_key(cls, is_class=True)
-        view_objects = cls._objects.get(objects_key, []).copy()
-        yield from view_objects  # type: ignore
+        warnings.warn(
+            'LonaView.iter_objects() will be removed in 1.8',
+            category=DeprecationWarning,
+        )
+
+        view_runtime_controller = cls._server.view_runtime_controller
+
+        for view_runtime in view_runtime_controller.iter_view_runtimes():
+            if view_runtime.view_class != cls:
+                continue
+
+            yield view_runtime.view
 
     # properties ##############################################################
     @property
