@@ -33,7 +33,7 @@ H = Union[None, AbstractNode, str]
 class LonaView:
     STATIC_FILES: list[StaticFile] = []
 
-    _server: LonaServer
+    _server: LonaServer  # TODO: remove after 1.8
 
     def __init__(
             self,
@@ -48,6 +48,8 @@ class LonaView:
     # objects #################################################################
     @classmethod
     def iter_objects(cls: type[V]) -> Iterator[V]:
+        # TODO: remove after 1.8
+
         warnings.warn(
             'LonaView.iter_objects() will be removed in 1.8',
             category=DeprecationWarning,
