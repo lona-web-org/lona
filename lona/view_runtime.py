@@ -698,6 +698,29 @@ class ViewRuntime:
                 payload[0],
             )
 
+        def run_handler(handler, input_event):
+            return_value = handler(input_event)
+
+            if not isinstance(return_value, (InputEvent, dict, type(None))):
+                raise RuntimeError(
+                    '%r returned an unexpected type (%r)',
+                    handler,
+                    return_value,
+                )
+
+            if isinstance(return_value, dict):
+                response_parser = self.server.response_parser
+
+                response_dict = response_parser.parse_event_response_dict(
+                    return_value,
+                )
+
+                self.handle_raw_response_dict(response_dict)
+
+                return response_dict
+
+            return return_value
+
         try:
             # sending input event ack
             input_events_logger.debug(
@@ -725,12 +748,21 @@ class ViewRuntime:
                 payload[0],
             )
 
-            input_event = self.view.handle_input_event_root(input_event)
+            return_value = run_handler(
+                self.view.handle_input_event_root,
+                input_event,
+            )
 
-            if not input_event:
+            if isinstance(return_value, dict):
+                return log_handled_message()
+
+            elif not return_value:
                 send_html_patches()
 
                 return log_handled_message()
+
+            else:
+                input_event = return_value
 
             # node input event handler
             for node in input_event.nodes:
@@ -741,12 +773,21 @@ class ViewRuntime:
                     get_object_repr(node),
                 )
 
-                input_event = node.handle_input_event(input_event)
+                return_value = run_handler(
+                    node.handle_input_event,
+                    input_event,
+                )
 
-                if not input_event:
+                if isinstance(return_value, dict):
+                    return log_handled_message()
+
+                elif not return_value:
                     send_html_patches()
 
                     return log_handled_message()
+
+                else:
+                    input_event = return_value
 
             # pending input events
             if(input_event.name in self.pending_input_events and
@@ -789,7 +830,13 @@ class ViewRuntime:
                 payload[0],
             )
 
-            self.view.handle_input_event(input_event)
+            return_value = run_handler(
+                self.view.handle_input_event,
+                input_event,
+            )
+
+            if isinstance(return_value, dict):
+                return log_handled_message()
 
             send_html_patches()
 

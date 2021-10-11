@@ -10,6 +10,35 @@ class ResponseParser:
     def __init__(self, server):
         self.server = server
 
+    def parse_event_response_dict(
+            self,
+            raw_response_dict: dict,
+    ) -> dict:
+
+        """
+        Parse response dicts coming from event handlers.
+
+        response dicts can only be redirects or http redirects.
+
+        examples:
+            {'redirect': '/foo'}
+            {'http_redirect': '/bar'}
+        """
+
+        supported_keys = ('redirect', 'http_redirect')
+
+        if(len(raw_response_dict.keys()) > 1 or
+           list(raw_response_dict.keys())[0] not in supported_keys):
+
+            raise ValueError(f'response dict has unexpected keys ({repr(list(raw_response_dict.keys()))})')
+
+        redirect_type, redirect_target = list(raw_response_dict.items())[0]
+
+        if not isinstance(redirect_target, str):
+            raise ValueError('redirect target has to be string')
+
+        return raw_response_dict
+
     def render_response_dict(self, raw_response_dict, view_name):
         response_dict = {
             'status': 200,
