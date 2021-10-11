@@ -341,7 +341,7 @@ class LonaView:
 
         return input_event
 
-    def on_view_event(self, view_event: 'ViewEvent') -> None:
+    def on_view_event(self, view_event: 'ViewEvent') -> dict | None:
         pass
 
     def on_shutdown(

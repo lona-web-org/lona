@@ -845,6 +845,10 @@ object of the same view class. To send events to multiple view classes
 ``Server.fire_input_event()`` can be used. Incoming view events are getting
 handled by ``LonaView.on_view_event()``.
 
+View event handler can return
+`redirects </end-user-documentation/views.html#redirects>`_, even after
+`handle_request() </end-user-documentation/views.html#id2>`_ stopped.
+
 .. code-block:: python
 
     from lona import LonaView
