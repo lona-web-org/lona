@@ -33,6 +33,10 @@ class METHOD(Enum):
     VIEW_START = 204
     VIEW_STOP = 205
 
+    # pings
+    PING = 301
+    PONG = 302
+
 
 class INPUT_EVENT_TYPE(Enum):
     CLICK = 301
@@ -119,14 +123,6 @@ def decode_message(raw_message: str) -> tuple[
     if len(message) != 4:
         return _invalid_message()
 
-    # window_id
-    if not isinstance(message[0], int):
-        return _invalid_message()
-
-    # view_runtime_id
-    if not isinstance(message[1], (str, NoneType)):
-        return _invalid_message()
-
     window_id, view_runtime_id, method, payload = message
 
     try:
@@ -135,6 +131,15 @@ def decode_message(raw_message: str) -> tuple[
 
     except ValueError:
         return _invalid_message()
+
+    if method != METHOD.PING:
+        # window_id
+        if not isinstance(message[0], int):
+            return _invalid_message()
+
+        # view_runtime_id
+        if not isinstance(message[1], (str, NoneType)):
+            return _invalid_message()
 
     # view
     if method == METHOD.VIEW:
@@ -173,6 +178,16 @@ def decode_message(raw_message: str) -> tuple[
 
         return (EXIT_CODE.SUCCESS, *message)
 
+    # ping
+    if method == METHOD.PING:
+        if(window_id is not None or
+           view_runtime_id is not None or
+           payload is not None):
+
+            return _invalid_message()
+
+        return (EXIT_CODE.SUCCESS, None, None, METHOD.PING, None)
+
     return (EXIT_CODE.INVALID_METHOD, *message)
 
 
@@ -209,4 +224,10 @@ def encode_view_start(window_id, view_runtime_id):
 def encode_view_stop(window_id, view_runtime_id):
     return PROTOCOL.MESSAGE_PREFIX.value + dumps(
         [window_id, view_runtime_id, METHOD.VIEW_STOP, None],
+    )
+
+
+def encode_pong():
+    return PROTOCOL.MESSAGE_PREFIX.value + dumps(
+        [None, None, METHOD.PONG, None],
     )

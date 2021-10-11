@@ -205,8 +205,10 @@ Lona.LonaContext = function(settings) {
             return this.lona_context._run_message_handler(raw_message);
         };
 
-        // all lona messages have to start with a window id
-        if(!Number.isInteger(json_data[0])) {
+        // all lona messages but pong messages have to start with a window id
+        if(json_data[2] != Lona.protocol.METHOD.PONG &&
+           !Number.isInteger(json_data[0])) {
+
             return this.lona_context._run_message_handler(raw_message);
         };
 
@@ -217,6 +219,39 @@ Lona.LonaContext = function(settings) {
 
             lona_window.handle_websocket_message(json_data);
         };
+    };
+
+    // pings ------------------------------------------------------------------
+    this.send_ping = function() {
+        var raw_message = [
+            undefined,  // window_id
+            undefined, // view_runtime_id
+            Lona.protocol.METHOD.PING,  // method
+            undefined,  // payload
+        ]
+
+        message = (
+            Lona.protocol.PROTOCOL.MESSAGE_PREFIX +
+            JSON.stringify(raw_message)
+        );
+
+        this.send(message);
+    };
+
+    this._send_pings = function() {
+        var _this = this;
+
+        setTimeout(
+            function() {
+                if(_this._ws.readyState != _this._ws.OPEN) {
+                    return;
+                };
+
+                _this.send_ping();
+                _this._send_pings();
+            },
+            Lona.settings.PING_INTERVAL * 1000,
+        );
     };
 
     // setup ------------------------------------------------------------------
@@ -263,6 +298,11 @@ Lona.LonaContext = function(settings) {
             var lona_context = this.lona_context;
 
             lona_context._run_disconnect_hooks(event);
+        };
+
+        // pings
+        if(Lona.settings.PING_INTERVAL > 0) {
+            this._send_pings();
         };
     };
 
