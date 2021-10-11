@@ -350,6 +350,17 @@ the event handler chain for the incoming event. If a hook name starts with
 ``on_`` the view gets only notified of the event. It can't control further
 handling of the event.
 
+The main entry point of a view is ``handle_request()``. ``handle_request()``
+may run indefinitely and wait for events. All other hooks are supposed to run
+for shorter periods of time.
+
+After ``handle_request()`` stops, the view stays accessible until the user
+closes the tab. That means even after ``handle_request()`` returned, hooks like
+``handle_input_event()`` and ``on_view_event()`` are getting called on incoming
+events. After ``handle_request()`` stopped, ``on_stop()`` gets called, and
+``on_cleanup()`` after the user disconnected, reloaded the tab or changed the
+browser URL.
+
 .. code-block:: python
 
     from lona import LonaView
