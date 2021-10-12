@@ -344,6 +344,10 @@ class ViewRuntime:
 
             return self.handle_raw_response_dict(raw_response_dict)
 
+        # view got stopped from outside
+        except(StopReason, CancelledError) as exception:
+            self.stop_reason = exception
+
         # 403 Forbidden
         except ForbiddenError as exception:
             self.stop_reason = exception
