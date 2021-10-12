@@ -48,6 +48,8 @@ class ViewRuntimeController:
         with contextlib.suppress(KeyError):
             self._view_runtimes.pop(view_runtime.view_runtime_id)
 
+        view_runtime.run_cleanup_hook()
+
     def iter_view_runtimes(self):
         view_runtime_ids = list(self._view_runtimes.keys())
 

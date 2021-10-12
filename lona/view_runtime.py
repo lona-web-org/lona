@@ -237,20 +237,69 @@ class ViewRuntime:
 
     # start and stop ##########################################################
     def run_shutdown_hook(self):
+        # TODO: remove after 1.8
+
         logger.debug(
             'running %s with stop reason %s',
             self.view.on_shutdown,
             self.stop_reason,
         )
 
+        stop_reason = self.stop_reason
+
+        if not isinstance(stop_reason, (ServerStop, CancelledError)):
+            stop_reason = None
+
         try:
-            self.view.on_shutdown(self.stop_reason)
+            self.view.on_shutdown(stop_reason)
 
         except Exception:
             logger.exception(
                 'Exception raised while running %s',
                 self.view.on_shutdown,
             )
+
+    def run_stop_hook(self):
+        logger.debug(
+            'running %s with stop reason %s',
+            self.view.on_stop,
+            self.stop_reason,
+        )
+
+        try:
+            self.view.on_stop(self.stop_reason)
+
+        except Exception:
+            logger.exception(
+                'Exception raised while running %s',
+                self.view.on_stop,
+            )
+
+    def run_cleanup_hook(self):
+        from lona.view import LonaView
+
+        # FIXME: this inline import is necessary to avoid circular import
+        # this can be fixed by moving runtime state changes from LonaView to
+        # ViewRuntime
+
+        def _run():
+            logger.debug('running %s', self.view.on_cleanup)
+
+            try:
+                self.view.on_cleanup()
+
+            except Exception:
+                logger.exception(
+                    'Exception raised while running %s',
+                    self.view.on_cleanup,
+                )
+
+        # if on_cleanup is not defined by the view class
+        # it is unnecessary to start a thread
+        if self.view_class.on_cleanup is LonaView.on_cleanup:
+            return
+
+        self.server.run_function_async(_run)
 
     def start(self):
         try:
@@ -295,11 +344,10 @@ class ViewRuntime:
 
             return self.handle_raw_response_dict(raw_response_dict)
 
-        except(StopReason, CancelledError) as _stop_reason:
-            self.stop_reason = _stop_reason
-
         # 403 Forbidden
         except ForbiddenError as exception:
+            self.stop_reason = exception
+
             view_class = self.server.view_loader.load(
                 self.server.settings.CORE_ERROR_403_VIEW,
             )
@@ -344,6 +392,7 @@ class ViewRuntime:
             self.is_stopped = True
             self.stopped_at = datetime.now()
             self.send_view_stop()
+            self.run_stop_hook()
 
         self.run_shutdown_hook()
 

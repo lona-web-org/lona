@@ -350,6 +350,17 @@ the event handler chain for the incoming event. If a hook name starts with
 ``on_`` the view gets only notified of the event. It can't control further
 handling of the event.
 
+The main entry point of a view is ``handle_request()``. ``handle_request()``
+may run indefinitely and wait for events. All other hooks are supposed to run
+for shorter periods of time.
+
+After ``handle_request()`` stops, the view stays accessible until the user
+closes the tab. That means even after ``handle_request()`` returned, hooks like
+``handle_input_event()`` and ``on_view_event()`` are getting called on incoming
+events. After ``handle_request()`` stopped, ``on_stop()`` gets called, and
+``on_cleanup()`` after the user disconnected, reloaded the tab or changed the
+browser URL.
+
 .. code-block:: python
 
     from lona import LonaView
@@ -366,6 +377,12 @@ handling of the event.
             return input_event
 
         def on_view_event(self, view_event):
+            pass
+
+        def on_stop(self, reason):
+            pass
+
+        def on_cleanup(self):
             pass
 
         def on_shutdown(self, reason):
@@ -407,12 +424,43 @@ LonaView.on_view_event\(view_event\)
 This hook gets called for every incoming `view event <#view-events>`_.
 
 
+LonaView.on_stop\(reason\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This hook gets called after ``handle_request()`` stops. ``reason`` is either
+``None`` if ``handle_request()`` finished normally, or an exception if
+``handle_request()`` was interrupted or crashed. If it crashed, ``reason``
+contains the original exception.
+
+If the ``handle_request()`` was interrupted by the server shutting down,
+``reason`` contains a ``lona.exceptions.ServerStop`` exception.
+
+If the ``handle_request()`` was interrupted by the user by closing the
+connection, either intentionally or due connection loss, ``reason`` contains
+a ``lona.exceptions.UserAbort`` exception.
+
+
+LonaView.on_cleanup\(\)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This hook gets called after the view is fully shutdown and gets removed from
+the server.
+
+
 LonaView.on_shutdown\(reason\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning::
+
+    ``LonaView.on_shutdown()`` is deprecated and will be removed in 1.8.
+    Use `LonaView.on_stop() <#lonaview-on-stop-reason>`_ instead.
 
 This hook gets called after the view is stopped. The stop reason is ``None``
 if the view finished normally or contains a ``lona.exceptions.ServerStop`` or
 ``lona.exceptions.UserAbort`` if the connected user closed the browser.
+
+It does not run if the view ran into a ``403`` error, a ``500`` error or
+returned a response dict.
 
 
 View Attributes

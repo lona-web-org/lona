@@ -347,4 +347,12 @@ class LonaView:
                 Exception,
             ],
     ) -> None:
+        # TODO: remove after 1.8
+
+        pass
+
+    def on_stop(self, reason: Exception | None) -> None:
+        pass
+
+    def on_cleanup(self) -> None:
         pass
