@@ -335,13 +335,33 @@ class ViewRuntimeController:
                 view_event,
             )
 
-            view_runtime.view.on_view_event(view_event)
+            return_value = view_runtime.view.on_view_event(view_event)
 
         except Exception:
             view_events_logger.exception(
                 'Exception raised while running %r',
                 view_runtime.view.on_view_event,
             )
+
+            return
+
+        if not isinstance(return_value, (dict, type(None))):
+            exception = ValueError(f'{repr(view_runtime.view.on_view_event)} returned an unexpected type ({repr(return_value)})')
+
+            view_runtime.issue_500_error(exception)
+
+        if isinstance(return_value, dict):
+            response_parser = self.server.response_parser
+
+            try:
+                response_dict = response_parser.parse_event_response_dict(
+                    return_value,
+                )
+
+                view_runtime.handle_raw_response_dict(response_dict)
+
+            except Exception as exception:
+                view_runtime.issue_500_error(exception)
 
             return
 

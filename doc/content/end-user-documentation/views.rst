@@ -525,6 +525,10 @@ If the event got returned by the last widget in the chain, Lona checks if
 Input events can, but don't have to, contain a node that issued the event in
 ``input_event.node``.
 
+Input event handler can also return
+`redirects </end-user-documentation/views.html#redirects>`_, even after
+`handle_request() </end-user-documentation/views.html#id2>`_ stopped.
+
 
 Input Event types
 ~~~~~~~~~~~~~~~~~
@@ -840,6 +844,10 @@ When a event is send using ``LonaView.fire_view_event()`` it is send to every
 object of the same view class. To send events to multiple view classes
 ``Server.fire_input_event()`` can be used. Incoming view events are getting
 handled by ``LonaView.on_view_event()``.
+
+View event handler can return
+`redirects </end-user-documentation/views.html#redirects>`_, even after
+`handle_request() </end-user-documentation/views.html#id2>`_ stopped.
 
 .. code-block:: python
 

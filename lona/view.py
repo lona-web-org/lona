@@ -327,13 +327,21 @@ class LonaView:
     def handle_request(self, request: Request) -> None | str | AbstractNode | dict:  # NOQA: LN001
         return ''
 
-    def handle_input_event_root(self, input_event: InputEvent) -> None | InputEvent:  # NOQA: LN001
+    def handle_input_event_root(
+            self,
+            input_event: InputEvent,
+    ) -> InputEvent | dict | None:
+
         return input_event
 
-    def handle_input_event(self, input_event: InputEvent) -> None | InputEvent:
+    def handle_input_event(
+            self,
+            input_event: InputEvent,
+    ) -> InputEvent | dict | None:
+
         return input_event
 
-    def on_view_event(self, view_event: 'ViewEvent') -> None:
+    def on_view_event(self, view_event: 'ViewEvent') -> dict | None:
         pass
 
     def on_shutdown(
