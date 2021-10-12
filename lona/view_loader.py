@@ -13,6 +13,9 @@ logger = logging.getLogger('lona.view_loader')
 
 
 class ViewLoader:
+    # FIXME: type annotations: views can also be callbacks to make
+    # aiohttp-wsgi work
+
     def __init__(self, server):
         self.server = server
 
