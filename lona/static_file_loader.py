@@ -76,6 +76,9 @@ class StaticFileLoader:
         logger.debug('%d view classes discovered', len(view_classes))
 
         for view_class in view_classes:
+            if not hasattr(view_class, 'STATIC_FILES'):
+                continue
+
             yield view_class, iter(view_class.STATIC_FILES)
 
     def _discover_static_files(self) -> list[StaticFile]:
