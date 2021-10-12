@@ -281,8 +281,12 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         var method = message[2];
         var payload = message[3];
 
+        // pong
+        if(method == Lona.protocol.METHOD.PONG) {
+            return;
+
         // view start
-        if (method == Lona.protocol.METHOD.VIEW_START) {
+        } else if(method == Lona.protocol.METHOD.VIEW_START) {
             clearTimeout(this._view_start_timeout);
 
             this._view_runtime_id = view_runtime_id;

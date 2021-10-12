@@ -33,6 +33,7 @@ class ClientPreCompiler:
         return {
             'VIEW_START_TIMEOUT': settings.CLIENT_VIEW_START_TIMEOUT,
             'INPUT_EVENT_TIMEOUT': settings.CLIENT_INPUT_EVENT_TIMEOUT,
+            'PING_INTERVAL': settings.CLIENT_PING_INTERVAL,
         }
 
     def get_enums(self):

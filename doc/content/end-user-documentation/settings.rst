@@ -125,6 +125,11 @@ Client
     :name: CLIENT_INPUT_EVENT_TIMEOUT
     :path: lona.default_settings.CLIENT_INPUT_EVENT_TIMEOUT
 
+.. setting::
+    :name: CLIENT_PING_INTERVAL
+    :path: lona.default_settings.CLIENT_PING_INTERVAL
+
+    To disable ping messages set to ``0``.
 
 Sessions
 --------

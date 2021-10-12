@@ -1,6 +1,12 @@
 import logging
 
-from lona.protocol import decode_message, EXIT_CODE, PROTOCOL
+from lona.protocol import (
+    decode_message,
+    encode_pong,
+    EXIT_CODE,
+    PROTOCOL,
+    METHOD,
+)
 
 logger = logging.getLogger('lona.protocol')
 
@@ -17,6 +23,11 @@ class LonaMessageMiddleware:
             logger.error('invalid lona message received: %s', data.message)
 
             return data
+
+        if method == METHOD.PING:
+            data.connection.send_str(encode_pong(), wait=False)
+
+            return
 
         data.server.view_runtime_controller.handle_lona_message(
             connection=data.connection,
