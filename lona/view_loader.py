@@ -67,7 +67,9 @@ class ViewLoader:
                 )
 
         # TODO: remove after 1.8
-        if view.on_shutdown is not LonaView.on_shutdown:
+        if(isinstance(view, type) and
+           view.on_shutdown is not LonaView.on_shutdown):
+
             warnings.warn(
                 'LonaView.on_shutdown() will be removed in 1.8',
                 category=DeprecationWarning,
@@ -105,7 +107,10 @@ class ViewLoader:
     ) -> None:
 
         view_class = self._acquire(view)
-        view_class._server = self.server  # TODO: remove after 1.8
+
+        # TODO: remove after 1.8
+        if isinstance(view_class, type) and issubclass(view_class, LonaView):
+            view_class._server = self.server
 
         if route:
             self._run_checks(route, view_class)
