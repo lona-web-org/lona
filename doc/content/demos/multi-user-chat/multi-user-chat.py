@@ -100,6 +100,10 @@ class Chat(LonaView):
         self.fire_view_event('message', message_data)
 
     def on_view_event(self, view_event):
+        # view is not fully setup yet
+        if not hasattr(self, 'room_name'):
+            return
+
         # message is for another room
         if view_event.data['room'] != self.room_name:
             return
@@ -107,6 +111,10 @@ class Chat(LonaView):
         self.update_messages()
 
     def on_cleanup(self):
+        # view is not fully setup yet
+        if not hasattr(self, 'name'):
+            return
+
         self.room['user'].remove(self.name)
 
         self.send_message(
