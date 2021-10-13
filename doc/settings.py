@@ -78,9 +78,6 @@ MENU = [
         ['Writing A Traditional Form',
          'cookbook/writing-a-traditional-form.rst'],
 
-        ['Writing A Multi User View',
-         'cookbook/writing-a-multi-user-view.rst'],
-
         ['Auto-Reconnect', 'cookbook/auto-reconnect.rst'],
         ['URL Reverse Resolving', 'cookbook/url-reverse-resolving.rst'],
         ['Using Server State', 'cookbook/using-server-state.rst'],
