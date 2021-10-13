@@ -344,6 +344,11 @@ JSON Responses
 View Hooks
 ----------
 
+.. note::
+
+    * ``LonaView.on_stop()`` was added in 1.7.4
+    * ``LonaView.on_cleanup()`` was added in 1.7.4
+
 All entry points for user code in Lona views are callbacks in the ``LonaView``
 class. If a hook name starts with ``handle_`` it means that the view can stop
 the event handler chain for the incoming event. If a hook name starts with
@@ -427,6 +432,10 @@ This hook gets called for every incoming `view event <#view-events>`_.
 LonaView.on_stop\(reason\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. note::
+
+    Added in 1.7.4
+
 This hook gets called after ``handle_request()`` stops. ``reason`` is either
 ``None`` if ``handle_request()`` finished normally, or an exception if
 ``handle_request()`` was interrupted or crashed. If it crashed, ``reason``
@@ -442,6 +451,10 @@ a ``lona.exceptions.UserAbort`` exception.
 
 LonaView.on_cleanup\(\)
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    Added in 1.7.4
 
 This hook gets called after the view is fully shutdown and gets removed from
 the server.
@@ -509,6 +522,8 @@ Input Events
     nodes have equal attributes, but did not check if node A is the same node
     as node B.  To check if node A is node B is ``is`` instead of ``==`` was
     required.
+
+    **Added in 1.7.4:** Redirects
 
 Input events get handled in a chain of hooks. Every hook is required to return
 the given input event, to pass it down the chain, or return ``None`` to mark
@@ -833,7 +848,8 @@ View Events
 
 .. note::
 
-    Added in 1.7.3
+    * Added in 1.7.3
+    * Redirect support was added in 1.7.4
 
 Views can communicate with each other by sending events using
 ``LonaView.fire_view_event()``. A view event consists of a name and data.

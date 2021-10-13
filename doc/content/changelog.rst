@@ -5,6 +5,53 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.7.4 (2021-10-13)
+
+
+Changes
+~~~~~~~
+
+* Deprecations
+
+  * ``LonaView.iter_objects()`` is now deprecated and will be removed in 1.8
+
+    * This method is replaced by the view events API
+
+  * ``LonaView.on_shutdown()`` is now deprecated and will be removed in 1.8
+
+    * This hook has many flaws and special rules when it runs and when not.
+      It is replaced by ``LonaView.on_stop()`` and ``LonaView.on_cleanup()``
+
+* Support for Python3.10 was added
+
+* Views
+
+  * ``LonaView.on_stop()`` was added
+  * ``LonaView.on_cleanup()`` was added
+  * Redirect support was added to ``LonaView.handle_input_event()``
+  * Redirect support was added to ``LonaView.handle_input_event_root()``
+  * Redirect support was added to ``LonaView.on_view_event()``
+
+* Client
+
+  * Ping messages were added
+
+    * Modern browsers like Chrome close websockets after a preconfigured
+      timeout of around five minutes of inactivity to save energy. This can
+      lead to all sorts of bad user experience, because all important state is
+      part of the view in Lona.
+
+
+Bugfixes
+~~~~~~~~
+
+* html
+
+  * Handling of generators was fixed
+
+    * Previously lines like ``Div(Div() for in range(10))`` did not work
+
+
 .. changelog-header:: 1.7.3 (2021-10-08)
 
 

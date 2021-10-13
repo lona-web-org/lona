@@ -129,6 +129,10 @@ Client
     :name: CLIENT_PING_INTERVAL
     :path: lona.default_settings.CLIENT_PING_INTERVAL
 
+    .. note::
+
+        Added in 1.7.4
+
     To disable ping messages set to ``0``.
 
 Sessions
