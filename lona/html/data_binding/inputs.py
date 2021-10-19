@@ -27,6 +27,9 @@ class TextInput(Node):
         self.bubble_up = bubble_up
         self.events.add(CHANGE(input_delay))
 
+    def _check_validity(self):
+        pass
+
     def handle_input_event(self, input_event):
         # Data binding nodes catch their own change events and synchronize
         # their internal value. When setting their value, a HTML patch,
@@ -46,6 +49,8 @@ class TextInput(Node):
                 input_event.data,
                 issuer=(input_event.connection, input_event.window_id),
             )
+
+            self._check_validity()
 
             input_event = self.handle_change(input_event)
 
@@ -178,28 +183,61 @@ class NumberInput(TextInput):
         self.max = max
         self.step = step
 
-    # properties ##############################################################
-    # value
-    @property
-    def value(self) -> None | float:
-        value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
+    def _get_raw_value(self) -> str:
+        return str(self.attributes.get(self.INPUT_ATTRIBUTE_NAME, ''))
 
-        if value != '':
-            with contextlib.suppress(ValueError):
-                return float(value)
+    def _get_value(self) -> float | None:
+        raw_value = self._get_raw_value()
+
+        with contextlib.suppress(ValueError):
+            return float(raw_value)
 
         return None
 
-    @value.setter
-    def value(self, new_value: None | float) -> None:
-        if new_value is not None and not isinstance(new_value, (int, float)):
-            raise TypeError('value should be None, int or float')
+    def _check_validity(self) -> None:
+        value = self._get_value()
 
+        if not isinstance(value, float):
+            self._valid = False
+
+            return
+
+        if((self.min is not None and value < self.min) or
+           (self.max is not None and value > self.max) or
+           (self.step is not None and
+               (value-(self.min or 0)) % self.step) != 0):  # NOQA: FS001
+
+            self._valid = False
+
+            return
+
+        self._valid = True
+
+    # properties ##############################################################
+    # valid
+    @property
+    def valid(self) -> bool:
+        return self._valid
+
+    # raw_value
+    @property
+    def raw_value(self) -> str:
+        return self._get_raw_value()
+
+    # value
+    @property
+    def value(self) -> None | float:
+        return self._get_value()
+
+    @value.setter
+    def value(self, new_value: str | float | None) -> None:
         if new_value is None:
             self.attributes[self.INPUT_ATTRIBUTE_NAME] = ''
 
         else:
-            self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
+            self.attributes[self.INPUT_ATTRIBUTE_NAME] = str(new_value)
+
+        self._check_validity()
 
     # min
     @property
@@ -223,6 +261,8 @@ class NumberInput(TextInput):
         else:
             self.attributes['min'] = new_value
 
+        self._check_validity()
+
     # max
     @property
     def max(self) -> None | float:
@@ -245,6 +285,8 @@ class NumberInput(TextInput):
         else:
             self.attributes['max'] = new_value
 
+        self._check_validity()
+
     # step
     @property
     def step(self) -> None | float:
@@ -266,3 +308,5 @@ class NumberInput(TextInput):
 
         else:
             self.attributes['step'] = new_value
+
+        self._check_validity()

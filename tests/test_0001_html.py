@@ -673,6 +673,7 @@ class TestNumberInput:
     def test_parsing_broken_value(self):
         node = HTML('<input type="number" value="abc" step="0.1"/>')[0]
 
+        assert node.raw_value == 'abc'
         assert node.value is None
 
     def test_parsing_all_attributes(self):
