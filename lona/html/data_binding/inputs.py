@@ -164,14 +164,16 @@ class NumberInput(TextInput):
             input_delay: int = DEFAULT_INPUT_DELAY,
             **kwargs: Any,
     ) -> None:
+
         super().__init__(
-            value,
-            disabled,
-            readonly,
-            bubble_up,
-            input_delay,
+            value=value,
+            disabled=disabled,
+            readonly=readonly,
+            bubble_up=bubble_up,
+            input_delay=input_delay,
             **kwargs,
         )
+
         self.min = min
         self.max = max
         self.step = step
@@ -181,9 +183,11 @@ class NumberInput(TextInput):
     @property
     def value(self) -> None | float:
         value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
+
         if value != '':
             with contextlib.suppress(ValueError):
                 return float(value)
+
         return None
 
     @value.setter
@@ -193,6 +197,7 @@ class NumberInput(TextInput):
 
         if new_value is None:
             self.attributes[self.INPUT_ATTRIBUTE_NAME] = ''
+
         else:
             self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
 
@@ -200,9 +205,11 @@ class NumberInput(TextInput):
     @property
     def min(self) -> None | float:
         value = self.attributes.get('min', None)
+
         if value is not None:
             with contextlib.suppress(ValueError):
                 return float(value)
+
         return None
 
     @min.setter
@@ -212,6 +219,7 @@ class NumberInput(TextInput):
 
         if new_value is None:
             del self.attributes['min']
+
         else:
             self.attributes['min'] = new_value
 
@@ -219,9 +227,11 @@ class NumberInput(TextInput):
     @property
     def max(self) -> None | float:
         value = self.attributes.get('max', None)
+
         if value is not None:
             with contextlib.suppress(ValueError):
                 return float(value)
+
         return None
 
     @max.setter
@@ -231,6 +241,7 @@ class NumberInput(TextInput):
 
         if new_value is None:
             del self.attributes['max']
+
         else:
             self.attributes['max'] = new_value
 
@@ -238,9 +249,11 @@ class NumberInput(TextInput):
     @property
     def step(self) -> None | float:
         value = self.attributes.get('step', None)
+
         if value is not None:
             with contextlib.suppress(ValueError):
                 return float(value)
+
         return None
 
     @step.setter
@@ -250,5 +263,6 @@ class NumberInput(TextInput):
 
         if new_value is None:
             del self.attributes['step']
+
         else:
             self.attributes['step'] = new_value
