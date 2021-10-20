@@ -5,6 +5,40 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.7.5 (2021-10-20)
+
+
+Bugfixes
+~~~~~~~~
+
+* Views
+
+  * Handling of top level nodes was fixed
+
+    * Previously a node could not get associated with an input event if it was
+      on the first level of a HTML tree
+
+  * Cleanup of non-interactive view runtimes was fixed
+
+    * Previously non-interactive view runtimes never got removed from memory
+
+* Protocol
+
+  * Duplicate method status codes were fixed
+
+    * Previously ``METHOD.PING`` had the same value as
+      ``INPUT_EVENT_TYPE.CLICK`` and ``METHOD.PONG`` had the same value as
+      ``INPUT_EVENT_TYPE.CHANGE``
+
+* HTML
+
+  * The return value of ``Select.value`` was fixed
+
+    * Previously ``Select.value`` would always return the first option if no
+      option is selected, which is only correct if ``multiple`` is set to
+      ``False``
+
+
 .. changelog-header:: 1.7.4 (2021-10-13)
 
 
