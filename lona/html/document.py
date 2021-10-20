@@ -28,16 +28,20 @@ class Document:
         nodes = []
 
         with self.lock:
-            for _node in self.html.iter_nodes():
-                if _node.id == node_id:
-                    node = _node
+            if self.html.id == node_id:
+                node = self.html
 
-                    break
+            else:
+                for _node in self.html.iter_nodes():
+                    if _node.id == node_id:
+                        node = _node
+
+                        break
 
             if node is None:
                 return []
 
-            while node.parent is not None:
+            while node is not None:
                 nodes.append(node)
                 node = node.parent
 

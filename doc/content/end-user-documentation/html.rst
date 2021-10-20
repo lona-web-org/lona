@@ -533,11 +533,13 @@ Select
 
     from lona.html import Select
 
-    Select([
-        # value, label, is_selected
-        ('foo', 'Foo', True),
-        ('bar', 'Bar', False),
-    ])
+    Select(
+        values=[
+            # value, label, is_selected
+            ('foo', 'Foo', True),
+            ('bar', 'Bar', False),
+        ],
+    )
 
 **Init Arguments:**
 

@@ -125,15 +125,18 @@ class Select(Node):
                 if 'selected' in option.attributes:
                     value.append(option.attributes['value'])
 
-            if not value and self.nodes:
+            if not self.multiple and not value and self.nodes:
                 option = self.nodes[0]
 
                 value.append(option.attributes['value'])
 
             if not value:
-                return None
+                if not self.multiple:
+                    return None
 
-            if 'multiple' not in self.attributes:
+                return value
+
+            if not self.multiple:
                 value = value.pop()
 
             return value

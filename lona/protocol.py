@@ -25,6 +25,7 @@ class METHOD(Enum):
     INPUT_EVENT = 102
     INPUT_EVENT_ACK = 103
     CLIENT_ERROR = 104
+    PING = 105
 
     # issuer: server
     REDIRECT = 201
@@ -32,10 +33,7 @@ class METHOD(Enum):
     DATA = 203
     VIEW_START = 204
     VIEW_STOP = 205
-
-    # pings
-    PING = 301
-    PONG = 302
+    PONG = 206
 
 
 class INPUT_EVENT_TYPE(Enum):
