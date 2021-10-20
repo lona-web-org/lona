@@ -272,7 +272,14 @@ class ViewRuntimeController:
             )
 
         else:
-            return view_runtime.start()
+            response_dict = view_runtime.start()
+
+            # Non interactive runtimes don't have to be held in memory, after
+            # handle_request() finished, because they can't be daemonized or
+            # receive input events.
+            self.remove_view_runtime(view_runtime)
+
+            return response_dict
 
         views_logger.debug('message handled')
 
