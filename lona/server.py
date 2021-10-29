@@ -289,6 +289,8 @@ class LonaServer:
         return connection, (handled, data, middleware)
 
     def _remove_connection(self, connection):
+        self.view_runtime_controller.remove_connection(connection)
+
         if connection in self.websocket_connections:
             self.websocket_connections.remove(connection)
 
@@ -360,8 +362,10 @@ class LonaServer:
         connection = None
 
         async def close_websocket():
-            self.view_runtime_controller.remove_connection(connection)
-            self._remove_connection(connection)
+            await self.run_function_async(
+                self._remove_connection,
+                connection=connection,
+            )
 
             await websocket.close()
 
