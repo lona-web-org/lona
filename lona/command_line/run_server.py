@@ -5,11 +5,16 @@ import signal
 import os
 
 from aiohttp.web import Application, run_app
+import aiohttp
 
 from lona.shell.shell import generate_shell_server, embed_shell
 from lona.worker_pool import WorkerPool
 from lona.logging import setup_logging
 from lona.server import LonaServer
+
+AIOHTTP_VERSION = tuple(
+    int(part) for part in aiohttp.__version__.split('.')[:2]
+)
 
 logger = logging.getLogger('lona')
 
@@ -68,13 +73,21 @@ def run_server(args, app=None, server=None):
         loop.create_task(start_shell(server))
 
     def _run_app():
+        keyword_args = {
+            'app': app,
+            'host': args.host,
+            'port': args.port,
+            'shutdown_timeout': args.shutdown_timeout,
+        }
+
+        # In aiohttp 3.8 the keyword "loop" was added, which is mandatory if
+        # you don’t want aiohttp to start a new event loop but use your
+        # previously created one
+        if AIOHTTP_VERSION >= (3, 8):
+            keyword_args['loop'] = loop
+
         try:
-            run_app(
-                app=app,
-                host=args.host,
-                port=args.port,
-                shutdown_timeout=args.shutdown_timeout,
-            )
+            run_app(**keyword_args)
 
         except socket.gaierror as exception:
             if exception.errno not in (-2, ):
