@@ -5,6 +5,29 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.7.6 (2021-11-01)
+
+
+Changes
+~~~~~~~
+
+* aiohttp
+
+  * Support for aiohttp 3.8 was added
+
+
+Bugfixes
+~~~~~~~~
+
+* Server
+
+  * Slow downs when removing connections were fixed
+
+    * Previously connections were removed directly on the ioloop which pulles
+      a HTML lock implicitly. This meant that, in worst case scenarios, the
+      server was locked until a view released its lock.
+
+
 .. changelog-header:: 1.7.5 (2021-10-20)
 
 
