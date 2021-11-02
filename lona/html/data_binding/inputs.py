@@ -124,6 +124,9 @@ class CheckBox(TextInput):
 
         super().__init__(value, disabled, readonly, bubble_up, **kwargs)
 
+        if 'input_delay' not in kwargs:
+            self.events = [CHANGE]
+
     @property
     def value(self) -> bool:
         value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, False)
