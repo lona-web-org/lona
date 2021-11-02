@@ -396,6 +396,15 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             this._clear();
         };
 
+        // scroll to top
+        // If the a new view gets started with the page scrolled down, and
+        // the page has a fixed height set in css, for example the min-height
+        // of the body is set to 100%, the new view starts scrolled to the
+        // bottom, which is counterintuitive to end users.
+        if(this.lona_context.settings.scroll_to_top_on_view_start) {
+            window.scrollTo(0, 0);
+        };
+
         // encode message
         var message = [
             this._window_id,
