@@ -106,36 +106,34 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         var input_delay = event_type[0];
 
         // oninput (input delay)
-        if(node.type == 'text' || node.type == 'textarea') {
-            if(input_delay) {
-                node.oninput = function(event) {
-                    event.preventDefault();
+        if(input_delay != undefined) {
+            node.oninput = function(event) {
+                event.preventDefault();
 
-                    try {
-                        if(node.delay_timer !== undefined) {
-                            clearTimeout(node.delay_timer);
-                        }
+                try {
+                    if(node.delay_timer !== undefined) {
+                        clearTimeout(node.delay_timer);
+                    }
 
-                        node.delay_timer = setTimeout(function() {
-                            var value = input_event_handler._get_value(node);
+                    node.delay_timer = setTimeout(function() {
+                        var value = input_event_handler._get_value(node);
 
-                            input_event_handler.fire_input_event(
-                                node,
-                                Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
-                                value,
-                            );
-                        }, input_delay);
+                        input_event_handler.fire_input_event(
+                            node,
+                            Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
+                            value,
+                        );
+                    }, input_delay);
 
-                    } catch(error) {
-                        lona_window.crash(error);
+                } catch(error) {
+                    lona_window.crash(error);
 
-                    };
-
-                    return false;
                 };
 
-                return;
+                return false;
             };
+
+            return;
         };
 
         // onchange
