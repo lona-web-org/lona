@@ -27,6 +27,9 @@ class TextInput(Node):
         self.bubble_up = bubble_up
         self.events.add(CHANGE(input_delay))
 
+    def _check_validity(self):
+        pass
+
     def handle_input_event(self, input_event):
         # Data binding nodes catch their own change events and synchronize
         # their internal value. When setting their value, a HTML patch,
@@ -46,6 +49,8 @@ class TextInput(Node):
                 input_event.data,
                 issuer=(input_event.connection, input_event.window_id),
             )
+
+            self._check_validity()
 
             input_event = self.handle_change(input_event)
 
@@ -124,6 +129,9 @@ class CheckBox(TextInput):
 
         super().__init__(value, disabled, readonly, bubble_up, **kwargs)
 
+        if 'input_delay' not in kwargs:
+            self.events = [CHANGE]
+
     @property
     def value(self) -> bool:
         value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, False)
@@ -161,45 +169,85 @@ class NumberInput(TextInput):
             input_delay: int = DEFAULT_INPUT_DELAY,
             **kwargs: Any,
     ) -> None:
+
         super().__init__(
-            value,
-            disabled,
-            readonly,
-            bubble_up,
-            input_delay,
+            value=value,
+            disabled=disabled,
+            readonly=readonly,
+            bubble_up=bubble_up,
+            input_delay=input_delay,
             **kwargs,
         )
+
         self.min = min
         self.max = max
         self.step = step
 
+    def _get_raw_value(self) -> str:
+        return str(self.attributes.get(self.INPUT_ATTRIBUTE_NAME, ''))
+
+    def _get_value(self) -> float | None:
+        raw_value = self._get_raw_value()
+
+        with contextlib.suppress(ValueError):
+            return float(raw_value)
+
+        return None
+
+    def _check_validity(self) -> None:
+        value = self._get_value()
+
+        if not isinstance(value, float):
+            self._valid = False
+
+            return
+
+        if((self.min is not None and value < self.min) or
+           (self.max is not None and value > self.max) or
+           (self.step is not None and
+               (value-(self.min or 0)) % self.step) != 0):  # NOQA: FS001
+
+            self._valid = False
+
+            return
+
+        self._valid = True
+
     # properties ##############################################################
+    # valid
+    @property
+    def valid(self) -> bool:
+        return self._valid
+
+    # raw_value
+    @property
+    def raw_value(self) -> str:
+        return self._get_raw_value()
+
     # value
     @property
     def value(self) -> None | float:
-        value = self.attributes.get(self.INPUT_ATTRIBUTE_NAME, '')
-        if value != '':
-            with contextlib.suppress(ValueError):
-                return float(value)
-        return None
+        return self._get_value()
 
     @value.setter
-    def value(self, new_value: None | float) -> None:
-        if new_value is not None and not isinstance(new_value, (int, float)):
-            raise TypeError('value should be None, int or float')
-
+    def value(self, new_value: str | float | None) -> None:
         if new_value is None:
             self.attributes[self.INPUT_ATTRIBUTE_NAME] = ''
+
         else:
-            self.attributes[self.INPUT_ATTRIBUTE_NAME] = new_value
+            self.attributes[self.INPUT_ATTRIBUTE_NAME] = str(new_value)
+
+        self._check_validity()
 
     # min
     @property
     def min(self) -> None | float:
         value = self.attributes.get('min', None)
+
         if value is not None:
             with contextlib.suppress(ValueError):
                 return float(value)
+
         return None
 
     @min.setter
@@ -209,16 +257,21 @@ class NumberInput(TextInput):
 
         if new_value is None:
             del self.attributes['min']
+
         else:
             self.attributes['min'] = new_value
+
+        self._check_validity()
 
     # max
     @property
     def max(self) -> None | float:
         value = self.attributes.get('max', None)
+
         if value is not None:
             with contextlib.suppress(ValueError):
                 return float(value)
+
         return None
 
     @max.setter
@@ -228,16 +281,21 @@ class NumberInput(TextInput):
 
         if new_value is None:
             del self.attributes['max']
+
         else:
             self.attributes['max'] = new_value
+
+        self._check_validity()
 
     # step
     @property
     def step(self) -> None | float:
         value = self.attributes.get('step', None)
+
         if value is not None:
             with contextlib.suppress(ValueError):
                 return float(value)
+
         return None
 
     @step.setter
@@ -247,5 +305,8 @@ class NumberInput(TextInput):
 
         if new_value is None:
             del self.attributes['step']
+
         else:
             self.attributes['step'] = new_value
+
+        self._check_validity()

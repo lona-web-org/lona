@@ -488,6 +488,50 @@ in reactive programming.
     |style      |(Dict) contains all styling attributes
 
 
+NumberInput
++++++++++++
+
+.. code-block:: python
+
+    from lona.html import NumberInput
+
+    NumberInput()
+    NumberInput(min=2, max=8, step=2)
+
+**Init Arguments:**
+
+.. table::
+
+    ^Name             ^Default Value      ^Description
+    |value            |None               |(Float,None) Initial value
+    |min              |None               |(Float,None) Minimal value
+    |max              |None               |(Float,None) Maximal value
+    |step             |None               |(Float,None) Valid steps for value
+    |bubble_up        |False              |(Bool) Pass input events further
+    |disabled         |False              |(Bool) sets the HTML attribute "disabled"
+    |readonly         |False              |(Bool) Accepts no input, but can be read and selected
+    |input_delay      |300                |(Int) Input delay in milliseconds
+    |*args            |()                 |Node args
+    |**kwargs         |{}                 |Node kwargs
+
+**Attributes:**
+
+.. table::
+
+    ^Name       ^Description
+    |value      |(Float) Currently set value
+    |raw_value  |(Str) Currently raw value set by the user
+    |min        |(Float,None) Minimal value
+    |max        |(Float,None) Maximal value
+    |step       |(Float,None) Valid steps for value
+    |valid      |(Bool) value meets all constrains set by min, max and step
+    |disabled   |(Bool) sets the HTML attribute "disabled"
+    |readonly   |(Bool) Accepts no input, but can be read and selected
+    |id_list    |(List) contains all ids
+    |class_list |(List) contains all classes
+    |style      |(Dict) contains all styling attributes
+
+
 CheckBox
 ++++++++
 
