@@ -20,6 +20,10 @@ Lona.LonaContext = function(settings) {
         this.settings.follow_http_redirects = true;
     };
 
+    if(typeof(this.settings.scroll_to_top_on_view_start) == 'undefined') {
+        this.settings.scroll_to_top_on_view_start = true;
+    };
+
     // state ------------------------------------------------------------------
     this._windows = {};
     this._connect_hooks = [];

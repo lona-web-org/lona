@@ -35,27 +35,26 @@ class Route:
 
         # string or regex
         else:
-            if self.raw_pattern.endswith(OPTIONAL_TRAILING_SLASH_PATTERN):
+            raw_pattern = self.raw_pattern
+
+            if raw_pattern.endswith(OPTIONAL_TRAILING_SLASH_PATTERN):
                 self.optional_trailing_slash = True
 
-            groups = ABSTRACT_ROUTE_RE.findall(self.raw_pattern)
+                raw_pattern = \
+                    raw_pattern[:-len(OPTIONAL_TRAILING_SLASH_PATTERN)]
+
+            groups = ABSTRACT_ROUTE_RE.findall(raw_pattern)
 
             # path is no pattern but simple string
             if not groups:
-                self.path = self.raw_pattern
-                self.format_string = self.raw_pattern
-
-                if self.optional_trailing_slash:
-                    suffix_len = len(OPTIONAL_TRAILING_SLASH_PATTERN) * -1
-
-                    self.path = self.path[:suffix_len]
-                    self.format_string = self.path[:suffix_len]
+                self.path = raw_pattern
+                self.format_string = raw_pattern
 
                 return
 
             pattern_names = [i[0] for i in groups]
             patterns = [(i[0], i[2] or DEFAULT_PATTERN) for i in groups]
-            cleaned_pattern = ABSTRACT_ROUTE_RE.sub('{}', self.raw_pattern)
+            cleaned_pattern = ABSTRACT_ROUTE_RE.sub('{}', raw_pattern)
 
             # setup format string
             self.format_string = cleaned_pattern.format(
@@ -68,7 +67,7 @@ class Route:
                         *[ROUTE_PART_FORMAT_STRING.format(*i)
                           for i in patterns],
                     ),
-                    (OPTIONAL_TRAILING_SLASH_PATTERN
+                    (r'(/)?'
                         if self.optional_trailing_slash else ''),
                 ),
             )

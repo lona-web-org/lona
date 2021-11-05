@@ -79,6 +79,7 @@ class TestOptionalTrailingSlash:
         self.routes = [
             Route('/foo(/)', None),
             Route('/bar/', None),
+            Route('/foobar/<arg>(/)', None),
         ]
 
         self.router = Router()
@@ -97,6 +98,20 @@ class TestOptionalTrailingSlash:
         assert match
         assert route == self.routes[0]
         assert match_info == {}
+
+    def test_optional_slash_resolves_without_slash_and_argument(self):
+        match, route, match_info = self.router.resolve('/foobar/foobar')
+
+        assert match
+        assert route == self.routes[2]
+        assert match_info == {'arg': 'foobar'}
+
+    def test_optional_slash_resolves_with_slash_and_argument(self):
+        match, route, match_info = self.router.resolve('/foobar/foobar/')
+
+        assert match
+        assert route == self.routes[2]
+        assert match_info == {'arg': 'foobar'}
 
     def test_required_slash_doesnt_resolve_without_slash(self):
         match, route, match_info = self.router.resolve('/bar')
@@ -117,6 +132,7 @@ class TestReverseMatching:
         routes = [
             Route('/foo/<arg>/', None, name='foo'),
             Route('/bar/', None, name='bar'),
+            Route('/foobar/<arg>(/)', None, name='foobar'),
         ]
         self.router = Router()
         self.router.add_routes(*routes)
@@ -125,6 +141,11 @@ class TestReverseMatching:
         url = self.router.reverse('foo', arg='bar')
 
         assert url == '/foo/bar/'
+
+    def test_reverse_with_arg_and_optional_slash(self):
+        url = self.router.reverse('foobar', arg='foobar')
+
+        assert url == '/foobar/foobar'
 
     def test_reverse_without_arg(self):
         url = self.router.reverse('bar')
