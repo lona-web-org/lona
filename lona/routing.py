@@ -134,6 +134,15 @@ class Router:
 
     # routes ##################################################################
     def add_route(self, route):
+        # check if route name already exists
+        if route.name:
+            for _route in self.routes:
+                if route.name == _route.name:
+                    logger.warning(
+                        "route name '%s' already exists",
+                        route.name,
+                    )
+
         self.routes.append(route)
 
     def add_routes(self, *routes):
