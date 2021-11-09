@@ -43,7 +43,8 @@ class ResponseParser:
         response_dict = {
             'status': 200,
             'content_type': 'text/html',
-            'text': '',
+            'text': None,
+            'body': None,
             'file': '',
             'redirect': '',
             'http_redirect': '',
@@ -51,6 +52,7 @@ class ResponseParser:
 
         key_words = {
             'text',
+            'body',
             'redirect',
             'http_redirect',
             'template',

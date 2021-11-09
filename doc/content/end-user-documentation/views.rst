@@ -341,6 +341,26 @@ JSON Responses
             }
 
 
+Binary Responses
+~~~~~~~~~~~~~~~~
+
+.. note::
+
+    Binary responses are only available in non interactive views
+
+.. code-block:: python
+
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return {
+                'content_type': 'application/pdf',
+                'body': open('foo.pdf', 'rb').read(),
+            }
+
+
 View Hooks
 ----------
 

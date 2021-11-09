@@ -336,10 +336,11 @@ class ViewRuntime:
             if(self.route and self.route.interactive and
                 isinstance(raw_response_dict, dict) and (
                     'json' in raw_response_dict or
-                    'file' in raw_response_dict)):
+                    'file' in raw_response_dict or
+                    'body' in raw_response_dict)):
 
                 raise RuntimeError(
-                    'JSON and file responses are only available in non-interactive mode',
+                    'JSON, binary and file responses are only available in non-interactive mode',
                 )
 
             return self.handle_raw_response_dict(raw_response_dict)
