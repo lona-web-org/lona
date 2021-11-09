@@ -97,10 +97,6 @@ class ViewLoader:
 
         view_class = self._acquire(view)
 
-        # TODO: remove after 1.8
-        if isinstance(view_class, type) and issubclass(view_class, LonaView):
-            view_class._server = self.server
-
         if route:
             self._run_checks(route, view_class)
 

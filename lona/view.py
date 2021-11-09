@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
-from collections.abc import Awaitable, Iterator, Callable
+from collections.abc import Awaitable, Callable
 import threading
-import warnings
 import asyncio
 
 from typing_extensions import Literal
@@ -30,8 +29,6 @@ H = Union[None, AbstractNode, str]
 class LonaView:
     STATIC_FILES: list[StaticFile] = []
 
-    _server: LonaServer  # TODO: remove after 1.8
-
     def __init__(
             self,
             server: LonaServer,
@@ -41,24 +38,6 @@ class LonaView:
         self._server: LonaServer = server
         self._view_runtime: ViewRuntime = view_runtime
         self._request: Request = request
-
-    # objects #################################################################
-    @classmethod
-    def iter_objects(cls: type[V]) -> Iterator[V]:
-        # TODO: remove after 1.8
-
-        warnings.warn(
-            'LonaView.iter_objects() will be removed in 1.8',
-            category=DeprecationWarning,
-        )
-
-        view_runtime_controller = cls._server.view_runtime_controller
-
-        for view_runtime in view_runtime_controller.iter_view_runtimes():
-            if view_runtime.view_class != cls:
-                continue
-
-            yield view_runtime.view
 
     # properties ##############################################################
     @property
