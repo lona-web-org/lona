@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Type, cast
-import warnings
 import logging
 import inspect
 import asyncio
@@ -49,7 +48,6 @@ class ViewLoader:
             'handle_input_event_root',
             'handle_input_event',
             'on_view_event',
-            'on_shutdown',
             'on_stop',
             'on_cleanup',
         ]
@@ -65,15 +63,6 @@ class ViewLoader:
                     route.view,
                     hook_name,
                 )
-
-        # TODO: remove after 1.8
-        if(isinstance(view, type) and
-           view.on_shutdown is not LonaView.on_shutdown):
-
-            warnings.warn(
-                'LonaView.on_shutdown() will be removed in 1.8',
-                category=DeprecationWarning,
-            )
 
     def _generate_acquiring_error_view(
             self,

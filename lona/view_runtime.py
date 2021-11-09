@@ -236,29 +236,6 @@ class ViewRuntime:
             )
 
     # start and stop ##########################################################
-    def run_shutdown_hook(self):
-        # TODO: remove after 1.8
-
-        logger.debug(
-            'running %s with stop reason %s',
-            self.view.on_shutdown,
-            self.stop_reason,
-        )
-
-        stop_reason = self.stop_reason
-
-        if not isinstance(stop_reason, (ServerStop, CancelledError)):
-            stop_reason = None
-
-        try:
-            self.view.on_shutdown(stop_reason)
-
-        except Exception:
-            logger.exception(
-                'Exception raised while running %s',
-                self.view.on_shutdown,
-            )
-
     def run_stop_hook(self):
         logger.debug(
             'running %s with stop reason %s',
@@ -399,8 +376,6 @@ class ViewRuntime:
             self.stopped_at = datetime.now()
             self.send_view_stop()
             self.run_stop_hook()
-
-        self.run_shutdown_hook()
 
     def stop(self, reason=UserAbort, clean_up=True):
         self.stop_reason = reason

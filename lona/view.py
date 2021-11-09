@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
 from collections.abc import Awaitable, Iterator, Callable
-from concurrent.futures import CancelledError
 import threading
 import warnings
 import asyncio
@@ -11,13 +10,11 @@ from typing_extensions import Literal
 from jinja2.nodes import Template
 
 from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
-from lona.exceptions import ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
 from lona.static_files import StaticFile
 from lona.shell.shell import embed_shell
 from lona.connection import Connection
-from lona.errors import ClientError
 from lona.request import Request
 
 # avoid import cycles
@@ -342,21 +339,6 @@ class LonaView:
         return input_event
 
     def on_view_event(self, view_event: 'ViewEvent') -> dict | None:
-        pass
-
-    def on_shutdown(
-            self,
-            reason: Union[
-                None,
-                UserAbort,
-                ServerStop,
-                CancelledError,
-                ClientError,
-                Exception,
-            ],
-    ) -> None:
-        # TODO: remove after 1.8
-
         pass
 
     def on_stop(self, reason: Exception | None) -> None:
