@@ -172,9 +172,9 @@ class Router:
     def _reverse(self, route_name, *args, **kwargs):
         route = None
 
-        for i in self.routes:
-            if i.name == route_name:
-                route = i
+        for _route in self.routes:
+            if _route.name == route_name:
+                route = _route
 
                 break
 
