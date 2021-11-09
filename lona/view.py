@@ -12,7 +12,6 @@ from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
 from lona.static_files import StaticFile
-from lona.shell.shell import embed_shell
 from lona.connection import Connection
 from lona.request import Request
 
@@ -290,14 +289,6 @@ class LonaView:
         self._assert_view_is_running()
 
         return 'pong'
-
-    # helper ##################################################################
-    def embed_shell(self, _locals: None | dict = None) -> None:
-        if _locals is None:
-            _locals = {}
-        _locals['self'] = self
-
-        embed_shell(server=self.server, locals=_locals)
 
     # hooks ###################################################################
     def handle_request(self, request: Request) -> None | str | AbstractNode | dict:  # NOQA: LN001
