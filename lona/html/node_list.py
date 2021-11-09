@@ -113,6 +113,10 @@ class NodeList:
                 payload=[],
             )
 
+    def index(self, node):
+        with self._node.lock:
+            return self._nodes.index(node)
+
     def __getitem__(self, index):
         with self._node.lock:
             return self._nodes[index]

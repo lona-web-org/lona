@@ -47,6 +47,9 @@ class HTML(Widget):
     def clear(self, *args, **kwargs):
         return self.nodes.clear(*args, **kwargs)
 
+    def index(self, *args, **kwargs):
+        return self.nodes.index(*args, **kwargs)
+
     def __getitem__(self, *args, **kwargs):
         return self.nodes.__getitem__(*args, **kwargs)
 
