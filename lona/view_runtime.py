@@ -337,10 +337,11 @@ class ViewRuntime:
                 isinstance(raw_response_dict, dict) and (
                     'json' in raw_response_dict or
                     'file' in raw_response_dict or
+                    'headers' in raw_response_dict or
                     'body' in raw_response_dict)):
 
                 raise RuntimeError(
-                    'JSON, binary and file responses are only available in non-interactive mode',
+                    'JSON, binary and file responses and headers are only available in non-interactive mode',
                 )
 
             return self.handle_raw_response_dict(raw_response_dict)

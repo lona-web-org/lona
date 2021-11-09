@@ -310,6 +310,7 @@ class LonaServer:
             content_type=response_dict['content_type'],
             text=response_dict['text'],
             body=response_dict['body'],
+            headers=response_dict['headers'],
         )
 
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'

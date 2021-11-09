@@ -361,6 +361,28 @@ Binary Responses
             }
 
 
+Custom Headers
+~~~~~~~~~~~~~~
+
+.. note::
+
+    Custom headers are only available in non interactive views
+
+.. code-block:: python
+
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return {
+                'headers': {
+                    'foo': 'bar',
+                },
+                'text': 'foo',
+            }
+
+
 View Hooks
 ----------
 

@@ -45,6 +45,7 @@ class ResponseParser:
             'content_type': 'text/html',
             'text': None,
             'body': None,
+            'headers': None,
             'file': '',
             'redirect': '',
             'http_redirect': '',
