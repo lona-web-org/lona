@@ -305,15 +305,19 @@ class LonaServer:
         if response_dict['http_redirect']:
             return HTTPFound(response_dict['http_redirect'])
 
+        default_headers = {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+        }
+
+        headers = response_dict['headers'] or default_headers
+
         response = Response(
             status=response_dict['status'],
             content_type=response_dict['content_type'],
             text=response_dict['text'],
             body=response_dict['body'],
-            headers=response_dict['headers'],
+            headers=headers,
         )
-
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
 
         return response
 
