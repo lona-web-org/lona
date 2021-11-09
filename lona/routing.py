@@ -169,17 +169,17 @@ class Router:
         return self._resolve_lru_cache(*args, **kwargs)
 
     # reverse #################################################################
-    def _reverse(self, name, *args, **kwargs):
+    def _reverse(self, route_name, *args, **kwargs):
         route = None
 
         for i in self.routes:
-            if i.name == name:
+            if i.name == route_name:
                 route = i
 
                 break
 
         if not route:
-            raise ValueError(f"no route named '{name}' found")
+            raise ValueError(f"no route named '{route_name}' found")
 
         if route.path:
             return route.path

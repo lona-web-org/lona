@@ -1106,8 +1106,8 @@ Server.get_view_class\(route=None, import_string=None, url=None\)
     Only one argument can be set at a time.
 
 
-Server.reverse\(url_name, \*\*url_args\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.reverse\(route_name, \*\*url_args\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Returns a routing reverse match as string.
 
