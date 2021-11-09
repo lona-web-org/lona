@@ -65,6 +65,11 @@ class NodeList:
                 ],
             )
 
+    def extend(self, nodes):
+        with self._node.lock:
+            for node in nodes:
+                self.append(node)
+
     def remove(self, node):
         with self._node.lock:
             self._nodes.remove(node)

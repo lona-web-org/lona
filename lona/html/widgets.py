@@ -41,6 +41,9 @@ class HTML(Widget):
     def append(self, *args, **kwargs):
         return self.nodes.append(*args, **kwargs)
 
+    def extend(self, *args, **kwargs):
+        return self.nodes.extend(*args, **kwargs)
+
     def remove(self, *args, **kwargs):
         return self.nodes.remove(*args, **kwargs)
 
