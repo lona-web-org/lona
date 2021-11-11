@@ -346,7 +346,8 @@ Binary Responses
 
 .. note::
 
-    Binary responses are only available in non interactive views
+    * Binary responses are only available in non interactive views
+    * Added in 1.8
 
 .. code-block:: python
 
@@ -366,7 +367,8 @@ Custom Headers
 
 .. note::
 
-    Custom headers are only available in non interactive views
+    * Custom headers are only available in non interactive views
+    * Added in 1.8
 
 .. code-block:: python
 
@@ -390,6 +392,7 @@ View Hooks
 
     * ``LonaView.on_stop()`` was added in 1.7.4
     * ``LonaView.on_cleanup()`` was added in 1.7.4
+    * ``LonaView.on_shutdown()`` was removed in 1.8
 
 All entry points for user code in Lona views are callbacks in the ``LonaView``
 class. If a hook name starts with ``handle_`` it means that the view can stop
@@ -433,6 +436,8 @@ browser URL.
             pass
 
         def on_shutdown(self, reason):
+            # this hook got removed in 1.8
+
             pass
 
 
@@ -505,10 +510,9 @@ the server.
 LonaView.on_shutdown\(reason\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. warning::
+.. note::
 
-    ``LonaView.on_shutdown()`` is deprecated and will be removed in 1.8.
-    Use `LonaView.on_stop() <#lonaview-on-stop-reason>`_ instead.
+    Removed in 1.8
 
 This hook gets called after the view is stopped. The stop reason is ``None``
 if the view finished normally or contains a ``lona.exceptions.ServerStop`` or
@@ -995,11 +999,9 @@ LonaView.daemonize\(\)
 LonaView.iter_objects\(\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    .. warning::
+    .. note::
 
-        ``LonaView.iter_objects()`` is deprecated and will be removed in 1.8.
-        Use `view events <#view-events>`_ instead.
-
+        Removed in 1.8
 
     Returns a generator over all objects of the view class. This is useful
     to build multi user views.
@@ -1089,6 +1091,15 @@ LonaView.await_sync\(awaitable\)
 LonaView.embed_shell\(\)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+    .. note::
+
+        Removed in 1.8. Use rlpython directly instead.
+
+        .. code-block:: python
+
+            import rlpython
+            rlpython.embed()
+
     Embeds a `rlpython <https://pypi.org/project/rlpython/>`_ based shell.
     More info on shells:
     `Debugging </end-user-documentation/debugging.html>`_.
@@ -1151,6 +1162,10 @@ Server.get_view_class\(route=None, import_string=None, url=None\)
 Server.reverse\(route_name, \*\*url_args\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    .. note::
+
+        The argument ``name`` was renamed to ``route_name`` in 1.8
+
     Returns a routing reverse match as string.
 
 
@@ -1185,6 +1200,15 @@ Server.fire_view_event\(name, data=None, view_classes=None\)
 
 Server.embed_shell\(\)
 ~~~~~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        Removed in 1.8. Use rlpython directly instead.
+
+        .. code-block:: python
+
+            import rlpython
+            rlpython.embed()
 
     Embeds a `rlpython <https://pypi.org/project/rlpython/>`_ based shell in
     the server context.

@@ -5,6 +5,76 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.8 (2021-11-11)
+
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+* ``LonaView.on_shutdown`` was removed
+
+  * ``LonaView.on_shutdown`` is deprecated and got replaced by
+    ``LonaView.on_stop`` and ``LonaView.on_cleanup``
+
+* ``LonaView.iter_objects`` was removed
+
+  * ``LonaView.iter_objects`` is deprecated and got replaced by
+    view events
+
+* ``LonaView.embed_shell`` and ``server.embed_shell`` were removed
+
+  * ``embed_shell`` never worked like an end-user would expect, because it
+    always runs in it's own scope, and not in the scope of the caller of the
+    method. The better way to do this is to use rlpython directly
+
+
+Changes
+~~~~~~~
+
+* HTML
+
+  * ``lona.html.NumberInput`` was added
+  * ``lona.html.NodeList.index`` was added
+  * ``lona.html.NodeList.extend`` was added
+  * ``lona.html.HTML.index`` was added
+  * ``lona.html.HTML.extend`` was added
+
+* Routing
+
+  * Route names are unique now. If a name gets reused a warning gets logged
+
+* Views
+
+  * Support for binary responses was added to non-interactive views
+  * Support for custom HTTP headers was added to non-interactive views
+
+
+Bugfixes
+~~~~~~~~
+
+* Client
+
+  * Scrolling issues were fixed
+
+    * Previously when the HTML of a view was scrolled down and a new view
+      started, the HTML of the new view started scrolled to the previous scroll
+      position. This only happened if a ``height`` CSS role was applied to the
+      body or the Lona window.
+
+* Routing
+
+  * Handling of optional trailing slashes was fixed
+
+    * Previously routes that ended with an argument and an optional slash
+      (``Route('/foo/<bar>(/)')``) couldn't be routed or reverse matched
+
+  * The first argument of ``Server.reverse`` was changed from ``name`` to
+    ``route_name``
+
+    * Previously routes with an argument named ``name`` couldn't be reverse
+      matched because of this naming clash
+
+
 .. changelog-header:: 1.7.6 (2021-11-01)
 
 

@@ -82,6 +82,10 @@ gets handled.
 Lona Shell
 ----------
 
+.. note::
+
+    ``LonaView.embed_shell`` and ``server.embed_shell`` were removed in 1.8.
+
 The Lona shell is based on `rlpython <https://pypi.org/project/rlpython/>`_ and
 can be started directly from the server process using ``--shell``, when using
 script using ``app.run(shell=True)`` and a shell server and can be embedded

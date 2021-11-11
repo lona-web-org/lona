@@ -491,6 +491,10 @@ in reactive programming.
 NumberInput
 +++++++++++
 
+.. note::
+
+    Added in 1.8
+
 .. code-block:: python
 
     from lona.html import NumberInput
