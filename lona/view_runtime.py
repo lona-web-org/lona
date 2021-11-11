@@ -224,6 +224,20 @@ class ViewRuntime:
                 },
             )
 
+        # 404 Not Found
+        except NotFoundError as exception:
+            self.stop_reason = exception
+
+            return self.run_error_view(
+                view_name=self.server.settings.CORE_ERROR_404_VIEW,
+                exception=exception,
+                send_view_start=True,
+                send_view_stop=True,
+                connections={
+                    connection: (window_id, url),
+                },
+            )
+
         # 500 Internal Error
         except Exception as exception:
             logger.exception('Exception raised while running middleware hooks')
