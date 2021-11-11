@@ -341,6 +341,48 @@ JSON Responses
             }
 
 
+Binary Responses
+~~~~~~~~~~~~~~~~
+
+.. note::
+
+    Binary responses are only available in non interactive views
+
+.. code-block:: python
+
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return {
+                'content_type': 'application/pdf',
+                'body': open('foo.pdf', 'rb').read(),
+            }
+
+
+Custom Headers
+~~~~~~~~~~~~~~
+
+.. note::
+
+    Custom headers are only available in non interactive views
+
+.. code-block:: python
+
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return {
+                'headers': {
+                    'foo': 'bar',
+                },
+                'text': 'foo',
+            }
+
+
 View Hooks
 ----------
 
@@ -1106,8 +1148,8 @@ Server.get_view_class\(route=None, import_string=None, url=None\)
     Only one argument can be set at a time.
 
 
-Server.reverse\(url_name, \*\*url_args\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.reverse\(route_name, \*\*url_args\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Returns a routing reverse match as string.
 

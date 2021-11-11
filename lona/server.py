@@ -23,7 +23,6 @@ from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
 from lona.server_state import ServerState
-from lona.shell.shell import embed_shell
 from lona.view_loader import ViewLoader
 from lona.connection import Connection
 from lona.settings import Settings
@@ -305,13 +304,19 @@ class LonaServer:
         if response_dict['http_redirect']:
             return HTTPFound(response_dict['http_redirect'])
 
+        default_headers = {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+        }
+
+        headers = response_dict['headers'] or default_headers
+
         response = Response(
             status=response_dict['status'],
             content_type=response_dict['content_type'],
             text=response_dict['text'],
+            body=response_dict['body'],
+            headers=headers,
         )
-
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
 
         return response
 
@@ -525,13 +530,6 @@ class LonaServer:
         return self._state
 
     # helper ##################################################################
-    def embed_shell(self, _locals=None):
-        if _locals is None:
-            _locals = {}
-        _locals['server'] = self
-
-        return embed_shell(self, locals=_locals)
-
     def get_running_views_count(self, *args, **kwargs):
         return self.view_runtime_controller.get_running_views_count(
             *args,

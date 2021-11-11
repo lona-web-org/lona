@@ -134,6 +134,15 @@ class Router:
 
     # routes ##################################################################
     def add_route(self, route):
+        # check if route name already exists
+        if route.name:
+            for _route in self.routes:
+                if route.name == _route.name:
+                    logger.warning(
+                        "route name '%s' already exists",
+                        route.name,
+                    )
+
         self.routes.append(route)
 
     def add_routes(self, *routes):
@@ -160,17 +169,17 @@ class Router:
         return self._resolve_lru_cache(*args, **kwargs)
 
     # reverse #################################################################
-    def _reverse(self, name, *args, **kwargs):
+    def _reverse(self, route_name, *args, **kwargs):
         route = None
 
-        for i in self.routes:
-            if i.name == name:
-                route = i
+        for _route in self.routes:
+            if _route.name == route_name:
+                route = _route
 
                 break
 
         if not route:
-            raise ValueError(f"no route named '{name}' found")
+            raise ValueError(f"no route named '{route_name}' found")
 
         if route.path:
             return route.path

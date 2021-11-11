@@ -1,23 +1,18 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
-from collections.abc import Awaitable, Iterator, Callable
-from concurrent.futures import CancelledError
+from collections.abc import Awaitable, Callable
 import threading
-import warnings
 import asyncio
 
 from typing_extensions import Literal
 from jinja2.nodes import Template
 
 from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
-from lona.exceptions import ServerStop, UserAbort
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
 from lona.static_files import StaticFile
-from lona.shell.shell import embed_shell
 from lona.connection import Connection
-from lona.errors import ClientError
 from lona.request import Request
 
 # avoid import cycles
@@ -33,8 +28,6 @@ H = Union[None, AbstractNode, str]
 class LonaView:
     STATIC_FILES: list[StaticFile] = []
 
-    _server: LonaServer  # TODO: remove after 1.8
-
     def __init__(
             self,
             server: LonaServer,
@@ -44,24 +37,6 @@ class LonaView:
         self._server: LonaServer = server
         self._view_runtime: ViewRuntime = view_runtime
         self._request: Request = request
-
-    # objects #################################################################
-    @classmethod
-    def iter_objects(cls: type[V]) -> Iterator[V]:
-        # TODO: remove after 1.8
-
-        warnings.warn(
-            'LonaView.iter_objects() will be removed in 1.8',
-            category=DeprecationWarning,
-        )
-
-        view_runtime_controller = cls._server.view_runtime_controller
-
-        for view_runtime in view_runtime_controller.iter_view_runtimes():
-            if view_runtime.view_class != cls:
-                continue
-
-            yield view_runtime.view
 
     # properties ##############################################################
     @property
@@ -315,14 +290,6 @@ class LonaView:
 
         return 'pong'
 
-    # helper ##################################################################
-    def embed_shell(self, _locals: None | dict = None) -> None:
-        if _locals is None:
-            _locals = {}
-        _locals['self'] = self
-
-        embed_shell(server=self.server, locals=_locals)
-
     # hooks ###################################################################
     def handle_request(self, request: Request) -> None | str | AbstractNode | dict:  # NOQA: LN001
         return ''
@@ -342,21 +309,6 @@ class LonaView:
         return input_event
 
     def on_view_event(self, view_event: 'ViewEvent') -> dict | None:
-        pass
-
-    def on_shutdown(
-            self,
-            reason: Union[
-                None,
-                UserAbort,
-                ServerStop,
-                CancelledError,
-                ClientError,
-                Exception,
-            ],
-    ) -> None:
-        # TODO: remove after 1.8
-
         pass
 
     def on_stop(self, reason: Exception | None) -> None:

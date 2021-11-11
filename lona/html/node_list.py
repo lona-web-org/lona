@@ -65,6 +65,11 @@ class NodeList:
                 ],
             )
 
+    def extend(self, nodes):
+        with self._node.lock:
+            for node in nodes:
+                self.append(node)
+
     def remove(self, node):
         with self._node.lock:
             self._nodes.remove(node)
@@ -112,6 +117,10 @@ class NodeList:
                 operation=OPERATION.CLEAR,
                 payload=[],
             )
+
+    def index(self, node):
+        with self._node.lock:
+            return self._nodes.index(node)
 
     def __getitem__(self, index):
         with self._node.lock:
