@@ -108,7 +108,11 @@ class LonaApp:
     def middleware(self, middleware_class: type) -> None:
         ...
 
-    def middleware(self, middleware_class: None | type = None) -> None | Callable[[type], None]:  # NOQA: LN001
+    def middleware(
+        self,
+        middleware_class: None | type = None,
+    ) -> None | Callable[[type], None]:
+
         def decorator(middleware_class: type) -> None:
             self.settings.MIDDLEWARES.append(middleware_class)
 
@@ -129,7 +133,11 @@ class LonaApp:
     def frontend_view(self, view_class: type[LonaView]) -> None:
         ...
 
-    def frontend_view(self, view_class: None | type[LonaView] = None) -> None | Callable[[type[LonaView]], None]:  # NOQA: LN001
+    def frontend_view(
+        self,
+        view_class: None | type[LonaView] = None,
+    ) -> None | Callable[[type[LonaView]], None]:
+
         def decorator(view_class: type[LonaView]) -> None:
             self.settings.FRONTEND_VIEW = view_class
 
