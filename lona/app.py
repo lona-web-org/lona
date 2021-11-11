@@ -141,6 +141,81 @@ class LonaApp:
         else:
             return decorator
 
+    # 403
+    @overload
+    def error_403_view(self) -> Callable[[type[LonaView]], None]:
+        ...
+
+    @overload
+    def error_403_view(self, view_class: type[LonaView]) -> None:
+        ...
+
+    def error_403_view(
+            self,
+            view_class: None | type[LonaView] = None,
+    ) -> None | Callable[[type[LonaView]], None]:
+
+        def decorator(view_class: type[LonaView]) -> None:
+            self.settings.ERROR_403_VIEW = view_class
+
+        if callable(view_class):
+            decorator(view_class)
+
+            return None
+
+        else:
+            return decorator
+
+    # 404
+    @overload
+    def error_404_view(self) -> Callable[[type[LonaView]], None]:
+        ...
+
+    @overload
+    def error_404_view(self, view_class: type[LonaView]) -> None:
+        ...
+
+    def error_404_view(
+            self,
+            view_class: None | type[LonaView] = None,
+    ) -> None | Callable[[type[LonaView]], None]:
+
+        def decorator(view_class: type[LonaView]) -> None:
+            self.settings.ERROR_404_VIEW = view_class
+
+        if callable(view_class):
+            decorator(view_class)
+
+            return None
+
+        else:
+            return decorator
+
+    # 500
+    @overload
+    def error_500_view(self) -> Callable[[type[LonaView]], None]:
+        ...
+
+    @overload
+    def error_500_view(self, view_class: type[LonaView]) -> None:
+        ...
+
+    def error_500_view(
+            self,
+            view_class: None | type[LonaView] = None,
+    ) -> None | Callable[[type[LonaView]], None]:
+
+        def decorator(view_class: type[LonaView]) -> None:
+            self.settings.ERROR_500_VIEW = view_class
+
+        if callable(view_class):
+            decorator(view_class)
+
+            return None
+
+        else:
+            return decorator
+
     # files ###################################################################
     def _add_file(
             self,

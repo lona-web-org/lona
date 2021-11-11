@@ -223,3 +223,40 @@ overridden.
     """)
 
     app.add_template('lona/style.css', path='lona/style.css')
+
+
+Custom Error Views
+------------------
+
+Custom error views can be set using the decorators ``LonaApp.error_403_view``,
+``LonaApp.error_404_view`` and ``LonaApp.error_500_view``.
+
+**More information on error views:**
+`Error Views </end-user-documentation/error-views.html>`_
+
+.. code-block:: python
+
+    from lona import LonaApp, LonaView
+
+    app = LonaApp(__file__)
+
+
+    @app.error_403_view
+    class Error403View(LonaView):
+        def handle_request(self, request, exception):
+            return '403: Forbidden'
+
+
+    @app.error_404_view
+    class Error404View(LonaView):
+        def handle_request(self, request):
+            return '404: Not Found'
+
+
+    @app.error_500_view
+    class Error500View(LonaView):
+        def handle_request(self, request, exception):
+            return '500: Internal Error'
+
+
+    app.run()
