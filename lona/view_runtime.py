@@ -22,8 +22,9 @@ from lona.protocol import (
     encode_data,
     DATA_TYPE,
 )
+
+from lona.errors import ForbiddenError, ClientError, NotFoundError
 from lona.exceptions import StopReason, ServerStop, UserAbort
-from lona.errors import ForbiddenError, ClientError
 from lona.html.abstract_node import AbstractNode
 from lona.unique_ids import generate_unique_id
 from lona.events.input_event import InputEvent
@@ -333,6 +334,27 @@ class ViewRuntime:
 
             view_class = self.server.view_loader.load(
                 self.server.settings.CORE_ERROR_403_VIEW,
+            )
+
+            view = view_class(
+                server=self.server,
+                view_runtime=self,
+                request=self.request,
+            )
+
+            return self.handle_raw_response_dict(
+                view.handle_request(
+                    self.request,
+                    exception=exception,
+                ),
+            )
+
+        # 404 Not Found
+        except NotFoundError as exception:
+            self.stop_reason = exception
+
+            view_class = self.server.view_loader.load(
+                self.server.settings.CORE_ERROR_404_VIEW,
             )
 
             view = view_class(
