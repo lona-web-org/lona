@@ -532,7 +532,7 @@ View Attributes
     |request  |Reference to the request passed into handle_request()
 
 
-Authentication
+ForbiddenError
 --------------
 
 To raise a forbidden error and run the 403 view you can raise
@@ -543,14 +543,13 @@ To raise a forbidden error and run the 403 view you can raise
 
 .. code-block:: python
 
-    from lona.errors import ForbiddenError
-    from lona import LonaView
+    from lona import LonaView, ForbiddenError
 
 
     class MyLonaView(LonaView):
         def handle_request(self, request):
             if not request.user.is_staff:
-                raise forbidden
+                raise ForbiddenError
 
             return '<h1>Hello Admin</h1>'
 
