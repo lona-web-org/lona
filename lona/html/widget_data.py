@@ -149,7 +149,7 @@ class ListOverlay:
                 payload=[
                     self._key_path,
                     name,
-                    item,
+                    deepcopy(item),
                 ],
             )
 
@@ -290,7 +290,7 @@ class DictOverlay:
                     payload=[
                         self._key_path,
                         key,
-                        value,
+                        deepcopy(value),
                     ],
                 )
 
@@ -312,7 +312,7 @@ class DictOverlay:
                 payload=[
                     self._key_path,
                     name,
-                    item,
+                    deepcopy(item),
                 ],
             )
 
