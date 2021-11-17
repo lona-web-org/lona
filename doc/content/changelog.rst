@@ -5,6 +5,17 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.8.1 (2021-11-17)
+
+
+Bugfixes
+~~~~~~~~
+
+* HTML
+
+  * Memory issues in widget data updates were fixed
+
+
 .. changelog-header:: 1.8 (2021-11-11)
 
 
