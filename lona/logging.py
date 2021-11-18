@@ -3,12 +3,37 @@ from textwrap import indent
 import threading
 import datetime
 import logging
+import syslog
 import socket
+import os
 
 from lona.command_line.terminal import (
     terminal_supports_colors,
     colors_are_enabled,
 )
+
+
+def journald_is_running():
+    return 'JOURNAL_STREAM' in os.environ
+
+
+def get_syslog_priority(levelno):
+    if levelno <= logging.DEBUG:
+        return syslog.LOG_DEBUG
+
+    elif levelno <= logging.INFO:
+        return syslog.LOG_INFO
+
+    elif levelno <= logging.WARNING:
+        return syslog.LOG_WARNING
+
+    elif levelno <= logging.ERROR:
+        return syslog.LOG_ERR
+
+    elif levelno <= logging.CRITICAL:
+        return syslog.LOG_CRIT
+
+    return syslog.LOG_ALERT
 
 
 class LogFilter(logging.Filter):
@@ -71,6 +96,8 @@ class LogFormatter(logging.Formatter):
             colors_are_enabled()
         )
 
+        self.syslog_priorities = journald_is_running()
+
     def format(self, record):
         current_thread_name = threading.current_thread().name
 
@@ -99,6 +126,12 @@ class LogFormatter(logging.Formatter):
                     prefix='  ',
                 ),
             )
+
+        # syslog priorities
+        if self.syslog_priorities:
+            syslog_priority = get_syslog_priority(record.levelno)
+
+            record_string = f'<{syslog_priority}>{record_string}'
 
         # colors
         if record.levelname == 'INFO' or not self.colors_enabled:
