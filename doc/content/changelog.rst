@@ -5,6 +5,17 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.8.2 (2021-11-22)
+
+
+Changes
+~~~~~~~
+
+* Logging
+
+  * Support for syslog priorities was added
+
+
 .. changelog-header:: 1.8.1 (2021-11-17)
 
 
