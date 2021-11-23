@@ -178,7 +178,7 @@ class LogFormatter(logging.Formatter):
         return f'\033[{style}{color}{background}m{record_string}\033[00m'
 
 
-def setup_logging(args, log_formatter=None, log_filter=None):
+def setup_logging(args):
     # set log level
     if not args.debug_mode:
         log_level = {
@@ -195,8 +195,8 @@ def setup_logging(args, log_formatter=None, log_filter=None):
     logging.basicConfig(level=log_level)
 
     # setup log formatting and log filtering
-    log_formatter = log_formatter or LogFormatter()
-    log_filter = log_filter or LogFilter()
+    log_formatter = LogFormatter()
+    log_filter = LogFilter()
 
     for handler in logging.getLogger().root.handlers:
         handler.setFormatter(log_formatter)
