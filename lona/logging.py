@@ -14,7 +14,7 @@ from lona.command_line.terminal import (
 
 
 def journald_is_running():
-    return 'JOURNAL_STREAM' in os.environ
+    return 'JOURNAL_STREAM' in os.environ and 'TERM' not in os.environ
 
 
 def get_syslog_priority(levelno):
