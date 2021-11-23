@@ -1,0 +1,6 @@
+coverage
+pytest
+pytest-dependency
+pytest-aiohttp
+pytest-timeout
+playwright

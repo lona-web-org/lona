@@ -1,0 +1,15 @@
+flake8
+flake8-2020
+flake8-bugbear
+flake8-commas
+flake8-comprehensions
+flake8-length
+flake8-logging-format
+flake8-mutable
+flake8-noqa==1.1.0
+flake8-pytest-style
+flake8-quotes
+flake8-use-fstring
+mypy
+isort
+pytest
