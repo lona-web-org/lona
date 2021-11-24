@@ -80,6 +80,12 @@ def handle_command_line(argv):
         choices=['messages', 'views', 'input-events', 'view-events'],
     )
 
+    parser_run_server.add_argument(
+        '--syslog-priorities',
+        choices=['no', 'auto', 'always'],
+        default='auto',
+    )
+
     # settings
     parser_run_server.add_argument(
         '--project-root',
@@ -160,6 +166,12 @@ def handle_command_line(argv):
     parser_collect_static.add_argument(
         '--debug-mode',
         choices=['messages', 'views', 'input-events', 'view-events'],
+    )
+
+    parser_collect_static.add_argument(
+        '--syslog-priorities',
+        choices=['no', 'auto', 'always'],
+        default='auto',
     )
 
     # settings

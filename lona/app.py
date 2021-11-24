@@ -240,6 +240,12 @@ class LonaApp:
         )
 
         parser.add_argument(
+            '--syslog-priorities',
+            choices=['no', 'auto', 'always'],
+            default='auto',
+        )
+
+        parser.add_argument(
             '-o',
             '--settings-pre-overrides',
             nargs='+',

@@ -88,15 +88,15 @@ class LogFilter(logging.Filter):
 
 
 class LogFormatter(logging.Formatter):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, syslog_priorities=False, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.syslog_priorities = syslog_priorities
 
         self.colors_enabled = (
             terminal_supports_colors() and
             colors_are_enabled()
         )
-
-        self.syslog_priorities = journald_is_running()
 
     def format(self, record):
         current_thread_name = threading.current_thread().name
@@ -194,8 +194,18 @@ def setup_logging(args):
 
     logging.basicConfig(level=log_level)
 
+    # syslog priorities
+    if args.syslog_priorities == 'always':
+        syslog_priorities = True
+
+    elif args.syslog_priorities == 'no':
+        syslog_priorities = False
+
+    elif args.syslog_priorities == 'auto':
+        syslog_priorities = journald_is_running()
+
     # setup log formatting and log filtering
-    log_formatter = LogFormatter()
+    log_formatter = LogFormatter(syslog_priorities=syslog_priorities)
     log_filter = LogFilter()
 
     for handler in logging.getLogger().root.handlers:
