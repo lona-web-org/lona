@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Dict, cast, Any
 from collections.abc import Container, Awaitable
 from concurrent.futures import CancelledError
-from typing import TYPE_CHECKING
 from datetime import datetime
 from enum import Enum
 import threading
@@ -22,8 +22,8 @@ from lona.protocol import (
     encode_data,
     DATA_TYPE,
 )
+from lona.errors import ForbiddenError, NotFoundError, ClientError
 from lona.exceptions import StopReason, ServerStop, UserAbort
-from lona.errors import ForbiddenError, ClientError
 from lona.html.abstract_node import AbstractNode
 from lona.unique_ids import generate_unique_id
 from lona.events.input_event import InputEvent
@@ -143,6 +143,44 @@ class ViewRuntime:
     def state(self, new_state):
         self._state = new_state
 
+    # error views #############################################################
+    def run_error_view(
+            self,
+            view_name: str,
+            exception: Exception,
+            send_view_start: bool = False,
+            send_view_stop: bool = False,
+            connections: dict | None = None,
+    ) -> Dict[str, Any]:
+
+        if send_view_start:
+            self.send_view_start(connections=connections)
+
+        view_class = self.server.view_loader.load(view_name)
+
+        view = view_class(
+            server=self.server,
+            view_runtime=self,
+            request=self.request,
+        )
+
+        view_kwargs = {
+            'request': self.request,
+        }
+
+        # 404 Not Found error views have no argument 'exception'
+        if view_name != self.server.settings.CORE_ERROR_404_VIEW:
+            view_kwargs['exception'] = exception
+
+        response_dict = self.handle_raw_response_dict(
+            view.handle_request(**view_kwargs),
+        )
+
+        if send_view_stop:
+            self.send_view_stop(connections)
+
+        return cast(Dict[str, Any], response_dict)
+
     # middlewares #############################################################
     def run_middlewares(self, connection, window_id, url):
         try:
@@ -174,62 +212,41 @@ class ViewRuntime:
 
                 return response_dict
 
+        # 403 Forbidden
         except ForbiddenError as exception:
-            self.send_view_start(
+            return self.run_error_view(
+                view_name=self.server.settings.CORE_ERROR_403_VIEW,
+                exception=exception,
+                send_view_start=True,
+                send_view_stop=True,
                 connections={
                     connection: (window_id, url),
                 },
             )
 
-            view_class = self.server.view_loader.load(
-                self.server.settings.CORE_ERROR_403_VIEW,
-            )
+        # 404 Not Found
+        except NotFoundError as exception:
+            self.stop_reason = exception
 
-            view = view_class(
-                server=self.server,
-                view_runtime=self,
-                request=self.request,
-            )
-
-            response_dict = self.handle_raw_response_dict(
-                view.handle_request(
-                    self.request,
-                    exception=exception,
-                ),
-            )
-
-            self.send_view_stop(
+            return self.run_error_view(
+                view_name=self.server.settings.CORE_ERROR_404_VIEW,
+                exception=exception,
+                send_view_start=True,
+                send_view_stop=True,
                 connections={
                     connection: (window_id, url),
                 },
             )
 
-            return response_dict
-
+        # 500 Internal Error
         except Exception as exception:
             logger.exception('Exception raised while running middleware hooks')
 
-            self.send_view_start(
-                connections={
-                    connection: (window_id, url),
-                },
-            )
-
-            view_class = self.server.view_loader.load(
-                self.server.settings.CORE_ERROR_500_VIEW,
-            )
-
-            view = view_class(
-                server=self.server,
-                view_runtime=self,
-                request=self.request,
-            )
-
-            return self.handle_raw_response_dict(
-                raw_response_dict=view.handle_request(
-                    self.request,
-                    exception=exception,
-                ),
+            return self.run_error_view(
+                view_name=self.server.settings.CORE_ERROR_500_VIEW,
+                exception=exception,
+                send_view_start=True,
+                send_view_stop=True,
                 connections={
                     connection: (window_id, url),
                 },
@@ -331,21 +348,22 @@ class ViewRuntime:
         except ForbiddenError as exception:
             self.stop_reason = exception
 
-            view_class = self.server.view_loader.load(
-                self.server.settings.CORE_ERROR_403_VIEW,
+            return self.run_error_view(
+                view_name=self.server.settings.CORE_ERROR_403_VIEW,
+                exception=exception,
+                send_view_start=False,
+                send_view_stop=False,
             )
 
-            view = view_class(
-                server=self.server,
-                view_runtime=self,
-                request=self.request,
-            )
+        # 404 Not Found
+        except NotFoundError as exception:
+            self.stop_reason = exception
 
-            return self.handle_raw_response_dict(
-                view.handle_request(
-                    self.request,
-                    exception=exception,
-                ),
+            return self.run_error_view(
+                view_name=self.server.settings.CORE_ERROR_404_VIEW,
+                exception=exception,
+                send_view_start=False,
+                send_view_stop=False,
             )
 
         # 500 Internal Error
@@ -354,21 +372,11 @@ class ViewRuntime:
 
             logger.exception('Exception raised while running %s', self.view)
 
-            view_class = self.server.view_loader.load(
-                self.server.settings.CORE_ERROR_500_VIEW,
-            )
-
-            view = view_class(
-                server=self.server,
-                view_runtime=self,
-                request=self.request,
-            )
-
-            return self.handle_raw_response_dict(
-                view.handle_request(
-                    self.request,
-                    exception=exception,
-                ),
+            return self.run_error_view(
+                view_name=self.server.settings.CORE_ERROR_500_VIEW,
+                exception=exception,
+                send_view_start=False,
+                send_view_stop=False,
             )
 
         finally:
@@ -415,27 +423,12 @@ class ViewRuntime:
         # output of the 500 handle through
         self.stop(reason=exception, clean_up=False)
 
-        # run 500 view
-        self.send_view_start()
-
-        view_class = self.server.view_loader.load(
-            self.server.settings.CORE_ERROR_500_VIEW,
+        self.run_error_view(
+            view_name=self.server.settings.CORE_ERROR_500_VIEW,
+            exception=exception,
+            send_view_start=True,
+            send_view_stop=True,
         )
-
-        view = view_class(
-            server=self.server,
-            view_runtime=self,
-            request=self.request,
-        )
-
-        self.handle_raw_response_dict(
-            view.handle_request(
-                self.request,
-                exception=exception,
-            ),
-        )
-
-        self.send_view_stop()
 
     # connection management ###################################################
     def add_connection(self, connection, window_id, url):
