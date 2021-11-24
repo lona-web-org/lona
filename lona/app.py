@@ -325,7 +325,6 @@ class LonaApp:
         parser.add_argument(
             '--syslog-priorities',
             choices=['no', 'auto', 'always'],
-            default='auto',
         )
 
         parser.add_argument(
@@ -435,6 +434,7 @@ class LonaApp:
             log_level='info',
             loggers=[],
             debug_mode='',
+            syslog_priorities='auto',
             shell=False,
             settings_pre_overrides=None,
             settings_post_overrides=None,
