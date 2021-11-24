@@ -557,8 +557,12 @@ To raise a forbidden error and run the 403 view you can raise
 NotFoundError
 -------------
 
+.. note::
+
+    Added in 1.8.3
+
 To raise a not found error and run the 404 view you can raise
-``lona.errors.NotFoundError``.
+``lona.NotFoundError``.
 
 **More information:**
 `Error views </end-user-documentation/error-views.html>`_

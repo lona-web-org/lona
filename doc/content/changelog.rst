@@ -5,6 +5,40 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.8.3 (2021-11-24)
+
+
+Changes
+~~~~~~~
+
+* Shell Commands
+
+  * ``logging syslog priorities`` was added to ``%lona_info``
+
+* Logging
+
+  * Command line option ``--syslog-priorities=no|always|auto`` was added
+
+* Error Views
+
+  * ``lona.NotFoundError`` was added
+  * ``lona.LonaApp.error_403_view`` was added
+  * ``lona.LonaApp.error_404_view`` was added
+  * ``lona.LonaApp.error_500_view`` was added
+
+
+Bugfixes
+~~~~~~~~
+
+* Logging
+
+  * Check if running in a systemd unit was fixed
+
+    * On modern Linux desktop systems the desktop environment is often started
+      within a systemd unit. In these setups ``JOURNAL_STREAM`` is often set in
+      every shell. Therefore this check often yielded false positive results.
+
+
 .. changelog-header:: 1.8.2 (2021-11-22)
 
 

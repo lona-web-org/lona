@@ -45,20 +45,25 @@ python script.
 Command Line Arguments
 ----------------------
 
+.. note::
+
+    ``--syslog-priorities`` and ``syslog_priorities`` were added in 1.8.3
+
 ``LonaApp.run()`` supports command line arguments, like
 `Lona Server </end-user-documentation/debugging.html#lona-server-command-line-options>`_,
 to make calls like ``python your-script.py --port=8081`` work.
 
 .. table::
 
-    ^Option           ^Description
-    |-l / --log-level |Set log level to [debug,info,warn,error,critical]
-    |--loggers        |Enable or disable a given list of loggers <br> To include a logger use "+{LOGGER_NAME}", to exclude "_{LOGGER_NAME}"
-    |--debug-mode     |Enable debug log for {messages,views,input-events,view-events}
-    |--shell          |Embed a shell in the same process as the server
-    |--shell-server   |Starts rlpython shell server containing a Lona shell <br> More Information: <a href="#lona-shell">Lona Shell</a>
-    |-o               |Set setting to value before settings.py got loaded <br> example "-o MY_FEATURE=True"
-    |-O               |Set setting to value after settings.py got loaded <br> example "-o MY_FEATURE=True"
+    ^Option               ^Description
+    |-l / --log-level     |Set log level to [debug,info,warn,error,critical]
+    |--loggers            |Enable or disable a given list of loggers <br> To include a logger use "+{LOGGER_NAME}", to exclude "_{LOGGER_NAME}"
+    |--debug-mode         |Enable debug log for {messages,views,input-events,view-events}
+    |--syslog-priorities  |Adds syslog priorities to log [no,auto,always] (auto is default)
+    |--shell              |Embed a shell in the same process as the server
+    |--shell-server       |Starts rlpython shell server containing a Lona shell <br> More Information: <a href="#lona-shell">Lona Shell</a>
+    |-o                   |Set setting to value before settings.py got loaded <br> example "-o MY_FEATURE=True"
+    |-O                   |Set setting to value after settings.py got loaded <br> example "-o MY_FEATURE=True"
 
 
 LonaApp.run\(\) Arguments
@@ -66,15 +71,16 @@ LonaApp.run\(\) Arguments
 
 .. table::
 
-    ^Name             ^Default      ^Description
-    |host             |'localhost' |(Str) Host to bind against
-    |port             |8080        |(Int) Port to bind against
-    |log_level        |'info'      |(Str) Set log level to [debug,info,warn,error,critical]
-    |loggers          |[]          |(List) Enable or disable a given list of loggers <br> To include a logger use "+{LOGGER_NAME}", <br> to exclude "_{LOGGER_NAME}"
-    |debug_mode       |''          |(Str) Enable debug log for {messages,views,input-events}
-    |shutdown_timeout |0           |(Int) aiohttp server shutdown timeout
-    |shell            |False       |(Bool) Embed a shell in the same process as the server
-    |shell_server_url |''          |(Str) Lona Shell Server URL<br>More information: <a href="/end-user-documentation/debugging.html#lona-shell">Lona Shell</a>
+    ^Name               ^Default      ^Description
+    |host               |'localhost' |(Str) Host to bind against
+    |port               |8080        |(Int) Port to bind against
+    |log_level          |'info'      |(Str) Set log level to [debug,info,warn,error,critical]
+    |loggers            |[]          |(List) Enable or disable a given list of loggers <br> To include a logger use "+{LOGGER_NAME}", <br> to exclude "_{LOGGER_NAME}"
+    |debug_mode         |''          |(Str) Enable debug log for {messages,views,input-events}
+    |syslog_priorities  |'auto'      |(Str) Adds syslog priorities to log [no,auto,always]
+    |shutdown_timeout   |0           |(Int) aiohttp server shutdown timeout
+    |shell              |False       |(Bool) Embed a shell in the same process as the server
+    |shell_server_url   |''          |(Str) Lona Shell Server URL<br>More information: <a href="/end-user-documentation/debugging.html#lona-shell">Lona Shell</a>
 
 
 Settings
@@ -227,6 +233,10 @@ overridden.
 
 Custom Error Views
 ------------------
+
+.. note::
+
+    Added in 1.8.3
 
 Custom error views can be set using the decorators ``LonaApp.error_403_view``,
 ``LonaApp.error_404_view`` and ``LonaApp.error_500_view``.
