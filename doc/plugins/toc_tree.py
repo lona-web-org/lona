@@ -37,6 +37,9 @@ class TocTree:
 
                     break
 
+            if header is None:
+                continue
+
             indentation = int(header.name[1:]) - 1
 
             # add anchor
