@@ -73,6 +73,14 @@ Templating
     :name: TEMPLATE_EXTRA_CONTEXT
     :path: lona.default_settings.TEMPLATE_EXTRA_CONTEXT
 
+.. setting::
+    :name: TEMPLATE_EXTRA_FILTERS
+    :path: lona.default_settings.TEMPLATE_EXTRA_FILTERS
+
+    All filters defined in this dictionary will be added to the Jinja2
+    templating environment.
+
+    **More Information:** `Custom Jinja2 Filters <https://jinja.palletsprojects.com/en/3.0.x/api/#writing-filters>`_
 
 Static Files
 ------------

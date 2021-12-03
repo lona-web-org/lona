@@ -89,6 +89,14 @@ class TemplatingEngine:
             ),
         )
 
+        # load extra filters
+        logger.debug(
+            'loading extra filters from settings.TEMPLATE_EXTRA_FILTERS',
+        )
+
+        for name, func in self.server.settings.TEMPLATE_EXTRA_FILTERS.items():
+            self.jinja2_env.filters[name] = func
+
     # public api ##############################################################
     def get_template(self, template_name):
         logger.debug("searching for '%s'", template_name)
