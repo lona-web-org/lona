@@ -77,6 +77,10 @@ Templating
     :name: TEMPLATE_EXTRA_FILTERS
     :path: lona.default_settings.TEMPLATE_EXTRA_FILTERS
 
+    .. note::
+
+        Added in 1.8.4
+
     All filters defined in this dictionary will be added to the Jinja2
     templating environment.
 

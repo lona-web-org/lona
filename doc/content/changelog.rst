@@ -5,6 +5,17 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.8.4 (2021-12-05)
+
+
+Changes
+~~~~~~~
+
+* Templates
+
+  * Support for custom Jinja2 filters was added
+
+
 .. changelog-header:: 1.8.3 (2021-11-24)
 
 

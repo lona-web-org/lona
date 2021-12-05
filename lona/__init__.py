@@ -10,5 +10,5 @@ except ImportError:
 
     pass
 
-VERSION = (1, 8, 3)
+VERSION = (1, 8, 4)
 VERSION_STRING = '.'.join(str(i) for i in VERSION)
