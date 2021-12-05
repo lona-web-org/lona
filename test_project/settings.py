@@ -16,6 +16,10 @@ TEMPLATE_EXTRA_CONTEXT = {
     'extra_context_variable': 'bar',
 }
 
+TEMPLATE_EXTRA_FILTERS = {
+    'custom_reverse': lambda string: string[::-1],
+}
+
 MIDDLEWARES = [
     'middlewares.py::CrashingMiddleware',
     'middlewares.py::PermissionMiddleware',

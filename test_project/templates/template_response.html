@@ -1,7 +1,19 @@
 {% set escape=Lona.import('html.escape') %}
 <h1>Template Response</h1>
-<h2>Variables</h2>
 
+<h2>Filters</h2>
+<table border=1>
+  <tr style="text-align: left; ">
+    <th>Filter</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <td>'foo'|custom_reverse</td>
+    <td>{{'foo'|custom_reverse}}</td>
+  </tr>
+</table>
+
+<h2>Variables</h2>
 <table>
   <tr>
     <th style="text-align: left;">extra_context_variable</th>

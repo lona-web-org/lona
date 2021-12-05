@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Callable, Any
 import os
 
 MAX_WORKER_THREADS = 4
@@ -25,6 +25,7 @@ ERROR_404_TEMPLATE = 'lona/404.html'
 ERROR_500_TEMPLATE = 'lona/500.html'
 
 TEMPLATE_EXTRA_CONTEXT: dict[str, Any] = {}
+TEMPLATE_EXTRA_FILTERS: dict[str, Callable] = {}
 
 # static files
 CORE_STATIC_DIRS = [
