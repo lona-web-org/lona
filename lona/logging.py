@@ -3,7 +3,6 @@ from textwrap import indent
 import threading
 import datetime
 import logging
-import syslog
 import socket
 import os
 
@@ -11,6 +10,15 @@ from lona.command_line.terminal import (
     terminal_supports_colors,
     colors_are_enabled,
 )
+
+try:
+    # syslog is only on unix based systems available
+    import syslog
+
+    SYSLOG_IS_AVAILABLE = True
+
+except ImportError:
+    SYSLOG_IS_AVAILABLE = False
 
 
 def journald_is_running():
@@ -91,7 +99,7 @@ class LogFormatter(logging.Formatter):
     def __init__(self, *args, syslog_priorities=False, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.syslog_priorities = syslog_priorities
+        self.syslog_priorities = SYSLOG_IS_AVAILABLE and syslog_priorities
 
         self.colors_enabled = (
             terminal_supports_colors() and
