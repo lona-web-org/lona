@@ -26,7 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -U setuptools
-        pip install tox
+        pip install -r tests/REQUIREMENTS.lint.txt
 
     - name: Run Tox
       run: tox -e lint
@@ -49,7 +49,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -U setuptools
-        pip install tox codecov
+        pip install -r tests/REQUIREMENTS.test.txt
 
     - name: Run Tox
       # Run tox using the version of Python in `PATH`
