@@ -3,6 +3,7 @@ jinja2
 rlpython
 typing-extensions
 
+tox
 coverage==6.1.2
 pytest==6.2.5
 pytest-aiohttp==0.3.0
