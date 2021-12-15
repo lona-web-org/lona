@@ -5,6 +5,18 @@ search_index_weight: -10
 Changelog
 =========
 
+.. changelog-header:: 1.8.5 (2021-12-15)
+
+
+Bugfixes
+~~~~~~~~
+
+* Import errors on non-Unix systems were fixed
+
+  * Previously the package ``syslog`` got imported on startup without proper
+    error handling.
+
+
 .. changelog-header:: 1.8.4 (2021-12-05)
 
 

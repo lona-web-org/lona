@@ -4,5 +4,5 @@ from .errors import *  # NOQA: F403
 from .view import LonaView
 from .app import LonaApp
 
-VERSION = (1, 8, 4)
+VERSION = (1, 8, 5)
 VERSION_STRING = '.'.join(str(i) for i in VERSION)
