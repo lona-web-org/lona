@@ -96,12 +96,24 @@ class AbstractNode:
     def handle_click(self, input_event):
         return input_event
 
+    def handle_focus(self, input_event):
+        return input_event
+
+    def handle_blur(self, input_event):
+        return input_event
+
     def handle_input_event(self, input_event):
         if input_event.name == 'change':
             return self.handle_change(input_event)
 
         elif input_event.name == 'click':
             return self.handle_click(input_event)
+
+        elif input_event.name == 'focus':
+            return self.handle_focus(input_event)
+
+        elif input_event.name == 'blur':
+            return self.handle_blur(input_event)
 
         return input_event
 

@@ -101,6 +101,12 @@ routes = [
     Route('/events/change-events/',
           'views/events/change_events.py::ChangeEventsView'),
 
+    Route('/events/focus-events/',
+          'views/events/focus_events.py::FocusEventsView'),
+
+    Route('/events/blur-events/',
+          'views/events/blur_events.py::BlurEventsView'),
+
     Route('/events/non-node-events/',
           'views/events/non_node_events.py::NonNodeEventView'),
 

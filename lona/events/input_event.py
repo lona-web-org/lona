@@ -38,6 +38,18 @@ class InputEvent:
             self.data = payload[2]
             self.node_info = payload[3:]
 
+        elif payload[1] == INPUT_EVENT_TYPE.FOCUS:
+            self.type = INPUT_EVENT_TYPE.FOCUS
+            self.name = 'focus'
+            self.data = payload[2]
+            self.node_info = payload[3:]
+
+        elif payload[1] == INPUT_EVENT_TYPE.BLUR:
+            self.type = INPUT_EVENT_TYPE.BLUR
+            self.name = 'blur'
+            self.data = payload[2]
+            self.node_info = payload[3:]
+
         # find node
         # node info contains a lona node id
         if self.node_info[0]:

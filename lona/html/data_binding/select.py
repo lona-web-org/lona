@@ -25,14 +25,11 @@ class Select(Node):
 
             input_event = self.handle_change(input_event)
 
-        elif input_event.name == 'click':
-            input_event = self.handle_click(input_event)
+            if self.bubble_up:
+                return input_event
 
         else:
-            return input_event
-
-        if self.bubble_up:
-            return input_event
+            return super().handle_input_event(input_event)
 
     # properties ##############################################################
     # disabled
