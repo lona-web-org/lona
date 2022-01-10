@@ -145,6 +145,18 @@ class Node(AbstractNode):
 
                 self.handle_click = value
 
+            elif name == 'handle-focus':  # '_' was replaced to '-' above
+                if not callable(value):
+                    raise TypeError('handle_focus has to be a function')
+
+                self.handle_focus = value
+
+            elif name == 'handle-blur':  # '_' was replaced to '-' above
+                if not callable(value):
+                    raise TypeError('handle_blur has to be a function')
+
+                self.handle_blur = value
+
             # misc attributes
             else:
                 self._attributes[name] = value

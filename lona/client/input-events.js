@@ -45,6 +45,8 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         node.onclick = undefined;
         node.oninput = undefined;
         node.onchange = undefined;
+        node.onfocus = undefined;
+        node.onblur = undefined;
     };
 
     this._patch_link = function(node) {
@@ -223,6 +225,52 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
+    this._patch_onfocus = function(node, event_type) {
+        var input_event_handler = this;
+        var lona_window = this.lona_window;
+
+        node.onfocus = function(event) {
+            event.preventDefault();
+
+            try {
+                input_event_handler.fire_input_event(
+                    node,
+                    Lona.protocol.INPUT_EVENT_TYPE.FOCUS,
+                    undefined,
+                );
+
+            } catch(error) {
+                lona_window.crash(error);
+
+            };
+
+            return false;
+        };
+    };
+
+    this._patch_onblur = function(node, event_type) {
+        var input_event_handler = this;
+        var lona_window = this.lona_window;
+
+        node.onblur = function(event) {
+            event.preventDefault();
+
+            try {
+                input_event_handler.fire_input_event(
+                    node,
+                    Lona.protocol.INPUT_EVENT_TYPE.BLUR,
+                    undefined,
+                );
+
+            } catch(error) {
+                lona_window.crash(error);
+
+            };
+
+            return false;
+        };
+    };
+
     this._parse_data_lona_events = function(node) {
         var event_types = {};
 
@@ -284,6 +332,14 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             // onsubmit
             } else if(key == Lona.protocol.INPUT_EVENT_TYPE.SUBMIT) {
                 _this._patch_onsubmit(node, event_type);
+
+            // onfocus
+            } else if(key == Lona.protocol.INPUT_EVENT_TYPE.FOCUS) {
+                _this._patch_onfocus(node, event_type);
+
+            // onblur
+            } else if(key == Lona.protocol.INPUT_EVENT_TYPE.BLUR) {
+                _this._patch_onblur(node, event_type);
 
             };
         });

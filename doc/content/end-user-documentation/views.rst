@@ -684,6 +684,50 @@ CHANGE
                 print('TextInput is set to', input_event.node.value)
 
 
+FOCUS
+`````
+
+.. code-block:: python
+
+    from lona.html import HTML, TextInput, FOCUS
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            html = HTML(
+                TextInput(events=[FOCUS]),
+            )
+
+            while True:
+                self.show(html)
+                input_event = self.await_focus()
+
+                print('TextInput got focused')
+
+
+BLUR
+````
+
+.. code-block:: python
+
+    from lona.html import HTML, TextInput, BLUR
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            html = HTML(
+                TextInput(events=[BLUR]),
+            )
+
+            while True:
+                self.show(html)
+                input_event = self.await_blur()
+
+                print('TextInput got blurred')
+
+
 Input Event Attributes
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1012,6 +1056,30 @@ LonaView.await_change\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Returns the next incoming change event.
+
+    When ``nodes`` is set, the next input event issued by one of the given
+    nodes is returned.
+
+    When ``html`` is set, ``LonaView.show()`` gets called before waiting on
+    an input event
+
+
+LonaView.await_focus\(\*nodes, html=None\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Returns the next incoming focus event.
+
+    When ``nodes`` is set, the next input event issued by one of the given
+    nodes is returned.
+
+    When ``html`` is set, ``LonaView.show()`` gets called before waiting on
+    an input event
+
+
+LonaView.await_blur\(\*nodes, html=None\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Returns the next incoming blur event.
 
     When ``nodes`` is set, the next input event issued by one of the given
     nodes is returned.

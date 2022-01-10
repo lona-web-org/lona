@@ -253,6 +253,36 @@ class LonaView:
             html=html,
         )
 
+    @overload
+    def await_focus(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
+        ...
+
+    @overload
+    def await_focus(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
+        ...
+
+    def await_focus(self, *nodes, html=None):
+        return self._await_specific_input_event(
+            *nodes,
+            event_type='focus',
+            html=html,
+        )
+
+    @overload
+    def await_blur(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
+        ...
+
+    @overload
+    def await_blur(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
+        ...
+
+    def await_blur(self, *nodes, html=None):
+        return self._await_specific_input_event(
+            *nodes,
+            event_type='blur',
+            html=html,
+        )
+
     # view events #############################################################
     def fire_view_event(self, name: str, data: dict | None = None) -> None:
         self.server.view_runtime_controller.fire_view_event(

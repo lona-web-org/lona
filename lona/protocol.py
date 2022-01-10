@@ -40,6 +40,8 @@ class INPUT_EVENT_TYPE(Enum):
     CLICK = 301
     CHANGE = 302
     CUSTOM = 303
+    FOCUS = 304
+    BLUR = 305
 
 
 class NODE_TYPE(Enum):

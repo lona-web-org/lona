@@ -118,6 +118,8 @@ class ViewRuntime:
             'event': None,
             'click': None,
             'change': None,
+            'focus': None,
+            'blur': None,
         }
 
     # state ###################################################################
