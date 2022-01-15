@@ -111,4 +111,4 @@ def collect_static(args):
     )
 
     _mkdir(os.path.dirname(destination))
-    _cp(server.client_pre_compiler.resolve(), destination)
+    _cp(server._client_pre_compiler.resolve(), destination)

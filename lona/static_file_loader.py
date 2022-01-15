@@ -218,7 +218,7 @@ class StaticFileLoader:
         if rel_path == client_url:
             logger.debug('returning javascript client')
 
-            return self.server.client_pre_compiler.resolve()
+            return self.server._client_pre_compiler.resolve()
 
         # searching in static dirs
         for static_dir in self.static_dirs:

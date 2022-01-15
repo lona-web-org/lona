@@ -161,7 +161,7 @@ class LonaServer:
         self._view_runtime_controller = ViewRuntimeController(self)
 
         # setup static files
-        self.client_pre_compiler: ClientPreCompiler = ClientPreCompiler(self)
+        self._client_pre_compiler: ClientPreCompiler = ClientPreCompiler(self)
 
         # the static file loader has to be started last because it does
         # node class discovery which has to happen after all views are imported
