@@ -24,7 +24,7 @@ class LonaConnectionsCommand:
         # write connections
         rows = [['User', 'URL']]
 
-        for connection in server.websocket_connections:
+        for connection in server._websocket_connections:
             rows.append(
                 [repr(connection.user), connection.http_request.url.path],
             )

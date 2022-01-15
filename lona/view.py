@@ -161,7 +161,7 @@ class LonaView:
 
         # broadcast
         if broadcast:
-            for connection in self.server.websocket_connections.copy():
+            for connection in self.server._websocket_connections.copy():
                 if not filter_connections(connection):
                     continue
 

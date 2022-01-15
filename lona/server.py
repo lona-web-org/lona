@@ -49,7 +49,7 @@ class LonaServer:
 
         self._project_root = os.path.abspath(project_root)
 
-        self.websocket_connections = []
+        self._websocket_connections = []
         self._loop = None
         self._worker_pool = None
 
@@ -236,7 +236,7 @@ class LonaServer:
 
         await self.run_function_async(self.view_runtime_controller.stop)
 
-        for connection in self.websocket_connections.copy():
+        for connection in self._websocket_connections.copy():
             with contextlib.suppress(Exception):
                 await connection.websocket.close()
 
@@ -306,15 +306,15 @@ class LonaServer:
             )
 
         if websocket is not None:
-            self.websocket_connections.append(connection)
+            self._websocket_connections.append(connection)
 
         return connection, (handled, data, middleware)
 
     def _remove_connection(self, connection):
         self.view_runtime_controller.remove_connection(connection)
 
-        if connection in self.websocket_connections:
-            self.websocket_connections.remove(connection)
+        if connection in self._websocket_connections:
+            self._websocket_connections.remove(connection)
 
     # view helper #############################################################
     def _render_response(self, response_dict):
@@ -571,7 +571,7 @@ class LonaServer:
     def get_connection_count(self, user):
         count = 0
 
-        for connection in self.websocket_connections.copy():
+        for connection in self._websocket_connections.copy():
             if connection.user == user:
                 count += 1
 
@@ -587,7 +587,7 @@ class LonaServer:
 
             user.append(new_user)
 
-        for connection in self.websocket_connections.copy():
+        for connection in self._websocket_connections.copy():
             add_user(connection.user)
 
         return len(user)
