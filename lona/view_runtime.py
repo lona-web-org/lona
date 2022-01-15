@@ -604,7 +604,7 @@ class ViewRuntime:
     def handle_raw_response_dict(self, raw_response_dict, connections=None):
         connections = connections or self.connections
 
-        response_dict = self.server.response_parser.render_response_dict(
+        response_dict = self.server._response_parser.render_response_dict(
             raw_response_dict=raw_response_dict,
             view_name=self.name,
         )
@@ -685,7 +685,7 @@ class ViewRuntime:
                 )
 
             if isinstance(return_value, dict):
-                response_parser = self.server.response_parser
+                response_parser = self.server._response_parser
 
                 response_dict = response_parser.parse_event_response_dict(
                     return_value,

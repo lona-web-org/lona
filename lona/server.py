@@ -153,7 +153,7 @@ class LonaServer:
         # setup response parser
         server_logger.debug('setup response parser')
 
-        self.response_parser = ResponseParser(self)
+        self._response_parser = ResponseParser(self)
 
         # setup views
         server_logger.debug('setup view runtime controller')

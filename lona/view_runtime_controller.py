@@ -358,7 +358,7 @@ class ViewRuntimeController:
             view_runtime.issue_500_error(exception)
 
         if isinstance(return_value, dict):
-            response_parser = self.server.response_parser
+            response_parser = self.server._response_parser
 
             try:
                 response_dict = response_parser.parse_event_response_dict(
