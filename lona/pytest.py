@@ -79,8 +79,8 @@ def lona_project_context(request, aiohttp_client):
                 settings_post_overrides=settings_post_overrides or {},
             )
 
-            server.set_loop(loop)
-            server.set_worker_pool(WorkerPool(settings=server.settings))
+            server._loop = loop
+            server._worker_pool = WorkerPool(settings=server.settings)
 
             return aiohttp_app
 

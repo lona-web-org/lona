@@ -172,12 +172,6 @@ class LonaServer:
         # finish
         server_logger.debug('setup finish')
 
-    def set_loop(self, loop):
-        self._loop = loop
-
-    def set_worker_pool(self, worker_pool):
-        self._worker_pool = worker_pool
-
     # properties ##############################################################
     @property
     def project_root(self):

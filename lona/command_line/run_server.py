@@ -47,8 +47,8 @@ def run_server(args, app=None, server=None):
 
     app.on_shutdown.append(shutdown)
 
-    server.set_loop(loop)
-    server.set_worker_pool(worker_pool)
+    server._loop = loop
+    server._worker_pool = worker_pool
 
     # run server
     if args.shell:
