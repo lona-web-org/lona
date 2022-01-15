@@ -196,6 +196,15 @@ class LonaServer:
     def template_dirs(self, new_value):
         self.templating_engine.template_dirs = new_value
 
+    # static dirs
+    @property
+    def static_dirs(self):
+        return tuple(self._static_file_loader.static_dirs)
+
+    @static_dirs.setter
+    def static_dirs(self, new_value):
+        self._static_file_loader.static_dirs = new_value
+
     async def start(self, *args, **kwargs):
         server_logger.debug('start')
 
