@@ -59,8 +59,8 @@ class LonaServer:
         self._app = app
         self._app['lona_server'] = self
 
-        self._app.on_startup.append(self.start)
-        self._app.on_shutdown.append(self.stop)
+        self._app.on_startup.append(self._start)
+        self._app.on_shutdown.append(self._stop)
 
         # setup settings
         server_logger.debug('setup settings')
@@ -207,7 +207,7 @@ class LonaServer:
     def static_dirs(self, new_value):
         self._static_file_loader.static_dirs = new_value
 
-    async def start(self, *args, **kwargs):
+    async def _start(self, *args, **kwargs):
         server_logger.debug('start')
 
         if not self._loop:
@@ -229,7 +229,7 @@ class LonaServer:
 
         self._view_runtime_controller.start()
 
-    async def stop(self, *args, **kwargs):
+    async def _stop(self, *args, **kwargs):
         server_logger.debug('stop')
 
         await self.run_function_async(self._view_runtime_controller.stop)
