@@ -276,7 +276,7 @@ class LonaViewsCommand:
             route = view_runtime.route
 
             if route:
-                route_id = server.router.routes.index(view_runtime.route)
+                route_id = server._router.routes.index(view_runtime.route)
 
                 url = route.format_string.format(
                     **view_runtime.request.match_info)

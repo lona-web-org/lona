@@ -30,7 +30,7 @@ class Namespace:
         return self.server.acquire(*args, **kwargs)
 
     def resolve_url(self, *args, **kwargs):
-        return self.server.router.reverse(*args, **kwargs)
+        return self.server._router.reverse(*args, **kwargs)
 
     def load_static_file(self, path):
         logger.debug('resolving static file path %s', path)

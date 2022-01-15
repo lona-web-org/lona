@@ -105,7 +105,7 @@ class LonaServer:
 
         # setup routing
         server_logger.debug('setup routing')
-        self.router = Router()
+        self._router = Router()
 
         if not routes:
             server_logger.debug("loading routing table from '%s'",
@@ -114,7 +114,7 @@ class LonaServer:
             routes = self.acquire(self.settings.ROUTING_TABLE)
 
         if routes:
-            self.router.add_routes(*routes)
+            self._router.add_routes(*routes)
 
         else:
             server_logger.warning('routing table is empty')
@@ -458,7 +458,7 @@ class LonaServer:
         http_logger.debug('resolving path %r', http_request.path)
 
         match, route, match_info = await self.run_function_async(
-            self.router.resolve,
+            self._router.resolve,
             http_request.path,
         )
 
@@ -618,7 +618,7 @@ class LonaServer:
             return self.view_loader.load(import_string)
 
         if url:
-            success, route, match_info = self.router.resolve(url)
+            success, route, match_info = self._router.resolve(url)
 
             if not success:
                 return None
@@ -626,7 +626,7 @@ class LonaServer:
             return self.view_loader.load(route.view)
 
     def reverse(self, *args, **kwargs):
-        return self.router.reverse(*args, **kwargs)
+        return self._router.reverse(*args, **kwargs)
 
     def fire_view_event(
             self,

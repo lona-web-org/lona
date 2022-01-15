@@ -151,7 +151,7 @@ class ViewRuntimeController:
 
         # resolve url
         url_object = URL(url)
-        match, route, match_info = self.server.router.resolve(url_object.path)
+        match, route, match_info = self.server._router.resolve(url_object.path)
 
         # route is not interactive; issue a http redirect
         if(connection.interactive and
