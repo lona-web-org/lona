@@ -418,7 +418,7 @@ class ViewRuntime:
 
             # multi user views have no start_connection
             if self.start_connection:
-                self.server.view_runtime_controller.remove_view_runtime(self)
+                self.server._view_runtime_controller.remove_view_runtime(self)
 
     def issue_500_error(self, exception):
         # stop the runtime but don't run cleanup code to get the

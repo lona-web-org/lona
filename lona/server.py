@@ -158,7 +158,7 @@ class LonaServer:
         # setup views
         server_logger.debug('setup view runtime controller')
 
-        self.view_runtime_controller = ViewRuntimeController(self)
+        self._view_runtime_controller = ViewRuntimeController(self)
 
         # setup static files
         self.client_pre_compiler: ClientPreCompiler = ClientPreCompiler(self)
@@ -233,12 +233,12 @@ class LonaServer:
             if self.settings.get(test_name, False):
                 server_logger.warning('%s is enabled', test_name)
 
-        self.view_runtime_controller.start()
+        self._view_runtime_controller.start()
 
     async def stop(self, *args, **kwargs):
         server_logger.debug('stop')
 
-        await self.run_function_async(self.view_runtime_controller.stop)
+        await self.run_function_async(self._view_runtime_controller.stop)
 
         for connection in self._websocket_connections.copy():
             with contextlib.suppress(Exception):
@@ -315,7 +315,7 @@ class LonaServer:
         return connection, (handled, data, middleware)
 
     def _remove_connection(self, connection):
-        self.view_runtime_controller.remove_connection(connection)
+        self._view_runtime_controller.remove_connection(connection)
 
         if connection in self._websocket_connections:
             self._websocket_connections.remove(connection)
@@ -540,7 +540,7 @@ class LonaServer:
         post_data = await http_request.post()
 
         response_dict = await self.run_function_async(
-            self.view_runtime_controller.handle_view_message,
+            self._view_runtime_controller.handle_view_message,
             connection=connection,
             window_id=None,
             view_runtime_id=None,
@@ -558,13 +558,13 @@ class LonaServer:
 
     # helper ##################################################################
     def get_running_views_count(self, *args, **kwargs):
-        return self.view_runtime_controller.get_running_views_count(
+        return self._view_runtime_controller.get_running_views_count(
             *args,
             **kwargs,
         )
 
     def view_is_already_running(self, request):
-        view_runtime = self.view_runtime_controller.get_running_view_runtime(
+        view_runtime = self._view_runtime_controller.get_running_view_runtime(
             user=request.user,
             route=request.route,
             match_info=request.match_info,
@@ -635,7 +635,7 @@ class LonaServer:
             view_classes: type[LonaView] | list[type[LonaView]] | None = None,
     ) -> None:
 
-        self.view_runtime_controller.fire_view_event(
+        self._view_runtime_controller.fire_view_event(
             name=name,
             data=data,
             view_classes=view_classes,

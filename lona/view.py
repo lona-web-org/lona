@@ -285,7 +285,7 @@ class LonaView:
 
     # view events #############################################################
     def fire_view_event(self, name: str, data: dict | None = None) -> None:
-        self.server.view_runtime_controller.fire_view_event(
+        self.server._view_runtime_controller.fire_view_event(
             name=name,
             data=data,
             view_classes=[self.__class__],

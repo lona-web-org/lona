@@ -210,9 +210,7 @@ class ViewRuntimeController:
         if connection.interactive and running_view_runtime:
             views_logger.debug('removing previous runtime')
 
-            self.server.view_runtime_controller.remove_view_runtime(
-                view_runtime=running_view_runtime,
-            )
+            self.remove_view_runtime(view_runtime=running_view_runtime)
 
         # start nev runtime
         views_logger.debug('trying to start a new view runtime')

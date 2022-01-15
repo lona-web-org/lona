@@ -29,7 +29,7 @@ class LonaMessageMiddleware:
 
             return
 
-        data.server.view_runtime_controller.handle_lona_message(
+        data.server._view_runtime_controller.handle_lona_message(
             connection=data.connection,
             window_id=window_id,
             view_runtime_id=view_runtime_id,
