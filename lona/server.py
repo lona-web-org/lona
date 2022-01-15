@@ -167,7 +167,7 @@ class LonaServer:
         # node class discovery which has to happen after all views are imported
         server_logger.debug('setup static file')
 
-        self.static_file_loader = StaticFileLoader(self)
+        self._static_file_loader = StaticFileLoader(self)
 
         # finish
         server_logger.debug('setup finish')
@@ -365,7 +365,7 @@ class LonaServer:
         rel_path = request.match_info['path']
 
         abs_path = await self.run_function_async(
-            self.static_file_loader.resolve_path,
+            self._static_file_loader.resolve_path,
             rel_path,
             executor_name='static_worker',
         )

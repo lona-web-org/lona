@@ -21,10 +21,10 @@ class Namespace:
         self.templating_engine = templating_engine
 
     def load_stylesheets(self):
-        return self.server.static_file_loader.style_tags_html
+        return self.server._static_file_loader.style_tags_html
 
     def load_scripts(self):
-        return self.server.static_file_loader.script_tags_html
+        return self.server._static_file_loader.script_tags_html
 
     def _import(self, *args, **kwargs):
         return self.server.acquire(*args, **kwargs)
@@ -42,7 +42,7 @@ class Namespace:
             logger.debug('%s is cached', path)
 
         else:
-            resolved_path = self.server.static_file_loader.resolve_path(path)
+            resolved_path = self.server._static_file_loader.resolve_path(path)
 
             if not resolved_path:
                 logger.error("static file '%s' was not found", path)

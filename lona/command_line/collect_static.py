@@ -80,7 +80,7 @@ def collect_static(args):
             _rm(path)
 
     # copy node static files
-    for static_file in server.static_file_loader.static_files[::-1]:
+    for static_file in server._static_file_loader.static_files[::-1]:
         if not static_file.enabled:
             continue
 
@@ -92,7 +92,7 @@ def collect_static(args):
         _cp(static_file.path, destination)
 
     # copy static files from static directories
-    for static_dir in server.static_file_loader.static_dirs[::-1]:
+    for static_dir in server._static_file_loader.static_dirs[::-1]:
         for name in os.listdir(static_dir):
             source = os.path.join(static_dir, name)
             destination = os.path.join(args.destination, name)

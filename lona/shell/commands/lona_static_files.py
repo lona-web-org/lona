@@ -40,7 +40,7 @@ class LonaStaticFilesCommand:
 
         # resolve
         if args.resolve:
-            abs_path = server.static_file_loader.resolve_path(args.resolve)
+            abs_path = server._static_file_loader.resolve_path(args.resolve)
 
             if not abs_path:
                 return 1
@@ -51,7 +51,7 @@ class LonaStaticFilesCommand:
 
         # list directories
         if args.list_directories:
-            for static_dir in server.static_file_loader.static_dirs:
+            for static_dir in server._static_file_loader.static_dirs:
                 self.repl.write(f'{static_dir}\n')
 
             return
@@ -59,7 +59,7 @@ class LonaStaticFilesCommand:
         # list static files
         static_files = {}
 
-        for static_dir in server.static_file_loader.static_dirs:
+        for static_dir in server._static_file_loader.static_dirs:
             for root, _dirs, files in os.walk(static_dir):
                 for _file in files:
                     name = os.path.join(root, _file)
