@@ -178,6 +178,7 @@ class LonaServer:
     def set_worker_pool(self, worker_pool):
         self._worker_pool = worker_pool
 
+    # properties ##############################################################
     @property
     def loop(self):
         return self._loop
@@ -185,6 +186,15 @@ class LonaServer:
     @property
     def worker_pool(self):
         return self._worker_pool
+
+    # template dirs
+    @property
+    def template_dirs(self):
+        return tuple(self.templating_engine.template_dirs)
+
+    @template_dirs.setter
+    def template_dirs(self, new_value):
+        self.templating_engine.template_dirs = new_value
 
     async def start(self, *args, **kwargs):
         server_logger.debug('start')
