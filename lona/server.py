@@ -148,7 +148,7 @@ class LonaServer:
         # setup view loader
         server_logger.debug('setup view loader')
 
-        self.view_loader = ViewLoader(self)
+        self._view_loader = ViewLoader(self)
 
         # setup response parser
         server_logger.debug('setup response parser')
@@ -473,7 +473,7 @@ class LonaServer:
             http_logger.debug('http_pass_through mode')
 
             # load view
-            view = self.view_loader.load(route.view)
+            view = self._view_loader.load(route.view)
 
             if inspect.isclass(view):
                 view = view(
@@ -612,10 +612,10 @@ class LonaServer:
             raise ValueError('too many or too few arguments given')
 
         if route:
-            return self.view_loader.load(route.view)
+            return self._view_loader.load(route.view)
 
         if import_string:
-            return self.view_loader.load(import_string)
+            return self._view_loader.load(import_string)
 
         if url:
             success, route, match_info = self._router.resolve(url)
@@ -623,7 +623,7 @@ class LonaServer:
             if not success:
                 return None
 
-            return self.view_loader.load(route.view)
+            return self._view_loader.load(route.view)
 
     def reverse(self, *args, **kwargs):
         return self._router.reverse(*args, **kwargs)

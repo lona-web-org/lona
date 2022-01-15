@@ -72,7 +72,7 @@ class StaticFileLoader:
             yield node_class, iter(node_class.STATIC_FILES)
 
         logger.debug('discover view classes')
-        view_classes = self.server.view_loader.get_all_views()
+        view_classes = self.server._view_loader.get_all_views()
         logger.debug('%d view classes discovered', len(view_classes))
 
         for view_class in view_classes:

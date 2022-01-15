@@ -85,7 +85,7 @@ class ViewRuntime:
             if route and route.frontend_view:
                 self.view = route.frontend_view
 
-        self.view_class = self.server.view_loader.load(self.view)
+        self.view_class = self.server._view_loader.load(self.view)
         self.name = repr(self.view_class)
 
         self.view = self.view_class(
@@ -158,7 +158,7 @@ class ViewRuntime:
         if send_view_start:
             self.send_view_start(connections=connections)
 
-        view_class = self.server.view_loader.load(view_name)
+        view_class = self.server._view_loader.load(view_name)
 
         view = view_class(
             server=self.server,
