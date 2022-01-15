@@ -122,14 +122,14 @@ class LonaServer:
         # setup middleware controller
         server_logger.debug('setup middleware controller')
 
-        self.middleware_controller = MiddlewareController(self)
+        self._middleware_controller = MiddlewareController(self)
 
         self._app.on_startup.append(
-            self.middleware_controller.run_on_startup,
+            self._middleware_controller.run_on_startup,
         )
 
         self._app.on_shutdown.append(
-            self.middleware_controller.run_on_shutdown,
+            self._middleware_controller.run_on_shutdown,
         )
 
         # setup aiohttp routes
@@ -305,7 +305,7 @@ class LonaServer:
         connection = Connection(self, http_request, websocket)
 
         handled, data, middleware = \
-            await self.middleware_controller.handle_connection(
+            await self._middleware_controller.handle_connection(
                 connection,
             )
 
@@ -380,7 +380,7 @@ class LonaServer:
             '%s message received %s', connection, message.data)
 
         handled, data, middleware = \
-            await self.middleware_controller.handle_websocket_message(
+            await self._middleware_controller.handle_websocket_message(
                 connection,
                 message.data,
             )
