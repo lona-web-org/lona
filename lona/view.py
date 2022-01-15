@@ -120,14 +120,14 @@ class LonaView:
 
             # string based templates
             if template_string:
-                html = self._server.templating_engine.render_string(
+                html = self._server.render_string(
                     template_string=template_string,
                     template_context=template_context,
                 )
 
             # file based templates
             else:
-                html = self._server.templating_engine.render_template(
+                html = self._server.render_template(
                     template_name=template,
                     template_context=template_context,
                 )

@@ -46,7 +46,7 @@ class StaticFileLoader:
         logger.debug('rendering html files')
 
         # stylesheets
-        self.style_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
+        self.style_tags_html: str = self.server.render_template(
             self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
             {
                 'stylesheets': [i for i in self.stylesheets
@@ -55,7 +55,7 @@ class StaticFileLoader:
         )
 
         # scripts
-        self.script_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
+        self.script_tags_html: str = self.server.render_template(
             self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
                 'scripts': [i for i in self.scripts

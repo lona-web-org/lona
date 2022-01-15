@@ -96,7 +96,7 @@ class LonaServer:
         # setup templating
         server_logger.debug('setup templating')
 
-        self.templating_engine = TemplatingEngine(self)
+        self._templating_engine = TemplatingEngine(self)
 
         # setup server state
         server_logger.debug('setup server state')
@@ -194,11 +194,11 @@ class LonaServer:
     # template dirs
     @property
     def template_dirs(self):
-        return tuple(self.templating_engine.template_dirs)
+        return tuple(self._templating_engine.template_dirs)
 
     @template_dirs.setter
     def template_dirs(self, new_value):
-        self.templating_engine.template_dirs = new_value
+        self._templating_engine.template_dirs = new_value
 
     # static dirs
     @property
@@ -593,13 +593,13 @@ class LonaServer:
         return len(user)
 
     def get_template(self, *args, **kwargs):
-        return self.templating_engine.get_template(*args, **kwargs)
+        return self._templating_engine.get_template(*args, **kwargs)
 
     def render_string(self, *args, **kwargs):
-        return self.templating_engine.render_string(*args, **kwargs)
+        return self._templating_engine.render_string(*args, **kwargs)
 
     def render_template(self, *args, **kwargs):
-        return self.templating_engine.render_template(*args, **kwargs)
+        return self._templating_engine.render_template(*args, **kwargs)
 
     def get_view_class(self, route=None, import_string=None, url=None):
         args = [bool(route), bool(import_string), bool(url)]
