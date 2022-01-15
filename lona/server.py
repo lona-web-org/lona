@@ -65,12 +65,12 @@ class LonaServer:
         # setup settings
         server_logger.debug('setup settings')
 
-        self.settings_paths = [
+        self._settings_paths = [
             DEFAULT_SETTINGS,
         ]
 
         for path in settings_paths or []:
-            self.settings_paths.append(
+            self._settings_paths.append(
                 os.path.normpath(
                     os.path.join(self.project_root, path),
                 ),
@@ -83,7 +83,7 @@ class LonaServer:
 
             self.settings.update(settings_pre_overrides)
 
-        for import_string in self.settings_paths:
+        for import_string in self._settings_paths:
             server_logger.debug("loading settings from '%s'", import_string)
 
             self.settings.add(import_string)
@@ -190,6 +190,10 @@ class LonaServer:
     @property
     def worker_pool(self):
         return self._worker_pool
+
+    @property
+    def settings_paths(self):
+        return tuple(self._settings_paths)
 
     # template dirs
     @property
