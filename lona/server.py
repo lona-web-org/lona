@@ -47,7 +47,7 @@ class LonaServer:
                  settings_pre_overrides=None, settings_post_overrides=None,
                  routes=None):
 
-        self.project_root = os.path.abspath(project_root)
+        self._project_root = os.path.abspath(project_root)
 
         self.websocket_connections = []
         self._loop = None
@@ -179,6 +179,10 @@ class LonaServer:
         self._worker_pool = worker_pool
 
     # properties ##############################################################
+    @property
+    def project_root(self):
+        return self._project_root
+
     @property
     def loop(self):
         return self._loop
