@@ -541,7 +541,7 @@ CheckBox
 
 .. code-block:: python
 
-    from lona.html import Checkbox
+    from lona.html import CheckBox
 
     CheckBox()
     CheckBox(value=True, _id='bar')
