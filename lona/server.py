@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from typing import overload, Callable, TypeVar, cast, Any
 from concurrent.futures import Future
 from collections.abc import Awaitable
-from typing import overload, TypeVar
 from functools import reduce
 import contextlib
 import operator
@@ -14,6 +14,7 @@ import os
 from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
 from typing_extensions import Literal
 from aiohttp import WSMsgType
+from jinja2 import Template
 
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
@@ -24,10 +25,11 @@ from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
 from lona.server_state import ServerState
 from lona.view_loader import ViewLoader
+from lona.routing import Router, Route
 from lona.connection import Connection
 from lona.settings import Settings
+from lona.request import Request
 from lona.protocol import METHOD
-from lona.routing import Router
 from lona.view import LonaView
 
 DEFAULT_SETTINGS = os.path.join(
@@ -516,6 +518,7 @@ class LonaServer:
             coroutine: Awaitable[T],
             wait: None | bool = True,
     ) -> Future[T] | T:
+
         future = asyncio.run_coroutine_threadsafe(coroutine, loop=self._loop)
 
         if wait:
@@ -523,8 +526,13 @@ class LonaServer:
 
         return future
 
-    def run_function_async(self, function, *args,
-                           executor_name='worker', **kwargs):
+    def run_function_async(
+            self,
+            function: Callable,
+            *args: Any,
+            executor_name: str = 'worker',
+            **kwargs: Any,
+    ) -> Future:
 
         """
         Takes a function or callable, runs it asynchronously in an thread
@@ -540,12 +548,19 @@ class LonaServer:
         def _function():
             return function(*args, **kwargs)
 
-        return self._loop.run_in_executor(
-            self._worker_pool.get_executor(executor_name),
-            _function,
+        return cast(
+            Future,
+            self._loop.run_in_executor(
+                self._worker_pool.get_executor(executor_name),
+                _function,
+            ),
         )
 
-    def resolve_path(self, path):
+    def resolve_path(
+            self,
+            path: str,
+    ) -> str:
+
         """
         Takes a path as a string and resolves it relatively to
         settings.PROJECT_ROOT.
@@ -559,7 +574,12 @@ class LonaServer:
 
         return os.path.normpath(os.path.join(self.project_root, path))
 
-    def acquire(self, import_string, ignore_import_cache=False):
+    def acquire(
+            self,
+            import_string: str,
+            ignore_import_cache: bool = False,
+    ) -> Any:
+
         """
         Takes an import string and returns the imported value.
         if ignore_import_cache is set, the attribute gets imported around
@@ -581,14 +601,25 @@ class LonaServer:
 
         return _acquire(import_string, ignore_import_cache=ignore_import_cache)
 
-    def get_running_views_count(self, user):
+    def get_running_views_count(
+            self,
+            user: Any,
+    ) -> int:
+
         """
         Returns the count of running views for the given user as integer.
         """
 
-        return self._view_runtime_controller.get_running_views_count(user)
+        return cast(
+            int,
+            self._view_runtime_controller.get_running_views_count(user),
+        )
 
-    def view_is_already_running(self, request):
+    def view_is_already_running(
+            self,
+            request: Request,
+    ) -> bool:
+
         """
         Checks if a view for the given request is already running and returns
         a boolean.
@@ -604,7 +635,11 @@ class LonaServer:
 
         return bool(view_runtime)
 
-    def get_connection_count(self, user):
+    def get_connection_count(
+            self,
+            user: Any,
+    ) -> int:
+
         """
         Returns the count of connections for the given user as integer.
 
@@ -619,12 +654,12 @@ class LonaServer:
 
         return count
 
-    def get_connected_user_count(self):
+    def get_connected_user_count(self) -> int:
         """
         Returns the count of connected users as integer.
         """
 
-        user = []
+        user: list[Any] = []
 
         def add_user(new_user):
             for _user in user:
@@ -638,15 +673,27 @@ class LonaServer:
 
         return len(user)
 
-    def get_template(self, template_name):
+    def get_template(
+            self,
+            template_name: str,
+    ) -> Template:
+
         """
         Returns a Jinja2 template object associated with the given template
         name.
         """
 
-        return self._templating_engine.get_template(template_name)
+        return cast(
+            Template,
+            self._templating_engine.get_template(template_name),
+        )
 
-    def render_string(self, template_string, template_context=None):
+    def render_string(
+            self,
+            template_string: str,
+            template_context: dict | None = None,
+    ) -> str:
+
         """
         Takes a Jinja2 template as a string and returns the rendering result
         as string. If no template context is given, an empty one is used.
@@ -658,12 +705,20 @@ class LonaServer:
         :template_context: (dict|none) template context as dictionary
         """
 
-        return self._templating_engine.render_string(
-            template_string=template_string,
-            template_context=template_context,
+        return cast(
+            str,
+            self._templating_engine.render_string(
+                template_string=template_string,
+                template_context=template_context,
+            ),
         )
 
-    def render_template(self, template_name, template_context=None):
+    def render_template(
+            self,
+            template_name: str,
+            template_context: dict | None = None,
+    ) -> str:
+
         """
         Takes the name of a Jinja2 template as a string, searches for a
         matching template in settings.TEMPLATE_DIRS and returns the rendering
@@ -677,12 +732,21 @@ class LonaServer:
         :template_context: (dict|none) template context as dictionary
         """
 
-        return self._templating_engine.render_template(
-            template_name=template_name,
-            template_context=template_context,
+        return cast(
+            str,
+            self._templating_engine.render_template(
+                template_name=template_name,
+                template_context=template_context,
+            ),
         )
 
-    def get_view_class(self, route=None, import_string=None, url=None):
+    def get_view_class(
+            self,
+            route: Route | None = None,
+            import_string: str | None = None,
+            url: str | None = None,
+    ) -> type[LonaView] | None:
+
         """
         Returns the lona.view.LonaView subclass associated with the given
         route, import string or url.
@@ -696,10 +760,10 @@ class LonaServer:
             raise ValueError('too many or too few arguments given')
 
         if route:
-            return self._view_loader.load(route.view)
+            view = route.view
 
         if import_string:
-            return self._view_loader.load(import_string)
+            view = import_string
 
         if url:
             success, route, match_info = self._router.resolve(url)
@@ -707,9 +771,21 @@ class LonaServer:
             if not success:
                 return None
 
-            return self._view_loader.load(route.view)
+            route = cast(Route, route)
+            view = route.view
 
-    def reverse(self, route_name, *args, **kwargs):
+        return cast(
+            type[LonaView],
+            self._view_loader.load(view),
+        )
+
+    def reverse(
+            self,
+            route_name: str,
+            *args: Any,
+            **kwargs: dict[str, Any],
+    ) -> str:
+
         """
         Returns a routing reverse match as string.
 
@@ -718,7 +794,14 @@ class LonaServer:
         :kwargs:      route keyword argument
         """
 
-        return self._router.reverse(route_name, *args, **kwargs)
+        return cast(
+            str,
+            self._router.reverse(
+                route_name=route_name,
+                *args,
+                **kwargs,
+            ),
+        )
 
     def fire_view_event(
             self,
