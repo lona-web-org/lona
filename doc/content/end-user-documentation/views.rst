@@ -1206,94 +1206,72 @@ LonaView.embed_shell\(\)
 Server Methods
 --------------
 
-Server.get_running_views_count\(user\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.get_running_views_count()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returns the count of running views for the given user as integer.
-
-
-Server.view_is_already_running\(request\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    Returns if a view for the given request is already running as boolean.
+    .. api-doc:: lona.server.LonaServer.get_running_views_count
 
 
-Server.get_connection_count\(user\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.view_is_already_running()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returns the count of connections for the given user as integer.
-
-
-Server.get_connected_user_count\(\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    Returns the count of connected users as integer.
+    .. api-doc:: lona.server.LonaServer.view_is_already_running
 
 
-Server.get_template\(template_name\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.get_connection_count()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returns a Jinja2 template object associated with the given template name
-
-
-Server.render_string\(template_string, \*\*template_context\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    Returns a rendered Jinja2 template string as string.
+    .. api-doc:: lona.server.LonaServer.get_connection_count
 
 
-Server.render_template\(template_name, \*\*template_context\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.get_connected_user_count()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Returns a rendered Jinja2 template as string.
-
-
-Server.get_view_class\(route=None, import_string=None, url=None\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    Returns the ``lona.view.LonaView`` subclass associated with the given
-    route, import string or url.
-
-    Only one argument can be set at a time.
+    .. api-doc:: lona.server.LonaServer.get_connected_user_count
 
 
-Server.reverse\(route_name, \*\*url_args\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.get_template()
+~~~~~~~~~~~~~~~~~~~~~
+
+    .. api-doc:: lona.server.LonaServer.get_template
+
+
+Server.render_string()
+~~~~~~~~~~~~~~~~~~~~~~
+
+    .. api-doc:: lona.server.LonaServer.render_string
+
+
+Server.render_template()
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. api-doc:: lona.server.LonaServer.render_template
+
+
+Server.get_view_class()
+~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. api-doc:: lona.server.LonaServer.get_view_class
+
+
+Server.reverse()
+~~~~~~~~~~~~~~~~
 
     .. note::
 
         The argument ``name`` was renamed to ``route_name`` in 1.8
 
-    Returns a routing reverse match as string.
+    .. api-doc:: lona.server.LonaServer.reverse
 
 
-Server.fire_view_event\(name, data=None, view_classes=None\)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server.fire_view_event()
+~~~~~~~~~~~~~~~~~~~~~~~~
 
     .. note::
 
         Added in 1.7.3
 
-    Sends a view event to all objects of the given ``LonaView`` class.
-    ``name`` has to be a ``str``, ``data`` is optional but has to be a ``dict``
-    if set.
-
-    ``view_classes`` can be a single view class or a list of view classes.
-
-    If ``view_classes`` is not set, the event becomes a broadcast event
-    and gets send to all view classes.
-
-    .. code-block:: python
-
-        # broadcast event
-        server.fire_view_event('foo', {'foo': 'bar'})
-
-        # event for all view objects behind the URL '/foo'
-        server.fire_view_event(
-            'foo',
-            {'foo': 'bar'},
-            view_classes=server.get_view_class(url='/foo'),
-        )
+    .. api-doc:: lona.server.LonaServer.fire_view_event
 
 
 Server.embed_shell\(\)

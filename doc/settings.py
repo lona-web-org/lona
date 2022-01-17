@@ -24,6 +24,7 @@ PLUGINS = [
     'plugins/pygments.py::rstPygments',
     'plugins/fix_search.py::FixSearch',
     'plugins/changelog.py::Changelog',
+    'plugins/api_doc.py::ApiDoc',
 ]
 
 MENU = [
