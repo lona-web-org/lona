@@ -6,7 +6,6 @@ import threading
 import asyncio
 
 from typing_extensions import Literal
-from jinja2.nodes import Template
 
 from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.html.abstract_node import AbstractNode
@@ -102,8 +101,8 @@ class LonaView:
     def show(
             self,
             html: H = None,
-            template: None | str | Template = None,
-            template_string: None | str | Template = None,
+            template: None | str = None,
+            template_string: None | str = None,
             title: None | str = None,
             template_context: None | dict = None,
     ) -> None:
@@ -128,7 +127,7 @@ class LonaView:
             # file based templates
             else:
                 html = self._server.render_template(
-                    template_name=template,
+                    template_name=cast(str, template),
                     template_context=template_context,
                 )
 
