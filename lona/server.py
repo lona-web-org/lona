@@ -189,6 +189,10 @@ class LonaServer:
     def settings_paths(self):
         return tuple(self._settings_paths)
 
+    @property
+    def state(self):
+        return self._state
+
     # template dirs
     @property
     def template_dirs(self):
@@ -207,6 +211,7 @@ class LonaServer:
     def static_dirs(self, new_value):
         self._static_file_loader.static_dirs = new_value
 
+    # start and stop ##########################################################
     async def _start(self, *args, **kwargs):
         server_logger.debug('start')
 
@@ -237,62 +242,6 @@ class LonaServer:
         for connection in self._websocket_connections.copy():
             with contextlib.suppress(Exception):
                 await connection.websocket.close()
-
-    # asyncio helper ##########################################################
-    @overload
-    def run_coroutine_sync(
-            self,
-            coroutine: Awaitable[T],
-            wait: None | Literal[True] = True,
-    ) -> T:
-        ...
-
-    @overload
-    def run_coroutine_sync(
-            self,
-            coroutine: Awaitable[T],
-            wait: Literal[False],
-    ) -> Future[T]:
-        ...
-
-    def run_coroutine_sync(
-            self,
-            coroutine: Awaitable[T],
-            wait: None | bool = True,
-    ) -> Future[T] | T:
-        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self._loop)
-
-        if wait:
-            return future.result()
-
-        return future
-
-    def run_function_async(self, function, *args,
-                           executor_name='worker', **kwargs):
-
-        def _function():
-            return function(*args, **kwargs)
-
-        return self._loop.run_in_executor(
-            self._worker_pool.get_executor(executor_name),
-            _function,
-        )
-
-    # path helper #############################################################
-    def resolve_path(self, path):
-        if path.startswith('/'):
-            return path
-
-        return os.path.normpath(os.path.join(self.project_root, path))
-
-    def acquire(self, import_string, *args, **kwargs):
-        if '::' in import_string:
-            script, attribute_name = import_string.split('::')
-            script = self.resolve_path(script)
-
-            import_string = f'{script}::{attribute_name}'
-
-        return _acquire(import_string, *args, **kwargs)
 
     # connection management ###################################################
     async def _setup_connection(self, http_request, websocket=None):
@@ -545,12 +494,61 @@ class LonaServer:
 
         return self._render_response(response_dict)
 
-    # state ###################################################################
-    @property
-    def state(self):
-        return self._state
+    # public api ##############################################################
+    @overload
+    def run_coroutine_sync(
+            self,
+            coroutine: Awaitable[T],
+            wait: None | Literal[True] = True,
+    ) -> T:
+        ...
 
-    # helper ##################################################################
+    @overload
+    def run_coroutine_sync(
+            self,
+            coroutine: Awaitable[T],
+            wait: Literal[False],
+    ) -> Future[T]:
+        ...
+
+    def run_coroutine_sync(
+            self,
+            coroutine: Awaitable[T],
+            wait: None | bool = True,
+    ) -> Future[T] | T:
+        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self._loop)
+
+        if wait:
+            return future.result()
+
+        return future
+
+    def run_function_async(self, function, *args,
+                           executor_name='worker', **kwargs):
+
+        def _function():
+            return function(*args, **kwargs)
+
+        return self._loop.run_in_executor(
+            self._worker_pool.get_executor(executor_name),
+            _function,
+        )
+
+    def resolve_path(self, path):
+        if path.startswith('/'):
+            return path
+
+        return os.path.normpath(os.path.join(self.project_root, path))
+
+    def acquire(self, import_string, *args, **kwargs):
+        if '::' in import_string:
+            script, attribute_name = import_string.split('::')
+            script = self.resolve_path(script)
+
+            import_string = f'{script}::{attribute_name}'
+
+        return _acquire(import_string, *args, **kwargs)
+
     def get_running_views_count(self, *args, **kwargs):
         return self._view_runtime_controller.get_running_views_count(
             *args,
