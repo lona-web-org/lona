@@ -199,18 +199,18 @@ class AttributeDict:
                         string.append(key)
 
                 else:
-                    string.append(f'{key}="{value}"')
+                    string.append(f'{key}="{html.escape(value)}"')
 
-            return html.escape(' '.join(string))
+            return ' '.join(string)
 
     def to_sub_attribute_string(self):
         with self._node.lock:
             string = []
 
             for key, value in self._attributes.items():
-                string.append(f'{key}: {value}')
+                string.append(f'{key}: {html.escape(value)}')
 
-            return html.escape('; '.join(string))
+            return '; '.join(string)
 
     def __repr__(self):
         return f'<AttributeDict({self._attributes!r})>'
