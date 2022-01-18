@@ -12,7 +12,7 @@ class Selector:
         self.parse_selector()
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}({self.selectors!r})>'
+        return f'<{self.__class__.__name__}({self.selectors!r})>'  # pragma: no cover
 
     def check_raw_selector_string(self):
         match = UNSUPPORTED_CHARACTERS.search(self.raw_selector_string)
