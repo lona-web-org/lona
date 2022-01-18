@@ -33,9 +33,3 @@ class Connection:
                 self.websocket.send_str(string),
                 wait=wait,
             )
-
-    async def close(self):
-        if not self.interactive:
-            raise NotInteractiveError
-
-        await self.websocket.close()
