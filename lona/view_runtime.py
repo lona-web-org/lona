@@ -32,7 +32,7 @@ from lona.html.document import Document
 from lona.request import Request
 
 # avoid import cycles
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from lona.server import LonaServer
 
 

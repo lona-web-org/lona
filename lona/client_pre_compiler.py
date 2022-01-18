@@ -67,7 +67,7 @@ class ClientPreCompiler:
                 f.write(file_content)
                 f.close()
 
-        except Exception:
+        except Exception:  # pragma: no cover
             logger.exception('exception raised while pre compiling js client')
 
     def resolve(self) -> str:
@@ -77,4 +77,4 @@ class ClientPreCompiler:
         return self.path
 
     def __repr__(self):
-        return f'<ClientPreCompiler({self.path})>'
+        return f'<ClientPreCompiler({self.path})>'  # pragma: no cover
