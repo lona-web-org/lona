@@ -22,7 +22,7 @@ class LonaMiddlewaresCommand:
         argument_parser.parse_args(argv[1:])
 
         server = self.repl.locals['server']
-        middleware_controller = server.middleware_controller
+        middleware_controller = server._middleware_controller
 
         # list middlewares
         hook_names = [

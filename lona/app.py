@@ -415,8 +415,8 @@ class LonaApp:
             settings=self.server.settings,
         )
 
-        self.server.set_loop(loop)
-        self.server.set_worker_pool(worker_pool)
+        self.server._loop = loop
+        self.server._worker_pool = worker_pool
 
     def run(
             self,

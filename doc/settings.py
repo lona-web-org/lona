@@ -24,6 +24,7 @@ PLUGINS = [
     'plugins/pygments.py::rstPygments',
     'plugins/fix_search.py::FixSearch',
     'plugins/changelog.py::Changelog',
+    'plugins/api_doc.py::ApiDoc',
 ]
 
 MENU = [
@@ -54,6 +55,7 @@ MENU = [
         ['Getting Started', 'end-user-documentation/getting-started.rst'],
         ['Lona Scripts', 'end-user-documentation/lona-scripts.rst'],
         ['Views', 'end-user-documentation/views.rst'],
+        ['Server', 'end-user-documentation/server.rst'],
         ['HTML', 'end-user-documentation/html.rst'],
         ['Frontends', 'end-user-documentation/frontends.rst'],
         ['Error Views', 'end-user-documentation/error-views.rst'],

@@ -42,7 +42,7 @@ class LonaTemplatesCommand:
         # resolve
         if args.resolve:
             try:
-                template = server.templating_engine.get_template(args.resolve)
+                template = server.get_template(args.resolve)
 
             except TemplateNotFound:
                 return 1
@@ -53,7 +53,7 @@ class LonaTemplatesCommand:
 
         # list directories
         if args.list_directories:
-            for static_dir in server.templating_engine.template_dirs:
+            for static_dir in server.template_dirs:
                 self.repl.write(f'{static_dir}\n')
 
             return
@@ -61,7 +61,7 @@ class LonaTemplatesCommand:
         # list static files
         templates = {}
 
-        for template_dir in server.templating_engine.template_dirs:
+        for template_dir in server.template_dirs:
             for root, _dirs, files in os.walk(template_dir):
                 for _file in files:
                     name = os.path.join(root, _file)

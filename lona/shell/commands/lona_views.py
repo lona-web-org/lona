@@ -25,7 +25,7 @@ class LonaViewsCommand:
 
     def complete(self, text, state, line_buffer):
         server = self.repl.locals['server']
-        controller = server.view_runtime_controller
+        controller = server._view_runtime_controller
 
         view_runtime_ids = []
 
@@ -125,7 +125,7 @@ class LonaViewsCommand:
 
     def show_view_memory(self, arguments):
         server = self.repl.locals['server']
-        controller = server.view_runtime_controller
+        controller = server._view_runtime_controller
 
         if not arguments['runtime-id']:
             self.repl.write_error('no runtime id given')
@@ -169,7 +169,7 @@ class LonaViewsCommand:
 
     def show_view_info(self, arguments):
         server = self.repl.locals['server']
-        controller = server.view_runtime_controller
+        controller = server._view_runtime_controller
 
         try:
             view_runtime = controller.get_view_runtime(
@@ -264,7 +264,7 @@ class LonaViewsCommand:
 
     def list_views(self, arguments):
         server = self.repl.locals['server']
-        controller = server.view_runtime_controller
+        controller = server._view_runtime_controller
 
         rows = [
             ['Runtime ID', 'Thread ID', 'Flags', 'User', 'Route ID',
@@ -276,7 +276,7 @@ class LonaViewsCommand:
             route = view_runtime.route
 
             if route:
-                route_id = server.router.routes.index(view_runtime.route)
+                route_id = server._router.routes.index(view_runtime.route)
 
                 url = route.format_string.format(
                     **view_runtime.request.match_info)

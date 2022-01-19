@@ -23,7 +23,7 @@ class FallbackView(LonaView):
 
         if view_setting:
             try:
-                view_class = request.server.view_loader.load(view_setting)
+                view_class = request.server._view_loader.load(view_setting)
 
                 view = view_class(
                     server=self.server,

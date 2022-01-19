@@ -84,6 +84,29 @@ a.anchor:after {
     content: '¶';
 }
 
+/* api doc ----------------------------------------------------------------- */
+.api-doc {
+    padding: 12px 0 0 12px;
+    border: 1px solid rgb(225, 228, 229);
+    background: rgb(248, 248, 248);
+}
+
+.highlight.signature {
+    background-color: transparent;
+    border: none !important;
+    font-weight: bold;
+}
+
+.highlight.signature pre {
+    padding: 0 !important;
+}
+
+.doc-string {
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,Courier,monospace;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 /* footer ------------------------------------------------------------------ */
 #footer {
     text-align: right;

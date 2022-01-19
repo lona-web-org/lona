@@ -46,7 +46,7 @@ class StaticFileLoader:
         logger.debug('rendering html files')
 
         # stylesheets
-        self.style_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
+        self.style_tags_html: str = self.server.render_template(
             self.server.settings.STATIC_FILES_STYLE_TAGS_TEMPLATE,
             {
                 'stylesheets': [i for i in self.stylesheets
@@ -55,7 +55,7 @@ class StaticFileLoader:
         )
 
         # scripts
-        self.script_tags_html: str = self.server.templating_engine.render_template(  # NOQA: LN001
+        self.script_tags_html: str = self.server.render_template(
             self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
                 'scripts': [i for i in self.scripts
@@ -72,7 +72,7 @@ class StaticFileLoader:
             yield node_class, iter(node_class.STATIC_FILES)
 
         logger.debug('discover view classes')
-        view_classes = self.server.view_loader.get_all_views()
+        view_classes = self.server._view_loader.get_all_views()
         logger.debug('%d view classes discovered', len(view_classes))
 
         for view_class in view_classes:
@@ -218,7 +218,7 @@ class StaticFileLoader:
         if rel_path == client_url:
             logger.debug('returning javascript client')
 
-            return self.server.client_pre_compiler.resolve()
+            return self.server._client_pre_compiler.resolve()
 
         # searching in static dirs
         for static_dir in self.static_dirs:

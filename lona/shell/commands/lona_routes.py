@@ -30,14 +30,14 @@ class LonaRoutesCommand:
         # resolve
         if arguments['resolve']:
             path = arguments['resolve']
-            match, route, match_info = server.router.resolve(path)
+            match, route, match_info = server._router.resolve(path)
 
             if not match:
                 self.repl.write('No match')
 
                 return
 
-            route_id = server.router.routes.index(route)
+            route_id = server._router.routes.index(route)
 
             rows = [
                 ['Route ID', route_id],
@@ -54,7 +54,7 @@ class LonaRoutesCommand:
             try:
                 route_id = int(arguments['route-id'])
 
-                self.repl.write(repr(server.router.routes[route_id]) + '\n')
+                self.repl.write(repr(server._router.routes[route_id]) + '\n')
 
                 return
 
@@ -66,7 +66,7 @@ class LonaRoutesCommand:
         # show all routes
         rows = [['Route ID', 'Route']]
 
-        for index, route in enumerate(server.router.routes):
+        for index, route in enumerate(server._router.routes):
             rows.append([index, repr(route)])
 
         write_table(rows, self.repl.write)

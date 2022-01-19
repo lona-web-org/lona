@@ -109,7 +109,7 @@ class ViewLoader:
 
         self._cache = {}
 
-        for route in self.server.router.routes:
+        for route in self.server._router.routes:
             self._cache_view(
                 route=route,
                 view=route.view,

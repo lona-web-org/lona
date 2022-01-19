@@ -118,7 +118,7 @@ class ResponseParser:
             # template file
             if 'template' in raw_response_dict:
                 response_dict['text'] = \
-                    self.server.templating_engine.render_template(
+                    self.server.render_template(
                         raw_response_dict['template'],
                         template_context,
                     )
@@ -126,7 +126,7 @@ class ResponseParser:
             # template string
             else:
                 response_dict['text'] = \
-                    self.server.templating_engine.render_string(
+                    self.server.render_string(
                         raw_response_dict['template_string'],
                         template_context,
                     )

@@ -50,7 +50,7 @@ class LonaSessionMiddleware:
     def handle_connection(self, data):
         http_request = data.connection.http_request
         settings = data.server.settings
-        router = data.server.router
+        router = data.server._router
 
         def get_session_key():
             if settings.SESSIONS_KEY_NAME not in http_request.cookies:

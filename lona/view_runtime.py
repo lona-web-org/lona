@@ -85,7 +85,7 @@ class ViewRuntime:
             if route and route.frontend_view:
                 self.view = route.frontend_view
 
-        self.view_class = self.server.view_loader.load(self.view)
+        self.view_class = self.server._view_loader.load(self.view)
         self.name = repr(self.view_class)
 
         self.view = self.view_class(
@@ -158,7 +158,7 @@ class ViewRuntime:
         if send_view_start:
             self.send_view_start(connections=connections)
 
-        view_class = self.server.view_loader.load(view_name)
+        view_class = self.server._view_loader.load(view_name)
 
         view = view_class(
             server=self.server,
@@ -187,7 +187,7 @@ class ViewRuntime:
     def run_middlewares(self, connection, window_id, url):
         try:
             handled, raw_response_dict, middleware = \
-                self.server.middleware_controller.handle_request(
+                self.server._middleware_controller.handle_request(
                     view=self.view,
                     request=self.request,
                 )
@@ -418,7 +418,7 @@ class ViewRuntime:
 
             # multi user views have no start_connection
             if self.start_connection:
-                self.server.view_runtime_controller.remove_view_runtime(self)
+                self.server._view_runtime_controller.remove_view_runtime(self)
 
     def issue_500_error(self, exception):
         # stop the runtime but don't run cleanup code to get the
@@ -604,7 +604,7 @@ class ViewRuntime:
     def handle_raw_response_dict(self, raw_response_dict, connections=None):
         connections = connections or self.connections
 
-        response_dict = self.server.response_parser.render_response_dict(
+        response_dict = self.server._response_parser.render_response_dict(
             raw_response_dict=raw_response_dict,
             view_name=self.name,
         )
@@ -685,7 +685,7 @@ class ViewRuntime:
                 )
 
             if isinstance(return_value, dict):
-                response_parser = self.server.response_parser
+                response_parser = self.server._response_parser
 
                 response_dict = response_parser.parse_event_response_dict(
                     return_value,

@@ -151,7 +151,7 @@ class ViewRuntimeController:
 
         # resolve url
         url_object = URL(url)
-        match, route, match_info = self.server.router.resolve(url_object.path)
+        match, route, match_info = self.server._router.resolve(url_object.path)
 
         # route is not interactive; issue a http redirect
         if(connection.interactive and
@@ -210,9 +210,7 @@ class ViewRuntimeController:
         if connection.interactive and running_view_runtime:
             views_logger.debug('removing previous runtime')
 
-            self.server.view_runtime_controller.remove_view_runtime(
-                view_runtime=running_view_runtime,
-            )
+            self.remove_view_runtime(view_runtime=running_view_runtime)
 
         # start nev runtime
         views_logger.debug('trying to start a new view runtime')
@@ -358,7 +356,7 @@ class ViewRuntimeController:
             view_runtime.issue_500_error(exception)
 
         if isinstance(return_value, dict):
-            response_parser = self.server.response_parser
+            response_parser = self.server._response_parser
 
             try:
                 response_dict = response_parser.parse_event_response_dict(

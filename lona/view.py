@@ -6,7 +6,6 @@ import threading
 import asyncio
 
 from typing_extensions import Literal
-from jinja2.nodes import Template
 
 from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.html.abstract_node import AbstractNode
@@ -102,8 +101,8 @@ class LonaView:
     def show(
             self,
             html: H = None,
-            template: None | str | Template = None,
-            template_string: None | str | Template = None,
+            template: None | str = None,
+            template_string: None | str = None,
             title: None | str = None,
             template_context: None | dict = None,
     ) -> None:
@@ -120,15 +119,15 @@ class LonaView:
 
             # string based templates
             if template_string:
-                html = self._server.templating_engine.render_string(
+                html = self._server.render_string(
                     template_string=template_string,
                     template_context=template_context,
                 )
 
             # file based templates
             else:
-                html = self._server.templating_engine.render_template(
-                    template_name=template,
+                html = self._server.render_template(
+                    template_name=cast(str, template),
                     template_context=template_context,
                 )
 
@@ -161,7 +160,7 @@ class LonaView:
 
         # broadcast
         if broadcast:
-            for connection in self.server.websocket_connections.copy():
+            for connection in self.server._websocket_connections.copy():
                 if not filter_connections(connection):
                     continue
 
@@ -285,7 +284,7 @@ class LonaView:
 
     # view events #############################################################
     def fire_view_event(self, name: str, data: dict | None = None) -> None:
-        self.server.view_runtime_controller.fire_view_event(
+        self.server._view_runtime_controller.fire_view_event(
             name=name,
             data=data,
             view_classes=[self.__class__],
