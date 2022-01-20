@@ -1,73 +1,93 @@
-from datetime import datetime
-
-from lona.html import HTML, Div, H1, A
+from lona.html import HTML, Div, H1, A, TextInput, Widget
+from lona.static_files import Script, SORT_ORDER, StyleSheet
 from lona import LonaView, LonaApp
 
 app = LonaApp(__file__)
-
-app.settings.MAX_WORKER_THREADS = 10
 
 app.settings.STATIC_DIRS = [
     'static',
 ]
 
 
-@app.middleware
-class MyMiddleware:
-    def handle_request(self, data):
-        print('>> middleware running')
+class AutoCompleteInput(Widget):
+    FRONTEND_WIDGET_CLASS = 'AutoCompleteWidget'
 
-        return data
+    STATIC_FILES = [
+        StyleSheet(
+            name='jquery-ui.css',
+            path='jquery-ui.css',
+            url='jquery-ui.css',
+            sort_order=SORT_ORDER.FRAMEWORK,
+        ),
+        Script(
+            name='jquery.js',
+            path='jquery.js',
+            url='jquery.js',
+            sort_order=SORT_ORDER.FRAMEWORK,
+        ),
+        Script(
+            name='jquery-ui.js',
+            path='jquery-ui.js',
+            url='jquery-ui.js',
+            sort_order=SORT_ORDER.FRAMEWORK,
+        ),
+        Script(
+            name='autocomplete_widget.js',
+            path='autocomplete_widget.js',
+            url='autocomplete_widget.js',
+            sort_order=SORT_ORDER.LIBRARY,
+        ),
+    ]
 
+    def __init__(self, completer=lambda term: []):
+        self.input_node = TextInput(bubble_up=True)
 
-@app.frontend_view
-class FrontendView(LonaView):
-    def handle_request(self, request):
-        print('>> running frontend')
+        self.nodes = [
+            self.input_node,
+        ]
 
-        return {
-            'template': self.server.settings.FRONTEND_TEMPLATE,
+        self.data = {
+            'results': [],
         }
+
+        self.completer = completer
+
+    def handle_input_event(self, input_event):
+        with self.lock:
+            if input_event.name != 'autocomplete-request':
+                return
+
+            with self.lock:
+                results = self.completer(input_event.data['term'])
+
+                if not isinstance(results, list):
+                    raise ValueError('results have to be a list')
+
+                self.data['results'] = [str(result) for result in results]
 
 
 @app.route('/')
-class Home(LonaView):
-    def handle_request(self, request):
-        return """
-            <h1>Lona Test Script</h1>
-            <ul>
-                <li><a href="/interactive-view/">Interactive View</a></li>
-                <li><a href="/non-interactive-view/">Non Interactive View</a></li>
-            </ul>
-        """
-
-
-@app.route('/interactive-view/')
-class InteractiveView(LonaView):
-    def handle_request(self, request):
-        timestamp = Div()
-
-        html = HTML(
-            H1('Interactive View'),
-            A('Home', href='/'),
-            timestamp,
-        )
-
-        while True:
-            timestamp.set_text(str(datetime.now()))
-
-            self.show(html)
-
-            self.sleep(1)
-
-
-@app.route('/non-interactive-view/', interactive=False)
 class NoneInteractiveView(LonaView):
+    def complete(self, term):
+        words = [
+            'foo',
+            'foobar',
+            'foobaz',
+            'bar',
+            'baz',
+            'bazbar',
+        ]
+
+        return [
+            word for word in words
+            if word.startswith(term)
+        ]
+
     def handle_request(self, request):
-        return """
-            <h1>Non Interactive View</h1>
-            <a href="/">Home</a>
-        """
+        return HTML(
+            H1('AutoComplete'),
+            AutoCompleteInput(completer=self.complete),
+        )
 
 
 app.run(port=8080)
