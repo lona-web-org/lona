@@ -32,6 +32,8 @@ Lona is a web application framework, designed to write responsive web apps in
 
 **Reddit:** `reddit.com/r/lona_web_org/ <https://www.reddit.com/r/lona_web_org/>`_
 
+**Discord:** `discord.com/lona-web.org <https://discord.gg/WBf5PVACsj>`_
+
 Web is a solved problem in Python since ages, but traditionally Python handles
 only the server side. If you want to have client side interaction like
 click events or you want update content live, you have to write an additional
