@@ -23,6 +23,7 @@ class ClientPreCompiler:
             loader=FileSystemLoader(SOURCE_ROOT),
         )
 
+        self.path: str = os.path.join(self.tmp_dir.name, 'lona.js')
         self.compile()
 
     def get_settings(self) -> Dict[str, Any]:
@@ -51,7 +52,6 @@ class ClientPreCompiler:
         logger.debug('pre compiling client')
 
         try:
-            path = self._get_path()
             template = self.jinja2_env.get_template('lona.js')
 
             template_context = {
@@ -63,7 +63,7 @@ class ClientPreCompiler:
                 **template_context,
             )
 
-            with open(path, 'w+') as f:
+            with open(self.path, 'w+') as f:
                 f.write(file_content)
                 f.close()
 
@@ -74,7 +74,7 @@ class ClientPreCompiler:
         if self.server.settings.CLIENT_RECOMPILE:
             self.compile()
 
-        return self._get_path()
+        return self.path
 
     def __repr__(self):
-        return f'<ClientPreCompiler({self._get_path()})>'
+        return f'<ClientPreCompiler({self.path})>'
