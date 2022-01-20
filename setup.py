@@ -11,7 +11,7 @@ setup(
     version=VERSION_STRING,
     author='Florian Scherf',
     url='https://github.com/lona-web-org/lona',
-    author_email='f.scherf@pengutronix.de',
+    author_email='mail@florianscherf.de',
     license='MIT',
     packages=find_packages(),
     install_requires=[
