@@ -1,4 +1,5 @@
 from tempfile import TemporaryDirectory
+from typing import Dict, Any
 import logging
 import os
 
@@ -24,10 +25,7 @@ class ClientPreCompiler:
 
         self.compile()
 
-    def _get_path(self) -> str:
-        return os.path.join(self.tmp_dir.name, 'lona.js')
-
-    def get_settings(self):
+    def get_settings(self) -> Dict[str, Any]:
         settings = self.server.settings
 
         return {
@@ -36,7 +34,7 @@ class ClientPreCompiler:
             'PING_INTERVAL': settings.CLIENT_PING_INTERVAL,
         }
 
-    def get_enums(self):
+    def get_enums(self) -> Dict[str, Dict[str, Any]]:
         enums = {}
 
         for enum in ENUMS:
@@ -49,7 +47,7 @@ class ClientPreCompiler:
 
         return enums
 
-    def compile(self):
+    def compile(self) -> None:
         logger.debug('pre compiling client')
 
         try:
