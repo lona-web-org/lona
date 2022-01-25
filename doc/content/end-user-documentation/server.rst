@@ -53,6 +53,12 @@ Server.get_view_class()
     .. api-doc:: lona.server.LonaServer.get_view_class
 
 
+Server.get_views()
+~~~~~~~~~~~~~~~~~~
+
+    .. api-doc:: lona.server.LonaServer.get_views
+
+
 Server.reverse()
 ~~~~~~~~~~~~~~~~
 

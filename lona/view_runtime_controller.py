@@ -5,9 +5,9 @@ import logging
 
 from yarl import URL
 
+from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.protocol import encode_http_redirect, METHOD
 from lona.events.view_event import ViewEvent
-from lona.view_runtime import ViewRuntime
 from lona.exceptions import ServerStop
 from lona.view import LonaView
 
@@ -419,3 +419,22 @@ class ViewRuntimeController:
                 view_runtime,
                 view_event,
             )
+
+    # public api ##############################################################
+    def get_views(
+        self,
+        view_class: type[LonaView],
+    ) -> list[LonaView]:
+
+        views: list[LonaView] = []
+
+        for view_runtime in self.iter_view_runtimes():
+            if view_runtime.view_class is not view_class:
+                continue
+
+            if view_runtime.state == VIEW_RUNTIME_STATE.NOT_STARTED:
+                continue
+
+            views.append(view_runtime.view)
+
+        return views

@@ -779,6 +779,45 @@ class LonaServer:
             self._view_loader.load(view),
         )
 
+    def get_views(
+        self,
+        route: Route | None = None,
+        import_string: str | None = None,
+        url: str | None = None,
+        user: Any = None,
+    ) -> list[LonaView]:
+
+        """
+        Returns a list of all running Lona views associated with the given
+        route, import string or url.
+
+        Only one argument to find the view can be set at a time. User can
+        always be set.
+
+        :route:          (lona.Route|none) Lona route associated with the view
+        :import_string:  (str|none) import string of the view
+        :url:            (str|none) URL to the view
+        :user:           (any) User that runs th view (optional)
+        """
+
+        view_class = self.get_view_class(
+            route=route,
+            import_string=import_string,
+            url=url,
+        )
+
+        views = cast(
+            list[LonaView],
+            self._view_runtime_controller.get_views(view_class=view_class),
+        )
+
+        if user:
+            for view in views.copy():
+                if view.request.user is not user:
+                    views.remove(view)
+
+        return views
+
     def reverse(
             self,
             route_name: str,
