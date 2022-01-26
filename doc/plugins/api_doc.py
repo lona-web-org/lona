@@ -44,7 +44,7 @@ class ApiDocDirective(Directive):
 
         # docstring
         doc_string = textwrap.indent(
-            textwrap.dedent(method.__doc__),
+            textwrap.dedent(method.__doc__ or ''),
             prefix='    ',
         )
 
