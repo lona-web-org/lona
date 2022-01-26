@@ -178,7 +178,11 @@ def lona_project_context(request, aiohttp_client, loop):
     return setup_lona_project_context
 
 
-def eventually(timeout: float = 5, interval: float = 1) -> Iterator[AsyncContextManager]:  # NOQA: LN001
+def eventually(
+        timeout: float = 5,
+        interval: float = 1,
+) -> Iterator[AsyncContextManager]:
+
     """
     Wait for expected state in async test.
 
