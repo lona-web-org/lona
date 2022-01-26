@@ -1,3 +1,4 @@
 -e../
 flamingo[live-server,pygments,thumbnails,sphinx-themes]==1.7
 beautifulsoup4
+pytest

@@ -27,6 +27,16 @@ class LonaContext:
     loop: AbstractEventLoop
 
     def make_url(self, path: str = '') -> str:
+        """
+        Takes a path and returns a full URL to the running test server.
+
+        This method is necessary because the Lona pytest plugin spins up a test
+        server that runs on an unprivileged random port, so URLs are not stable
+        between test runs.
+
+        :path: (str) path to to view
+        """
+
         return str(self.client.make_url(path))
 
     def debug_interactive(
