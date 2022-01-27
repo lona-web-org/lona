@@ -1,3 +1,6 @@
 [run]
 branch = True
 source = lona
+
+omit =
+    lona/__main__.py
