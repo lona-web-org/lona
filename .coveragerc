@@ -4,3 +4,4 @@ source = lona
 
 omit =
     lona/__main__.py
+    lona/default_routes.py
