@@ -83,9 +83,9 @@ class LonaApp:
             interactive: bool = True,
             http_pass_through: bool = False,
             frontend_view: None | str | LonaView = None,
-    ) -> Callable[[type[LonaView]], None]:
+    ) -> Callable[[type[LonaView]], type[LonaView]]:
 
-        def decorator(view_class: type[LonaView]) -> None:
+        def decorator(view_class: type[LonaView]) -> type[LonaView]:
             self.routes.append(
                 Route(
                     raw_pattern=raw_pattern,
@@ -96,6 +96,7 @@ class LonaApp:
                     frontend_view=frontend_view,
                 ),
             )
+            return view_class
 
         return decorator
 
