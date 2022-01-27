@@ -978,7 +978,7 @@ has to be a dict.
 
 When a event is send using ``LonaView.fire_view_event()`` it is send to every
 object of the same view class. To send events to multiple view classes
-``Server.fire_input_event()`` can be used. Incoming view events are getting
+``Server.fire_view_event()`` can be used. Incoming view events are getting
 handled by ``LonaView.on_view_event()``.
 
 View event handler can return

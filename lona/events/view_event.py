@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from typing_extensions import TYPE_CHECKING
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from lona.view import LonaView
 
 

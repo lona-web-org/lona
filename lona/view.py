@@ -15,7 +15,7 @@ from lona.connection import Connection
 from lona.request import Request
 
 # avoid import cycles
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from lona.events.view_event import ViewEvent
     from lona.server import LonaServer
 

@@ -11,7 +11,7 @@ from lona.imports import get_all_subclasses, get_file
 from lona.html.abstract_node import AbstractNode
 
 # avoid import cycles
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from lona.server import LonaServer
 
 

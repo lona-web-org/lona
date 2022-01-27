@@ -1,4 +1,5 @@
 from tempfile import TemporaryDirectory
+from typing import Dict, Any
 import logging
 import os
 
@@ -22,12 +23,10 @@ class ClientPreCompiler:
             loader=FileSystemLoader(SOURCE_ROOT),
         )
 
+        self.path: str = os.path.join(self.tmp_dir.name, 'lona.js')
         self.compile()
 
-    def _get_path(self) -> str:
-        return os.path.join(self.tmp_dir.name, 'lona.js')
-
-    def get_settings(self):
+    def get_settings(self) -> Dict[str, Any]:
         settings = self.server.settings
 
         return {
@@ -36,7 +35,7 @@ class ClientPreCompiler:
             'PING_INTERVAL': settings.CLIENT_PING_INTERVAL,
         }
 
-    def get_enums(self):
+    def get_enums(self) -> Dict[str, Dict[str, Any]]:
         enums = {}
 
         for enum in ENUMS:
@@ -49,11 +48,10 @@ class ClientPreCompiler:
 
         return enums
 
-    def compile(self):
+    def compile(self) -> None:
         logger.debug('pre compiling client')
 
         try:
-            path = self._get_path()
             template = self.jinja2_env.get_template('lona.js')
 
             template_context = {
@@ -65,18 +63,18 @@ class ClientPreCompiler:
                 **template_context,
             )
 
-            with open(path, 'w+') as f:
+            with open(self.path, 'w+') as f:
                 f.write(file_content)
                 f.close()
 
-        except Exception:
+        except Exception:  # pragma: no cover
             logger.exception('exception raised while pre compiling js client')
 
     def resolve(self) -> str:
         if self.server.settings.CLIENT_RECOMPILE:
             self.compile()
 
-        return self._get_path()
+        return self.path
 
     def __repr__(self):
-        return f'<ClientPreCompiler({self._get_path()})>'
+        return f'<ClientPreCompiler({self.path})>'  # pragma: no cover
