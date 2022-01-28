@@ -32,26 +32,12 @@ Lona.register_widget_class = function(widget_name, javascript_class) {
     this.widget_classes[widget_name] = javascript_class;
 };
 
-// job-queue.js
-{% include 'job-queue.js' %}
+{{ settings.DEBUG }}
 
-// window-shim.js
-{% include 'window-shim.js' %}
+{% if not DEBUG -%}
+{% for source_file in source_files -%}
+// {{ source_file }}
+{% include source_file %}
 
-// dom-renderer.js
-{% include 'dom-renderer.js' %}
-
-// dom-updater.js
-{% include 'dom-updater.js' %}
-
-// widget-data-updater.js
-{% include 'widget-data-updater.js' %}
-
-// input-events.js
-{% include 'input-events.js' %}
-
-// window.js
-{% include 'window.js' %}
-
-// context.js
-{% include 'context.js' %}
+{% endfor %}
+{%- endif %}

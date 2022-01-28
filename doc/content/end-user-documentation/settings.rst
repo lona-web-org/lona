@@ -117,17 +117,13 @@ Static Files
     :name: STATIC_FILES_DISABLED
     :path: lona.default_settings.STATIC_FILES_DISABLED
 
-.. setting::
-    :name: STATIC_FILES_CLIENT_URL
-    :path: lona.default_settings.STATIC_FILES_CLIENT_URL
-
 
 Client
 ------
 
 .. setting::
-    :name: CLIENT_RECOMPILE
-    :path: lona.default_settings.CLIENT_RECOMPILE
+    :name: CLIENT_DEBUG
+    :path: lona.default_settings.CLIENT_DEBUG
 
 .. setting::
     :name: CLIENT_VIEW_START_TIMEOUT

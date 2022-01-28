@@ -46,13 +46,16 @@ Lona Server Command Line Options
 Lona Client
 -----------
 
-CLIENT_RECOMPILE
-~~~~~~~~~~~~~~~~
+CLIENT_DEBUG
+~~~~~~~~~~~~
 
 By default the Lona client and all its discovered modules get compiled once at
 startup. To recompile on every request you can set
-``settings.CLIENT_RECOMPILE`` to ``True`` or use ``-O CLIENT_RECOMPILE=True``
+``settings.CLIENT_DEBUG`` to ``True`` or use ``-O CLIENT_DEBUG=True``
 from the command line.
+
+When ``settings.CLIENT_DEBUG`` is set, Lona does not merge the clients source
+files together, to make Chrome Inspector work as expected.
 
 
 TEST_VIEW_START_TIMEOUT
