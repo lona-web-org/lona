@@ -6,7 +6,7 @@ Changelog
 =========
 
 
-.. changelog-header:: 1.9 (2022-01-29)
+.. changelog-header:: 1.9 (2022-01-28)
 
 
 Changes
