@@ -10,5 +10,5 @@ except ImportError as e:  # pragma: no cover
     if e.name != 'typing_extensions':
         raise
 
-VERSION = (1, 8, 5)
+VERSION = (1, 9)
 VERSION_STRING = '.'.join(str(i) for i in VERSION)

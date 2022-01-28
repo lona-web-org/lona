@@ -56,6 +56,10 @@ Server.get_view_class()
 Server.get_views()
 ~~~~~~~~~~~~~~~~~~
 
+    .. note::
+
+        Added in 1.9
+
     .. api-doc:: lona.server.LonaServer.get_views
 
 

@@ -5,6 +5,73 @@ search_index_weight: -10
 Changelog
 =========
 
+
+.. changelog-header:: 1.9 (2022-01-29)
+
+
+Changes
+~~~~~~~
+
+* Input events
+
+  * ``FOCUS`` and ``BLUR`` were added
+
+* Server
+
+  * ``LonaServer.project_root`` was added
+  * ``LonaServer.template_dirs`` was added
+  * ``LonaServer.static_dirs`` was added
+  * ``LonaServer.get_views`` was added
+
+* Testing
+
+  * Pytest based testing was added
+
+
+Bugfixes
+~~~~~~~~
+
+
+* Packaging
+
+  * Import errors during installation were fixed
+
+    * Previously an import error stating that ``typing-extensions`` is not
+      installed could occur while installing the Lona package
+
+* HTML
+
+  * Quoting in Python representations were fixed
+
+    * Previously representations looked like this:
+      ``<input data-lona-node-id="1" type=&quot;checkbox&quot; />``
+
+* Scripts
+
+  * Return value of ``app.route`` decorator was fixed
+
+    * Previously the decorator returned nothing which overwrote the given
+      view class with ``None``
+
+
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+* Server
+
+  * ``LonaServer.websockets`` is a private attribute now
+  * ``LonaServer.templating_engine`` is a private attribute now
+  * ``LonaServer.router`` is a private attribute now
+  * ``LonaServer.middleware_controller`` is a private attribute now
+  * ``LonaServer.view_loader`` is a private attribute now
+  * ``LonaServer.response_parser`` is a private attribute now
+  * ``LonaServer.view_runtime_controller`` is a private attribute now
+  * ``LonaServer.client_pre_compiler`` is a private attribute now
+  * ``LonaServer.static_file_loader`` is a private attribute now
+  * ``LonaServer.settings_paths`` is a read only property now
+
+
 .. changelog-header:: 1.8.5 (2021-12-15)
 
 

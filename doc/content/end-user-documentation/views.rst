@@ -687,6 +687,10 @@ CHANGE
 FOCUS
 `````
 
+.. note::
+
+    Added in 1.9
+
 .. code-block:: python
 
     from lona.html import HTML, TextInput, FOCUS
@@ -708,6 +712,10 @@ FOCUS
 
 BLUR
 ````
+
+.. note::
+
+        Added in 1.9
 
 .. code-block:: python
 
@@ -1067,6 +1075,10 @@ LonaView.await_change\(\*nodes, html=None\)
 LonaView.await_focus\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    .. note::
+
+        Added in 1.9
+
     Returns the next incoming focus event.
 
     When ``nodes`` is set, the next input event issued by one of the given
@@ -1078,6 +1090,10 @@ LonaView.await_focus\(\*nodes, html=None\)
 
 LonaView.await_blur\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        Added in 1.9
 
     Returns the next incoming blur event.
 

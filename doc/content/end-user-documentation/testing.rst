@@ -3,6 +3,10 @@
 Testing
 =======
 
+.. note::
+
+    Testing is officially supported since 1.9
+
 For testing Lona comes with a `pytest <http://docs.pytest.org>`_ plugin, based
 on pytest-aiohttp. The plugin contains two fixtures:
 `lona_app_context <#lona-app-context-example>`_ and
