@@ -133,15 +133,24 @@ class LonaView:
 
         with self._view_runtime.document.lock:
             html = html or self._view_runtime.document.html
-            data = self._view_runtime.document.apply(html)
 
-            if data:
-                self._view_runtime.send_data(data=data, title=title)
+            title, data_type, data = self._view_runtime.document.apply(
+                title=title,
+                html=html,
+            )
+
+            if data_type and data:
+                self._view_runtime.send_data(
+                    title=title,
+                    data=[data_type, data],
+                )
 
     def set_title(self, title: str) -> None:
         self._assert_not_main_thread()
         self._assert_view_is_interactive()
         self._assert_view_is_running()
+
+        title, _, _ = self._view_runtime.document.apply(title=title)
 
         with self._view_runtime.document.lock:
             self._view_runtime.send_data(title=title)

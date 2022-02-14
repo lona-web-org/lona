@@ -7,8 +7,9 @@ from lona.protocol import DATA_TYPE
 
 class Document:
     def __init__(self):
-        self._lock = RLock()
+        self.title = ''
         self.html = None
+        self._lock = RLock()
         self._patch_stack = PatchStack()
 
     @property
@@ -51,21 +52,29 @@ class Document:
         if not self.html:
             return self.apply('')
 
-        return DATA_TYPE.HTML_TREE, self.html._serialize()
+        # HTML string
+        if isinstance(self.html, str):
+            return self.title, DATA_TYPE.HTML, self.html
 
-    def apply(self, html):
-        if isinstance(html, str) and html is self.html:
-            return
+        # HTML tree
+        return self.title, DATA_TYPE.HTML_TREE, self.html._serialize()
+
+    def apply(self, title='', html=None):
+        if title:
+            self.title = title
+
+        if html is None:
+            return self.title, None, None
 
         # HTML update
         elif html is self.html:
             if not self._patch_stack.has_patches():
-                return
+                return self.title, None, None
 
             patches = self._patch_stack.get_patches()
             self._patch_stack.clear()
 
-            return DATA_TYPE.HTML_UPDATE, patches
+            return self.title, DATA_TYPE.HTML_UPDATE, patches
 
         # HTML
         else:
@@ -80,9 +89,9 @@ class Document:
 
                 self.html._set_document(self)
 
-                return self.serialize()
+                return self.title, DATA_TYPE.HTML_TREE, self.html._serialize()
 
             # HTML string
             self.html = str(html)
 
-            return DATA_TYPE.HTML, html
+            return self.title, DATA_TYPE.HTML, html
