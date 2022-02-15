@@ -433,30 +433,23 @@ class ViewRuntime:
         )
 
     # connection management ###################################################
-    def add_connection(self, connection, window_id, url):
+    def add_connection(
+            self,
+            connection,
+            window_id,
+            url,
+            send_view_start=False,
+    ):
+
         with self.document.lock:
             self.connections[connection] = (window_id, url)
 
-            title, data_type, data = self.document.serialize()
-
-            if not data_type or not data:
-                return
-
-            self.send_data(
-                title=title,
-                data=[data_type, data],
-                connections={connection: (window_id, url)},
-            )
-
-    def reconnect_connection(self, connection, window_id, url):
-        with self.document.lock:
-            self.connections[connection] = (window_id, url)
-
-            self.send_view_start(
-                connections={
-                    connection: (window_id, url),
-                },
-            )
+            if send_view_start:
+                self.send_view_start(
+                    connections={
+                        connection: (window_id, url),
+                    },
+                )
 
             title, data_type, data = self.document.serialize()
 
