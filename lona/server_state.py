@@ -44,7 +44,7 @@ class Overlay:
 
     def __bool__(self):
         with self.lock:
-            return self._data.__bool__()
+            return bool(self._data)
 
     def __dir__(self):
         with self.lock:
