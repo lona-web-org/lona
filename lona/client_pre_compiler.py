@@ -13,14 +13,14 @@ from lona._json import dumps
 SOURCE_ROOT = os.path.join(os.path.dirname(__file__), 'client')
 
 SOURCE_FILES = [
-    'lona/job-queue.js',
-    'lona/window-shim.js',
-    'lona/dom-renderer.js',
-    'lona/dom-updater.js',
-    'lona/widget-data-updater.js',
-    'lona/input-events.js',
-    'lona/window.js',
-    'lona/context.js',
+    '_lona/job-queue.js',
+    '_lona/window-shim.js',
+    '_lona/dom-renderer.js',
+    '_lona/dom-updater.js',
+    '_lona/widget-data-updater.js',
+    '_lona/input-events.js',
+    '_lona/window.js',
+    '_lona/context.js',
 ]
 
 logger = logging.getLogger('lona.client_pre_compiler')
@@ -33,7 +33,7 @@ class ClientPreCompiler:
         # setup temp dir
         self.tmp_dir = TemporaryDirectory()
 
-        os.makedirs(os.path.join(self.tmp_dir.name, 'lona'))
+        os.makedirs(os.path.join(self.tmp_dir.name, '_lona'))
 
         # setup templating environment
         self.jinja2_env = Environment(
@@ -72,12 +72,12 @@ class ClientPreCompiler:
     def get_source_files(self) -> list[str]:
         if self.server.settings.CLIENT_DEBUG:
             return [
-                'lona/lona.js',
+                '_lona/lona.js',
                 *SOURCE_FILES,
             ]
 
         return [
-            'lona/lona.js',
+            '_lona/lona.js',
         ]
 
     def compile(self) -> None:
