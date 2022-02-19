@@ -7,8 +7,8 @@ import logging
 import os
 
 from lona.static_files import StyleSheet, StaticFile, Script
-from lona.imports import get_all_subclasses, get_file
 from lona.html.abstract_node import AbstractNode
+from lona.imports import get_file
 
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
@@ -69,7 +69,7 @@ class StaticFileLoader:
 
     def _iter_all_declarations(self) -> Iterator[tuple[type, Iterator[StaticFile]]]:  # NOQA: LN001
         logger.debug('discover node classes')
-        node_classes = [AbstractNode] + list(get_all_subclasses(AbstractNode))
+        node_classes = AbstractNode.get_all_node_classes()
         logger.debug('%d node classes discovered', len(node_classes))
 
         for node_class in node_classes:
