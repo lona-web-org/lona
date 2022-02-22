@@ -24,6 +24,14 @@ class Namespace:
     def reverse(self):
         return self.server.reverse
 
+    @property
+    def settings(self):
+        return self.server.settings
+
+    @property
+    def state(self):
+        return self.server.state
+
     def load_stylesheets(self):
         return self.server._static_file_loader.style_tags_html
 
