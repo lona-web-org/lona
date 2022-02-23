@@ -20,6 +20,18 @@ class Namespace:
         self.server = server
         self.templating_engine = templating_engine
 
+    @property
+    def reverse(self):
+        return self.server.reverse
+
+    @property
+    def settings(self):
+        return self.server.settings
+
+    @property
+    def state(self):
+        return self.server.state
+
     def load_stylesheets(self):
         return self.server._static_file_loader.style_tags_html
 
@@ -28,9 +40,6 @@ class Namespace:
 
     def _import(self, *args, **kwargs):
         return self.server.acquire(*args, **kwargs)
-
-    def resolve_url(self, *args, **kwargs):
-        return self.server._router.reverse(*args, **kwargs)
 
     def load_static_file(self, path):
         logger.debug('resolving static file path %s', path)
