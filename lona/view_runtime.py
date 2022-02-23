@@ -433,36 +433,31 @@ class ViewRuntime:
         )
 
     # connection management ###################################################
-    def add_connection(self, connection, window_id, url):
+    def add_connection(
+            self,
+            connection,
+            window_id,
+            url,
+            send_view_start=False,
+    ):
+
         with self.document.lock:
             self.connections[connection] = (window_id, url)
 
-            data_type, data = self.document.serialize()
+            if send_view_start:
+                self.send_view_start(
+                    connections={
+                        connection: (window_id, url),
+                    },
+                )
 
-            if not data:
+            title, data_type, data = self.document.serialize()
+
+            if not data_type or not data:
                 return
 
             self.send_data(
-                data=[data_type, data],
-                connections={connection: (window_id, url)},
-            )
-
-    def reconnect_connection(self, connection, window_id, url):
-        with self.document.lock:
-            self.connections[connection] = (window_id, url)
-
-            self.send_view_start(
-                connections={
-                    connection: (window_id, url),
-                },
-            )
-
-            data_type, data = self.document.serialize()
-
-            if not data:
-                return
-
-            self.send_data(
+                title=title,
                 data=[data_type, data],
                 connections={connection: (window_id, url)},
             )
@@ -623,8 +618,15 @@ class ViewRuntime:
 
         elif response_dict['text']:
             with self.document.lock:
-                data = self.document.apply(response_dict['text'])
-                self.send_data(data=data, connections=connections)
+                title, data_type, data = self.document.apply(
+                    html=response_dict['text'],
+                )
+
+                self.send_data(
+                    title=title,
+                    data=[data_type, data],
+                    connections=connections,
+                )
 
         return response_dict
 
@@ -662,10 +664,15 @@ class ViewRuntime:
 
         def send_html_patches():
             with self.document.lock:
-                data = self.document.apply(self.document.html)
+                title, data_type, data = self.document.apply(
+                    self.document.html,
+                )
 
-                if data:
-                    self.send_data(data=data)
+                if data_type and data:
+                    self.send_data(
+                        title=title,
+                        data=[data_type, data],
+                    )
 
         def log_handled_message():
             input_events_logger.debug(

@@ -195,10 +195,11 @@ class ViewRuntimeController:
             if running_view_runtime and not running_view_runtime.is_stopped:
                 views_logger.debug('reconnecting to %r', running_view_runtime)
 
-                running_view_runtime.reconnect_connection(
+                running_view_runtime.add_connection(
                     connection=connection,
                     window_id=window_id,
                     url=url,
+                    send_view_start=True,
                 )
 
                 views_logger.debug('message handled')

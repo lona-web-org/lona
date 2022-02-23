@@ -24,12 +24,25 @@ class DummyDocument:
 
 class AbstractNode:
     STATIC_FILES: list[StaticFile] = []
+    _subclasses: list[type] = []
+
+    def __init_subclass__(cls, *args, **kwargs):
+        super().__init_subclass__(*args, **kwargs)
+
+        cls._subclasses.append(cls)
 
     def __copy__(self, *args, **kwargs):
         raise RuntimeError('copy is not supported')
 
     def __deepcopy__(self, memo):
         raise RuntimeError('deepcopy is not supported')
+
+    @staticmethod
+    def get_all_node_classes():
+        return [
+            AbstractNode,
+            *AbstractNode._subclasses,
+        ]
 
     # id ######################################################################
     @property

@@ -7,8 +7,8 @@ import logging
 import os
 
 from lona.static_files import StyleSheet, StaticFile, Script
-from lona.imports import get_all_subclasses, get_file
 from lona.html.abstract_node import AbstractNode
+from lona.imports import get_file
 
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
@@ -25,6 +25,7 @@ class StaticFileLoader:
         self.static_dirs: list[str] = [
             *self.server.settings.STATIC_DIRS,
             *self.server.settings.CORE_STATIC_DIRS,
+            self.server._client_pre_compiler.tmp_dir.name,
         ]
 
         # resolving potential relative paths
@@ -58,6 +59,9 @@ class StaticFileLoader:
         self.script_tags_html: str = self.server.render_template(
             self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
+                'client_source_files':
+                    self.server._client_pre_compiler.get_source_files(),
+
                 'scripts': [i for i in self.scripts
                             if i.enabled and i.link],
             },
@@ -65,7 +69,7 @@ class StaticFileLoader:
 
     def _iter_all_declarations(self) -> Iterator[tuple[type, Iterator[StaticFile]]]:  # NOQA: LN001
         logger.debug('discover node classes')
-        node_classes = [AbstractNode] + list(get_all_subclasses(AbstractNode))
+        node_classes = AbstractNode.get_all_node_classes()
         logger.debug('%d node classes discovered', len(node_classes))
 
         for node_class in node_classes:
@@ -210,15 +214,12 @@ class StaticFileLoader:
             rel_path = rel_path[1:]
 
         # javascript client
-        client_url = self.server.settings.STATIC_FILES_CLIENT_URL
+        logger.debug('trying Lona Javascript client')
 
-        if client_url.startswith('/'):
-            client_url = client_url[1:]
+        abs_path = self.server._client_pre_compiler.resolve_path(rel_path)
 
-        if rel_path == client_url:
-            logger.debug('returning javascript client')
-
-            return self.server._client_pre_compiler.resolve()
+        if abs_path:
+            return abs_path
 
         # searching in static dirs
         for static_dir in self.static_dirs:
