@@ -790,3 +790,19 @@ class TestNumberInput:
         node = span.closest('div#foo')
 
         assert node is html[0]
+
+    def test_state(self):
+        div = Div()
+
+        assert hasattr(div, 'state')
+        assert hasattr(div.state, 'lock')
+
+        assert div.state == {}
+
+        div.state['foo'] = 'bar'
+
+        assert div.state == {'foo': 'bar'}
+
+        div.state.clear()
+
+        assert div.state == {}

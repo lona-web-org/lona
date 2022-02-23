@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from lona.unique_ids import generate_unique_id
+from lona.server_state import ServerState
 from lona.static_files import StaticFile
 from lona.html.selector import Selector
 
@@ -101,6 +102,17 @@ class AbstractNode:
             return DummyLock()
 
         return document.lock
+
+    # state ###################################################################
+    @property
+    def state(self):
+        if not hasattr(self, '_state'):
+            self._state = ServerState(
+                initial_data={},
+                node=self,
+            )
+
+        return self._state
 
     # input events ############################################################
     def handle_change(self, input_event):

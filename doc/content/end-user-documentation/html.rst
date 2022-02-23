@@ -382,6 +382,56 @@ and release it after writing.
                 )
 
 
+State
+~~~~~
+
+Lona nodes can store state that is not send to the client in
+``node.state``. This data store can be used to transport state between
+scopes, for example when handling input events.
+
+``node.state`` is thread safe and is coupled with ``node.lock``.
+
+.. code-block:: python
+
+    DATA = [
+        ('Alice', 'Alison', 1, ),
+        ('Bob', 'Brown', 2, ),
+    ]
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            # show all entries in DATA
+            html = HTML(
+                Table(
+                    Tr(
+                        Th('First Name'),
+                        Th('Last Name'),
+                    )
+                )
+            )
+
+            for first_name, last_name, secret_id in DATA:
+                tr = Tr(
+                    Td(first_name),
+                    Td(last_name),
+                    events=[CLICK],
+                )
+
+                tr.handle_click = self.handle_click_on_tr
+
+                # set secret id
+                tr.state['secret_id'] = secret_id
+
+            self.show(html)
+
+        def handle_click_on_tr(self, input_event):
+            # retrieve secret id
+            secret_id = input_event.node.state['secret_id']
+
+            # remove entry by secret_id
+            DATABASE.remove_user(secret_id)
+
+
 Inputs
 ~~~~~~
 
