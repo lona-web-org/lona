@@ -118,29 +118,32 @@ class Router:
         )
 
     # caches ##################################################################
+    # name
     def resize_name_cache(self, max_size):
         self._name_lru_cache = lru_cache(max_size)(self._get_route)
-
-    def resize_resolve_cache(self, max_size):
-        self._resolve_lru_cache = lru_cache(max_size)(self._resolve)
-
-    def resize_reverse_cache(self, max_size):
-        self._reverse_lru_cache = lru_cache(max_size)(self._reverse)
 
     def get_name_cache_info(self):
         return self._name_lru_cache.cache_info()
 
-    def get_resolve_cache_info(self):
-        return self._resolve_lru_cache.cache_info()
-
-    def get_reverse_cache_info(self):
-        return self._reverse_lru_cache.cache_info()
-
     def clear_name_cache_info(self):
         return self._name_lru_cache.cache_clear()
 
+    # resolve
+    def resize_resolve_cache(self, max_size):
+        self._resolve_lru_cache = lru_cache(max_size)(self._resolve)
+
+    def get_resolve_cache_info(self):
+        return self._resolve_lru_cache.cache_info()
+
     def clear_resolve_cache_info(self):
         return self._resolve_lru_cache.cache_clear()
+
+    # reverse
+    def resize_reverse_cache(self, max_size):
+        self._reverse_lru_cache = lru_cache(max_size)(self._reverse)
+
+    def get_reverse_cache_info(self):
+        return self._reverse_lru_cache.cache_info()
 
     def clear_reverse_cache_info(self):
         return self._reverse_lru_cache.cache_clear()
