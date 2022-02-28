@@ -787,12 +787,12 @@ class LonaServer:
         )
 
     def get_views(
-        self,
-        route_name: str | None = None,
-        route: Route | None = None,
-        import_string: str | None = None,
-        url: str | None = None,
-        user: Any = None,
+            self,
+            route_name: str | None = None,
+            route: Route | None = None,
+            import_string: str | None = None,
+            url: str | None = None,
+            user: Any = None,
     ) -> list[LonaView]:
 
         """
