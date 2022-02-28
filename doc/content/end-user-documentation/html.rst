@@ -328,7 +328,7 @@ Extending Nodes
 Locking
 ~~~~~~~
 
-Lona is multithreaded and up to three views can be involved at the same time
+Lona is multithreaded and up to three threads can be involved at the same time
 to run a view (more information:
 `Resource management </end-user-documentation/views.html#resource-management>`_)
 
