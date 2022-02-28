@@ -105,6 +105,10 @@ class Router:
     def __init__(self):
         self.routes = []
 
+        self.resize_name_cache(
+            default_settings.ROUTING_NAME_CACHE_MAX_SIZE,
+        )
+
         self.resize_resolve_cache(
             default_settings.ROUTING_RESOLVE_CACHE_MAX_SIZE,
         )
@@ -114,17 +118,26 @@ class Router:
         )
 
     # caches ##################################################################
+    def resize_name_cache(self, max_size):
+        self._name_lru_cache = lru_cache(max_size)(self._get_route)
+
     def resize_resolve_cache(self, max_size):
         self._resolve_lru_cache = lru_cache(max_size)(self._resolve)
 
     def resize_reverse_cache(self, max_size):
         self._reverse_lru_cache = lru_cache(max_size)(self._reverse)
 
+    def get_name_cache_info(self):
+        return self._name_lru_cache.cache_info()
+
     def get_resolve_cache_info(self):
         return self._resolve_lru_cache.cache_info()
 
     def get_reverse_cache_info(self):
         return self._reverse_lru_cache.cache_info()
+
+    def clear_name_cache_info(self):
+        return self._name_lru_cache.cache_clear()
 
     def clear_resolve_cache_info(self):
         return self._resolve_lru_cache.cache_clear()
@@ -148,6 +161,14 @@ class Router:
     def add_routes(self, *routes):
         for route in routes:
             self.add_route(route)
+
+    def _get_route(self, name):
+        for route in self.routes:
+            if route.name == name:
+                return route
+
+    def get_route(self, *args, **kwargs):
+        return self._name_lru_cache(*args, **kwargs)
 
     # resolve #################################################################
     def _resolve(self, path):
