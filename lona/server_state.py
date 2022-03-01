@@ -58,6 +58,9 @@ class Overlay:
         with self.lock:
             return self._data.__str__()
 
+    def __eq__(self, other):
+        return self._data == other
+
     def __repr__(self):
         with self.lock:
             return self._data.__repr__()
