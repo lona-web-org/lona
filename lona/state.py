@@ -66,7 +66,7 @@ class Overlay:
             return self._data.__repr__()
 
 
-class ServerState(Overlay):
+class State(Overlay):
     def __init__(self, initial_data=None, node=None):
         self._data = initial_data or {}
         self._node = node

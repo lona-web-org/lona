@@ -23,7 +23,6 @@ from lona.static_file_loader import StaticFileLoader
 from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
-from lona.server_state import ServerState
 from lona.view_loader import ViewLoader
 from lona.routing import Router, Route
 from lona.connection import Connection
@@ -31,6 +30,7 @@ from lona.settings import Settings
 from lona.request import Request
 from lona.protocol import METHOD
 from lona.view import LonaView
+from lona.state import State
 
 DEFAULT_SETTINGS = os.path.join(
     os.path.dirname(__file__),
@@ -100,10 +100,10 @@ class LonaServer:
 
         self._templating_engine = TemplatingEngine(self)
 
-        # setup server state
-        server_logger.debug('setup server state')
+        # setup state
+        server_logger.debug('setup state')
 
-        self._state = ServerState(initial_data={})
+        self._state = State(initial_data={})
 
         # setup routing
         server_logger.debug('setup routing')
