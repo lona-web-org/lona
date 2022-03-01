@@ -64,11 +64,21 @@ class Overlay:
 
 
 class ServerState(Overlay):
-    def __init__(self, initial_data=None):
-        self._server_state = self
+    def __init__(self, initial_data=None, node=None):
         self._data = initial_data or {}
-        self._lock = RLock()
+        self._node = node
+
+        self._server_state = self
+
+        if self._node:
+            self._lock = None
+
+        else:
+            self._lock = RLock()
 
     @property
     def lock(self):
+        if self._node:
+            return self._node.lock
+
         return self._lock
