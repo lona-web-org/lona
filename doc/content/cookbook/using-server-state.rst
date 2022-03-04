@@ -21,3 +21,12 @@ accesses in a transaction, ``server.state.lock`` can be used explicit.
                 self.server.state['bar'] = 'bar'
 
             print(self.server.state['foo'])
+
+The ``server.state`` can be initialized in the settings using ``INITIAL_SERVER_STATE``:
+
+.. code-block:: python
+
+    # settings.py
+    INITITAL_SERVER_STATE = {
+        "myvalue": 42,
+    }
