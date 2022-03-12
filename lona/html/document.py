@@ -50,7 +50,7 @@ class Document:
 
     def serialize(self):
         if not self.html:
-            return self.apply('')
+            return self.apply(html='')
 
         # HTML string
         if isinstance(self.html, str):
