@@ -6,7 +6,7 @@ import runpy
 
 
 def acquire(import_string, ignore_import_cache=False):
-    # scripts
+    # script attribute
     if '::' in import_string:
         script, attribute_name = import_string.split('::')
         attributes = runpy.run_path(script, run_name=script)
@@ -18,7 +18,7 @@ def acquire(import_string, ignore_import_cache=False):
 
         return attributes[attribute_name]
 
-    # modules
+    # module attribute
     elif '.' in import_string:
         module_name, attribute_name = import_string.rsplit('.', 1)
         module = importlib.import_module(module_name)
@@ -36,8 +36,8 @@ def acquire(import_string, ignore_import_cache=False):
 
         return getattr(module, attribute_name)
 
-    else:
-        raise TypeError('invalid import string')
+    # module
+    return importlib.import_module(import_string)
 
 
 def get_file(obj):
