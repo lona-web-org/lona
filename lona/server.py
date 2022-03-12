@@ -23,7 +23,6 @@ from lona.static_file_loader import StaticFileLoader
 from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
-from lona.server_state import ServerState
 from lona.view_loader import ViewLoader
 from lona.routing import Router, Route
 from lona.connection import Connection
@@ -31,6 +30,7 @@ from lona.settings import Settings
 from lona.request import Request
 from lona.protocol import METHOD
 from lona.view import LonaView
+from lona.state import State
 
 DEFAULT_SETTINGS = os.path.join(
     os.path.dirname(__file__),
@@ -100,10 +100,10 @@ class LonaServer:
 
         self._templating_engine = TemplatingEngine(self)
 
-        # setup server state
-        server_logger.debug('setup server state')
+        # setup state
+        server_logger.debug('setup state')
 
-        self._state = ServerState(initial_data={})
+        self._state = State(initial_data={})
 
         # setup routing
         server_logger.debug('setup routing')
@@ -742,6 +742,7 @@ class LonaServer:
 
     def get_view_class(
             self,
+            route_name: str | None = None,
             route: Route | None = None,
             import_string: str | None = None,
             url: str | None = None,
@@ -749,15 +750,21 @@ class LonaServer:
 
         """
         Returns the lona.view.LonaView subclass associated with the given
-        route, import string or url.
+        route_name, route, import string or url.
 
         Only one argument can be set at a time.
         """
 
-        args = [bool(route), bool(import_string), bool(url)]
+        args = [bool(route_name), bool(route), bool(import_string), bool(url)]
 
         if reduce(operator.xor, args, True):
             raise ValueError('too many or too few arguments given')
+
+        if route_name:
+            route = self._router.get_route(name=route_name)
+
+            if not route:
+                return None
 
         if route:
             view = route.view
@@ -780,16 +787,17 @@ class LonaServer:
         )
 
     def get_views(
-        self,
-        route: Route | None = None,
-        import_string: str | None = None,
-        url: str | None = None,
-        user: Any = None,
+            self,
+            route_name: str | None = None,
+            route: Route | None = None,
+            import_string: str | None = None,
+            url: str | None = None,
+            user: Any = None,
     ) -> list[LonaView]:
 
         """
         Returns a list of all running Lona views associated with the given
-        route, import string or url.
+        route_name, route, import string or url.
 
         Only one argument to find the view can be set at a time. User can
         always be set.
@@ -801,6 +809,7 @@ class LonaServer:
         """
 
         view_class = self.get_view_class(
+            route_name=route_name,
             route=route,
             import_string=import_string,
             url=url,
