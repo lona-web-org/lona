@@ -665,7 +665,7 @@ class ViewRuntime:
         def send_html_patches():
             with self.document.lock:
                 title, data_type, data = self.document.apply(
-                    self.document.html,
+                    html=self.document.html,
                 )
 
                 if data_type and data:
