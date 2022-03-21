@@ -385,6 +385,10 @@ and release it after writing.
 State
 ~~~~~
 
+.. note::
+
+    Added in 1.10
+
 Lona nodes can store state that is not send to the client in
 ``node.state``. This data store can be used to transport state between
 scopes, for example when handling input events.

@@ -1,9 +1,92 @@
 toctree: False
 search_index_weight: -10
+is_template: False
 
 
 Changelog
 =========
+
+.. changelog-header:: 1.10 (2022-03-21)
+
+
+Changes
+~~~~~~~
+
+* Templating
+
+  * The shortcut ``Lona.settings`` to ``server.settings`` was added
+  * The shortcut ``Lona.state`` to ``server.state`` was added
+  * Support for top level imports like ``json`` was added
+
+    * Previously template imports like ``{% Lona.import('json') %}`` failed
+
+* Client
+
+  * Debug mode was added
+
+    * When ``settings.CLIENT_DEBUG`` is set to ``True`` Lona recompiles the
+      client on every request and serves all library files seperately to make
+      Chrome Inspector work as expected
+
+* Server State
+
+  * Support for equal comparisons was added
+
+    * Previously operations like ``server.state['foo'] == ['foo', 'bar']``
+      were not supported
+
+* HTML
+
+  * Add ``AbstractNode.state``
+
+* Server
+
+  * ``route_name`` argument was added to ``Server.get_view_class()``
+  * ``route_name`` argument was added to ``Server.get_views()``
+
+
+Bugfixes
+~~~~~~~~
+
+* Views
+
+  * Page titles on daemonized views were fixed
+
+    * Previously the the page title was send only once on view start and was
+      not resend when reconnecting to a view
+
+* Server State
+
+  * Boolean typecasts were fixed
+
+* HTML
+
+  * node static file discovery was fixed using
+    `PEP 487 <https://www.python.org/dev/peps/pep-0487/>`_
+
+    * Previously node static file discovery used ``__subclasses__()``. This
+      method sometimes failed unreproducible, while running the test suite in
+      CI. It seems this problem has something to do with multi-threading, which
+      gets used heavily in Lona.
+
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+* Templating
+
+  * ``Lona.resolve_url`` was renamed to ``Lona.reverse``
+
+    * This makes naming across Lona more consistent
+
+* Settings
+
+  * ``CLIENT_RECOMPILE`` was replaced with ``CLIENT_DEBUG``
+  * ``STATIC_FILES_CLIENT_URL`` was removed
+
+* Static Files
+
+  * Lona client files get served using the URL prefix ``_lona/`` now
 
 
 .. changelog-header:: 1.9 (2022-01-28)

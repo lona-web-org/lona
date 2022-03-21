@@ -46,6 +46,11 @@ Lona Server Command Line Options
 Lona Client
 -----------
 
+.. note::
+
+    Changed in in 1.10: ``settings.CLIENT_RECOMPILE`` was renamed to
+    ``settings.CLIENT_DEBUG``
+
 CLIENT_DEBUG
 ~~~~~~~~~~~~
 
