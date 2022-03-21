@@ -100,15 +100,13 @@ def collect_static(args):
             _cp(source, destination)
 
     # copy client
-    client_url = server.settings.STATIC_FILES_CLIENT_URL
+    for source_file in server._client_pre_compiler.get_source_files():
+        source = server._client_pre_compiler.resolve_path(source_file)
 
-    if client_url.startswith('/'):
-        client_url = client_url[1:]
+        destination = os.path.join(
+            args.destination,
+            source_file,
+        )
 
-    destination = os.path.join(
-        args.destination,
-        client_url,
-    )
-
-    _mkdir(os.path.dirname(destination))
-    _cp(server._client_pre_compiler.resolve(), destination)
+        _mkdir(os.path.dirname(destination))
+        _cp(source, destination)
