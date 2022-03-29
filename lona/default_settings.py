@@ -57,6 +57,7 @@ SESSIONS_KEY_RANDOM_LENGTH = 28
 # views
 CORE_FRONTEND_VIEW = 'lona.default_views.FrontendView'
 FRONTEND_VIEW = ''
+INITIAL_SERVER_STATE: dict = {}
 
 # error views
 CORE_ERROR_403_VIEW = 'lona.default_views.Error403View'

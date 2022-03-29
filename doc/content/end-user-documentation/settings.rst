@@ -170,6 +170,13 @@ Views
     :name: FRONTEND_VIEW
     :path: lona.default_settings.FRONTEND_VIEW
 
+.. setting::
+    :name: INITIAL_SERVER_STATE
+    :path: lona.default_settings.INITIAL_SERVER_STATE
+
+    This dict, if present, is copied to ``server.state``.
+    This is a convenient way to define or load server state on startup without
+    the need to write a specific middleware.
 
 Error Views
 -----------

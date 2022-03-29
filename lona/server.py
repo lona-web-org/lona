@@ -4,6 +4,7 @@ from typing import overload, Callable, TypeVar, cast, Any
 from concurrent.futures import Future
 from collections.abc import Awaitable
 from functools import reduce
+from copy import deepcopy
 import contextlib
 import operator
 import logging
@@ -102,8 +103,9 @@ class LonaServer:
 
         # setup state
         server_logger.debug('setup state')
-
-        self._state = State(initial_data={})
+        self._state = State(
+            initial_data=deepcopy(self.settings.INITIAL_SERVER_STATE),
+        )
 
         # setup routing
         server_logger.debug('setup routing')
