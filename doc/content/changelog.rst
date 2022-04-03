@@ -6,6 +6,17 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.10.1 (2022-04-03)
+
+
+Changes
+~~~~~~~
+
+* Server State
+
+  * Server State can pre set using ``settings.INITIAL_SERVER_STATE`` now
+
+
 .. changelog-header:: 1.10 (2022-03-21)
 
 
