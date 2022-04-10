@@ -4,8 +4,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._window_id = window_id;
     this._view_start_timeout = undefined;
 
-    this._job_queue = new Lona.JobQueue(this);
-
     this._input_event_handler = new Lona.LonaInputEventHandler(
         lona_context,
         this,
@@ -200,52 +198,50 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     this._show_html = function(html) {
         _this = this;
 
-        _this._job_queue.add(function() {
-            var message_type = html[0];
-            var data = html[1];
+        var message_type = html[0];
+        var data = html[1];
 
-            // HTML
-            if(message_type == Lona.protocol.DATA_TYPE.HTML) {
-                var selector = 'a,form,[data-lona-events]';
+        // HTML
+        if(message_type == Lona.protocol.DATA_TYPE.HTML) {
+            var selector = 'a,form,[data-lona-events]';
 
-                _this._root.innerHTML = data;
-                _this._clean_node_cache();
+            _this._root.innerHTML = data;
+            _this._clean_node_cache();
 
-                _this._root.querySelectorAll(selector).forEach(function(node) {
-                    _this._input_event_handler.patch_input_events(node);
-                });
+            _this._root.querySelectorAll(selector).forEach(function(node) {
+                _this._input_event_handler.patch_input_events(node);
+            });
 
-            // HTML tree
-            } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
-                _this._clear_node_cache();
+        // HTML tree
+        } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
+            _this._clear_node_cache();
 
-                var node_list = _this._dom_renderer._render_node(data)
+            var node_list = _this._dom_renderer._render_node(data)
 
-                _this._clear();
-                _this._dom_updater._apply_node_list(_this._root, node_list);
+            _this._clear();
+            _this._dom_updater._apply_node_list(_this._root, node_list);
 
-            // HTML update
-            } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {
-                _this._widgets_to_setup = [];
-                _this._widgets_to_update = [];
+        // HTML update
+        } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {
+            _this._widgets_to_setup = [];
+            _this._widgets_to_update = [];
 
-                data.forEach(function(patch) {
-                    var patch_type = patch[1];
+            data.forEach(function(patch) {
+                var patch_type = patch[1];
 
-                    if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
-                        _this._widget_data_updater._apply_patch(patch);
+                if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
+                    _this._widget_data_updater._apply_patch(patch);
 
-                    } else {;
-                        _this._dom_updater._apply_patch(patch);
+                } else {;
+                    _this._dom_updater._apply_patch(patch);
 
-                    };
+                };
 
-                });
-            };
+            });
+        };
 
-            _this._run_widget_hooks();
-            _this.lona_context._run_rendering_hooks(_this);
-        });
+        _this._run_widget_hooks();
+        _this.lona_context._run_rendering_hooks(_this);
     };
 
     // public api -------------------------------------------------------------
