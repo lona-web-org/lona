@@ -102,52 +102,50 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     this._clean_node_cache = function() {
-        var _this = this;
-
         // nodes
-        Object.keys(_this._nodes).forEach(function(key) {
-            var node = _this._nodes[key];
+        Object.keys(this._nodes).forEach(key => {
+            var node = this._nodes[key];
 
-            if(!_this._root.contains(node)) {
-                delete _this._nodes[key];
+            if(!this._root.contains(node)) {
+                delete this._nodes[key];
             };
         });
 
-        Object.keys(_this._widget_marker).forEach(function(key) {
-            var node = _this._widget_marker[key];
+        Object.keys(this._widget_marker).forEach(key => {
+            var node = this._widget_marker[key];
 
             // widget_marker
-            if(_this._root.contains(node)) {
+            if(this._root.contains(node)) {
                 return;
 
             };
 
-            delete _this._widget_marker[key];
+            delete this._widget_marker[key];
 
             // widget
-            if(key in _this._widgets) {
+            if(key in this._widgets) {
 
                 // run deconstructor
-                if(_this._widgets[key].deconstruct !== undefined) {
-                    _this._widgets[key].deconstruct();
+                if(this._widgets[key].deconstruct !== undefined) {
+                    this._widgets[key].deconstruct();
                 };
 
                 // remove widget
-                delete _this._widgets[key];
+                delete this._widgets[key];
 
                 // remove widget data
-                delete _this._widget_data[key];
+                delete this._widget_data[key];
 
                 // remove widget from _widgets_to_setup
-                if(_this._widgets_to_setup.indexOf(key) > -1) {
-                    _this._widgets_to_setup.splice(
-                     _this._widgets_to_setup.indexOf(key), 1);
+                if(this._widgets_to_setup.indexOf(key) > -1) {
+                    this._widgets_to_setup.splice(
+                        this._widgets_to_setup.indexOf(key), 1);
                 };
 
                 // remove widget from _widgets_to_update
-                if(_this._widgets_to_update.indexOf(key) > -1) {
-                    _this._widgets_to_update.splice(
-                     _this._widgets_to_update.indexOf(key), 1);
+                if(this._widgets_to_update.indexOf(key) > -1) {
+                    this._widgets_to_update.splice(
+                        this._widgets_to_update.indexOf(key), 1);
                 };
             };
         });
@@ -155,12 +153,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
 
     // hooks ------------------------------------------------------------------
     this._run_widget_hooks = function() {
-        var _this = this;
-
         // setup
-        _this._widgets_to_setup.forEach(function(node_id) {
-            var widget = _this._widgets[node_id];
-            var widget_data = _this._widget_data[node_id];
+        this._widgets_to_setup.forEach(node_id => {
+            var widget = this._widgets[node_id];
+            var widget_data = this._widget_data[node_id];
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -168,7 +164,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 return;
             };
 
-            widget.nodes = _this._dom_updater._get_widget_nodes(node_id);
+            widget.nodes = this._dom_updater._get_widget_nodes(node_id);
 
             if(widget.setup !== undefined) {
                 widget.setup();
@@ -176,9 +172,9 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         });
 
         // data_updated
-        _this._widgets_to_update.forEach(function(node_id) {
-            var widget = _this._widgets[node_id];
-            var widget_data = _this._widget_data[node_id];
+        this._widgets_to_update.forEach(node_id => {
+            var widget = this._widgets[node_id];
+            var widget_data = this._widget_data[node_id];
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -191,57 +187,55 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             };
         });
 
-        _this._widgets_to_setup = [];
-        _this._widgets_to_update = [];
+        this._widgets_to_setup = [];
+        this._widgets_to_update = [];
     };
 
-    this._show_html = function(html) {
-        _this = this;
-
+    this._show_html = function (html) {
         var message_type = html[0];
         var data = html[1];
 
         // HTML
-        if(message_type == Lona.protocol.DATA_TYPE.HTML) {
+        if (message_type == Lona.protocol.DATA_TYPE.HTML) {
             var selector = 'a,form,[data-lona-events]';
 
-            _this._root.innerHTML = data;
-            _this._clean_node_cache();
+            this._root.innerHTML = data;
+            this._clean_node_cache();
 
-            _this._root.querySelectorAll(selector).forEach(function(node) {
-                _this._input_event_handler.patch_input_events(node);
+            this._root.querySelectorAll(selector).forEach(node => {
+                this._input_event_handler.patch_input_events(node);
             });
 
         // HTML tree
         } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
-            _this._clear_node_cache();
+            this._clear_node_cache();
 
-            var node_list = _this._dom_renderer._render_node(data)
+            var node_list = this._dom_renderer._render_node(data)
 
-            _this._clear();
-            _this._dom_updater._apply_node_list(_this._root, node_list);
+            this._clear();
+            this._dom_updater._apply_node_list(this._root, node_list);
 
         // HTML update
         } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {
-            _this._widgets_to_setup = [];
-            _this._widgets_to_update = [];
+            this._widgets_to_setup = [];
+            this._widgets_to_update = [];
 
-            data.forEach(function(patch) {
+            data.forEach(patch => {
                 var patch_type = patch[1];
 
                 if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
-                    _this._widget_data_updater._apply_patch(patch);
+                    this._widget_data_updater._apply_patch(patch);
 
                 } else {;
-                    _this._dom_updater._apply_patch(patch);
+                    this._dom_updater._apply_patch(patch);
 
                 };
 
             });
         };
 
-        _this._run_widget_hooks();
-        _this.lona_context._run_rendering_hooks(_this);
+        this._run_widget_hooks();
+        this.lona_context._run_rendering_hooks(this);
     };
 
     // public api -------------------------------------------------------------
@@ -375,8 +369,6 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         // to this request.
         // This prevents glitches when switching urls fast.
 
-        var _this = this;
-
         if(this._crashed) {
             return;
         };
@@ -423,8 +415,8 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this.lona_context.send(message);
 
         // setup view start timeout
-        this._view_start_timeout = setTimeout(function() {
-            _this.lona_context._run_view_timeout_hooks(_this);
+        this._view_start_timeout = setTimeout(() => {
+            this.lona_context._run_view_timeout_hooks(this);
         }, Lona.settings.VIEW_START_TIMEOUT * 1000);
     };
 
