@@ -226,7 +226,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
                     this._widget_data_updater._apply_patch(patch);
 
-                } else {;
+                } else {
                     this._dom_updater._apply_patch(patch);
 
                 };
