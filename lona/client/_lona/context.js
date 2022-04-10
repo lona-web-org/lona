@@ -326,4 +326,15 @@ Lona.LonaContext = function(settings) {
             _this._ws.close();
         });
     };
+
+    // shortcuts --------------------------------------------------------------
+    this.get_default_window = function() {
+        return this._windows[1];
+    };
+
+    this.run_view = function(url, post_data) {
+        var window = this.get_default_window();
+
+        return window.run_view(url, post_data);
+    };
 };
