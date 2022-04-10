@@ -26,6 +26,7 @@ Lona.LonaContext = function(settings) {
 
     // state ------------------------------------------------------------------
     this._windows = {};
+    this._last_window_id = 0;
     this._connect_hooks = [];
     this._disconnect_hooks = [];
     this._rendering_hooks = [];
@@ -39,7 +40,9 @@ Lona.LonaContext = function(settings) {
             root = document.querySelector(root);
         };
 
-        var window_id = Object.keys(this._windows).length + 1;
+        this._last_window_id += 1;
+
+        var window_id = this._last_window_id;
 
         this._windows[window_id] = new Lona.LonaWindow(
             this, root, window_id, url);
