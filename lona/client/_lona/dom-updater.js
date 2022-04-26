@@ -18,10 +18,8 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
     };
 
     this._get_widget_nodes = function(node_id) {
-        var _this = this;
-
         var node_list = [];
-        var widget_marker = _this.lona_window._widget_marker[node_id];
+        var widget_marker = this.lona_window._widget_marker[node_id];
         var end_marker_text = 'end-lona-widget:' + node_id;
         var cursor = 0;
 
@@ -69,15 +67,13 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
     };
 
     this._insert_node = function(node_list, node_id, index) {
-        var _this = this;
-
         var target_node;
         var cursor = 0;
 
         // find target node
         // Widget
-        if(node_id in _this.lona_window._widget_marker) {
-            var marker = _this.lona_window._widget_marker[node_id];
+        if(node_id in this.lona_window._widget_marker) {
+            var marker = this.lona_window._widget_marker[node_id];
 
             target_node = marker.parentElement;
 
@@ -94,7 +90,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            target_node = _this.lona_window._nodes[node_id];
+            target_node = this.lona_window._nodes[node_id];
 
         }
 
@@ -150,14 +146,12 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
     };
 
     this._set_node = function(node_list, target_node_id, index) {
-        var _this = this;
-
         var target_node;
         var cursor = 0;
 
         // Widget
-        if(target_node_id in _this.lona_window._widget_marker) {
-            var marker = _this.lona_window._widget_marker[target_node_id];
+        if(target_node_id in this.lona_window._widget_marker) {
+            var marker = this.lona_window._widget_marker[target_node_id];
             var target_node = marker.parentElement;
             var end_marker_text = 'end-lona-widget:' + target_node_id;
 
@@ -174,7 +168,7 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
 
         // Node
         } else {
-            target_node = _this.lona_window._nodes[node_id];
+            target_node = this.lona_window._nodes[node_id];
 
             if(!target_node) {
                 return;
@@ -251,17 +245,16 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
     };
 
     this._remove_node = function(node_id) {
-        var _this = this;
 
         // TextNode
-        if(node_id in _this.lona_window._nodes) {
-            _this.lona_window._nodes[node_id].remove();
+        if(node_id in this.lona_window._nodes) {
+            this.lona_window._nodes[node_id].remove();
 
-            delete _this.lona_window._nodes[node_id];
+            delete this.lona_window._nodes[node_id];
 
         // Widget
-        } else if(node_id in _this.lona_window._widget_marker) {
-            var marker = _this.lona_window._widget_marker[node_id];
+        } else if(node_id in this.lona_window._widget_marker) {
+            var marker = this.lona_window._widget_marker[node_id];
             var parent_element = marker.parentElement;
             var end_marker_text = 'end-lona-widget:' + node_id;
             var index = 0;
@@ -288,25 +281,24 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
                 node.remove();
             };
 
-            _this.lona_window._clean_node_cache();
+            this.lona_window._clean_node_cache();
 
         // Node
         } else {
-            node = _this.lona_window._nodes[node_id];
+            node = this.lona_window._nodes[node_id];
 
             if(node) {
                 node.remove();
-                _this.lona_window._clean_node_cache();
+                this.lona_window._clean_node_cache();
             };
         };
     };
 
     this._clear_node = function(node_id) {
-        var _this = this;
 
         // Widget
-        if(node_id in _this.lona_window._widget_marker) {
-            var marker = _this.lona_window._widget_marker[node_id];
+        if(node_id in this.lona_window._widget_marker) {
+            var marker = this.lona_window._widget_marker[node_id];
             var child_nodes = marker.parentElement.childNodes;
             var end_marker_text = 'end-lona-widget:' + node_id;
             var index = 0;
@@ -327,18 +319,18 @@ Lona.LonaDomUpdater = function(lona_context, lona_window) {
                 child_nodes[index].remove();
             };
 
-            _this.lona_window._clean_node_cache();
+            this.lona_window._clean_node_cache();
 
         // Node
         } else {
-            var node = _this.lona_window._nodes[node_id];
+            var node = this.lona_window._nodes[node_id];
 
             if(!node) {
                 return;
             };
 
             node.innerHTML = '';
-            _this.lona_window._clean_node_cache();
+            this.lona_window._clean_node_cache();
         };
     };
 
