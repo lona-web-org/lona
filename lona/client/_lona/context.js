@@ -54,8 +54,6 @@ Lona.LonaContext = function(settings) {
 
     // input events -----------------------------------------------------------
     this.patch_input_events = function(root_node_selector, window_id) {
-        var _this = this;
-
         // find window
         if(window_id == undefined) {
             window_id = 1;
@@ -67,7 +65,7 @@ Lona.LonaContext = function(settings) {
         var node = document.querySelector(root_node_selector);
         var selector = 'a,form,[data-lona-events]';
 
-        node.querySelectorAll(selector).forEach(function(node) {
+        node.querySelectorAll(selector).forEach(node => {
             _window._input_event_handler.patch_input_events(node);
         });
     };
@@ -246,16 +244,14 @@ Lona.LonaContext = function(settings) {
     };
 
     this._send_pings = function() {
-        var _this = this;
-
         setTimeout(
-            function() {
-                if(_this._ws.readyState != _this._ws.OPEN) {
+            () => {
+                if(this._ws.readyState != this._ws.OPEN) {
                     return;
                 };
 
-                _this.send_ping();
-                _this._send_pings();
+                this.send_ping();
+                this._send_pings();
             },
             Lona.settings.PING_INTERVAL * 1000,
         );
@@ -314,16 +310,14 @@ Lona.LonaContext = function(settings) {
     };
 
     this.setup = function() {
-        var _this = this;
-
-        _this.reconnect();
+        this.reconnect();
 
         // unset websocket.onclose handler when page gets unloaded to
         // prevent the browser from showing "Server disconnected" when the
         // user changes the browser URL
-        window.addEventListener('beforeunload', function(event) {
-            _this._ws.onclose = function(event) {};
-            _this._ws.close();
+        window.addEventListener('beforeunload', event => {
+            this._ws.onclose = event => {};
+            this._ws.close();
         });
     };
 
