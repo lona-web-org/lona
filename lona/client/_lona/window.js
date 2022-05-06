@@ -1,45 +1,47 @@
-Lona.LonaWindow = function(lona_context, root, window_id) {
-    this.lona_context = lona_context;
-    this._root = root;
-    this._window_id = window_id;
-    this._view_start_timeout = undefined;
+Lona.LonaWindow = class LonaWindow {
+    constructor(lona_context, root, window_id) {
+        this.lona_context = lona_context;
+        this._root = root;
+        this._window_id = window_id;
+        this._view_start_timeout = undefined;
 
-    this._input_event_handler = new Lona.LonaInputEventHandler(
-        lona_context,
-        this,
-    );
+        this._input_event_handler = new Lona.LonaInputEventHandler(
+            lona_context,
+            this,
+        );
 
-    this._dom_renderer = new Lona.LonaDomRenderer(
-        lona_context,
-        this,
-    );
+        this._dom_renderer = new Lona.LonaDomRenderer(
+            lona_context,
+            this,
+        );
 
-    this._dom_updater = new Lona.LonaDomUpdater(
-        lona_context,
-        this,
-    );
+        this._dom_updater = new Lona.LonaDomUpdater(
+            lona_context,
+            this,
+        );
 
-    this._widget_data_updater = new Lona.LonaWidgetDataUpdater(
-        lona_context,
-        this,
-    );
+        this._widget_data_updater = new Lona.LonaWidgetDataUpdater(
+            lona_context,
+            this,
+        );
 
-    // window state -----------------------------------------------------------
-    this._crashed = false;
-    this._view_running = false;
-    this._view_runtime_id = undefined;
-    this._url = '';
-    this._nodes = {};
-    this._widget_marker = {};
-    this._widget_data = {};
-    this._widgets = {};
-    this._widgets_to_setup = [];
-    this._widgets_to_update = [];
+        this._crashed = false;
+        this._view_running = false;
+        this._view_runtime_id = undefined;
+        this._url = '';
+        this._nodes = {};
+        this._widget_marker = {};
+        this._widget_data = {};
+        this._widgets = {};
+        this._widgets_to_setup = [];
+        this._widgets_to_update = [];
+    };
 
     // urls -------------------------------------------------------------------
-    this._set_url = function(raw_url) {
+    _set_url(raw_url) {
         // parse pathname, search and hash
-        _raw_url = new URL(raw_url, window.location.origin);
+        var _raw_url = new URL(raw_url, window.location.origin);
+
         _raw_url = _raw_url.pathname + _raw_url.search + _raw_url.hash;
 
         if(raw_url.startsWith('..')) {
@@ -74,17 +76,17 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this._url = url.pathname + url.search + url.hash;
     };
 
-    this.get_url = function() {
+    get_url() {
         return this._url;
     };
 
     // html rendering helper --------------------------------------------------
-    this._clear = function() {
+    _clear() {
         this._root.innerHTML = '';
         this._input_event_handler.reset();
     };
 
-    this._clear_node_cache = function() {
+    _clear_node_cache() {
         // running widget deconstructors
         for(var key in this._widgets) {
             if(this._widgets[key].deconstruct !== undefined) {
@@ -101,7 +103,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this._widgets_to_update = [];
     };
 
-    this._clean_node_cache = function() {
+    _clean_node_cache() {
         // nodes
         Object.keys(this._nodes).forEach(key => {
             var node = this._nodes[key];
@@ -152,7 +154,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     // hooks ------------------------------------------------------------------
-    this._run_widget_hooks = function() {
+    _run_widget_hooks() {
         // setup
         this._widgets_to_setup.forEach(node_id => {
             var widget = this._widgets[node_id];
@@ -191,7 +193,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this._widgets_to_update = [];
     };
 
-    this._show_html = function (html) {
+    _show_html(html) {
         var message_type = html[0];
         var data = html[1];
 
@@ -239,7 +241,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
     };
 
     // public api -------------------------------------------------------------
-    this.crash = function(error) {
+    crash(error) {
         // encode message
         var error_string;
 
@@ -265,7 +267,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         throw(error);
     };
 
-    this._handle_websocket_message = function (message) {
+    _handle_websocket_message(message) {
         var window_id = message[0];
         var view_runtime_id = message[1];
         var method = message[2];
@@ -350,7 +352,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
     };
 
-    this.handle_websocket_message = function(message) {
+    handle_websocket_message(message) {
         if(this._crashed) {
             return;
         };
@@ -364,7 +366,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
     };
 
-    this.run_view = function(url, post_data) {
+    run_view(url, post_data) {
         // Save the requested url to only show HTML messages that are related
         // to this request.
         // This prevents glitches when switching urls fast.
@@ -420,7 +422,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         }, Lona.settings.VIEW_START_TIMEOUT * 1000);
     };
 
-    this.setup = function(url) {
+    setup(url) {
         this.run_view(url);
     };
 };
