@@ -1,41 +1,41 @@
-Lona.LonaContext = function(settings) {
-    // settings ---------------------------------------------------------------
-    this.settings = settings || {};
-    this.settings.target = this.settings.target || '#lona';
-    this.settings.title = this.settings.title || '';
+Lona.LonaContext = class LonaContext {
+    constructor(settings) {
+        this.settings = settings || {};
+        this.settings.target = this.settings.target || '#lona';
+        this.settings.title = this.settings.title || '';
 
-    if(typeof(this.settings.update_address_bar) == 'undefined') {
-        this.settings.update_address_bar = true;
+        if(typeof(this.settings.update_address_bar) == 'undefined') {
+            this.settings.update_address_bar = true;
+        };
+
+        if(typeof(this.settings.update_title) == 'undefined') {
+            this.settings.update_title = true;
+        };
+
+        if(typeof(this.settings.follow_redirects) == 'undefined') {
+            this.settings.follow_redirects = true;
+        };
+
+        if(typeof(this.settings.follow_http_redirects) == 'undefined') {
+            this.settings.follow_http_redirects = true;
+        };
+
+        if(typeof(this.settings.scroll_to_top_on_view_start) == 'undefined') {
+            this.settings.scroll_to_top_on_view_start = true;
+        };
+
+        this._windows = {};
+        this._last_window_id = 0;
+        this._connect_hooks = [];
+        this._disconnect_hooks = [];
+        this._rendering_hooks = [];
+        this._view_timeout_hooks = [];
+        this._input_event_timeout_hooks = [];
+        this._message_handler = [];
     };
-
-    if(typeof(this.settings.update_title) == 'undefined') {
-        this.settings.update_title = true;
-    };
-
-    if(typeof(this.settings.follow_redirects) == 'undefined') {
-        this.settings.follow_redirects = true;
-    };
-
-    if(typeof(this.settings.follow_http_redirects) == 'undefined') {
-        this.settings.follow_http_redirects = true;
-    };
-
-    if(typeof(this.settings.scroll_to_top_on_view_start) == 'undefined') {
-        this.settings.scroll_to_top_on_view_start = true;
-    };
-
-    // state ------------------------------------------------------------------
-    this._windows = {};
-    this._last_window_id = 0;
-    this._connect_hooks = [];
-    this._disconnect_hooks = [];
-    this._rendering_hooks = [];
-    this._view_timeout_hooks = [];
-    this._input_event_timeout_hooks = [];
-    this._message_handler = [];
 
     // window -----------------------------------------------------------------
-    this.create_window = function(root, url) {
+    create_window(root, url) {
         if(typeof(root) == 'string') {
             root = document.querySelector(root);
         };
@@ -53,7 +53,7 @@ Lona.LonaContext = function(settings) {
     };
 
     // input events -----------------------------------------------------------
-    this.patch_input_events = function(root_node_selector, window_id) {
+    patch_input_events(root_node_selector, window_id) {
         // find window
         if(window_id == undefined) {
             window_id = 1;
@@ -71,31 +71,31 @@ Lona.LonaContext = function(settings) {
     };
 
     // hooks ------------------------------------------------------------------
-    this.add_connect_hook = function(hook) {
+    add_connect_hook(hook) {
         this._connect_hooks.push(hook);
     };
 
-    this.add_disconnect_hook = function(hook) {
+    add_disconnect_hook(hook) {
         this._disconnect_hooks.push(hook);
     };
 
-    this.add_rendering_hook = function(hook) {
+    add_rendering_hook(hook) {
         this._rendering_hooks.push(hook);
     };
 
-    this.add_view_timeout_hook = function(hook) {
+    add_view_timeout_hook(hook) {
         this._view_timeout_hooks.push(hook);
     };
 
-    this.add_input_event_timeout_hook = function(hook) {
+    add_input_event_timeout_hook(hook) {
         this._input_event_timeout_hooks.push(hook);
     };
 
-    this.add_message_handler = function(handler) {
+    add_message_handler(handler) {
         this._message_handler.push(handler);
     };
 
-    this._run_connect_hooks = function(event) {
+    _run_connect_hooks(event) {
         for(var i in this._connect_hooks) {
             var hook = this._connect_hooks[i];
 
@@ -103,7 +103,7 @@ Lona.LonaContext = function(settings) {
         };
     };
 
-    this._run_disconnect_hooks = function(event) {
+    _run_disconnect_hooks(event) {
         for(var i in this._disconnect_hooks) {
             var hook = this._disconnect_hooks[i];
 
@@ -111,7 +111,7 @@ Lona.LonaContext = function(settings) {
         };
     };
 
-    this._run_rendering_hooks = function(lona_window) {
+    _run_rendering_hooks(lona_window) {
         try {
             for(var i in this._rendering_hooks) {
                 var hook = this._rendering_hooks[i];
@@ -125,7 +125,7 @@ Lona.LonaContext = function(settings) {
         };
     };
 
-    this._run_view_timeout_hooks = function(lona_window) {
+    _run_view_timeout_hooks(lona_window) {
         var lona_window_shim = new Lona.LonaWindowShim(this, lona_window);
 
         try {
@@ -141,7 +141,7 @@ Lona.LonaContext = function(settings) {
         };
     };
 
-    this._run_input_event_timeout_hooks = function(lona_window) {
+    _run_input_event_timeout_hooks(lona_window) {
         var lona_window_shim = new Lona.LonaWindowShim(this, lona_window);
 
         try {
@@ -157,7 +157,7 @@ Lona.LonaContext = function(settings) {
         };
     };
 
-    this._run_message_handler = function(message) {
+    _run_message_handler(message) {
         for(var i in this._message_handler) {
             var message_handler = this._message_handler[i];
 
@@ -170,7 +170,7 @@ Lona.LonaContext = function(settings) {
     };
 
     // websocket messages -----------------------------------------------------
-    this.send = function(message) {
+    send(message) {
         if(typeof(message) != 'string') {
             message = JSON.stringify(message);
         };
@@ -180,7 +180,7 @@ Lona.LonaContext = function(settings) {
         this._ws.send(message);
     };
 
-    this._handle_raw_websocket_message = function(event) {
+    _handle_raw_websocket_message(event) {
         var raw_message = event.data;
         var json_data = undefined;
 
@@ -227,7 +227,7 @@ Lona.LonaContext = function(settings) {
     };
 
     // pings ------------------------------------------------------------------
-    this.send_ping = function() {
+    send_ping() {
         var raw_message = [
             undefined,  // window_id
             undefined, // view_runtime_id
@@ -243,7 +243,7 @@ Lona.LonaContext = function(settings) {
         this.send(message);
     };
 
-    this._send_pings = function() {
+    _send_pings() {
         setTimeout(
             () => {
                 if(this._ws.readyState != this._ws.OPEN) {
@@ -258,7 +258,7 @@ Lona.LonaContext = function(settings) {
     };
 
     // setup ------------------------------------------------------------------
-    this.reconnect = function() {
+    reconnect() {
         // state
         this._windows = {};
 
@@ -309,7 +309,7 @@ Lona.LonaContext = function(settings) {
         };
     };
 
-    this.setup = function() {
+    setup() {
         this.reconnect();
 
         // unset websocket.onclose handler when page gets unloaded to
@@ -322,11 +322,11 @@ Lona.LonaContext = function(settings) {
     };
 
     // shortcuts --------------------------------------------------------------
-    this.get_default_window = function() {
+    get_default_window() {
         return this._windows[1];
     };
 
-    this.run_view = function(url, post_data) {
+    run_view(url, post_data) {
         var window = this.get_default_window();
 
         return window.run_view(url, post_data);
