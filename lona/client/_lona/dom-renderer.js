@@ -1,9 +1,11 @@
-Lona.LonaDomRenderer = function(lona_context, lona_window) {
-    this.lona_context = lona_context;
-    this.lona_window = lona_window;
+Lona.LonaDomRenderer = class LonaDomRenderer {
+    constructor(lona_context, lona_window) {
+        this.lona_context = lona_context;
+        this.lona_window = lona_window;
+    };
 
     // html rendering ---------------------------------------------------------
-    this._render_node = function(node_spec) {
+    _render_node(node_spec) {
         var property_names = ['value', 'checked', 'selected'];
 
         var node_list = [];
@@ -141,7 +143,7 @@ Lona.LonaDomRenderer = function(lona_context, lona_window) {
         return node_list;
     };
 
-    this._render_nodes = function(node_specs) {
+    _render_nodes(node_specs) {
         // TODO: get rid of this method and move functionality
         // into _render_node()
 
