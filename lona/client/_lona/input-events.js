@@ -1,13 +1,17 @@
-Lona.LonaInputEventHandler = function(lona_context, lona_window) {
-    this.lona_context = lona_context;
-    this.lona_window = lona_window;
+Lona.LonaInputEventHandler = class LonaInputEventHandler {
+    constructor(lona_context, lona_window) {
+        this.lona_context = lona_context;
+        this.lona_window = lona_window;
 
-    this.reset = function() {
+        this.reset();
+    };
+
+    reset() {
         this._event_id = 1;
         this._timeouts = {};
     };
 
-    this.gen_event_id = function() {
+    gen_event_id() {
         var event_id = this._event_id;
 
         this._event_id += 1;
@@ -15,13 +19,13 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         return event_id;
     };
 
-    this.clear_timeout = function(event_id) {
+    clear_timeout(event_id) {
         clearTimeout(this._timeouts[event_id]);
 
         delete this._timeouts[event_id];
     };
 
-    this._get_value = function(node) {
+    _get_value(node) {
         var value = node.value;
 
         // checkbox
@@ -41,7 +45,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         return value;
     };
 
-    this._clear_input_events = function(node) {
+    _clear_input_events(node) {
         node.onclick = undefined;
         node.oninput = undefined;
         node.onchange = undefined;
@@ -49,7 +53,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         node.onblur = undefined;
     };
 
-    this._patch_link = function(node) {
+    _patch_link(node) {
         var lona_window = this.lona_window;
 
         node.onclick = function(event) {
@@ -67,7 +71,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
-    this._patch_onclick = function(node, event_type) {
+    _patch_onclick(node, event_type) {
         var input_event_handler = this;
         var lona_window = this.lona_window;
 
@@ -101,7 +105,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
-    this._patch_onchange = function(node, event_type) {
+    _patch_onchange(node, event_type) {
         var input_event_handler = this;
         var lona_window = this.lona_window;
 
@@ -160,7 +164,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
-    this._patch_onsubmit = function(node) {
+    _patch_onsubmit(node) {
         node.onsubmit = function(event) {
             event.preventDefault();
 
@@ -225,7 +229,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
-    this._patch_onfocus = function(node, event_type) {
+    _patch_onfocus(node, event_type) {
         var input_event_handler = this;
         var lona_window = this.lona_window;
 
@@ -248,7 +252,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
-    this._patch_onblur = function(node, event_type) {
+    _patch_onblur(node, event_type) {
         var input_event_handler = this;
         var lona_window = this.lona_window;
 
@@ -271,7 +275,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         };
     };
 
-    this._parse_data_lona_events = function(node) {
+    _parse_data_lona_events(node) {
         var event_types = {};
 
         if(!node.hasAttribute('data-lona-events')) {
@@ -291,7 +295,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         return event_types;
     };
 
-    this.patch_input_events = function(node) {
+    patch_input_events(node) {
         if(node.nodeType != Node.ELEMENT_NODE) {
             return;
         };
@@ -343,7 +347,7 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
         });
     };
 
-    this.fire_input_event = function(node, event_type, data) {
+    fire_input_event(node, event_type, data) {
         if(this.lona_window._crashed) {
             return;
         };
@@ -400,7 +404,4 @@ Lona.LonaInputEventHandler = function(lona_context, lona_window) {
             this.lona_context._run_input_event_timeout_hooks(this);
         }, Lona.settings.INPUT_EVENT_TIMEOUT * 1000);
     };
-
-    // setup ------------------------------------------------------------------
-    this.reset();
 };
