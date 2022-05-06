@@ -1,8 +1,10 @@
-Lona.LonaWidgetDataUpdater = function(lona_context, lona_window) {
-    this.lona_context = lona_context;
-    this.lona_window = lona_window;
+Lona.LonaWidgetDataUpdater = class LonaWidgetDataUpdater {
+    constructor(lona_context, lona_window) {
+        this.lona_context = lona_context;
+        this.lona_window = lona_window;
+    };
 
-    this._apply_patch = function(patch) {
+    _apply_patch(patch) {
         var node_id = patch[0];
         var patch_type = patch[1];
         var operation = patch[2];
