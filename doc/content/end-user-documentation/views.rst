@@ -157,6 +157,22 @@ Trailing Slashes
     ]
 
 
+Wildcards
+~~~~~~~~~
+
+Wildcards allow to glob the end of a route.
+
+.. code-block:: python
+
+    # routes.py
+
+    from lona import Route
+
+    routes = [
+        Route('/foo(*)', 'views/my_view.py::MyView'),
+    ]
+
+
 Request Objects
 ---------------
 

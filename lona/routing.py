@@ -8,6 +8,7 @@ ABSTRACT_ROUTE_RE = re.compile(r'<(?P<name>[^:>]+)(:(?P<pattern>[^>]+))?>')
 ROUTE_PART_FORMAT_STRING = r'(?P<{}>{})'
 DEFAULT_PATTERN = r'[^/]+'
 OPTIONAL_TRAILING_SLASH_PATTERN = r'(/)'
+TRAILING_WILDCARD_PATTERN = r'(*)'
 
 MATCH_ALL = 1
 
@@ -28,6 +29,7 @@ class Route:
         self.path = None
         self.format_string = ''
         self.optional_trailing_slash = False
+        self.trailing_wildcard = False
 
         # match all
         if self.raw_pattern == MATCH_ALL:
@@ -39,9 +41,13 @@ class Route:
 
             if raw_pattern.endswith(OPTIONAL_TRAILING_SLASH_PATTERN):
                 self.optional_trailing_slash = True
-
                 raw_pattern = \
                     raw_pattern[:-len(OPTIONAL_TRAILING_SLASH_PATTERN)]
+
+            if raw_pattern.endswith(TRAILING_WILDCARD_PATTERN):
+                self.trailing_wildcard = True
+                raw_pattern = \
+                    raw_pattern[:-len(TRAILING_WILDCARD_PATTERN)]
 
             groups = ABSTRACT_ROUTE_RE.findall(raw_pattern)
 
@@ -81,6 +87,9 @@ class Route:
         if self.path:
             if self.optional_trailing_slash and path.endswith('/'):
                 path = path[:-1]
+
+            if self.trailing_wildcard:
+                path = path[:min(len(path), len(self.path))]
 
             return path == self.path, {}
 
