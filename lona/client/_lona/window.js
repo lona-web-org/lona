@@ -1,47 +1,47 @@
-Lona.LonaWindow = function(lona_context, root, window_id) {
-    this.lona_context = lona_context;
-    this._root = root;
-    this._window_id = window_id;
-    this._view_start_timeout = undefined;
+Lona.LonaWindow = class LonaWindow {
+    constructor(lona_context, root, window_id) {
+        this.lona_context = lona_context;
+        this._root = root;
+        this._window_id = window_id;
+        this._view_start_timeout = undefined;
 
-    this._job_queue = new Lona.JobQueue(this);
+        this._input_event_handler = new Lona.LonaInputEventHandler(
+            lona_context,
+            this,
+        );
 
-    this._input_event_handler = new Lona.LonaInputEventHandler(
-        lona_context,
-        this,
-    );
+        this._dom_renderer = new Lona.LonaDomRenderer(
+            lona_context,
+            this,
+        );
 
-    this._dom_renderer = new Lona.LonaDomRenderer(
-        lona_context,
-        this,
-    );
+        this._dom_updater = new Lona.LonaDomUpdater(
+            lona_context,
+            this,
+        );
 
-    this._dom_updater = new Lona.LonaDomUpdater(
-        lona_context,
-        this,
-    );
+        this._widget_data_updater = new Lona.LonaWidgetDataUpdater(
+            lona_context,
+            this,
+        );
 
-    this._widget_data_updater = new Lona.LonaWidgetDataUpdater(
-        lona_context,
-        this,
-    );
-
-    // window state -----------------------------------------------------------
-    this._crashed = false;
-    this._view_running = false;
-    this._view_runtime_id = undefined;
-    this._url = '';
-    this._nodes = {};
-    this._widget_marker = {};
-    this._widget_data = {};
-    this._widgets = {};
-    this._widgets_to_setup = [];
-    this._widgets_to_update = [];
+        this._crashed = false;
+        this._view_running = false;
+        this._view_runtime_id = undefined;
+        this._url = '';
+        this._nodes = {};
+        this._widget_marker = {};
+        this._widget_data = {};
+        this._widgets = {};
+        this._widgets_to_setup = [];
+        this._widgets_to_update = [];
+    };
 
     // urls -------------------------------------------------------------------
-    this._set_url = function(raw_url) {
+    _set_url(raw_url) {
         // parse pathname, search and hash
-        _raw_url = new URL(raw_url, window.location.origin);
+        var _raw_url = new URL(raw_url, window.location.origin);
+
         _raw_url = _raw_url.pathname + _raw_url.search + _raw_url.hash;
 
         if(raw_url.startsWith('..')) {
@@ -76,17 +76,17 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this._url = url.pathname + url.search + url.hash;
     };
 
-    this.get_url = function() {
+    get_url() {
         return this._url;
     };
 
     // html rendering helper --------------------------------------------------
-    this._clear = function() {
+    _clear() {
         this._root.innerHTML = '';
         this._input_event_handler.reset();
     };
 
-    this._clear_node_cache = function() {
+    _clear_node_cache() {
         // running widget deconstructors
         for(var key in this._widgets) {
             if(this._widgets[key].deconstruct !== undefined) {
@@ -103,66 +103,62 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this._widgets_to_update = [];
     };
 
-    this._clean_node_cache = function() {
-        var _this = this;
-
+    _clean_node_cache() {
         // nodes
-        Object.keys(_this._nodes).forEach(function(key) {
-            var node = _this._nodes[key];
+        Object.keys(this._nodes).forEach(key => {
+            var node = this._nodes[key];
 
-            if(!_this._root.contains(node)) {
-                delete _this._nodes[key];
+            if(!this._root.contains(node)) {
+                delete this._nodes[key];
             };
         });
 
-        Object.keys(_this._widget_marker).forEach(function(key) {
-            var node = _this._widget_marker[key];
+        Object.keys(this._widget_marker).forEach(key => {
+            var node = this._widget_marker[key];
 
             // widget_marker
-            if(_this._root.contains(node)) {
+            if(this._root.contains(node)) {
                 return;
 
             };
 
-            delete _this._widget_marker[key];
+            delete this._widget_marker[key];
 
             // widget
-            if(key in _this._widgets) {
+            if(key in this._widgets) {
 
                 // run deconstructor
-                if(_this._widgets[key].deconstruct !== undefined) {
-                    _this._widgets[key].deconstruct();
+                if(this._widgets[key].deconstruct !== undefined) {
+                    this._widgets[key].deconstruct();
                 };
 
                 // remove widget
-                delete _this._widgets[key];
+                delete this._widgets[key];
 
                 // remove widget data
-                delete _this._widget_data[key];
+                delete this._widget_data[key];
 
                 // remove widget from _widgets_to_setup
-                if(_this._widgets_to_setup.indexOf(key) > -1) {
-                    _this._widgets_to_setup.splice(
-                     _this._widgets_to_setup.indexOf(key), 1);
+                if(this._widgets_to_setup.indexOf(key) > -1) {
+                    this._widgets_to_setup.splice(
+                        this._widgets_to_setup.indexOf(key), 1);
                 };
 
                 // remove widget from _widgets_to_update
-                if(_this._widgets_to_update.indexOf(key) > -1) {
-                    _this._widgets_to_update.splice(
-                     _this._widgets_to_update.indexOf(key), 1);
+                if(this._widgets_to_update.indexOf(key) > -1) {
+                    this._widgets_to_update.splice(
+                        this._widgets_to_update.indexOf(key), 1);
                 };
             };
         });
     };
 
     // hooks ------------------------------------------------------------------
-    this._run_widget_hooks = function() {
-        var _this = this;
-
+    _run_widget_hooks() {
         // setup
-        _this._widgets_to_setup.forEach(function(node_id) {
-            var widget = _this._widgets[node_id];
-            var widget_data = _this._widget_data[node_id];
+        this._widgets_to_setup.forEach(node_id => {
+            var widget = this._widgets[node_id];
+            var widget_data = this._widget_data[node_id];
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -170,7 +166,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
                 return;
             };
 
-            widget.nodes = _this._dom_updater._get_widget_nodes(node_id);
+            widget.nodes = this._dom_updater._get_widget_nodes(node_id);
 
             if(widget.setup !== undefined) {
                 widget.setup();
@@ -178,9 +174,9 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         });
 
         // data_updated
-        _this._widgets_to_update.forEach(function(node_id) {
-            var widget = _this._widgets[node_id];
-            var widget_data = _this._widget_data[node_id];
+        this._widgets_to_update.forEach(node_id => {
+            var widget = this._widgets[node_id];
+            var widget_data = this._widget_data[node_id];
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -193,63 +189,59 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
             };
         });
 
-        _this._widgets_to_setup = [];
-        _this._widgets_to_update = [];
+        this._widgets_to_setup = [];
+        this._widgets_to_update = [];
     };
 
-    this._show_html = function(html) {
-        _this = this;
+    _show_html(html) {
+        var message_type = html[0];
+        var data = html[1];
 
-        _this._job_queue.add(function() {
-            var message_type = html[0];
-            var data = html[1];
+        // HTML
+        if (message_type == Lona.protocol.DATA_TYPE.HTML) {
+            var selector = 'a,form,[data-lona-events]';
 
-            // HTML
-            if(message_type == Lona.protocol.DATA_TYPE.HTML) {
-                var selector = 'a,form,[data-lona-events]';
+            this._root.innerHTML = data;
+            this._clean_node_cache();
 
-                _this._root.innerHTML = data;
-                _this._clean_node_cache();
+            this._root.querySelectorAll(selector).forEach(node => {
+                this._input_event_handler.patch_input_events(node);
+            });
 
-                _this._root.querySelectorAll(selector).forEach(function(node) {
-                    _this._input_event_handler.patch_input_events(node);
-                });
+        // HTML tree
+        } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
+            this._clear_node_cache();
 
-            // HTML tree
-            } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
-                _this._clear_node_cache();
+            var node_list = this._dom_renderer._render_node(data)
 
-                var node_list = _this._dom_renderer._render_node(data)
+            this._clear();
+            this._dom_updater._apply_node_list(this._root, node_list);
 
-                _this._clear();
-                _this._dom_updater._apply_node_list(_this._root, node_list);
+        // HTML update
+        } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {
+            this._widgets_to_setup = [];
+            this._widgets_to_update = [];
 
-            // HTML update
-            } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {
-                _this._widgets_to_setup = [];
-                _this._widgets_to_update = [];
+            data.forEach(patch => {
+                var patch_type = patch[1];
 
-                data.forEach(function(patch) {
-                    var patch_type = patch[1];
+                if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
+                    this._widget_data_updater._apply_patch(patch);
 
-                    if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
-                        _this._widget_data_updater._apply_patch(patch);
+                } else {
+                    this._dom_updater._apply_patch(patch);
 
-                    } else {;
-                        _this._dom_updater._apply_patch(patch);
+                };
 
-                    };
+            });
+        };
 
-                });
-            };
-
-            _this._run_widget_hooks();
-            _this.lona_context._run_rendering_hooks(_this);
-        });
+        this._run_widget_hooks();
+        this.lona_context._run_rendering_hooks(this);
     };
 
     // public api -------------------------------------------------------------
-    this.crash = function(error) {
+    crash(error) {
         // encode message
         var error_string;
 
@@ -275,7 +267,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         throw(error);
     };
 
-    this._handle_websocket_message = function (message) {
+    _handle_websocket_message(message) {
         var window_id = message[0];
         var view_runtime_id = message[1];
         var method = message[2];
@@ -360,7 +352,7 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
     };
 
-    this.handle_websocket_message = function(message) {
+    handle_websocket_message(message) {
         if(this._crashed) {
             return;
         };
@@ -374,12 +366,10 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         };
     };
 
-    this.run_view = function(url, post_data) {
+    run_view(url, post_data) {
         // Save the requested url to only show HTML messages that are related
         // to this request.
         // This prevents glitches when switching urls fast.
-
-        var _this = this;
 
         if(this._crashed) {
             return;
@@ -427,12 +417,12 @@ Lona.LonaWindow = function(lona_context, root, window_id) {
         this.lona_context.send(message);
 
         // setup view start timeout
-        this._view_start_timeout = setTimeout(function() {
-            _this.lona_context._run_view_timeout_hooks(_this);
+        this._view_start_timeout = setTimeout(() => {
+            this.lona_context._run_view_timeout_hooks(this);
         }, Lona.settings.VIEW_START_TIMEOUT * 1000);
     };
 
-    this.setup = function(url) {
+    setup(url) {
         this.run_view(url);
     };
 };

@@ -13,7 +13,6 @@ from lona._json import dumps
 SOURCE_ROOT = os.path.join(os.path.dirname(__file__), 'client')
 
 SOURCE_FILES = [
-    '_lona/job-queue.js',
     '_lona/window-shim.js',
     '_lona/dom-renderer.js',
     '_lona/dom-updater.js',

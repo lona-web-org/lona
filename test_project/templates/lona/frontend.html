@@ -15,10 +15,6 @@
         <td id="application-started">-</td>
       </tr>
       <tr>
-        <th>Pending Rendering Jobs:</th>
-        <td id="pending-rendering-jobs">-</td>
-      </tr>
-      <tr>
         <th>Loaded Nodes:</th>
         <td id="loaded-nodes">-</td>
       </tr>
@@ -137,16 +133,13 @@
       document.querySelector('#enable-rendering-statistics').onclick = function(event) {
         event.preventDefault();
 
-        var pending_rendering_jobs = document.querySelector('#pending-rendering-jobs');
         var loaded_nodes = document.querySelector('#loaded-nodes');
         var loaded_widgets = document.querySelector('#loaded-widgets');
 
-        pending_rendering_jobs.innerHTML = '';
         loaded_nodes.innerHTML = '';
         loaded_widgets.innerHTML = '';
 
         lona_context.add_rendering_hook(function(lona_window) {
-          pending_rendering_jobs.innerHTML = lona_context._windows[1]._job_queue._promises.length - 1;
           loaded_nodes.innerHTML = Object.keys(lona_context._windows[1]._nodes).length;
           loaded_widgets.innerHTML = Object.keys(lona_context._windows[1]._widget_marker).length;
         });

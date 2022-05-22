@@ -195,7 +195,6 @@ class LonaViewsCommand:
             ['Thread ID', view_runtime.thread_ident],
             ['Thread Name', view_runtime.thread_name],
             ['View ID', view_runtime.view_runtime_id],
-            ['Multi user', repr(isinstance(view_runtime.request.user, list))],
             ['Daemon', repr(view_runtime.is_daemon)],
             ['Started at', str(view_runtime.started_at)],
             ['Stopped at', str(view_runtime.stopped_at or '-')],
