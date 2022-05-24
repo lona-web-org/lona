@@ -25,6 +25,7 @@ PLUGINS = [
     'plugins/fix_search.py::FixSearch',
     'plugins/changelog.py::Changelog',
     'plugins/api_doc.py::ApiDoc',
+    'plugins/version_prefix.py::VersionPrefix',
 ]
 
 MENU = [
@@ -127,3 +128,5 @@ sphinx_themes.defaults.SPHINX_THEMES_METATAGS = """
     <meta name="theme-color" content="#ffffff">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 """
+
+VERSION_PREFIX = '/1.x/'
