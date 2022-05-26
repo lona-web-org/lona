@@ -224,3 +224,17 @@ Testing
 .. setting::
     :name: TEST_INPUT_EVENT_TIMEOUT
     :path: lona.default_settings.TEST_INPUT_EVENT_TIMEOUT
+
+Server
+------
+
+.. setting::
+    :name: AIOHTTP_CLIENT_MAX_SIZE
+    :path: lona.default_settings.AIOHTTP_CLIENT_MAX_SIZE
+
+    This value is used to set the ``client_max_size`` value for the aiohttp server.
+    It defines the maximum body size of a post request accepted by the server.
+    See
+    `aiohttp documentation <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application>`_
+    for details.
+    The default value is set to the aiohttp default of ``1024**2`` Bytes.

@@ -4,7 +4,7 @@ import socket
 import signal
 import os
 
-from aiohttp.web import Application, run_app
+from aiohttp.web import run_app
 import aiohttp
 
 from lona.shell.shell import generate_shell_server, embed_shell
@@ -19,22 +19,20 @@ AIOHTTP_VERSION = tuple(
 logger = logging.getLogger('lona')
 
 
-def run_server(args, app=None, server=None):
+def run_server(args, server=None):
     loop = asyncio.get_event_loop()
 
     # setup logging
     log_formatter, log_filter = setup_logging(args)
 
     # setup lona server
-    app = app or Application()
-
     server = server or LonaServer(
-        app=app,
         project_root=args.project_root,
         settings_paths=args.settings,
         settings_pre_overrides=args.settings_pre_overrides,
         settings_post_overrides=args.settings_post_overrides,
     )
+    app = server._app
 
     worker_pool = WorkerPool(
         settings=server.settings,

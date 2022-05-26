@@ -12,7 +12,13 @@ import inspect
 import asyncio
 import os
 
-from aiohttp.web import WebSocketResponse, FileResponse, HTTPFound, Response
+from aiohttp.web import (
+    WebSocketResponse,
+    FileResponse,
+    Application,
+    HTTPFound,
+    Response,
+)
 from typing_extensions import Literal
 from aiohttp import WSMsgType
 from jinja2 import Template
@@ -46,7 +52,7 @@ T = TypeVar('T')
 
 
 class LonaServer:
-    def __init__(self, app, project_root, settings_paths=None,
+    def __init__(self, project_root, settings_paths=None,
                  settings_pre_overrides=None, settings_post_overrides=None,
                  routes=None):
 
@@ -55,15 +61,7 @@ class LonaServer:
         self._websocket_connections = []
         self._loop = None
         self._worker_pool = None
-
-        server_logger.debug("starting server in '%s'", project_root)
-
-        # setup aiohttp app
-        self._app = app
-        self._app['lona_server'] = self
-
-        self._app.on_startup.append(self._start)
-        self._app.on_shutdown.append(self._stop)
+        self._app: Application = None
 
         # setup settings
         server_logger.debug('setup settings')
@@ -95,6 +93,17 @@ class LonaServer:
             server_logger.debug('applying settings post overrides')
 
             self.settings.update(settings_post_overrides)
+
+        # setup aiohttp app
+        server_logger.debug("starting server in '%s'", project_root)
+
+        self._app = Application(
+            client_max_size=self.settings.AIOHTTP_CLIENT_MAX_SIZE,
+        )
+        self._app['lona_server'] = self
+
+        self._app.on_startup.append(self._start)
+        self._app.on_shutdown.append(self._stop)
 
         # setup templating
         server_logger.debug('setup templating')

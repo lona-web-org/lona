@@ -150,11 +150,8 @@ def lona_project_context(request, aiohttp_client, loop):
         def setup_aiohttp_app(loop: AbstractEventLoop) -> Application:
             nonlocal server
 
-            aiohttp_app = Application(loop=loop)
-
             # setup lona server
             server = LonaServer(
-                app=aiohttp_app,
                 project_root=project_root or request.fspath,
                 settings_paths=settings or [],
                 settings_pre_overrides=settings_pre_overrides or {},
@@ -164,7 +161,7 @@ def lona_project_context(request, aiohttp_client, loop):
             server._loop = loop
             server._worker_pool = WorkerPool(settings=server.settings)
 
-            return aiohttp_app
+            return server._app
 
         client = await aiohttp_client(setup_aiohttp_app)
 
