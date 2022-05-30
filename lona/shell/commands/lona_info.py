@@ -26,11 +26,11 @@ class LonaInfoCommand:
         rows = [
             ['Key', 'Value'],
             ['Lona version', f'v{VERSION_STRING}'],
-            ['project root', self.repl.locals['server'].project_root],
-            ['cli args', pformat(self.repl.locals.get('cli_args', {}))],
+            ['project root', self.repl.globals['server'].project_root],
+            ['cli args', pformat(self.repl.globals.get('cli_args', {}))],
 
             ['logging syslog priorities',
-             repr(self.repl.locals['log_formatter'].syslog_priorities)],
+             repr(self.repl.globals['log_formatter'].syslog_priorities)],
         ]
 
         write_table(rows, self.repl.write)
