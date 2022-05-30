@@ -1,4 +1,7 @@
 -e../
+Jinja2==3.0.3
+pygments==2.11.2
+Beautifulsoup4==4.10.0
 flamingo[live-server,pygments,thumbnails,sphinx-themes]==1.7
 beautifulsoup4
 pytest

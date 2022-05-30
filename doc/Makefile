@@ -1,4 +1,4 @@
-PYTHON=python3
+PYTHON=python3.9
 PYTHON_VENV=env
 FLAMINGO_ARGS=-s settings.py
 
