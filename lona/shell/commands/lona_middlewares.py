@@ -21,7 +21,7 @@ class LonaMiddlewaresCommand:
 
         argument_parser.parse_args(argv[1:])
 
-        server = self.repl.locals['server']
+        server = self.repl.globals['server']
         middleware_controller = server._middleware_controller
 
         # list middlewares

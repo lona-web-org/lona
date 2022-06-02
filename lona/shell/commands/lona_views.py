@@ -24,7 +24,7 @@ class LonaViewsCommand:
         self.repl = repl
 
     def complete(self, text, state, line_buffer):
-        server = self.repl.locals['server']
+        server = self.repl.globals['server']
         controller = server._view_runtime_controller
 
         view_runtime_ids = []
@@ -124,7 +124,7 @@ class LonaViewsCommand:
         return self.list_views(arguments)
 
     def show_view_memory(self, arguments):
-        server = self.repl.locals['server']
+        server = self.repl.globals['server']
         controller = server._view_runtime_controller
 
         if not arguments['runtime-id']:
@@ -168,7 +168,7 @@ class LonaViewsCommand:
             self.repl.write('\n\n')
 
     def show_view_info(self, arguments):
-        server = self.repl.locals['server']
+        server = self.repl.globals['server']
         controller = server._view_runtime_controller
 
         try:
@@ -262,7 +262,7 @@ class LonaViewsCommand:
         self.repl.write('\n')
 
     def list_views(self, arguments):
-        server = self.repl.locals['server']
+        server = self.repl.globals['server']
         controller = server._view_runtime_controller
 
         rows = [

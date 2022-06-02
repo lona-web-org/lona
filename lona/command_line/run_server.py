@@ -55,7 +55,7 @@ def run_server(args, app=None, server=None):
         async def start_shell(server):
             def _start_shell():
                 embed_kwargs = {
-                    'locals': {
+                    'globals': {
                         'loop': loop,
                         'server': server,
                         'cli_args': vars(args),
@@ -104,7 +104,7 @@ def run_server(args, app=None, server=None):
     if args.shell_server_url:
         embed_kwargs = {
             'bind': args.shell_server_url,
-            'locals': {
+            'globals': {
                 'loop': loop,
                 'server': server,
                 'cli_args': vars(args),

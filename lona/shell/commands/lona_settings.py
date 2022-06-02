@@ -15,7 +15,7 @@ class LonaSettingsCommand:
         self.repl = repl
 
     def complete(self, text, state, line_buffer):
-        names = sorted(self.repl.locals['server'].settings)
+        names = sorted(self.repl.globals['server'].settings)
         candidates = []
 
         for name in names:
@@ -37,7 +37,7 @@ class LonaSettingsCommand:
 
         arguments = vars(argument_parser.parse_args(argv[1:]))
 
-        server = self.repl.locals['server']
+        server = self.repl.globals['server']
 
         # write setting
         if arguments['name']:

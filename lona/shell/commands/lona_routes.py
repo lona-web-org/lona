@@ -25,7 +25,7 @@ class LonaRoutesCommand:
 
         arguments = vars(argument_parser.parse_args(argv[1:]))
 
-        server = self.repl.locals['server']
+        server = self.repl.globals['server']
 
         # resolve
         if arguments['resolve']:
