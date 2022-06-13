@@ -277,30 +277,27 @@ Lona.LonaContext = class LonaContext {
 
         // onopen
         this._ws.onopen = function(event) {
-            var lona_context = this.lona_context;
-
             // load initial page
             var window_id = this.lona_context.create_window(
-                lona_context.settings.target,
+                this.lona_context.settings.target,
                 document.location.href,
             );
 
             // setup pushstate
             if(this.lona_context.settings.update_address_bar) {
-                window.onpopstate = function(event) {
-                    lona_context._windows[window_id].run_view(
-                        document.location.href);
+                window.onpopstate = () => {
+                    this.lona_context._windows[window_id].run_view(
+                        document.location.href,
+                    );
                 };
             };
 
-            lona_context._run_connect_hooks(event);
+            this.lona_context._run_connect_hooks(event);
         };
 
         // onclose
         this._ws.onclose = function(event) {
-            var lona_context = this.lona_context;
-
-            lona_context._run_disconnect_hooks(event);
+            this.lona_context._run_disconnect_hooks(event);
         };
 
         // pings
