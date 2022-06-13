@@ -14,6 +14,7 @@ from lona.imports import get_file
 if TYPE_CHECKING:  # pragma: no cover
     from lona.server import LonaServer
 
+CLIENT_ROOT = os.path.join(os.path.dirname(__file__), 'client')
 
 logger = logging.getLogger('lona.static_file_loader')
 
@@ -26,6 +27,7 @@ class StaticFileLoader:
             *self.server.settings.STATIC_DIRS,
             *self.server.settings.CORE_STATIC_DIRS,
             self.server._client_pre_compiler.tmp_dir.name,
+            CLIENT_ROOT,
         ]
 
         # resolving potential relative paths

@@ -1,4 +1,33 @@
-Lona.LonaContext = class LonaContext {
+/* MIT License
+
+Copyright (c) 2020 Florian Scherf
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
+import { LonaWindowShim } from './window-shim.js';
+import { LonaWindow } from './window.js';
+import { Lona } from './lona.js';
+
+
+export class LonaContext {
     constructor(settings) {
         this.settings = settings || {};
         this.settings.target = this.settings.target || '#lona';
@@ -44,7 +73,7 @@ Lona.LonaContext = class LonaContext {
 
         var window_id = this._last_window_id;
 
-        this._windows[window_id] = new Lona.LonaWindow(
+        this._windows[window_id] = new LonaWindow(
             this, root, window_id, url);
 
         this._windows[window_id].setup(url);
@@ -126,7 +155,7 @@ Lona.LonaContext = class LonaContext {
     };
 
     _run_view_timeout_hooks(lona_window) {
-        var lona_window_shim = new Lona.LonaWindowShim(this, lona_window);
+        var lona_window_shim = new LonaWindowShim(this, lona_window);
 
         try {
             for(var i in this._view_timeout_hooks) {
@@ -142,7 +171,7 @@ Lona.LonaContext = class LonaContext {
     };
 
     _run_input_event_timeout_hooks(lona_window) {
-        var lona_window_shim = new Lona.LonaWindowShim(this, lona_window);
+        var lona_window_shim = new LonaWindowShim(this, lona_window);
 
         try {
             for(var i in this._input_event_timeout_hooks) {

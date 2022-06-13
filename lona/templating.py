@@ -1,8 +1,11 @@
 import builtins
 import logging
+import json
 import os
 
 from jinja2 import FileSystemLoader, Environment
+
+from lona.protocol import get_enum_values
 
 logger = logging.getLogger('lona.templating')
 
@@ -64,6 +67,19 @@ class Namespace:
             self.server.settings.STATIC_URL_PREFIX,
             path,
         )
+
+    def get_protocol_as_json(self):
+        return json.dumps(get_enum_values())
+
+    def get_settings_as_json(self):
+        settings = {
+            'DEBUG': self.settings.CLIENT_DEBUG,
+            'VIEW_START_TIMEOUT': self.settings.CLIENT_VIEW_START_TIMEOUT,
+            'INPUT_EVENT_TIMEOUT': self.settings.CLIENT_INPUT_EVENT_TIMEOUT,
+            'PING_INTERVAL': self.settings.CLIENT_PING_INTERVAL,
+        }
+
+        return json.dumps(settings)
 
     def __getattribute__(self, name):
         # this is necessary because in python its illegal to name a
