@@ -132,6 +132,8 @@ Simple Patterns
 Custom Patterns
 ~~~~~~~~~~~~~~~
 
+Custom patterns can be any valid regex:
+
 .. code-block:: python
 
     # routes.py
@@ -140,6 +142,19 @@ Custom Patterns
 
     routes = [
         Route('/<arg1:[a-z]{3}>/', 'views/my_view.py::MyView'),
+    ]
+
+It is possible to match any character (including the ``/``).
+The following route matches any URL beginning with ``prefix``:
+
+.. code-block:: python
+
+    # routes.py
+
+    from lona import Route
+
+    routes = [
+        Route('/prefix<path:.*>', 'views/my_view.py::MyView'),
     ]
 
 
