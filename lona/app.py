@@ -396,7 +396,6 @@ class LonaApp:
         self.settings.STATIC_DIRS.insert(0, self.static_dir)
 
         # setup server
-        self.aiohttp_app = Application(loop=loop)
 
         settings_post_overrides = {
             **self._get_settings_as_dict(),
@@ -404,12 +403,12 @@ class LonaApp:
         }
 
         self.server = LonaServer(
-            app=self.aiohttp_app,
             project_root=self.project_root,
             settings_pre_overrides=settings_pre_overrides,
             settings_post_overrides=settings_post_overrides,
             routes=self.routes,
         )
+        self.aiohttp_app = self.server._app
 
         # setup worker pool
         worker_pool = WorkerPool(
@@ -462,6 +461,5 @@ class LonaApp:
         # start server
         run_server(
             args=server_args,
-            app=self.aiohttp_app,
             server=self.server,
         )

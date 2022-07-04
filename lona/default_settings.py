@@ -94,3 +94,6 @@ COMMANDS: list[str] = []
 # testing
 TEST_VIEW_START_TIMEOUT = False
 TEST_INPUT_EVENT_TIMEOUT = False
+
+# server
+AIOHTTP_CLIENT_MAX_SIZE = 1024**2
