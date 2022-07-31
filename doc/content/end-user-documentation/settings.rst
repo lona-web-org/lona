@@ -232,6 +232,10 @@ Server
     :name: AIOHTTP_CLIENT_MAX_SIZE
     :path: lona.default_settings.AIOHTTP_CLIENT_MAX_SIZE
 
+    .. note::
+
+        Added in 1.10.2
+
     This value is used to set the ``client_max_size`` value for the aiohttp server.
     It defines the maximum body size of a post request accepted by the server.
     See

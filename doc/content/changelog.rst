@@ -6,6 +6,37 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.10.2 (2022-07-31)
+
+
+Changes
+~~~~~~~
+
+* Server
+
+  * Add setting to set aiohttp ``client_max_size``
+
+* Client
+
+  * Window shortcuts were added
+
+    * In most applications Lona has only one window.
+      The Shortcuts ``window.get_default_window()`` and ``window.run_view()``
+      were added to access this first window as the default window.
+
+
+Bugfixes
+~~~~~~~~
+
+* Client
+
+  * Window id reuse was fixed
+
+    * Previously Lona generated a new window id by incrementing the current
+      window count. This lead to potential reuse of ids, when a window got
+      removed
+
+
 .. changelog-header:: 1.10.1 (2022-04-03)
 
 
