@@ -122,7 +122,7 @@ Lona.LonaDomRenderer = class LonaDomRenderer {
                 var widget_class = Lona.widget_classes[node_widget_class_name];
 
                 var window_shim = new Lona.LonaWindowShim(
-                    lona_context,
+                    this.lona_context,
                     this.lona_window,
                     node_id,
                 );
