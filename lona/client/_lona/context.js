@@ -235,7 +235,7 @@ Lona.LonaContext = class LonaContext {
             undefined,  // payload
         ]
 
-        message = (
+        var message = (
             Lona.protocol.PROTOCOL.MESSAGE_PREFIX +
             JSON.stringify(raw_message)
         );
