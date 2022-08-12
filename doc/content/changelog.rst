@@ -6,6 +6,17 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.10.3 (2022-08-12)
+
+Bugfixes
+~~~~~~~~
+
+* Fix client crashes
+
+  * ``1.10.2`` introduced some uninitialized variable and variable name issues
+    that caused occasional crashes
+
+
 .. changelog-header:: 1.10.2 (2022-07-31)
 
 
