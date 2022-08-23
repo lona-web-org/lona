@@ -29,7 +29,8 @@ Lona.LonaInputEventHandler = class LonaInputEventHandler {
         var value = node.value;
 
         // checkbox
-        if(node.getAttribute('type') == 'checkbox') {
+        if(node.getAttribute('type') == 'checkbox' ||
+           node.getAttribute('type') == 'radio') {
             value = node.checked;
 
         // select multiple
