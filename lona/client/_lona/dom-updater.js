@@ -199,10 +199,6 @@ export class LonaDomUpdater {
         } else {
             target_node = this.lona_window._nodes[node_id];
 
-            if(!target_node) {
-                return;
-            };
-
         };
 
         // find start index
@@ -314,9 +310,7 @@ export class LonaDomUpdater {
         } else {
             node = this.lona_window._nodes[node_id];
 
-            if(node) {
-                node.remove();
-            };
+            node.remove();
         };
     };
 
@@ -349,10 +343,6 @@ export class LonaDomUpdater {
         } else {
             var node = this.lona_window._nodes[node_id];
 
-            if(!node) {
-                return;
-            };
-
             node.innerHTML = '';
         };
     };
@@ -367,10 +357,6 @@ export class LonaDomUpdater {
         var operation = patch[2];
         var data = patch.splice(3);
         var node = this.lona_window._nodes[node_id];
-
-        if(!node) {
-            return;  // FIXME: this should throw an error
-        };
 
         // id_list
         if(patch_type == protocol.PATCH_TYPE.ID_LIST) {
