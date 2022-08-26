@@ -264,6 +264,7 @@ export class LonaWindow {
 
                 };
 
+                this._clean_node_cache();
             });
         };
 

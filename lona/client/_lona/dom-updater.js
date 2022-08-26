@@ -310,15 +310,12 @@ export class LonaDomUpdater {
                 node.remove();
             };
 
-            this.lona_window._clean_node_cache();
-
         // Node
         } else {
             node = this.lona_window._nodes[node_id];
 
             if(node) {
                 node.remove();
-                this.lona_window._clean_node_cache();
             };
         };
     };
@@ -348,8 +345,6 @@ export class LonaDomUpdater {
                 child_nodes[index].remove();
             };
 
-            this.lona_window._clean_node_cache();
-
         // Node
         } else {
             var node = this.lona_window._nodes[node_id];
@@ -359,7 +354,6 @@ export class LonaDomUpdater {
             };
 
             node.innerHTML = '';
-            this.lona_window._clean_node_cache();
         };
     };
 
