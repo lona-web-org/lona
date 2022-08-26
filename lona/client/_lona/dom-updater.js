@@ -363,17 +363,16 @@ export class LonaDomUpdater {
 
             // ADD
             if(operation == protocol.OPERATION.ADD) {
-                this.lona_window._add_id(node, data[0]);
+                this._add_id(node, data[0]);
 
             // RESET
             } else if(operation == protocol.OPERATION.RESET) {
                 node.removeAttribute('id');
 
-                this.lona_window._add_id(node, 'lona-' + node_id)
+                this._add_id(node, 'lona-' + node_id)
 
                 for(var i in data) {
-                    this.lona_window._add_id(data[0]);
-
+                    this._add_id(node, data[0]);
                 };
 
             // REMOVE
@@ -384,7 +383,7 @@ export class LonaDomUpdater {
             } else if(operation == protocol.OPERATION.CLEAR) {
                 node.removeAttribute('id');
 
-                this.lona_window._add_id(node, 'lona-' + node_id)
+                this._add_id(node, 'lona-' + node_id)
 
             };
 
