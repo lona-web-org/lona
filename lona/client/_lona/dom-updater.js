@@ -369,8 +369,6 @@ export class LonaDomUpdater {
             } else if(operation == protocol.OPERATION.RESET) {
                 node.removeAttribute('id');
 
-                this._add_id(node, 'lona-' + node_id)
-
                 for(var i in data) {
                     this._add_id(node, data[0]);
                 };
@@ -382,8 +380,6 @@ export class LonaDomUpdater {
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
                 node.removeAttribute('id');
-
-                this._add_id(node, 'lona-' + node_id)
 
             };
 
