@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Test Project",
+            "type": "python",
+            "request": "launch",
+            "module": "lona",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/test_project",
+            "args": ["run-server", "-s", "settings.py"],
+        },
+    ],
+}
