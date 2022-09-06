@@ -76,8 +76,11 @@ class Namespace:
 
 
 class TemplatingEngine:
-    def __init__(self, server):
+    def __init__(self, server, jinja_environment_kwargs=None):
         self.server = server
+
+        if not jinja_environment_kwargs:
+            jinja_environment_kwargs = {}
 
         self.template_dirs = (self.server.settings.TEMPLATE_DIRS +
                               self.server.settings.CORE_TEMPLATE_DIRS)
@@ -96,6 +99,7 @@ class TemplatingEngine:
                 self.template_dirs,
                 followlinks=True,
             ),
+            **jinja_environment_kwargs,
         )
 
         # load extra filters
