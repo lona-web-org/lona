@@ -199,7 +199,7 @@ class AttributeDict:
                         string.append(key)
 
                 else:
-                    string.append(f'{key}="{html.escape(value)}"')
+                    string.append(f'{key}="{html.escape(str(value))}"')
 
             return ' '.join(string)
 
@@ -208,7 +208,7 @@ class AttributeDict:
             string = []
 
             for key, value in self._attributes.items():
-                string.append(f'{key}: {html.escape(value)}')
+                string.append(f'{key}: {html.escape(str(value))}')
 
             return '; '.join(string)
 
