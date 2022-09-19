@@ -1,26 +1,57 @@
-Lona.LonaWindow = class LonaWindow {
+/* MIT License
+
+Copyright (c) 2020 Florian Scherf
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
+import { LonaWidgetDataUpdater } from './widget-data-updater.js'
+import { LonaInputEventHandler } from './input-events.js';
+import { LonaDomRenderer } from './dom-renderer.js';
+import { LonaDomUpdater } from './dom-updater.js'
+import { Lona } from './lona.js'
+
+
+export class LonaWindow {
     constructor(lona_context, root, window_id) {
         this.lona_context = lona_context;
         this._root = root;
         this._window_id = window_id;
         this._view_start_timeout = undefined;
 
-        this._input_event_handler = new Lona.LonaInputEventHandler(
+        this._input_event_handler = new LonaInputEventHandler(
             lona_context,
             this,
         );
 
-        this._dom_renderer = new Lona.LonaDomRenderer(
+        this._dom_renderer = new LonaDomRenderer(
             lona_context,
             this,
         );
 
-        this._dom_updater = new Lona.LonaDomUpdater(
+        this._dom_updater = new LonaDomUpdater(
             lona_context,
             this,
         );
 
-        this._widget_data_updater = new Lona.LonaWidgetDataUpdater(
+        this._widget_data_updater = new LonaWidgetDataUpdater(
             lona_context,
             this,
         );
@@ -233,6 +264,7 @@ Lona.LonaWindow = class LonaWindow {
 
                 };
 
+                this._clean_node_cache();
             });
         };
 

@@ -25,7 +25,6 @@ from jinja2 import Template
 
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
-from lona.client_pre_compiler import ClientPreCompiler
 from lona.static_file_loader import StaticFileLoader
 from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
@@ -174,7 +173,6 @@ class LonaServer:
         self._view_runtime_controller = ViewRuntimeController(self)
 
         # setup static files
-        self._client_pre_compiler: ClientPreCompiler = ClientPreCompiler(self)
 
         # the static file loader has to be started last because it does
         # node class discovery which has to happen after all views are imported

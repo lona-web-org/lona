@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Dict, Any
 from enum import Enum
 import json
 
@@ -84,6 +84,20 @@ ENUMS = [
     PATCH_TYPE,
     OPERATION,
 ]
+
+
+def get_enum_values() -> Dict[str, Dict[str, Any]]:
+    enums = {}
+
+    for enum in ENUMS:
+        enum_values = {}
+
+        for enum_value in enum:
+            enum_values[enum_value.name] = enum_value.value
+
+        enums[enum.__name__] = enum_values
+
+    return enums
 
 
 def decode_message(raw_message: str) -> tuple[

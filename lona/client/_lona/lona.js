@@ -22,22 +22,30 @@ SOFTWARE.
 
 */
 
-var Lona = Object();
+import { LonaContext } from './context.js';
 
-Lona.protocol = JSON.parse('{{ protocol }}');
-Lona.settings = JSON.parse('{{ settings }}');
-Lona.widget_classes = {};
 
-Lona.register_widget_class = function(widget_name, javascript_class) {
-    this.widget_classes[widget_name] = javascript_class;
+export class Lona {
+    static settings = {};
+    static protocol = {};
+    static widget_classes = {};
+    static LonaContext = LonaContext;
+
+    static set_protocol(protocol) {
+        for(const [key, value] of Object.entries(protocol)) {
+            Lona.protocol[key] = value;
+        };
+    };
+
+    static set_settings(settings) {
+        for(const [key, value] of Object.entries(settings)) {
+            Lona.settings[key] = value;
+        };
+    };
+
+    static register_widget_class(widget_name, javascript_class) {
+        Lona.widget_classes[widget_name] = javascript_class;
+    };
 };
 
-{{ settings.DEBUG }}
-
-{% if not DEBUG -%}
-{% for source_file in source_files -%}
-// {{ source_file }}
-{% include source_file %}
-
-{% endfor %}
-{%- endif %}
+window['Lona'] = Lona;

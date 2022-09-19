@@ -14,6 +14,7 @@ from lona.imports import get_file
 if TYPE_CHECKING:  # pragma: no cover
     from lona.server import LonaServer
 
+CLIENT_ROOT = os.path.join(os.path.dirname(__file__), 'client')
 
 logger = logging.getLogger('lona.static_file_loader')
 
@@ -25,7 +26,7 @@ class StaticFileLoader:
         self.static_dirs: list[str] = [
             *self.server.settings.STATIC_DIRS,
             *self.server.settings.CORE_STATIC_DIRS,
-            self.server._client_pre_compiler.tmp_dir.name,
+            CLIENT_ROOT,
         ]
 
         # resolving potential relative paths
@@ -59,9 +60,6 @@ class StaticFileLoader:
         self.script_tags_html: str = self.server.render_template(
             self.server.settings.STATIC_FILES_SCRIPT_TAGS_TEMPLATE,
             {
-                'client_source_files':
-                    self.server._client_pre_compiler.get_source_files(),
-
                 'scripts': [i for i in self.scripts
                             if i.enabled and i.link],
             },
@@ -212,14 +210,6 @@ class StaticFileLoader:
 
         if rel_path.startswith('/'):
             rel_path = rel_path[1:]
-
-        # javascript client
-        logger.debug('trying Lona Javascript client')
-
-        abs_path = self.server._client_pre_compiler.resolve_path(rel_path)
-
-        if abs_path:
-            return abs_path
 
         # searching in static dirs
         for static_dir in self.static_dirs:

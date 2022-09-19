@@ -10,18 +10,20 @@
     {% include "lona/footer.html" %}
     {{ Lona.load_scripts() }}
     <script>
-      var lona_context = new Lona.LonaContext({
-        target: '#lona',
-        title: 'Lona',
-        update_address_bar: true,
-        update_title: true,
-        follow_redirects: true,
-        follow_http_redirects: true,
+      window.addEventListener('load', function() {
+        var lona_context = new Lona.LonaContext({
+          target: '#lona',
+          title: 'Lona',
+          update_address_bar: true,
+          update_title: true,
+          follow_redirects: true,
+          follow_http_redirects: true,
+        });
+
+        {% include "lona/frontend.js" %}
+
+        lona_context.setup();
       });
-
-      {% include "lona/frontend.js" %}
-
-      lona_context.setup();
     </script>
   </body>
 </html>

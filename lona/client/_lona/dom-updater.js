@@ -1,4 +1,31 @@
-Lona.LonaDomUpdater = class LonaDomUpdater {
+/* MIT License
+
+Copyright (c) 2020 Florian Scherf
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
+import { Lona } from './lona.js';
+
+
+export class LonaDomUpdater {
     constructor(lona_context, lona_window) {
         this.lona_context = lona_context;
         this.lona_window = lona_window;
@@ -172,10 +199,6 @@ Lona.LonaDomUpdater = class LonaDomUpdater {
         } else {
             target_node = this.lona_window._nodes[node_id];
 
-            if(!target_node) {
-                return;
-            };
-
         };
 
         // find start index
@@ -283,16 +306,11 @@ Lona.LonaDomUpdater = class LonaDomUpdater {
                 node.remove();
             };
 
-            this.lona_window._clean_node_cache();
-
         // Node
         } else {
             node = this.lona_window._nodes[node_id];
 
-            if(node) {
-                node.remove();
-                this.lona_window._clean_node_cache();
-            };
+            node.remove();
         };
     };
 
@@ -321,18 +339,11 @@ Lona.LonaDomUpdater = class LonaDomUpdater {
                 child_nodes[index].remove();
             };
 
-            this.lona_window._clean_node_cache();
-
         // Node
         } else {
             var node = this.lona_window._nodes[node_id];
 
-            if(!node) {
-                return;
-            };
-
             node.innerHTML = '';
-            this.lona_window._clean_node_cache();
         };
     };
 
@@ -347,26 +358,19 @@ Lona.LonaDomUpdater = class LonaDomUpdater {
         var data = patch.splice(3);
         var node = this.lona_window._nodes[node_id];
 
-        if(!node) {
-            return;  // FIXME: this should throw an error
-        };
-
         // id_list
         if(patch_type == protocol.PATCH_TYPE.ID_LIST) {
 
             // ADD
             if(operation == protocol.OPERATION.ADD) {
-                this.lona_window._add_id(node, data[0]);
+                this._add_id(node, data[0]);
 
             // RESET
             } else if(operation == protocol.OPERATION.RESET) {
                 node.removeAttribute('id');
 
-                this.lona_window._add_id(node, 'lona-' + node_id)
-
                 for(var i in data) {
-                    this.lona_window._add_id(data[0]);
-
+                    this._add_id(node, data[0]);
                 };
 
             // REMOVE
@@ -376,8 +380,6 @@ Lona.LonaDomUpdater = class LonaDomUpdater {
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
                 node.removeAttribute('id');
-
-                this.lona_window._add_id(node, 'lona-' + node_id)
 
             };
 
