@@ -6,6 +6,40 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.10.4 (2022-09-26)
+
+Changes
+~~~~~~~
+
+* Client
+
+  * Python based pre compiler was replaced with JavaScript ES06 imports
+
+    * The sole reason for the client pre compiler was to add Python constants
+      and Javascript imports to the vanilla Javascript client implementation.
+
+      Since all major browsers support ES06 imports now, and Python constants
+      can also resolved in the templating stage, the client pre compiler was
+      removed.
+
+Bugfixes
+~~~~~~~~
+
+* Client
+
+  * Node caching problem was fixed
+
+    * Previously the node cache got cleaned out after every rendering patch
+      that was applied. In some cases that resulted in situations in which
+      nodes got cleaned out of the cache before they were applied to the Dom.
+
+      When a patch came in, for a node that was not present in the node cache,
+      the client crashed.
+
+      This issue was fixed by removing the cash clear calls after every patch
+      and add one call after an entire patch stack.
+
+
 .. changelog-header:: 1.10.3 (2022-08-12)
 
 Bugfixes
