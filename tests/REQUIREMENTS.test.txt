@@ -4,7 +4,7 @@ rlpython
 typing-extensions
 
 tox
-coverage==6.1.2
+coverage==6.5.0
 pytest==6.2.5
 pytest-aiohttp==0.3.0
 pytest-dependency==0.5.1
