@@ -8,6 +8,7 @@ from lona.html.attribute_list import ClassList, IDList
 from lona.html.node_event_list import NodeEventList
 from lona.events import ChangeEventType, EventType
 from lona.html.abstract_node import AbstractNode
+from lona.html.widget_data import WidgetData
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
 
@@ -37,14 +38,25 @@ class Node(AbstractNode):
     STYLE: dict[str, str] | str = {}
     ATTRIBUTES: dict[str, str] = {}
     EVENTS: list[EventType | ChangeEventType] = []
+    WIDGET: str = ''
 
-    def __init__(self, *args, tag_name=None, self_closing_tag=None, **kwargs):
+    def __init__(
+            self,
+            *args,
+            tag_name=None,
+            self_closing_tag=None,
+            widget='',
+            **kwargs,
+    ):
+
         self._id_list = IDList(self, self.ID_LIST)
         self._class_list = ClassList(self, self.CLASS_LIST)
         self._style = StyleDict(self, self.STYLE)
         self._attributes = AttributeDict(self, self.ATTRIBUTES)
         self._nodes = NodeList(self)
         self._events = NodeEventList(self, self.EVENTS)
+        self._widget = widget or self.WIDGET
+        self._widget_data = WidgetData(widget=self)
 
         # tag overrides
         self.tag_name = tag_name or self.TAG_NAME
@@ -216,6 +228,15 @@ class Node(AbstractNode):
     def nodes(self, value):
         self._nodes._reset(value)
 
+    # widget_data
+    @property
+    def widget_data(self):
+        return self._widget_data
+
+    @widget_data.setter
+    def widget_data(self, value):
+        self._widget_data._reset(value)
+
     # lona attribute helper ###################################################
     def has_class(self, class_name):
         return class_name in self._class_list
@@ -241,6 +262,11 @@ class Node(AbstractNode):
 
     # serialization ###########################################################
     def _serialize(self):
+        widget_data = None
+
+        if self._widget:
+            widget_data = self._widget_data._serialize()
+
         return [
             NODE_TYPE.NODE,
             self.id,
@@ -250,6 +276,8 @@ class Node(AbstractNode):
             self._style._serialize(),
             self._attributes._serialize(),
             self._nodes._serialize(),
+            self._widget,
+            widget_data,
         ]
 
     # node list helper ########################################################

@@ -198,6 +198,7 @@ export class LonaWindow {
             };
 
             widget.nodes = this._dom_updater._get_widget_nodes(node_id);
+            widget.root_node = widget.nodes[0];
 
             if(widget.setup !== undefined) {
                 widget.setup();
