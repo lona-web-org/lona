@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from html.parser import HTMLParser
+from typing import List, Dict
 import logging
 
 from lona.html.abstract_node import AbstractNode
 from lona.html.text_node import TextNode
+from lona.html.nodes import Div
 from lona.html.node import Node
 
 logger = logging.getLogger('lona')
@@ -195,3 +197,45 @@ def html_string_to_node_list(html_string, use_high_level_nodes=True,
         )
 
     return list(root_node.nodes)
+
+
+def HTML(
+        *nodes: str | AbstractNode,
+        use_high_level_nodes: bool = True,
+        node_classes: Dict[str, AbstractNode] | None = None,
+) -> AbstractNode:
+
+    _nodes: List[AbstractNode] = []
+
+    for node in nodes:
+
+        # strings
+        if isinstance(node, str):
+
+            # escaped text
+            if node.startswith('\\'):
+                _nodes.append(TextNode(node[1:]))
+
+            # html string
+            elif '<' in node or '>' in node:
+                if len(nodes) > 1:
+                    _nodes.append(HTML(node))
+
+                else:
+                    _nodes = html_string_to_node_list(
+                        html_string=node,
+                        use_high_level_nodes=use_high_level_nodes,
+                        node_classes=node_classes or {},
+                    )
+
+            else:
+                _nodes.append(TextNode(node))
+
+        # lona nodes
+        else:
+            _nodes.append(node)
+
+    if len(_nodes) == 1:
+        return _nodes[0]
+
+    return Div(nodes=_nodes)
