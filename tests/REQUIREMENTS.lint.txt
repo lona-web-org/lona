@@ -19,4 +19,4 @@ flake8-quotes==3.3.1
 flake8-use-fstring==1.4
 mypy==0.910
 isort==5.10.1
-pytest==6.2.5
+pytest==7.1.3
