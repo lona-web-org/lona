@@ -24,7 +24,7 @@ class LonaContext:
     client: TestClient
     app: None | LonaApp
     server: LonaServer
-    loop: AbstractEventLoop
+    event_loop: AbstractEventLoop
 
     def make_url(self, path: str = '') -> str:
         """
@@ -69,7 +69,7 @@ class LonaContext:
                         locals=locals(),
                     )
 
-                context.loop.run_in_executor(None, run_test)
+                context.event_loop.run_in_executor(None, run_test)
 
         :webbrowser: (bool) start a webbrowser that points to the test server
         :sync:       (bool) run blocking in the current thread
@@ -103,12 +103,12 @@ class LonaContext:
 
         return cast(
             Future,
-            self.loop.run_in_executor(None, _debug_interactive),
+            self.event_loop.run_in_executor(None, _debug_interactive),
         )
 
 
 @pytest.fixture()
-def lona_app_context(request, aiohttp_client, loop):
+def lona_app_context(request, aiohttp_client, event_loop):
     async def setup_lona_app_context(
             setup_app: Callable[[LonaApp], None],
             project_root: str = '',
@@ -118,25 +118,25 @@ def lona_app_context(request, aiohttp_client, loop):
         setup_app(lona_app)
 
         # setup client
-        def setup_aiohttp_app(loop: AbstractEventLoop) -> Application:
-            lona_app.setup_server(loop=loop)
+        async def setup_aiohttp_app() -> Application:
+            lona_app.setup_server(loop=event_loop)
 
             return cast(Application, lona_app.aiohttp_app)
 
-        client = await aiohttp_client(setup_aiohttp_app)
+        client = await aiohttp_client(await setup_aiohttp_app())
 
         return LonaContext(
             client=client,
             app=lona_app,
             server=cast(LonaServer, lona_app.server),
-            loop=loop,
+            event_loop=event_loop,
         )
 
     return setup_lona_app_context
 
 
 @pytest.fixture()
-def lona_project_context(request, aiohttp_client, loop):
+def lona_project_context(request, aiohttp_client, event_loop):
     async def setup_lona_project_context(
         project_root: str = '',
         settings: None | list[str] = None,
@@ -147,7 +147,7 @@ def lona_project_context(request, aiohttp_client, loop):
         # setup aiohttp app
         server = None
 
-        def setup_aiohttp_app(loop: AbstractEventLoop) -> Application:
+        async def setup_aiohttp_app() -> Application:
             nonlocal server
 
             # setup lona server
@@ -158,18 +158,18 @@ def lona_project_context(request, aiohttp_client, loop):
                 settings_post_overrides=settings_post_overrides or {},
             )
 
-            server._loop = loop
+            server._loop = event_loop
             server._worker_pool = WorkerPool(settings=server.settings)
 
             return server._app
 
-        client = await aiohttp_client(setup_aiohttp_app)
+        client = await aiohttp_client(await setup_aiohttp_app())
 
         return LonaContext(
             client=client,
             app=None,
             server=cast(LonaServer, server),
-            loop=loop,
+            event_loop=event_loop,
         )
 
     return setup_lona_project_context
