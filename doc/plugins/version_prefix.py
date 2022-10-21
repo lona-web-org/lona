@@ -1,10 +1,8 @@
 from pathlib import Path
-from sys import prefix
 import os
 
-from bs4 import BeautifulSoup
-
 from flamingo.plugins.redirects import HTML_TEMPLATE
+from bs4 import BeautifulSoup
 
 
 class VersionPrefix:
@@ -21,14 +19,14 @@ class VersionPrefix:
             if not tag[attribute_name].startswith('/'):
                 continue
 
-            tag[attribute_name] = f"{prefix}{tag[attribute_name][1:]}"
+            tag[attribute_name] = f'{prefix}{tag[attribute_name][1:]}'
 
     def settings_setup(self, context):
         self.settings = context.settings
         prefix = self.get_prefix()
 
-        context.settings.OUTPUT_ROOT = f"output{prefix}"
-        context.settings.STATIC_ROOT = f"output{prefix}static"
+        context.settings.OUTPUT_ROOT = f'output{prefix}'
+        context.settings.STATIC_ROOT = f'output{prefix}static'
 
     def post_build(self, context):
         prefix = self.get_prefix()
