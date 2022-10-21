@@ -5,7 +5,7 @@ PYTHON_ENV_ROOT=envs
 PYTHON_DEV_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-dev
 PYTHON_PACKAGING_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-packaging-env
 
-.PHONY: clean doc sdist test ci-test lint isort shell freeze
+.PHONY: clean doc sdist pytest test ci-test lint isort shell freeze
 
 # development environment #####################################################
 $(PYTHON_DEV_ENV)/.created: REQUIREMENTS.dev.txt
@@ -42,7 +42,7 @@ freeze: dev-env
 	pip freeze
 
 # tests #######################################################################
-test: dev-env
+pytest: dev-env
 	. $(PYTHON_DEV_ENV)/bin/activate && \
 	rm -rf htmlcov && \
 	time tox $(args)
@@ -51,6 +51,9 @@ ci-test: dev-env
 	. $(PYTHON_DEV_ENV)/bin/activate && \
 	rm -rf htmlcov && \
 	time JENKINS_URL=1 tox -r $(args)
+
+test:
+	ARGS=$(args) docker-compose -f tests/docker/docker-compose.yml run lona-tox
 
 # linting #####################################################################
 lint: dev-env

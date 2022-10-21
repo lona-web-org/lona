@@ -1,0 +1,22 @@
+version: '3'
+
+networks:
+    net:
+        driver: bridge
+
+services:
+  lona-tox:
+    build:
+      context: ./
+      dockerfile: playwright.dockerfile
+
+    networks:
+      - net
+
+    volumes:
+      - ../../:/project
+      - .cache/envs:/project/envs
+      - .cache/.tox:/project/.tox
+      - .cache/.ms-playwright:/root/.cache/ms-playwright
+
+    command: 'make --directory=/project pytest args="${ARGS}"'
