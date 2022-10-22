@@ -54,6 +54,11 @@ class VersionPrefix:
             path = os.path.join('output', base_path)
             dirname = os.path.dirname(path)
             url = os.path.join('/', prefix, base_path)
+
+            # remove obsolete '/index.html' suffixes
+            if url.endswith('/index.html'):
+                url = url[:-10]
+
             redirect_text = HTML_TEMPLATE.format(url)
 
             try:
