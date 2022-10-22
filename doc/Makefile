@@ -13,7 +13,10 @@ $(PYTHON_VENV)/.created: REQUIREMENTS.txt
 env: $(PYTHON_VENV)/.created
 
 clean:
-	rm -rf $(PYTHON_VENV) output
+	rm -rf output
+
+distclean:
+	rm -rf $(PYTHON_VENV)
 
 html: env
 	. $(PYTHON_VENV)/bin/activate && \
