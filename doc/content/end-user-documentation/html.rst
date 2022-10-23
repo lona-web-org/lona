@@ -633,40 +633,66 @@ Select
 
 .. code-block:: python
 
-    from lona.html import Select
+    from lona.html import Select, Option
 
-    Select(
-        values=[
-            # value, label, is_selected
-            ('foo', 'Foo', True),
-            ('bar', 'Bar', False),
-        ],
+    select = Select(
+        Option('Option 1', value='1'),
+        Option('Option 2', value=2),
+        Option('Option 3', value=3.0, selected=True),
     )
 
-**Init Arguments:**
+    # disable first option
+    select.options[0].disabled = True
+
+    # select second option by selected property
+    select.options[1].selected = True
+
+    # select second option by value property
+    select.value = 2
+
+A ``Select`` consist of one or more ``Option`` objects, which hold information
+on value, selection state and disabled state.
+
+``Option`` objects consist of a label text and a value. The value can be
+anything. If ``Option.render_value`` is set, which is set by default, the
+content of ``Option.value`` gets typecasted to a string and rendered into the
+HTML tree. This can be disabled if the actually values of the select shouldn't
+be disclosed to end users.
+
+``Select.value`` returns the value of the option that is currently
+selected. If the ``Select`` is a multi select, ``Select.value`` returns a
+tuple of all selected options values.
+
+An option can be selected by setting ``Select.value`` to the value of the
+option that should be selected, or by setting ``Option.selected``. If the
+select is no multi select, all other options get unselected automatically.
+
+**Select Attributes:**
 
 .. table::
 
-    ^Name             ^Default Value      ^Description
-    |values           |None               |(List of Tuples) Initial values
-    |bubble_up        |False              |(Bool) Pass input events further
-    |disabled         |False              |(Bool) sets the HTML attribute "disabled"
-    |multiple         |False              |(Bool) Enables multi selection
-    |*args            |()                 |Node args
-    |**kwargs         |{}                 |Node kwargs
+    ^Name              ^Description
+    |value             |Value of the currently selected option or tuple of values of selected options
+    |values            |(Tuple) tuple of all possible values
+    |options           |(Tuple) tuple of all options
+    |selected_options  |(Tuple) tuple of all selected options
+    |disabled          |(Bool) sets the HTML attribute "disabled"
+    |multiple          |(Bool) Enables multi selection
+    |id_list           |(List) contains all ids
+    |class_list        |(List) contains all classes
+    |style             |(Dict) contains all styling attributes
 
-**Attributes:**
+**Option Attributes:**
 
 .. table::
 
-    ^Name       ^Description
-    |values     |(List of Tuples) All options
-    |value      |Currently set value
-    |disabled   |(Bool) sets the HTML attribute "disabled"
-    |multiple   |(Bool) Enables multi selection
-    |id_list    |(List) contains all ids
-    |class_list |(List) contains all classes
-    |style      |(Dict) contains all styling attributes
+    ^Name              ^Description
+    |value             |value of the option
+    |selected          |(Bool) sets selection state
+    |disabled          |(Bool) sets the HTML attribute "disabled"
+    |id_list           |(List) contains all ids
+    |class_list        |(List) contains all classes
+    |style             |(Dict) contains all styling attributes
 
 
 Adding Javascript And CSS To HTML Nodes
