@@ -3,10 +3,14 @@ from lona.html.node import Node
 
 
 class Option(Node):
+    # TODO: remove in 2.0
+
     TAG_NAME = 'option'
 
 
 class Select(Node):
+    # TODO: remove in 2.0
+
     TAG_NAME = 'select'
     EVENTS = [CHANGE]
 

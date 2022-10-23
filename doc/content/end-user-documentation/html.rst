@@ -645,6 +645,10 @@ Select
 
     ``multiple`` was added in 1.6
 
+.. warning::
+
+    Deprecated since 1.12. Use `Select2 <#id1>`_ instead.
+
 
 .. code-block:: python
 
@@ -682,6 +686,78 @@ Select
     |id_list    |(List) contains all ids
     |class_list |(List) contains all classes
     |style      |(Dict) contains all styling attributes
+
+
+Select2
++++++++
+
+.. note::
+
+    Added in 1.12
+
+
+.. code-block:: python
+
+    from lona.html import Select2, Option2
+
+    select2 = Select2(
+        Option2('Option 1', value='1'),
+        Option2('Option 2', value=2),
+        Option2('Option 3', value=3.0, selected=True),
+    )
+
+    # disable first option
+    select2.options[0].disabled = True
+
+    # select second option by selected property
+    select2.options[1].selected = True
+
+    # select second option by value property
+    select2.value = 2
+
+A ``Select2`` consist of one or more ``Option2`` objects, which hold
+information on value, selection state and disabled state.
+
+``Option2`` objects consist of a label text and a value. The value can be
+anything. If ``Option2.render_value`` is set, which is set by default, the
+content of ``Option2.value`` gets typecasted to a string and rendered into the
+HTML tree. This can be disabled if the actually values of the select shouldn't
+be disclosed to end users.
+
+``Select2.value`` returns the value of the option that is currently
+selected. If the ``Select2`` is a multi select, ``Select2.value`` returns a
+tuple of all selected options values.
+
+An option can be selected by setting ``Select2.value`` to the value of the
+option that should be selected, or by setting ``Option2.selected``. If the
+select is no multi select, all other options get unselected automatically.
+
+**Select Attributes:**
+
+.. table::
+
+    ^Name              ^Description
+    |value             |Value of the currently selected option or tuple of values of selected options
+    |values            |(Tuple) tuple of all possible values
+    |options           |(Tuple) tuple of all options
+    |selected_options  |(Tuple) tuple of all selected options
+    |disabled          |(Bool) sets the HTML attribute "disabled"
+    |multiple          |(Bool) Enables multi selection
+    |id_list           |(List) contains all ids
+    |class_list        |(List) contains all classes
+    |style             |(Dict) contains all styling attributes
+
+**Option Attributes:**
+
+.. table::
+
+    ^Name              ^Description
+    |value             |value of the option
+    |selected          |(Bool) sets selection state
+    |disabled          |(Bool) sets the HTML attribute "disabled"
+    |id_list           |(List) contains all ids
+    |class_list        |(List) contains all classes
+    |style             |(Dict) contains all styling attributes
 
 
 Adding Javascript And CSS To HTML Nodes

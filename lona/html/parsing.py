@@ -33,8 +33,19 @@ SELF_CLOSING_TAGS = [
 
 
 def _setup_node_classes_cache():
+    from lona.html.data_binding.select2 import Select2, Option2
+
+    # TODO: remove in 2.0
+    IGNORED_NODE_CLASSES = (
+        Select2,
+        Option2,
+    )
+
     for node_class in AbstractNode.get_all_node_classes():
         if not issubclass(node_class, Node):
+            continue
+
+        if node_class in IGNORED_NODE_CLASSES:
             continue
 
         # input nodes
