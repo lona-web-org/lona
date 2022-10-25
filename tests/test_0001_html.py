@@ -791,6 +791,7 @@ class TestNumberInput:
 
         assert node is html[0]
 
+    # state ###################################################################
     def test_state(self):
         div = Div()
 
@@ -806,3 +807,8 @@ class TestNumberInput:
         div.state.clear()
 
         assert div.state == {}
+
+    def test_initial_state(self):
+        div = Div(state={'foo': 'bar'})
+
+        assert div.state == {'foo': 'bar'}

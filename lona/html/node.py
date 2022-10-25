@@ -11,6 +11,7 @@ from lona.html.abstract_node import AbstractNode
 from lona.html.widget_data import WidgetData
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
+from lona.state import State
 
 
 def parse_style_string(style_string: str) -> dict[str, str]:
@@ -168,6 +169,12 @@ class Node(AbstractNode):
                     raise TypeError('handle_blur has to be a function')
 
                 self.handle_blur = value
+
+            elif name == 'state':
+                self._state = State(
+                    initial_data=value,
+                    node=self,
+                )
 
             # misc attributes
             else:
