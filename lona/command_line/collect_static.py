@@ -2,8 +2,6 @@ import contextlib
 import shutil
 import os
 
-from aiohttp.web import Application
-
 from lona.logging import setup_logging
 from lona.server import LonaServer
 
@@ -59,7 +57,6 @@ def collect_static(args):
 
     # setup server
     server = LonaServer(
-        app=Application(),
         project_root=args.project_root,
         settings_paths=args.settings,
         settings_pre_overrides=args.settings_pre_overrides,
