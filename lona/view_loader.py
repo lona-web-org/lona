@@ -35,8 +35,8 @@ class ViewLoader:
 
     def _run_checks(self, route: Route, view: type[LonaView]) -> None:
         # check if view is instance of lona.views.LonaView
-        if(not route.http_pass_through and
-           (not inspect.isclass(view) or not issubclass(view, LonaView))):
+        if (not route.http_pass_through and
+                (not inspect.isclass(view) or not issubclass(view, LonaView))):
 
             logger.error('%s is no lona view', route.view)
 
@@ -55,8 +55,8 @@ class ViewLoader:
         for hook_name in hook_names:
             hook = getattr(view, hook_name, None)
 
-            if(not route.http_pass_through and
-               asyncio.iscoroutinefunction(hook)):
+            if (not route.http_pass_through and
+                    asyncio.iscoroutinefunction(hook)):
 
                 logger.error(
                     '%s.%s is a coroutine function',

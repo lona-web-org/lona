@@ -11,7 +11,7 @@ TOC_TREE_TEMPLATE_STRING = """
         <li>{{ indentation * '&nbsp;&nbsp;&nbsp;&nbsp;' }}<a href="#{{ section .attrs['id'] }}">{{ header }}</a></li>
     {% endfor %}
 </ul>
-"""  # NOQA: LN001
+"""  # NOQA: LN002
 
 _toc_tree_template = Template(TOC_TREE_TEMPLATE_STRING)
 

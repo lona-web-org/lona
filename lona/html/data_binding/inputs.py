@@ -199,10 +199,10 @@ class NumberInput(TextInput):
 
             return
 
-        if((self.min is not None and value < self.min) or
-           (self.max is not None and value > self.max) or
-           (self.step is not None and
-               (value-(self.min or 0)) % self.step) != 0):  # NOQA: FS001
+        if ((self.min is not None and value < self.min) or
+                (self.max is not None and value > self.max) or
+                (self.step is not None and
+                    (value-(self.min or 0)) % self.step) != 0):  # NOQA: FS001
 
             self._valid = False
 

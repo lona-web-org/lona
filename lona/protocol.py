@@ -194,9 +194,9 @@ def decode_message(raw_message: str) -> tuple[
 
     # ping
     if method == METHOD.PING:
-        if(window_id is not None or
-           view_runtime_id is not None or
-           payload is not None):
+        if (window_id is not None or
+                view_runtime_id is not None or
+                payload is not None):
 
             return _invalid_message()
 

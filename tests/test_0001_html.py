@@ -551,7 +551,7 @@ class TestHTMLFromStr:
             'password',
             'radio',
             'range',
-            'reset',  # intentionally, see 575dcf635180 ("html: remove Reset node")  # NOQA: LN001
+            'reset',  # intentionally, see 575dcf635180 ("html: remove Reset node")  # NOQA: LN002
             'search',
             'tel',
             'time',

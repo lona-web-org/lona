@@ -460,8 +460,9 @@ class LonaServer:
             return response
 
         # websocket requests ##################################################
-        if(http_request.method == 'GET' and
-           http_request.headers.get('upgrade', '').lower() == 'websocket'):
+        if (http_request.method == 'GET' and
+                (http_request.headers.get('upgrade', '').lower() ==
+                    'websocket')):
 
             return await self._handle_websocket_request(http_request)
 

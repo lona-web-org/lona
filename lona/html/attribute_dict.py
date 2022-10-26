@@ -90,8 +90,8 @@ class AttributeDict:
             raise ValueError('dict required')
 
         with self._node.lock:
-            for key, value in value.items():
-                self[key] = value
+            for key, _value in value.items():
+                self[key] = _value
 
     def __getitem__(self, name):
         with self._node.lock:

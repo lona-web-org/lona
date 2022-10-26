@@ -27,8 +27,8 @@ class ResponseParser:
 
         supported_keys = ('redirect', 'http_redirect')
 
-        if(len(raw_response_dict.keys()) > 1 or
-           list(raw_response_dict.keys())[0] not in supported_keys):
+        if (len(raw_response_dict.keys()) > 1 or
+                list(raw_response_dict.keys())[0] not in supported_keys):
 
             raise ValueError(f'response dict has unexpected keys ({repr(list(raw_response_dict.keys()))})')
 
@@ -105,8 +105,8 @@ class ResponseParser:
             response_dict['http_redirect'] = raw_response_dict['http_redirect']
 
         # template response
-        elif('template' in raw_response_dict or
-             'template_string' in raw_response_dict):
+        elif ('template' in raw_response_dict or
+              'template_string' in raw_response_dict):
 
             logger.debug("'%s' is a template view", view_name)
 

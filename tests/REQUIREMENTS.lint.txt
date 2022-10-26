@@ -5,18 +5,18 @@ typing-extensions
 
 tox
 coverage
-flake8==3.9.2
-flake8-2020==1.6.0
-flake8-bugbear==21.9.2
+flake8==5.0.4
+flake8-2020==1.7.0
+flake8-bugbear==22.10.25
 flake8-commas==2.1.0
 flake8-comprehensions==3.10.0
-flake8-length==0.2.0
+flake8-length==0.3.0
 flake8-logging-format==0.8.1
 flake8-mutable==1.2.0
 flake8-noqa==1.2.9
 flake8-pytest-style==1.6.0
 flake8-quotes==3.3.1
 flake8-use-fstring==1.4
-mypy==0.910
+mypy==0.982
 isort==5.10.1
 pytest==7.2.0

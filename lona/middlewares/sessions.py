@@ -64,8 +64,8 @@ class LonaSessionMiddleware:
 
             return data
 
-        if(not data.connection.interactive and
-           not get_session_key()):
+        if (not data.connection.interactive and
+                not get_session_key()):
 
             # skip cookie setting and redirecting on non-interactive routes
             # without this exception REST APIs don't work as expected

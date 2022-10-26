@@ -29,8 +29,8 @@ class FormView(LonaView):
         action = '.'
         method = 'post'
 
-        if(input_event.node_has_id('non-interactive-get') or
-           input_event.node_has_id('interactive-get')):
+        if (input_event.node_has_id('non-interactive-get') or
+                input_event.node_has_id('interactive-get')):
 
             method = 'get'
 
@@ -45,8 +45,8 @@ class FormView(LonaView):
             ),
         )
 
-        if(input_event.node_has_id('non-interactive-get') or
-           input_event.node_has_id('non-interactive-post')):
+        if (input_event.node_has_id('non-interactive-get') or
+                input_event.node_has_id('non-interactive-post')):
 
             message.set_text('View stopped')
 

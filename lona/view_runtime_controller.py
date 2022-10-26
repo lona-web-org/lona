@@ -37,10 +37,10 @@ class ViewRuntimeController:
 
     def get_running_view_runtime(self, user, route, match_info):
         for view_runtime in self.iter_view_runtimes():
-            if(view_runtime.start_connection.user == user and
-               view_runtime.is_daemon and
-               view_runtime.route == route and
-               view_runtime.match_info == match_info):
+            if (view_runtime.start_connection.user == user and
+                    view_runtime.is_daemon and
+                    view_runtime.route == route and
+                    view_runtime.match_info == match_info):
 
                 return view_runtime
 
@@ -72,8 +72,8 @@ class ViewRuntimeController:
         count = 0
 
         for view_runtime in self.iter_view_runtimes():
-            if(view_runtime.start_connection and
-               view_runtime.start_connection.user == user):
+            if (view_runtime.start_connection and
+                    view_runtime.start_connection.user == user):
 
                 count += 1
 
@@ -154,9 +154,9 @@ class ViewRuntimeController:
         match, route, match_info = self.server._router.resolve(url_object.path)
 
         # route is not interactive; issue a http redirect
-        if(connection.interactive and
-           match and
-           (route.http_pass_through or not route.interactive)):
+        if (connection.interactive and
+                match and
+                (route.http_pass_through or not route.interactive)):
 
             views_logger.debug(
                 'route is not interactive; issue a http redirect',
