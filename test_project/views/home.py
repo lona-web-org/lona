@@ -87,4 +87,4 @@ class HomeView(LonaView):
                 <li><a href="/frontend/custom-event/">Custom Event</a></li>
                 <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
             </ul>
-        """  # NOQA: LN001
+        """  # NOQA: LN002
