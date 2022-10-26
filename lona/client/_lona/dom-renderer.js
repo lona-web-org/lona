@@ -48,6 +48,8 @@ export class LonaDomRenderer {
             var node_style = node_spec[5];
             var node_attributes = node_spec[6];
             var node_child_nodes = node_spec[7];
+            var widget_class_name = node_spec[8];
+            var widget_data = node_spec[9];
 
             var node = document.createElement(node_tag_name);
 
@@ -105,6 +107,27 @@ export class LonaDomRenderer {
 
             this.lona_window._nodes[node_id] = node;
             node_list.push(node);
+
+            // widget
+            if(widget_class_name != '') {
+                if(!(widget_class_name in Lona.widget_classes)) {
+                    throw(`RuntimeError: unknown widget name '${widget_class_name}'`);
+                }
+
+                var widget_class = Lona.widget_classes[widget_class_name];
+
+                var window_shim = new LonaWindowShim(
+                    this.lona_context,
+                    this.lona_window,
+                    node_id,
+                );
+
+                var widget = new widget_class(window_shim);
+
+                this.lona_window._widgets[node_id] = widget;
+                this.lona_window._widget_data[node_id] = widget_data;
+                this.lona_window._widgets_to_setup.splice(0, 0, node_id);
+            }
 
         // TextNode
         } else if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {

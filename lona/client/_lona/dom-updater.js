@@ -47,6 +47,10 @@ export class LonaDomUpdater {
     };
 
     _get_widget_nodes(node_id) {
+        if(node_id in this.lona_window._nodes) {
+            return [this.lona_window._nodes[node_id]];
+        }
+
         var node_list = [];
         var widget_marker = this.lona_window._widget_marker[node_id];
         var end_marker_text = 'end-lona-widget:' + node_id;

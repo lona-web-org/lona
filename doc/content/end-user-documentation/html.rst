@@ -819,12 +819,13 @@ handle the event.
 Frontend Widgets
 ~~~~~~~~~~~~~~~~
 
-Widgets can define a Javascript based frontend widget, to include client side
-code. This is useful to integrate with third party Javascript libraries.
+Widgets and nodes can define a Javascript based frontend widget, to include
+client side code. This is useful to integrate with third party Javascript
+libraries.
 
 To communicate between the backend widget and the frontend widget, the backend
-can set its state in ``Widget.state``, a dict like object, and the frontend
-can issue events with custom data.
+can set its state in ``Widget.state``, or in ``Node.widget_data`` a dict like
+object, and the frontend can issue events with custom data.
 
 .. code-block:: python
 
@@ -847,6 +848,31 @@ can issue events with custom data.
             ]
 
             self.data = {'foo': 'bar'}
+
+
+.. code-block:: python
+
+    # my_node.py
+
+    from lona.static_files import Script
+    from lona.html import Div
+
+    class MyNode(Div):
+        WIDGET = 'MyFrontendWidget'
+
+        STATIC_FILES = [
+            # the path is always relative to the current file
+            Script(name='MyFrontendWidget', path='my_frontend_widget.js'),
+        ]
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.nodes = [
+                Div('foo'),
+            ]
+
+            self.widget_data = {'foo': 'bar'}
 
 
 .. code-block:: javascript
