@@ -52,12 +52,12 @@ test:
 # linting #####################################################################
 lint: | $(PYTHON_DEV_ENV)
 	. $(PYTHON_DEV_ENV)/bin/activate && \
-	time tox -e lint
+	time tox -e lint $(args)
 
 # isort #######################################################################
 isort: | $(PYTHON_DEV_ENV)
 	. $(PYTHON_DEV_ENV)/bin/activate && \
-	tox -e isort
+	tox -e isort $(args)
 
 # packaging ###################################################################
 sdist: | $(PYTHON_PACKAGING_ENV)
