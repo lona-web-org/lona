@@ -101,10 +101,7 @@ class LonaContext:
 
             return None
 
-        return cast(
-            Future,
-            self.event_loop.run_in_executor(None, _debug_interactive),
-        )
+        return self.event_loop.run_in_executor(None, _debug_interactive)
 
 
 @pytest.fixture()
