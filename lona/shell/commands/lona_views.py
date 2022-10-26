@@ -247,8 +247,8 @@ class LonaViewsCommand:
             self._print_exception(view_runtime.stop_reason)
 
         # shortened stack
-        elif(view_runtime.state.value > 20 and
-             view_runtime.state.value < 30):
+        elif (view_runtime.state.value > 20 and
+                view_runtime.state.value < 30):
 
             self.repl.write('Shortened Stack\n')
             self.repl.write('===============\n')

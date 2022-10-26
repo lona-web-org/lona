@@ -329,12 +329,12 @@ class ViewRuntime:
 
             # check if non-interactive features got used in
             # interactive mode
-            if(self.route and self.route.interactive and
-                isinstance(raw_response_dict, dict) and (
-                    'json' in raw_response_dict or
-                    'file' in raw_response_dict or
-                    'headers' in raw_response_dict or
-                    'body' in raw_response_dict)):
+            if (self.route and self.route.interactive and
+                    isinstance(raw_response_dict, dict) and (
+                        'json' in raw_response_dict or
+                        'file' in raw_response_dict or
+                        'headers' in raw_response_dict or
+                        'body' in raw_response_dict)):
 
                 raise RuntimeError(
                     'JSON, binary and file responses and headers are only available in non-interactive mode',
@@ -343,7 +343,7 @@ class ViewRuntime:
             return self.handle_raw_response_dict(raw_response_dict)
 
         # view got stopped from outside
-        except(StopReason, CancelledError) as exception:
+        except (StopReason, CancelledError) as exception:
             self.stop_reason = exception
 
         # 403 Forbidden
@@ -524,8 +524,8 @@ class ViewRuntime:
                 _patches = []
 
                 for patch in patches:
-                    if(patch.issuer and
-                       patch.issuer == (connection, window_id)):
+                    if (patch.issuer and
+                            patch.issuer == (connection, window_id)):
 
                         continue
 
@@ -773,8 +773,8 @@ class ViewRuntime:
                     input_event = return_value
 
             # pending input events
-            if(input_event.name in self.pending_input_events and
-               self.pending_input_events[input_event.name] is not None):
+            if (input_event.name in self.pending_input_events and
+                    self.pending_input_events[input_event.name] is not None):
 
                 future, nodes = self.pending_input_events[input_event.name]
 
@@ -825,7 +825,7 @@ class ViewRuntime:
 
             return log_handled_message()
 
-        except(StopReason, CancelledError):
+        except (StopReason, CancelledError):
             input_events_logger.debug(
                 'runtime #%s: event #%s: handling was stopped',
                 self.view_runtime_id,

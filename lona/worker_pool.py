@@ -17,8 +17,8 @@ class WorkerPool:
             'static_worker': None,
         }
 
-        if(self.settings.MAX_STATIC_THREADS and
-           self.settings.STATIC_FILES_SERVE):
+        if (self.settings.MAX_STATIC_THREADS and
+                self.settings.STATIC_FILES_SERVE):
 
             self._executors['static_worker'] = ThreadPoolExecutor(
                 max_workers=self.settings.MAX_STATIC_THREADS,

@@ -67,14 +67,14 @@ class LogFilter(logging.Filter):
         if record.exc_info:
 
             # OSErrors
-            if(isinstance(record.exc_info[1], OSError) and
-               record.exc_info[1].errno in (13, 98)):
+            if (isinstance(record.exc_info[1], OSError) and
+                    record.exc_info[1].errno in (13, 98)):
 
                 return False
 
             # socket.gaierror
-            if(isinstance(record.exc_info[1], socket.gaierror) and
-               record.exc_info[1].errno in (-2, )):
+            if (isinstance(record.exc_info[1], socket.gaierror) and
+                    record.exc_info[1].errno in (-2, )):
 
                 return False
 

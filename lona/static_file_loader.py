@@ -191,8 +191,10 @@ class StaticFileLoader:
 
         # disable static files that are not enabled by default and
         # are not configured to be enabled
-        if(not static_file.enabled_by_default and
-           static_file.name not in self.server.settings.STATIC_FILES_ENABLED):
+        if (not static_file.enabled_by_default and
+                (static_file.name not in
+                 self.server.settings.STATIC_FILES_ENABLED)):
+
             static_file.enabled = False
 
         # disable static files that are disabled explicitly
