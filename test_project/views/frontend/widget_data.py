@@ -1,17 +1,19 @@
-from lona.html import Widget, Strong, Select, HTML, Div, H2, Br
+from lona.html import Strong, Select, HTML, Div, H2, Br
 from lona.static_files import Script
 from lona._json import dumps
 from lona.view import View
 
 
-class TestWidget(Widget):
+class TestWidget(Div):
     STATIC_FILES = [
         Script(name='TestWidget', path='widget_data.js'),
     ]
 
-    FRONTEND_WIDGET_CLASS = 'widget_data'
+    WIDGET = 'widget_data'
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         self.server_state = Div()
 
         self.nodes = [
@@ -20,7 +22,7 @@ class TestWidget(Widget):
         ]
 
     def update_state(self):
-        self.server_state.set_text(dumps(self.data))
+        self.server_state.set_text(dumps(self.widget_data))
 
 
 class WidgetDataView(View):
@@ -60,54 +62,54 @@ class WidgetDataView(View):
 
         while True:
             # list
-            widget.data = {'list': []}
+            widget.widget_data = {'list': []}
 
             for i in range(6):
-                widget.data['list'].append(i)
+                widget.widget_data['list'].append(i)
                 widget.update_state()
                 self.show(html)
                 self.sleep(float(interval.value))
 
-            widget.data['list'].remove(2)
+            widget.widget_data['list'].remove(2)
             widget.update_state()
             self.show(html)
             self.sleep(float(interval.value))
 
-            widget.data['list'].insert(2, 2)
+            widget.widget_data['list'].insert(2, 2)
             widget.update_state()
             self.show(html)
             self.sleep(float(interval.value))
 
-            widget.data['list'].clear()
+            widget.widget_data['list'].clear()
             widget.update_state()
             self.show(html)
             self.sleep(float(interval.value))
 
-            widget.data['list'] = [5, 4, 3, 2, 1]
+            widget.widget_data['list'] = [5, 4, 3, 2, 1]
             widget.update_state()
             self.show(html)
             self.sleep(float(interval.value))
 
             # dict
-            widget.data = [{}]
+            widget.widget_data = [{}]
 
             for i in range(6):
-                widget.data[0][i] = i
+                widget.widget_data[0][i] = i
                 widget.update_state()
                 self.show(html)
                 self.sleep(float(interval.value))
 
-            widget.data[0].pop(2)
+            widget.widget_data[0].pop(2)
             widget.update_state()
             self.show(html)
             self.sleep(float(interval.value))
 
-            widget.data[0].clear()
+            widget.widget_data[0].clear()
             widget.update_state()
             self.show(html)
             self.sleep(float(interval.value))
 
-            widget.data[0] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
+            widget.widget_data[0] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
             widget.update_state()
             self.show(html)
             self.sleep(float(interval.value))

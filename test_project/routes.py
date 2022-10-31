@@ -87,8 +87,8 @@ routes = [
     Route('/crashes/handle-500/',
           'views/crashes/handle_500.py::CrashingView'),
 
-    Route('/crashes/frontend-widget/',
-          'views/crashes/frontend_widget.py::CrashingFrontendWidgetView'),
+    Route('/crashes/widget/',
+          'views/crashes/widget.py::CrashingWidgetView'),
 
     # routing
     Route('/routing/url-args/<a:[^/]+>/<b:[^/]+>/<c:[^/]+>/',
@@ -110,8 +110,8 @@ routes = [
     Route('/events/non-node-events/',
           'views/events/non_node_events.py::NonNodeEventView'),
 
-    Route('/events/widget-event-handler/',
-          'views/events/widget_event_handler.py::WidgetEventHandlerView'),
+    Route('/events/node-event-handler/',
+          'views/events/node_event_handler.py::NodeEventHandlerView'),
 
     Route('/events/class-based-view/',
           'views/events/class_based_view.py::ClassBasedView'),

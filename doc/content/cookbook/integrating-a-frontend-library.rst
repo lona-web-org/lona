@@ -130,7 +130,7 @@ in ``Node.STATIC_FILES``.
 
 This example shows how a package of Bootstrap 5 buttons would look like.
 
-**More information:** `Adding Javascript And CSS To HTML Nodes </end-user-documentation/html.html#adding-javascript-and-css-to-frontend-widgets>`_
+**More information:** `Adding Javascript And CSS To HTML Nodes </end-user-documentation/html.html#adding-javascript-and-css-to-html-nodes>`_
 
 .. code-block:: text
 

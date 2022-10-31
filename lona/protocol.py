@@ -47,7 +47,6 @@ class INPUT_EVENT_TYPE(Enum):
 class NODE_TYPE(Enum):
     NODE = 401
     TEXT_NODE = 402
-    WIDGET = 403
 
 
 class DATA_TYPE(Enum):

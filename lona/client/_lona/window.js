@@ -61,7 +61,6 @@ export class LonaWindow {
         this._view_runtime_id = undefined;
         this._url = '';
         this._nodes = {};
-        this._widget_marker = {};
         this._widget_data = {};
         this._widgets = {};
         this._widgets_to_setup = [];
@@ -127,7 +126,6 @@ export class LonaWindow {
 
         // resetting node state
         this._nodes = {};
-        this._widget_marker = {};
         this._widget_data = {};
         this._widgets = {}
         this._widgets_to_setup = [];
@@ -144,42 +142,35 @@ export class LonaWindow {
             };
         });
 
-        Object.keys(this._widget_marker).forEach(key => {
-            var node = this._widget_marker[key];
+        Object.keys(this._widgets).forEach(key => {
+            var node = this._nodes[key];
 
             // widget_marker
             if(this._root.contains(node)) {
                 return;
-
             };
 
-            delete this._widget_marker[key];
+            // run deconstructor
+            if(this._widgets[key].deconstruct !== undefined) {
+                this._widgets[key].deconstruct();
+            };
 
-            // widget
-            if(key in this._widgets) {
+            // remove widget
+            delete this._widgets[key];
 
-                // run deconstructor
-                if(this._widgets[key].deconstruct !== undefined) {
-                    this._widgets[key].deconstruct();
-                };
+            // remove widget data
+            delete this._widget_data[key];
 
-                // remove widget
-                delete this._widgets[key];
+            // remove widget from _widgets_to_setup
+            if(this._widgets_to_setup.indexOf(key) > -1) {
+                this._widgets_to_setup.splice(
+                    this._widgets_to_setup.indexOf(key), 1);
+            };
 
-                // remove widget data
-                delete this._widget_data[key];
-
-                // remove widget from _widgets_to_setup
-                if(this._widgets_to_setup.indexOf(key) > -1) {
-                    this._widgets_to_setup.splice(
-                        this._widgets_to_setup.indexOf(key), 1);
-                };
-
-                // remove widget from _widgets_to_update
-                if(this._widgets_to_update.indexOf(key) > -1) {
-                    this._widgets_to_update.splice(
-                        this._widgets_to_update.indexOf(key), 1);
-                };
+            // remove widget from _widgets_to_update
+            if(this._widgets_to_update.indexOf(key) > -1) {
+                this._widgets_to_update.splice(
+                    this._widgets_to_update.indexOf(key), 1);
             };
         });
     };
@@ -197,7 +188,7 @@ export class LonaWindow {
                 return;
             };
 
-            widget.nodes = this._dom_updater._get_widget_nodes(node_id);
+            widget.nodes = [this._nodes[node_id]];
             widget.root_node = widget.nodes[0];
 
             if(widget.setup !== undefined) {
@@ -244,10 +235,10 @@ export class LonaWindow {
         } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
             this._clear_node_cache();
 
-            var node_list = this._dom_renderer._render_node(data)
+            var node = this._dom_renderer._render_node(data)
 
             this._clear();
-            this._dom_updater._apply_node_list(this._root, node_list);
+            this._root.appendChild(node);
 
         // HTML update
         } else if(message_type == Lona.protocol.DATA_TYPE.HTML_UPDATE) {

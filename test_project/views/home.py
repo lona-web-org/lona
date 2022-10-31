@@ -48,7 +48,7 @@ class HomeView(View):
                 <li><a href="/crashes/input-events/">Input Events</a></li>
                 <li><a href="/crashes/handle-404/">404 Handler</a></li>
                 <li><a href="/crashes/handle-500/">500 Handler</a></li>
-                <li><a href="/crashes/frontend-widget/">Frontend Widget</a></li>
+                <li><a href="/crashes/widget/">Widget</a></li>
             </ul>
 
             <h2>Routing</h2>

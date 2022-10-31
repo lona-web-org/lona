@@ -69,7 +69,7 @@ overridden.
 Loading static files
 ~~~~~~~~~~~~~~~~~~~~
 
-To load static files, that are not part of a widget, Lona defines a filter.
+To load static files, that are not part of a node, Lona defines a filter.
 
 .. code-block:: html
 

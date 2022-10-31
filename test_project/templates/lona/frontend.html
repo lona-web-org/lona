@@ -18,10 +18,6 @@
         <th>Loaded Nodes:</th>
         <td id="loaded-nodes">-</td>
       </tr>
-      <tr>
-        <th>Loaded Widgets:</th>
-        <td id="loaded-widgets">-</td>
-      </tr>
     </table>
 
     <br />
@@ -137,16 +133,13 @@
           event.preventDefault();
 
           var loaded_nodes = document.querySelector('#loaded-nodes');
-          var loaded_widgets = document.querySelector('#loaded-widgets');
 
           loaded_nodes.innerHTML = '';
-          loaded_widgets.innerHTML = '';
 
           lona_context.add_rendering_hook(function(lona_window) {
             var default_window = lona_context.get_default_window();
 
             loaded_nodes.innerHTML = Object.keys(default_window._nodes).length;
-            loaded_widgets.innerHTML = Object.keys(default_window._widget_marker).length;
           });
 
           return false;

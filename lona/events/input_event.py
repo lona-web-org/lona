@@ -1,5 +1,4 @@
 from lona.protocol import INPUT_EVENT_TYPE
-from lona.html import Widget
 
 
 class InputEvent:
@@ -81,18 +80,10 @@ class InputEvent:
         if self.node is None:
             return name in self.id_list
 
-        if isinstance(self.node, Widget):
-            if not hasattr(self.node, 'has_id'):
-                return False
-
         return self.node.has_id(name)
 
     def node_has_class(self, name):
         if self.node is None:
             return name in self.class_list
-
-        if isinstance(self.node, Widget):
-            if not hasattr(self.node, 'has_class'):
-                return False
 
         return self.node.has_class(name)

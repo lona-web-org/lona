@@ -484,7 +484,7 @@ LonaView.handle_input_event\(input_event\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This hook is gets called for every input event that is not awaited in
-``handle_request()`` or handled by a widget.
+``handle_request()`` or handled by a node.
 
 
 LonaView.on_view_event\(view_event\)
@@ -625,7 +625,7 @@ the event as handled.
 The first member of the chain is ``LonaView.handle_input_event_root()``. If the
 event got returned Lona passes the event into all
 ``AbstractNode.handle_input_event()`` by bubbling the event the HTML tree up.
-If the event got returned by the last widget in the chain, Lona checks if
+If the event got returned by the last node in the chain, Lona checks if
 ``LonaView.handle_request()`` awaits an input event using
 ``await_[input_event|click|change]()``. If not
 ``LonaView.handle_input_event()`` gets called as last member of the chain.
@@ -909,7 +909,7 @@ Overriding All Input Event Hooks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``handle_input_event_root()`` gets always called first. This makes it possible
-to override even widget event handler.
+to override even node event handler.
 
 .. code-block:: python
 
@@ -932,7 +932,7 @@ Views can include stylesheets and javascript files in ``STATIC_FILES``.
 Such files will be automatically served and included in html.
 
 Static file's ``name`` must be unique in the whole project
-(including static files in nodes and widgets).
+(including static files in nodes).
 
 To control the include order, ``sort_order`` is used. ``sort_order`` is a
 simple integer, but to make the code more readable
