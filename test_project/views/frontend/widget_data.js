@@ -14,7 +14,7 @@ function WidgetDataWidget(lona_window) {
     };
 
     this.data_updated = function() {
-        this.nodes[1].innerHTML = JSON.stringify(this.data);
+        this.root_node.childNodes[1].innerHTML = JSON.stringify(this.data);
     };
 };
 

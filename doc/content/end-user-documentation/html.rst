@@ -669,6 +669,62 @@ Select
     |style      |(Dict) contains all styling attributes
 
 
+Handling Input Events
+---------------------
+
+.. code-block:: python
+
+    from lona.html import Div, Span, Button
+
+
+    class Counter(Div):
+        def __init__(self, initial_value=0):
+            super().__init__()
+
+            self.counter = initial_value
+
+            self.counter_label = Span(str(self.counter))
+            self.inc_button = Button('+')
+            self.dec_button = Button('-')
+
+            self.nodes = [
+                self.counter_label,
+                self.inc_button,
+                self.dec_button,
+            ]
+
+        def handle_input_event(self, input_event):
+            if input_event.node is self.inc_button:
+                self.counter = self.counter + 1
+                self.counter_label.set_text(str(self.counter))
+
+            elif input_event.node is self.dec_button:
+                self.counter = self.counter - 1
+                self.counter_label.set_text(str(self.counter))
+
+            else:
+                return input_event
+
+
+Event Bubbling
+~~~~~~~~~~~~~~
+
+When an input event gets issued by the frontend, Lona runs all node
+input event handler from the innermost to the outermost until one of them
+does not return the event. In this case the event is regarded as handled.
+If all handler return the event ``LonaView.handle_input_event()`` gets to
+handle the event.
+
+.. code-block:: python
+
+    MyNode(  # last
+        MyNode(  # second
+            MyNode(  # first
+                Button('Click me!'),
+            ),
+        ),
+    )
+
 Adding Javascript And CSS To HTML Nodes
 ---------------------------------------
 
@@ -683,9 +739,9 @@ simple integer, but to make the code more readable
 .. code-block:: python
 
     from lona.static_files import StyleSheet, Script, SORT_ORDER
-    from lona.html import Widget, Div
+    from lona.html import Div
 
-    class ChartJsWidget(Widget):
+    class ChartJsNode(Div):
         STATIC_FILES = [
             # styesheets
             StyleSheet(
@@ -741,8 +797,8 @@ with template tags.
 Widgets
 -------
 
-Widgets are a collections of Nodes that are used to encapsulate logic and input
-event handling.
+Nodes can define a Javascript based widget, to include client side code. This
+is useful to integrate with third party Javascript libraries.
 
 .. code-block:: python
 
@@ -757,43 +813,6 @@ event handling.
 
         def set_value(self, new_value):
             self.nodes[0].set_text(new_value)
-
-
-Handling Input Events
-~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from lona.html import Widget, Div, Span, Button
-
-
-    class Counter(Widget):
-        def __init__(self, initial_value=0):
-            self.counter = initial_value
-
-            self.counter_label = Span(str(self.counter))
-            self.inc_button = Button('+')
-            self.dec_button = Button('-')
-
-            self.nodes = [
-                Div(
-                    self.counter_label,
-                    self.inc_button,
-                    self.dec_button,
-                ),
-            ]
-
-        def handle_input_event(self, input_event):
-            if input_event.node is self.inc_button:
-                self.counter = self.counter + 1
-                self.counter_label.set_text(str(self.counter))
-
-            elif input_event.node is self.dec_button:
-                self.counter = self.counter - 1
-                self.counter_label.set_text(str(self.counter))
-
-            else:
-                return input_event
 
 
 Event Bubbling
@@ -827,31 +846,9 @@ Widgets and nodes can define a Javascript based frontend widget, to include
 client side code. This is useful to integrate with third party Javascript
 libraries.
 
-To communicate between the backend widget and the frontend widget, the backend
-can set its state in ``Widget.state``, or in ``Node.widget_data`` a dict like
-object, and the frontend can issue events with custom data.
-
-.. code-block:: python
-
-    # my_widget.py
-
-    from lona.static_files import Script
-    from lona.html import Widget, Div
-
-    class MyWidget(Widget):
-        FRONTEND_WIDGET_CLASS = 'MyFrontendWidget'
-
-        STATIC_FILES = [
-            # the path is always relative to the current file
-            Script(name='MyFrontendWidget', path='my_frontend_widget.js'),
-        ]
-
-        def __init__(self):
-            self.nodes = [
-                Div('foo'),
-            ]
-
-            self.data = {'foo': 'bar'}
+To communicate between the backend node and the frontend widget, the backend
+can set its state in ``Node.widget_data``, a dict like object, and the frontend
+can issue events with custom data.
 
 
 .. code-block:: python
@@ -862,11 +859,11 @@ object, and the frontend can issue events with custom data.
     from lona.html import Div
 
     class MyNode(Div):
-        WIDGET = 'MyFrontendWidget'
+        WIDGET = 'MyWidget'
 
         STATIC_FILES = [
             # the path is always relative to the current file
-            Script(name='MyFrontendWidget', path='my_frontend_widget.js'),
+            Script(name='MyWidget', path='my_widget.js'),
         ]
 
         def __init__(self, *args, **kwargs):
@@ -881,9 +878,9 @@ object, and the frontend can issue events with custom data.
 
 .. code-block:: javascript
 
-    // my_frontend_widget.js
+    // my_widget.js
 
-    function MyFrontendWidget(lona_window) {
+    function MyWidget(lona_window) {
         this.lona_window = lona_window;
 
         this.setup = function() {
@@ -905,17 +902,17 @@ object, and the frontend can issue events with custom data.
         };
     };
 
-    Lona.register_widget_class('MyFrontendWidget', MyFrontendWidget);
+    Lona.register_widget_class('MyWidget', MyWidget);
 
 
 Firing Custom Input Events
-++++++++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: javascript
 
-    // my_frontend_widget.js
+    // my_widget.js
 
-    function MyFrontendWidget(lona_window) {
+    function MyWidget(lona_window) {
         this.lona_window = lona_window;
 
         this.setup = function() {

@@ -3,35 +3,35 @@ import os.path
 from playwright.async_api import async_playwright
 
 from lona.static_files import StyleSheet, Script
-from lona.html import Widget
+from lona.html import Div
 from lona import LonaView
 
 
 def setup_app(app):
     some_existing_file = os.path.basename(__file__)
 
-    class MyWidget(Widget):
+    class MyNode(Div):
         STATIC_FILES = [
             StyleSheet(
-                name='my-widget-style',
+                name='my-node-style',
                 path=some_existing_file,
-                url='widget.css',
+                url='node.css',
             ),
             Script(
-                name='my-widget-script',
+                name='my-node-script',
                 path=some_existing_file,
-                url='widget.js',
+                url='node.js',
             ),
             Script(
-                name='my-widget-map',
+                name='my-node-map',
                 path=some_existing_file,
-                url='widget.map',
+                url='node.map',
                 link=False,
             ),
             StyleSheet(
-                name='disabled-widget',
+                name='disabled-node',
                 path=some_existing_file,
-                url='widget.disabled',
+                url='node.disabled',
                 enabled_by_default=False,
             ),
         ]
@@ -42,13 +42,13 @@ def setup_app(app):
             return 'SUCCESS'
 
 
-async def test_static_files_widget(lona_app_context):
+async def test_static_files_nodes(lona_app_context):
     context = await lona_app_context(setup_app)
 
-    assert (await context.client.get('/static/widget.css')).status == 200
-    assert (await context.client.get('/static/widget.js')).status == 200
-    assert (await context.client.get('/static/widget.map')).status == 200
-    assert (await context.client.get('/static/widget.disabled')).status == 404
+    assert (await context.client.get('/static/node.css')).status == 200
+    assert (await context.client.get('/static/node.js')).status == 200
+    assert (await context.client.get('/static/node.map')).status == 200
+    assert (await context.client.get('/static/node.disabled')).status == 404
 
     async with async_playwright() as p:
         browser = await p.chromium.launch()
@@ -64,7 +64,7 @@ async def test_static_files_widget(lona_app_context):
         script_urls = [await x.get_attribute('src') for x in scripts]
         html = await page.inner_html('html')
 
-        assert '/static/widget.css' in style_urls
-        assert '/static/widget.js' in script_urls
-        assert 'widget.map' not in html
-        assert 'widget.disabled' not in html
+        assert '/static/node.css' in style_urls
+        assert '/static/node.js' in script_urls
+        assert 'node.map' not in html
+        assert 'node.disabled' not in html

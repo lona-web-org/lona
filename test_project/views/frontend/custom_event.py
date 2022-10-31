@@ -1,18 +1,20 @@
 from pprint import pformat
 
-from lona.html import Widget, Button, HTML, Pre, Div, H2, A
+from lona.html import Button, HTML, Pre, Div, H2, A
 from lona.static_files import Script
 from lona.view import LonaView
 
 
-class CustomEventWidget(Widget):
+class CustomEventNode(Div):
     STATIC_FILES = [
         Script(name='CustomEvent', path='custom_event.js'),
     ]
 
-    FRONTEND_WIDGET_CLASS = 'custom_event'
+    WIDGET = 'custom_event'
 
     def __init__(self):
+        super().__init__()
+
         self.pre = Pre(
             '{}',
             style={
@@ -53,12 +55,10 @@ class CustomEventWidget(Widget):
 
 class CustomEventView(LonaView):
     def handle_request(self, request):
-        widget = CustomEventWidget()
-
         html = HTML(
             H2('Custom Event'),
             A('Home', href='/'),
-            widget,
+            CustomEventNode(),
         )
 
         self.show(html)

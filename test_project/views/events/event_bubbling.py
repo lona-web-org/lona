@@ -1,9 +1,11 @@
-from lona.html import Widget, Select, Button, HTML, Pre, Div, H2, P
+from lona.html import Select, Button, HTML, Pre, Div, H2, P
 from lona.view import LonaView
 
 
-class BubblingWidget(Widget):
+class BubblingNode(Div):
     def __init__(self, view, text, *nodes):
+        super().__init__()
+
         self.text = text
         self.view = view
 
@@ -24,7 +26,7 @@ class BubblingWidget(Widget):
 
     def handle_input_event(self, input_event):
         self.view.print(
-            f'>> Widget({self.text}).handle_input_event({input_event!r})',
+            f'>> Node({self.text}).handle_input_event({input_event!r})',
         )
 
         if self.view.select.value != self.text:
@@ -41,9 +43,9 @@ class EventBubblingView(LonaView):
                     values=[
                         ('', '---', True),
                         ('handle_input_event_root', 'handle_input_event_root'),
-                        ('Widget 1', 'Widget 1'),
-                        ('Widget 2', 'Widget 2'),
-                        ('Widget 3', 'Widget 3'),
+                        ('Node 1', 'Node 1'),
+                        ('Node 2', 'Node 2'),
+                        ('Node 3', 'Node 3'),
                     ],
                 ),
             ),
@@ -56,15 +58,15 @@ class EventBubblingView(LonaView):
             ),
 
             Button('Click Me'),
-            BubblingWidget(
+            BubblingNode(
                 self,
-                'Widget 1',
-                BubblingWidget(
+                'Node 1',
+                BubblingNode(
                     self,
-                    'Widget 2',
-                    BubblingWidget(
+                    'Node 2',
+                    BubblingNode(
                         self,
-                        'Widget 3',
+                        'Node 3',
                     ),
                 ),
             ),

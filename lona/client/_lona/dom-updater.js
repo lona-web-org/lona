@@ -46,309 +46,36 @@ export class LonaDomUpdater {
         node.id = id_list.join(' ').trim();
     };
 
-    _get_widget_nodes(node_id) {
-        if(node_id in this.lona_window._nodes) {
-            return [this.lona_window._nodes[node_id]];
+    _get_node(node_id) {
+        return this.lona_window._nodes[node_id];
+    };
+
+    _insert_node(node, node_id, index) {
+        const target_node = this._get_node(node_id);
+
+        if(index >= target_node.children.length) {
+            target_node.appendChild(node)
+        } else {
+            target_node.insertBefore(node, target_node.children[index])
         }
-
-        var node_list = [];
-        var widget_marker = this.lona_window._widget_marker[node_id];
-        var end_marker_text = 'end-lona-widget:' + node_id;
-        var cursor = 0;
-
-        // find start marker
-        var parent_child_nodes = widget_marker.parentElement.childNodes;
-
-        while(cursor < parent_child_nodes.length) {
-            if(parent_child_nodes[cursor] == widget_marker) {
-                break;
-            };
-
-            cursor++;
-        };
-
-        cursor++;
-
-        // find end marker
-        while(cursor < parent_child_nodes.length) {
-            var node = parent_child_nodes[cursor];
-
-            if((node.nodeType == Node.COMMENT_NODE) &&
-               (node.textContent.startsWith(end_marker_text))) {
-
-                break;
-            };
-
-            node_list.push(node);
-            cursor++;
-        };
-
-        return node_list;
     };
 
-    // methods ----------------------------------------------------------------
-    _apply_node_list(node, node_list) {
-        for(var index=0; index<node_list.length; index++) {
-            if(node_list[index] instanceof Array) {
-                this._apply_node_list(node, node_list[index]);
+    _set_node(node, node_id, index) {
+        const target_node = this._get_node(node_id).children[index];
 
-            } else {
-                node.appendChild(node_list[index]);
-
-            };
-        };
-    };
-
-    _insert_node(node_list, node_id, index) {
-        var target_node;
-        var cursor = 0;
-
-        // find target node
-        // Widget
-        if(node_id in this.lona_window._widget_marker) {
-            var marker = this.lona_window._widget_marker[node_id];
-
-            target_node = marker.parentElement;
-
-            // find widget start
-            while(cursor < target_node.childNodes.length) {
-                if(target_node.childNodes[cursor] == marker) {
-                    cursor++;
-
-                    break;
-                };
-
-                cursor++;
-            };
-
-        // Node
-        } else {
-            target_node = this.lona_window._nodes[node_id];
-
-        }
-
-        // find start index
-        while(index > 0) {
-            var _node = target_node.childNodes[cursor];
-
-            if(_node == undefined) {
-                break;
-            };
-
-            // skip widgets
-            if((_node.nodeType == Node.COMMENT_NODE) &&
-               (_node.textContent.startsWith('lona-widget:'))) {
-
-                while(cursor < target_node.childNodes.length) {
-                    cursor++;
-
-                    var _node = target_node.childNodes[cursor];
-
-                    if((_node.nodeType == Node.COMMENT_NODE) &&
-                       (_node.textContent.startsWith('end-lona-widget:'))) {
-
-                        break;
-                    };
-
-                };
-            };
-
-            cursor++;
-            index--;
-        };
-
-        // flatten node list
-        for(var i=0; i<node_list.length; i++) {
-            if(Array.isArray(node_list[i])) {
-                node_list = node_list.flat();
-            };
-        };
-
-        // apply node list
-        for(var i=0; i<node_list.length; i++) {
-            var new_node = node_list[i];
-
-            if(target_node.childNodes.length == 0) {
-                target_node.appendChild(new_node);
-
-            } else {
-                target_node.insertBefore(
-                    new_node, target_node.childNodes[cursor + i]);
-            };
-        };
-    };
-
-    _set_node(node_list, target_node_id, index) {
-        var target_node;
-        var cursor = 0;
-
-        // Widget
-        if(target_node_id in this.lona_window._widget_marker) {
-            var marker = this.lona_window._widget_marker[target_node_id];
-            var target_node = marker.parentElement;
-            var end_marker_text = 'end-lona-widget:' + target_node_id;
-
-            // find marker
-            while(cursor < target_node.childNodes.length) {
-                if(target_node.childNodes[cursor] == marker) {
-                    cursor++;
-
-                    break;
-                };
-
-                cursor++;
-            };
-
-        // Node
-        } else {
-            target_node = this.lona_window._nodes[node_id];
-
-        };
-
-        // find start index
-        while(index > 0) {
-            var _node = target_node.childNodes[cursor];
-
-            // skip widgets
-            if((_node.nodeType == Node.COMMENT_NODE) &&
-               (_node.textContent.startsWith('lona-widget:'))) {
-
-                while(cursor < target_node.childNodes.length) {
-                    cursor++;
-
-                    var _node = target_node.childNodes[cursor];
-
-                    if((_node.nodeType == Node.COMMENT_NODE) &&
-                       (_node.textContent.startsWith('end-lona-widget:'))) {
-
-                        break;
-                    };
-
-                };
-            };
-
-            cursor++;
-            index--;
-        };
-
-        // replace node
-        var node = target_node.childNodes[cursor];
-
-        // Widget
-        if((node.nodeType == Node.COMMENT_NODE) &&
-           (node.textContent.startsWith('lona-widget:'))) {
-
-            var widget_id = node.textContent.split(':')[1];
-            var end_marker_text = 'end-lona-widget:' + widget_id;
-
-            while(target_node.childNodes.length > 0) {
-                var _node = target_node.childNodes[cursor];
-
-                _node.remove();
-
-                if((_node.nodeType == Node.COMMENT_NODE) &&
-                   (_node.textContent == end_marker_text)) {
-
-                    break;
-                };
-            };
-
-        // Node
-        } else {
-            node.remove();
-
-        };
-
-        // apply node list
-        for(var i=0; i<node_list.length; i++) {
-            var new_node = node_list[i];
-
-            if(target_node.childNodes.length == 0) {
-                target_node.appendChild(new_node);
-
-            } else {
-                target_node.insertBefore(
-                    new_node, target_node.childNodes[cursor + i]);
-            };
-        };
+        target_node.replaceWith(node);
     };
 
     _remove_node(node_id) {
+        const node = this._get_node(node_id);
 
-        // TextNode
-        if(node_id in this.lona_window._nodes) {
-            this.lona_window._nodes[node_id].remove();
-
-            delete this.lona_window._nodes[node_id];
-
-        // Widget
-        } else if(node_id in this.lona_window._widget_marker) {
-            var marker = this.lona_window._widget_marker[node_id];
-            var parent_element = marker.parentElement;
-            var end_marker_text = 'end-lona-widget:' + node_id;
-            var index = 0;
-
-            while(index < parent_element.childNodes.length) {
-                if(parent_element.childNodes[index] == marker) {
-                    break;
-                };
-
-                index++;
-            };
-
-            while(index < parent_element.childNodes.length) {
-                var node = parent_element.childNodes[index];
-
-                if((node.nodeType == Node.COMMENT_NODE) &&
-                   (node.textContent == end_marker_text)) {
-
-                    node.remove();
-
-                    break;
-                };
-
-                node.remove();
-            };
-
-        // Node
-        } else {
-            node = this.lona_window._nodes[node_id];
-
-            node.remove();
-        };
+        node.remove();
     };
 
     _clear_node(node_id) {
+        const node = this._get_node(node_id);
 
-        // Widget
-        if(node_id in this.lona_window._widget_marker) {
-            var marker = this.lona_window._widget_marker[node_id];
-            var child_nodes = marker.parentElement.childNodes;
-            var end_marker_text = 'end-lona-widget:' + node_id;
-            var index = 0;
-
-            while(index < child_nodes.length) {
-                if(child_nodes[index] == marker) {
-                    break;
-                };
-
-                index++;
-            };
-
-            index++;
-
-            while(!((child_nodes[index].nodeType == Node.COMMENT_NODE) &&
-                    (child_nodes[index].textContent == end_marker_text))) {
-
-                child_nodes[index].remove();
-            };
-
-        // Node
-        } else {
-            var node = this.lona_window._nodes[node_id];
-
-            node.innerHTML = '';
-        };
+        node.innerHTML = '';
     };
 
     // patches ----------------------------------------------------------------
@@ -533,16 +260,23 @@ export class LonaDomUpdater {
 
         // SET
         if(operation == Lona.protocol.OPERATION.SET) {
-            var node_list = dom_renderer._render_node(data[1]);
+            var node = dom_renderer._render_node(data[1]);
 
-            this._set_node(node_list, node_id, data[0]);
+            this._set_node(node, node_id, data[0]);
 
         // RESET
         } else if(operation == Lona.protocol.OPERATION.RESET) {
-            var node_list = dom_renderer._render_nodes(data[0]);
+            const node = this._get_node(node_id);
+
+            const child_nodes = data[0].map(node_spec => {
+                return dom_renderer._render_node(node_spec);
+            });
 
             this._clear_node(node_id);
-            this._insert_node(node_list, node_id, 0);
+
+            child_nodes.map(child_nodes => {
+                node.appendChild(child_nodes);
+            });
 
         // CLEAR
         } else if(operation == Lona.protocol.OPERATION.CLEAR) {
@@ -550,9 +284,9 @@ export class LonaDomUpdater {
 
         // INSERT
         } else if(operation == Lona.protocol.OPERATION.INSERT) {
-            var node_list = dom_renderer._render_node(data[1]);
+            var node = dom_renderer._render_node(data[1]);
 
-            this._insert_node(node_list, node_id, data[0])
+            this._insert_node(node, node_id, data[0])
 
         // REMOVE
         } else if(operation == Lona.protocol.OPERATION.REMOVE) {
@@ -569,7 +303,6 @@ export class LonaDomUpdater {
 
         } else {
             this._apply_patch_to_node(patch);
-
         };
     };
 };

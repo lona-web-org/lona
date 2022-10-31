@@ -21,8 +21,8 @@ touches multiple layers of the software (backend and frontend) our application
 developers are sometimes busy for days. Thats slows down development and that's
 expensive.
 
-With Lona, and the Lona widgets i created for the accounting system, i can give
-them a very simple, abstract and pythonic API for common
+With Lona, and the Lona components i created for the accounting system, i can
+give them a very simple, abstract and pythonic API for common
 tasks like "show an table and then update it", "show a progressbar with an
 abort button" or "show a popup with 3 buttons". The code is more readable for
 everyone involved, and the application developers can solve most of their
@@ -44,7 +44,7 @@ sense to make decisions, like if a button is clickable or not, there.
 There are cases where it makes more sense to handle events in Javascript
 directly, because they fire very often per second or have sensitive timing
 constrains. In this case you can add a
-`Frontend Widget </end-user-documentation/html.html#frontend-widgets>`_
+`Widget </end-user-documentation/html.html#widgets>`_
 which can contain some Javascript code, to handle your events directly in the
 browser.
 
@@ -79,7 +79,7 @@ Why has Lona no live-reload feature like aiohttp-devtools?
 
 **fscherf:** Early versions of Lona had such a feature, but it got removed due
 bad user experience: Reloading your view helps when the view is fully self
-contained, but when it uses widgets or helper functions from another module,
+contained, but when it uses nodes or helper functions from another module,
 things become inconsistent.
 
 To make that a reliable feature you would have to maintain a list of all loaded
