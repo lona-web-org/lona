@@ -140,6 +140,9 @@ routes = [
     Route('/frontend/static-files/',
           'views/frontend/static_files.py::StaticFilesView'),
 
+    Route('/frontend/rendering/',
+          'views/frontend/rendering.py::RenderingTestView'),
+
     Route('/frontend/widget-data/',
           'views/frontend/widget_data.py::WidgetDataView'),
 
