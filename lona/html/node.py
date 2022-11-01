@@ -261,13 +261,13 @@ class Node(AbstractNode):
             del self._attributes['data-lona-ignore']
 
     # serialization ###########################################################
-    def _serialize(self):
+    def _serialize(self, include_node_ids=True):
         widget_data = None
 
         if self._widget:
             widget_data = self._widget_data._serialize()
 
-        return [
+        data = [
             NODE_TYPE.NODE,
             self.id,
             self.tag_name,
@@ -275,10 +275,15 @@ class Node(AbstractNode):
             self._class_list._serialize(),
             self._style._serialize(),
             self._attributes._serialize(),
-            self._nodes._serialize(),
+            self._nodes._serialize(include_node_ids=include_node_ids),
             self._widget,
             widget_data,
         ]
+
+        if not include_node_ids:
+            data.pop(1)
+
+        return data
 
     # node list helper ########################################################
     def insert(self, index, node):

@@ -122,7 +122,7 @@ class AttributeList:
                 patch_type=self.PATCH_TYPE,
                 operation=OPERATION.RESET,
                 payload=[
-                    list(value),
+                    sorted(value),
                 ],
             )
 

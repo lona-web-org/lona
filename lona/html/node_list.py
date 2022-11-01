@@ -202,8 +202,9 @@ class NodeList:
                     ],
                 )
 
-    def _serialize(self):
-        return [i._serialize() for i in self._nodes]
+    def _serialize(self, include_node_ids=True):
+        return [i._serialize(include_node_ids=include_node_ids)
+                for i in self._nodes]
 
     # string representation ###################################################
     def __str__(self):
