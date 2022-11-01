@@ -59,8 +59,13 @@ class TextNode(AbstractNode):
         return f'<TextNode({self._string!r})>'
 
     # serialization ###########################################################
-    def _serialize(self):
-        return [NODE_TYPE.TEXT_NODE, self.id, self._string]
+    def _serialize(self, include_node_ids=True):
+        data = [NODE_TYPE.TEXT_NODE, self.id, self._string]
+
+        if not include_node_ids:
+            data.pop(1)
+
+        return data
 
     # node helper #############################################################
     def remove(self):

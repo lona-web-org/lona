@@ -189,7 +189,11 @@ class NodeList:
 
     def __contains__(self, node):
         with self._node.lock:
-            return node in self._nodes
+            for child_node in self._nodes:
+                if child_node is node:
+                    return True
+
+            return False
 
     # serialization ###########################################################
     def _reset(self, values):
@@ -218,8 +222,9 @@ class NodeList:
                     ],
                 )
 
-    def _serialize(self):
-        return [i._serialize() for i in self._nodes]
+    def _serialize(self, include_node_ids=True):
+        return [i._serialize(include_node_ids=include_node_ids)
+                for i in self._nodes]
 
     # string representation ###################################################
     def __str__(self):
