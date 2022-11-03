@@ -44,7 +44,7 @@ class LonaContext:
             self,
             webbrowser: bool = True,
             sync: bool = False,
-            locals: Dict[str, Any] | None = None,
+            globals: Dict[str, Any] | None = None,
     ) -> Future | None:  # pragma: no cover
 
         """
@@ -67,14 +67,14 @@ class LonaContext:
                 def run_test():
                     context.debug_interactive(
                         sync=True,
-                        locals=locals(),
+                        globals=locals(),
                     )
 
                 context.event_loop.run_in_executor(None, run_test)
 
         :webbrowser: (bool) start a webbrowser that points to the test server
         :sync:       (bool) run blocking in the current thread
-        :locals:     (dict|None) variable overrides for the rlpython shell
+        :globals:    (dict|None) variable overrides for the rlpython shell
         """
 
         capmanager = self.pytestconfig.pluginmanager.getplugin(
@@ -92,17 +92,17 @@ class LonaContext:
                     _webbrowser.open(self.make_url())
 
                 # embed shell
-                _locals = locals or {}
+                _globals = globals or {}
 
-                _locals = {
+                _globals = {
                     'server': self.server,
                     'lona_context': self,
-                    **_locals,
+                    **_globals,
                 }
 
                 embed_shell(
                     server=self.server,
-                    locals=_locals,
+                    globals=_globals,
                 )
 
             finally:
