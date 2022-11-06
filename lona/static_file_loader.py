@@ -241,3 +241,19 @@ class StaticFileLoader:
         logger.debug("'%s' was not found", path)
 
         return None
+
+    def get_paths(self) -> Iterator[tuple[str, str]]:
+
+        # copy node static files
+        for static_file in self.static_files[::-1]:
+            if not static_file.enabled:
+                continue
+
+            yield static_file.path, static_file.url
+
+        # static directories
+        for static_dir in self.static_dirs[::-1]:
+            for name in os.listdir(static_dir):
+                path = os.path.join(static_dir, name)
+
+                yield path, name

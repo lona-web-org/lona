@@ -1,4 +1,3 @@
-import contextlib
 import shutil
 import os
 
@@ -24,15 +23,6 @@ def collect_static(args):
 
         else:
             os.unlink(path)
-
-    def _mkdir(path):
-        _print(f'mkdir -p {path}')
-
-        if args.dry_run:
-            return
-
-        with contextlib.suppress(FileExistsError):
-            os.makedirs(path)
 
     def _cp(source, destination):
         source_is_dir = os.path.isdir(source)
@@ -76,34 +66,8 @@ def collect_static(args):
             path = os.path.join(args.destination, name)
             _rm(path)
 
-    # copy node static files
-    for static_file in server._static_file_loader.static_files[::-1]:
-        if not static_file.enabled:
-            continue
+    # copy files
+    for path, url in server._static_file_loader.get_paths():
+        destination = os.path.join(args.destination, url)
 
-        destination = os.path.join(
-            args.destination,
-            static_file.url,
-        )
-
-        _cp(static_file.path, destination)
-
-    # copy static files from static directories
-    for static_dir in server._static_file_loader.static_dirs[::-1]:
-        for name in os.listdir(static_dir):
-            source = os.path.join(static_dir, name)
-            destination = os.path.join(args.destination, name)
-
-            _cp(source, destination)
-
-    # copy client
-    for source_file in server._client_pre_compiler.get_source_files():
-        source = server._client_pre_compiler.resolve_path(source_file)
-
-        destination = os.path.join(
-            args.destination,
-            source_file,
-        )
-
-        _mkdir(os.path.dirname(destination))
-        _cp(source, destination)
+        _cp(path, destination)
