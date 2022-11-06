@@ -5,23 +5,25 @@ from lona.html.node import Node
 class Option(Node):
     TAG_NAME = 'option'
 
-    def __init__(self, *args, value='', selected=False, disabled=False,
-                 **kwargs):
+    def __init__(
+            self,
+            *args,
+            value='',
+            selected=False,
+            disabled=False,
+            render_value=True,
+            **kwargs,
+    ):
 
         super().__init__(*args, **kwargs)
 
-        self._select = None
+        self.render_value = render_value
         self.value = value
         self.selected = selected
         self.disabled = disabled
 
-    def _set_selected(self, selected):
-        with self.lock:
-            if selected and 'selected' not in self.attributes:
-                self.attributes['selected'] = ''
-
-            elif not selected and 'selected' in self.attributes:
-                del self.attributes['selected']
+    def _render_value(self, value):
+        return str(value)
 
     # properties ##############################################################
     # value
@@ -32,7 +34,9 @@ class Option(Node):
     @value.setter
     def value(self, new_value):
         with self.lock:
-            self.attributes['value'] = str(new_value)
+            if self.render_value:
+                self.attributes['value'] = self._render_value(new_value)
+
             self._value = new_value
 
     # selected
@@ -42,12 +46,11 @@ class Option(Node):
 
     @selected.setter
     def selected(self, new_value):
-        with self.lock:
-            if self._select:
-                self._select._set_selected(self, new_value)
+        if new_value:
+            self.attributes['selected'] = ''
 
-            else:
-                self._set_selected(new_value)
+        else:
+            del self.attributes['selected']
 
     # disabled
     @property
@@ -87,23 +90,13 @@ class Select(Node):
 
         with self.lock:
             for index, option in enumerate(self.options):
-                option._set_selected(index in selected_option_indexes)
+                option.selected = index in selected_option_indexes
 
         # run custom change event handler
         input_event = self.handle_change(input_event)
 
         if self.bubble_up:
             return input_event
-
-    def _set_selected(self, option, selected):
-        with self.lock:
-            if self.multiple:
-                option._set_selected(selected)
-
-                return
-
-            for _option in self.options:
-                _option._set_selected(_option is option)
 
     # select properties #######################################################
     # disabled
@@ -201,16 +194,22 @@ class Select(Node):
     @property
     def value(self):
         with self.lock:
+            selected_options = self.selected_options
             values = ()
 
-            for option in self.selected_options:
+            for option in selected_options:
                 values += (option.value, )
 
             if not self.multiple:
                 if not values:
-                    return self.options[0].value
+                    options = self.options
 
-                return values[-1]
+                    if options:
+                        return self.options[0].value
+
+                    return None
+
+                return values[0]
 
             return values
 
@@ -227,7 +226,7 @@ class Select(Node):
                     raise RuntimeError(f'unknown value: {value}')
 
             for option in self.options:
-                option._set_selected(option.value in new_value)
+                option.selected = option.value in new_value
 
     # values
     @property
@@ -243,13 +242,16 @@ class Select(Node):
     # helper ##################################################################
     def add_option(self, option):
         with self.lock:
-            option._select = self
             self.nodes.append(option)
 
     def remove_option(self, option):
         with self.lock:
-            option._select = None
             self.nodes.remove(option)
+
+    def clear_options(self):
+        with self.lock:
+            for option in self.options:
+                option.remove()
 
     def select_all(self):
         with self.lock:
