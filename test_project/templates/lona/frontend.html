@@ -50,6 +50,8 @@
           follow_http_redirects: true,
         });
 
+        window['lona_context'] = lona_context;
+
         // messages -----------------------------------------------------------
         function show_message(message, color, timeout) {
           if(timeout === undefined) {
