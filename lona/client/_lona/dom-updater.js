@@ -42,7 +42,7 @@ export class LonaDomUpdater {
     _remove_id(node, id) {
         var id_list = node.id.split(' ');
 
-        id_list.pop(id);
+        id_list = id_list.filter(_id => _id != id);
         node.id = id_list.join(' ').trim();
     };
 
