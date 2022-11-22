@@ -379,7 +379,7 @@ export class LonaDomUpdater {
 
             // REMOVE
             } else if(operation == protocol.OPERATION.REMOVE) {
-                this.lona_window._remove_id(node, data[0]);
+                this._remove_id(node, data[0]);
 
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
