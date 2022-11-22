@@ -404,7 +404,7 @@ export class LonaDomUpdater {
 
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
-                node.classList = '';
+                node.removeAttribute('class');
 
             };
 
