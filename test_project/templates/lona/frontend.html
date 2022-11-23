@@ -14,18 +14,13 @@
         <th>Application Started:</th>
         <td id="application-started">-</td>
       </tr>
-      <tr>
-        <th>Loaded Nodes:</th>
-        <td id="loaded-nodes">-</td>
-      </tr>
     </table>
 
     <br />
 
     <div id="lona-links">
       <a href="/">Home</a> |
-      <a href="/" data-lona-ignore="True">Reload Application</a> |
-      <a href="#" data-lona-ignore="True" id="enable-rendering-statistics">Enable Rendering Statistics</a>
+      <a href="/" data-lona-ignore="True">Reload Application</a>
     </div>
 
     <hr />
@@ -127,21 +122,6 @@
         lona_context.add_input_event_timeout_hook(function(lona_context, lona_window) {
           show_message('Waiting for server...');
         });
-
-        // rendering statistics -----------------------------------------------
-        document.querySelector('#enable-rendering-statistics').onclick = function(event) {
-          event.preventDefault();
-
-          var loaded_nodes = document.querySelector('#loaded-nodes');
-
-          loaded_nodes.innerHTML = '';
-
-          lona_context.add_rendering_hook(function(lona_window) {
-            loaded_nodes.innerHTML = Object.keys(lona_context._windows[1]._nodes).length;
-          });
-
-          return false;
-        };
 
         lona_context.setup();
 
