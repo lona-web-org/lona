@@ -57,7 +57,6 @@ export class LonaContext {
         this._last_window_id = 0;
         this._connect_hooks = [];
         this._disconnect_hooks = [];
-        this._rendering_hooks = [];
         this._view_timeout_hooks = [];
         this._input_event_timeout_hooks = [];
         this._message_handler = [];
@@ -108,10 +107,6 @@ export class LonaContext {
         this._disconnect_hooks.push(hook);
     };
 
-    add_rendering_hook(hook) {
-        this._rendering_hooks.push(hook);
-    };
-
     add_view_timeout_hook(hook) {
         this._view_timeout_hooks.push(hook);
     };
@@ -137,20 +132,6 @@ export class LonaContext {
             var hook = this._disconnect_hooks[i];
 
             hook(this, event);
-        };
-    };
-
-    _run_rendering_hooks(lona_window) {
-        try {
-            for(var i in this._rendering_hooks) {
-                var hook = this._rendering_hooks[i];
-
-                hook(this, lona_window);
-            };
-
-        } catch(error) {
-            lona_window.crash(error);
-
         };
     };
 

@@ -639,6 +639,5 @@ export class LonaRenderingEngine {
         };
 
         this._run_widget_hooks();
-        this.lona_context._run_rendering_hooks(this);
     };
 };
