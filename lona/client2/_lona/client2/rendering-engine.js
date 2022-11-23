@@ -60,6 +60,10 @@ export class LonaRenderingEngine {
     };
 
     _get_node(node_id) {
+        if(!(node_id in this._nodes)) {
+            throw(`unknown node id: ${node_id}`);
+        }
+
         return this._nodes[node_id];
     };
 
@@ -82,6 +86,7 @@ export class LonaRenderingEngine {
     _remove_node(node_id) {
         const node = this._get_node(node_id);
 
+        delete this._nodes[node_id];
         node.remove();
     };
 
@@ -111,15 +116,15 @@ export class LonaRenderingEngine {
     _clean_node_cache() {
         // nodes
         Object.keys(this._nodes).forEach(key => {
-            var node = this._nodes[key];
+            var node = this._get_node(key);
 
             if(!this._root.contains(node)) {
-                delete this._nodes[key];
+                this._remove_node(key);
             };
         });
 
         Object.keys(this._widgets).forEach(key => {
-            var node = this._nodes[key];
+            var node = this._get_node(key);
 
             // widget_marker
             if(this._root.contains(node)) {
@@ -271,7 +276,7 @@ export class LonaRenderingEngine {
                 return;
             };
 
-            widget.nodes = [this._nodes[node_id]];
+            widget.nodes = [this._get_node(node_id)];
             widget.root_node = widget.nodes[0];
 
             if(widget.setup !== undefined) {
@@ -308,7 +313,7 @@ export class LonaRenderingEngine {
         var patch_type = patch[1];
         var operation = patch[2];
         var data = patch.splice(3);
-        var node = this._nodes[node_id];
+        var node = this._get_node(node_id);
 
         // id_list
         if(patch_type == protocol.PATCH_TYPE.ID_LIST) {
