@@ -114,44 +114,43 @@ export class LonaRenderingEngine {
     };
 
     _clean_node_cache() {
-        // nodes
-        Object.keys(this._nodes).forEach(key => {
-            var node = this._get_node(key);
+        Object.keys(this._nodes).forEach(node_id => {
 
-            if(!this._root.contains(node)) {
-                this._remove_node(key);
-            };
-        });
+            // nodes
+            var node = this._get_node(node_id);
 
-        Object.keys(this._widgets).forEach(key => {
-            var node = this._get_node(key);
-
-            // widget_marker
             if(this._root.contains(node)) {
                 return;
-            };
+            }
+
+            this._remove_node(node_id);
+
+            // widgets
+            if(!(node_id in this._widgets)) {
+                return;
+            }
 
             // run deconstructor
-            if(this._widgets[key].deconstruct !== undefined) {
-                this._widgets[key].deconstruct();
+            if(this._widgets[node_id].deconstruct !== undefined) {
+                this._widgets[node_id].deconstruct();
             };
 
             // remove widget
-            delete this._widgets[key];
+            delete this._widgets[node_id];
 
             // remove widget data
-            delete this._widget_data[key];
+            delete this._widget_data[node_id];
 
             // remove widget from _widgets_to_setup
-            if(this._widgets_to_setup.indexOf(key) > -1) {
+            if(this._widgets_to_setup.indexOf(node_id) > -1) {
                 this._widgets_to_setup.splice(
-                    this._widgets_to_setup.indexOf(key), 1);
+                    this._widgets_to_setup.indexOf(node_id), 1);
             };
 
             // remove widget from _widgets_to_update
-            if(this._widgets_to_update.indexOf(key) > -1) {
+            if(this._widgets_to_update.indexOf(node_id) > -1) {
                 this._widgets_to_update.splice(
-                    this._widgets_to_update.indexOf(key), 1);
+                    this._widgets_to_update.indexOf(node_id), 1);
             };
         });
     };
