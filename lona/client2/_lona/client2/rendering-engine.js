@@ -632,8 +632,9 @@ export class LonaRenderingEngine {
 
             data.forEach(patch => {
                 this._apply_patch(patch);
-                this._clean_node_cache();
             });
+
+            this._clean_node_cache();
         };
 
         this._run_widget_hooks();
