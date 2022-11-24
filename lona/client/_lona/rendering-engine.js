@@ -607,14 +607,9 @@ export class LonaRenderingEngine {
 
         // HTML
         if (message_type == Lona.protocol.DATA_TYPE.HTML) {
-            var selector = 'a,form,[data-lona-events]';
-
             this._root.innerHTML = data;
             this._clear_node_cache();
-
-            this._root.querySelectorAll(selector).forEach(node => {
-                this.lona_window._input_event_handler.patch_input_events(node);
-            });
+            this.lona_window._input_event_handler.patch_input_events_recursively(this._root);
 
         // HTML tree
         } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
