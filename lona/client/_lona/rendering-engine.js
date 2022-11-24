@@ -48,14 +48,14 @@ export class LonaRenderingEngine {
     };
 
     _add_id(node, id) {
-        var id_list = node.id.split(' ');
+        let id_list = node.id.split(' ');
 
         id_list = id_list.concat(id);
         node.id = id_list.join(' ').trim();
     };
 
     _remove_id(node, id) {
-        var id_list = node.id.split(' ');
+        let id_list = node.id.split(' ');
 
         id_list = id_list.filter(_id => _id != id);
         node.id = id_list.join(' ').trim();
@@ -101,7 +101,7 @@ export class LonaRenderingEngine {
     // node cache -------------------------------------------------------------
     _clear_node_cache() {
         // running widget deconstructors
-        for(var key in this._widgets) {
+        for(let key in this._widgets) {
             if(this._widgets[key].deconstruct !== undefined) {
                 this._widgets[key].deconstruct();
             };
@@ -119,7 +119,7 @@ export class LonaRenderingEngine {
         Object.keys(this._nodes).forEach(node_id => {
 
             // nodes
-            var node = this._get_node(node_id);
+            const node = this._get_node(node_id);
 
             if(this._root.contains(node)) {
                 return;
@@ -159,15 +159,15 @@ export class LonaRenderingEngine {
 
     // html rendering ---------------------------------------------------------
     _render_node(node_spec) {
-        var property_names = ['value', 'checked', 'selected'];
-        var node_type = node_spec[0];
+        const property_names = ['value', 'checked', 'selected'];
+        const node_type = node_spec[0];
 
         // TextNode
         if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {
-            var node_id = node_spec[1];
-            var node_content = node_spec[2];
+            const node_id = node_spec[1];
+            const node_content = node_spec[2];
 
-            var node = document.createTextNode(node_content);
+            const node = document.createTextNode(node_content);
 
             this._nodes[node_id] = node;
 
@@ -175,17 +175,17 @@ export class LonaRenderingEngine {
         };
 
         // Node
-        var node_id = node_spec[1];
-        var node_tag_name = node_spec[2];
-        var node_id_list = node_spec[3];
-        var node_class_list = node_spec[4];
-        var node_style = node_spec[5];
-        var node_attributes = node_spec[6];
-        var node_child_nodes = node_spec[7];
-        var widget_class_name = node_spec[8];
-        var widget_data = node_spec[9];
+        const node_id = node_spec[1];
+        const node_tag_name = node_spec[2];
+        const node_id_list = node_spec[3];
+        const node_class_list = node_spec[4];
+        const node_style = node_spec[5];
+        const node_attributes = node_spec[6];
+        const node_child_nodes = node_spec[7];
+        const widget_class_name = node_spec[8];
+        const widget_data = node_spec[9];
 
-        var node = document.createElement(node_tag_name);
+        const node = document.createElement(node_tag_name);
 
         // lona node id
         node.setAttribute('data-lona-node-id', node_id);
@@ -210,7 +210,7 @@ export class LonaRenderingEngine {
         // attributes
         if(Object.keys(node_attributes).length > 0) {
             Object.keys(node_attributes).forEach(key => {
-                var value = node_attributes[key];
+                let value = node_attributes[key];
 
                 // properties
                 if(property_names.indexOf(key) > -1) {
@@ -230,7 +230,7 @@ export class LonaRenderingEngine {
 
         // nodes
         node_child_nodes.forEach(child_node_argspec => {
-            var child_node = this._render_node(child_node_argspec);
+            const child_node = this._render_node(child_node_argspec);
 
             node.appendChild(child_node);
         });
@@ -243,15 +243,15 @@ export class LonaRenderingEngine {
                 throw(`RuntimeError: unknown widget name '${widget_class_name}'`);
             }
 
-            var widget_class = Lona.widget_classes[widget_class_name];
+            const widget_class = Lona.widget_classes[widget_class_name];
 
-            var window_shim = new LonaWindowShim(
+            const window_shim = new LonaWindowShim(
                 this.lona_context,
                 this.lona_window,
                 node_id,
             );
 
-            var widget = new widget_class(window_shim);
+            const widget = new widget_class(window_shim);
 
             this._widgets[node_id] = widget;
             this._widget_data[node_id] = widget_data;
@@ -268,8 +268,8 @@ export class LonaRenderingEngine {
     _run_widget_hooks() {
         // setup
         this._widgets_to_setup.forEach(node_id => {
-            var widget = this._widgets[node_id];
-            var widget_data = this._widget_data[node_id];
+            const widget = this._widgets[node_id];
+            const widget_data = this._widget_data[node_id];
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -287,8 +287,8 @@ export class LonaRenderingEngine {
 
         // data_updated
         this._widgets_to_update.forEach(node_id => {
-            var widget = this._widgets[node_id];
-            var widget_data = this._widget_data[node_id];
+            const widget = this._widgets[node_id];
+            const widget_data = this._widget_data[node_id];
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -307,14 +307,14 @@ export class LonaRenderingEngine {
 
     // patches ----------------------------------------------------------------
     _apply_patch_to_node(patch) {
-        var protocol = Lona.protocol;
-        var property_names = ['value', 'checked', 'selected'];
+        const protocol = Lona.protocol;
+        const property_names = ['value', 'checked', 'selected'];
 
-        var node_id = patch[0];
-        var patch_type = patch[1];
-        var operation = patch[2];
-        var data = patch.splice(3);
-        var node = this._get_node(node_id);
+        const node_id = patch[0];
+        const patch_type = patch[1];
+        const operation = patch[2];
+        const data = patch.splice(3);
+        const node = this._get_node(node_id);
 
         // id_list
         if(patch_type == protocol.PATCH_TYPE.ID_LIST) {
@@ -327,7 +327,7 @@ export class LonaRenderingEngine {
             } else if(operation == protocol.OPERATION.RESET) {
                 node.removeAttribute('id');
 
-                for(var i in data) {
+                for(let i in data) {
                     this._add_id(node, data[0]);
                 };
 
@@ -373,7 +373,7 @@ export class LonaRenderingEngine {
             } else if(operation == protocol.OPERATION.RESET) {
                 node.removeAttribute('style');
 
-                for(var key in data[0]) {
+                for(let key in data[0]) {
                     node.style[key] = data[0][key];
                 };
 
@@ -392,8 +392,8 @@ export class LonaRenderingEngine {
 
             // SET
             if(operation == protocol.OPERATION.SET) {
-                var name = data[0];
-                var value = data[1];
+                const name = data[0];
+                let value = data[1];
 
                 // properties
                 if(property_names.indexOf(name) > -1) {
@@ -419,8 +419,8 @@ export class LonaRenderingEngine {
                     node.removeAttribute(name);
                 });
 
-                for(var name in data[0]) {
-                    var value = data[0][name];
+                for(let name in data[0]) {
+                    let value = data[0][name];
 
                     // properties
                     if(property_names.indexOf(name) > -1) {
@@ -438,7 +438,7 @@ export class LonaRenderingEngine {
 
             // REMOVE
             } else if(operation == protocol.OPERATION.REMOVE) {
-                var name = data[0];
+                const name = data[0];
 
                 // properties
                 if(property_names.indexOf(name) > -1) {
@@ -478,14 +478,14 @@ export class LonaRenderingEngine {
     };
 
     _apply_patch_to_child_nodes(patch) {
-        var node_id = patch[0];
-        var patch_type = patch[1];
-        var operation = patch[2];
-        var data = patch.splice(3);
+        const node_id = patch[0];
+        const patch_type = patch[1];
+        const operation = patch[2];
+        const data = patch.splice(3);
 
         // SET
         if(operation == Lona.protocol.OPERATION.SET) {
-            var node = this._render_node(data[1]);
+            const node = this._render_node(data[1]);
 
             this._set_node(node, node_id, data[0]);
 
@@ -509,7 +509,7 @@ export class LonaRenderingEngine {
 
         // INSERT
         } else if(operation == Lona.protocol.OPERATION.INSERT) {
-            var node = this._render_node(data[1]);
+            const node = this._render_node(data[1]);
 
             this._insert_node(node, node_id, data[0])
 
@@ -521,17 +521,18 @@ export class LonaRenderingEngine {
     };
 
     _apply_patch_to_widget_data(patch) {
-        var node_id = patch[0];
-        var patch_type = patch[1];
-        var operation = patch[2];
-        var payload = patch.splice(3);
+        const node_id = patch[0];
+        const patch_type = patch[1];
+        const operation = patch[2];
+        const payload = patch.splice(3);
 
-        var key_path = payload[0];
-        var data = payload.splice(1);
+        const key_path = payload[0];
+        const data = payload.splice(1);
 
         // key path
-        var parent_data = undefined;
-        var widget_data = this._widget_data[node_id];
+        let parent_data = undefined;
+        let widget_data = this._widget_data[node_id];
+        let new_data = undefined;
 
         key_path.forEach(function(key) {
             parent_data = widget_data;
@@ -555,10 +556,10 @@ export class LonaRenderingEngine {
         // CLEAR
         } else if(operation == Lona.protocol.OPERATION.CLEAR) {
             if(widget_data instanceof Array) {
-                var new_data = [];
+                new_data = [];
 
             } else if(widget_data instanceof Object) {
-                var new_data = {};
+                new_data = {};
 
             };
 
@@ -589,7 +590,7 @@ export class LonaRenderingEngine {
     };
 
     _apply_patch(patch) {
-        var patch_type = patch[1];
+        const patch_type = patch[1];
 
         if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
             this._apply_patch_to_widget_data(patch);
@@ -604,8 +605,8 @@ export class LonaRenderingEngine {
 
     // public api -------------------------------------------------------------
     show_html(html) {
-        var message_type = html[0];
-        var data = html[1];
+        const message_type = html[0];
+        const data = html[1];
 
         // HTML
         if (message_type == Lona.protocol.DATA_TYPE.HTML) {
@@ -617,7 +618,7 @@ export class LonaRenderingEngine {
         } else if(message_type == Lona.protocol.DATA_TYPE.HTML_TREE) {
             this._clear_node_cache();
 
-            var node = this._render_node(data)
+            const node = this._render_node(data)
 
             this._clear();
             this._root.appendChild(node);
