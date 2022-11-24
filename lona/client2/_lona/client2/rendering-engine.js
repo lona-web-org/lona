@@ -326,9 +326,9 @@ export class LonaRenderingEngine {
             } else if(operation == Lona.protocol.OPERATION.RESET) {
                 node.removeAttribute('id');
 
-                for(let i in data) {
-                    this._add_id(node, data[0]);
-                };
+                data[0].forEach(id => {
+                    this._add_id(node, id);
+                });
 
             // REMOVE
             } else if(operation == Lona.protocol.OPERATION.REMOVE) {
