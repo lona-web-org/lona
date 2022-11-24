@@ -374,6 +374,14 @@ export class LonaInputEventHandler {
         });
     };
 
+    patch_input_events_recursively(node) {
+        var selector = 'a,form,[data-lona-events]';
+
+        node.querySelectorAll(selector).forEach(child_node => {
+            this.patch_input_events(child_node);
+        });
+    };
+
     fire_input_event(node, event_type, data) {
         if(this.lona_window._crashed) {
             return;
