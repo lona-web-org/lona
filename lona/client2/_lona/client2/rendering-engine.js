@@ -22,6 +22,8 @@ SOFTWARE.
 
 */
 
+'use strict';
+
 import { LonaWindowShim } from './window-shim.js';
 import { Lona } from './lona.js';
 
