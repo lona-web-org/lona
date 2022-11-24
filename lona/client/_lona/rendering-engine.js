@@ -589,7 +589,10 @@ export class LonaRenderingEngine {
     _apply_patch(patch) {
         var patch_type = patch[1];
 
-        if(patch_type == Lona.protocol.PATCH_TYPE.NODES) {
+        if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
+            this._apply_patch_to_widget_data(patch);
+
+        } else if(patch_type == Lona.protocol.PATCH_TYPE.NODES) {
             this._apply_patch_to_child_nodes(patch);
 
         } else {
@@ -628,16 +631,7 @@ export class LonaRenderingEngine {
             this._widgets_to_update = [];
 
             data.forEach(patch => {
-                var patch_type = patch[1];
-
-                if(patch_type == Lona.protocol.PATCH_TYPE.WIDGET_DATA) {
-                    this._apply_patch_to_widget_data(patch);
-
-                } else {
-                    this._apply_patch(patch);
-
-                };
-
+                this._apply_patch(patch);
                 this._clean_node_cache();
             });
         };
