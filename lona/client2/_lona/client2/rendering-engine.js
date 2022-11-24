@@ -479,7 +479,6 @@ export class LonaRenderingEngine {
 
     _apply_patch_to_child_nodes(patch) {
         const node_id = patch[0];
-        const patch_type = patch[1];
         const operation = patch[2];
         const data = patch.splice(3);
 
@@ -522,7 +521,6 @@ export class LonaRenderingEngine {
 
     _apply_patch_to_widget_data(patch) {
         const node_id = patch[0];
-        const patch_type = patch[1];
         const operation = patch[2];
         const payload = patch.splice(3);
 
