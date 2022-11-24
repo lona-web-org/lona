@@ -534,7 +534,7 @@ export class LonaRenderingEngine {
         let widget_data = this._widget_data[node_id];
         let new_data = undefined;
 
-        key_path.forEach(function(key) {
+        key_path.forEach(key => {
             parent_data = widget_data;
             widget_data = widget_data[key];
         });
