@@ -610,7 +610,7 @@ export class LonaRenderingEngine {
             var selector = 'a,form,[data-lona-events]';
 
             this._root.innerHTML = data;
-            this._clean_node_cache();
+            this._clear_node_cache();
 
             this._root.querySelectorAll(selector).forEach(node => {
                 this.lona_window._input_event_handler.patch_input_events(node);
