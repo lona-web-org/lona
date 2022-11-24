@@ -27,6 +27,9 @@ SOFTWARE.
 import { LonaWindowShim } from './window-shim.js';
 import { Lona } from './lona.js';
 
+const SPECIAL_ATTRIBUTE_NAMES = ['id', 'class', 'style', 'data-lona-node-id'];
+const PROPERTY_NAMES = ['value', 'checked', 'selected'];
+
 
 export class LonaRenderingEngine {
     constructor(lona_context, lona_window, root) {
@@ -159,7 +162,6 @@ export class LonaRenderingEngine {
 
     // html rendering ---------------------------------------------------------
     _render_node(node_spec) {
-        const property_names = ['value', 'checked', 'selected'];
         const node_type = node_spec[0];
 
         // TextNode
@@ -213,7 +215,7 @@ export class LonaRenderingEngine {
                 let value = node_attributes[key];
 
                 // properties
-                if(property_names.indexOf(key) > -1) {
+                if(PROPERTY_NAMES.indexOf(key) > -1) {
                     if(key != 'value' && node_attributes[key] !== false) {
                         value = true;
                     };
@@ -307,8 +309,6 @@ export class LonaRenderingEngine {
 
     // patches ----------------------------------------------------------------
     _apply_patch_to_node(patch) {
-        const property_names = ['value', 'checked', 'selected'];
-
         const node_id = patch[0];
         const patch_type = patch[1];
         const operation = patch[2];
@@ -395,7 +395,7 @@ export class LonaRenderingEngine {
                 let value = data[1];
 
                 // properties
-                if(property_names.indexOf(name) > -1) {
+                if(PROPERTY_NAMES.indexOf(name) > -1) {
                     if(name != 'value' && value !== false) {
                         value = true;
                     };
@@ -410,7 +410,7 @@ export class LonaRenderingEngine {
             // RESET
             } else if(operation == Lona.protocol.OPERATION.RESET) {
                 node.getAttributeNames().forEach(function(name) {
-                    if(['id', 'class', 'style', 'data-lona-node-id'].indexOf(name) > -1) {
+                    if(SPECIAL_ATTRIBUTE_NAMES.indexOf(name) > -1) {
                         return;
 
                     };
@@ -422,7 +422,7 @@ export class LonaRenderingEngine {
                     let value = data[0][name];
 
                     // properties
-                    if(property_names.indexOf(name) > -1) {
+                    if(PROPERTY_NAMES.indexOf(name) > -1) {
                         if(name != 'value' && value !== false) {
                             value = true;
                         };
@@ -440,7 +440,7 @@ export class LonaRenderingEngine {
                 const name = data[0];
 
                 // properties
-                if(property_names.indexOf(name) > -1) {
+                if(PROPERTY_NAMES.indexOf(name) > -1) {
                     if(name == 'value') {
                         node[name] = '';
 
@@ -457,7 +457,7 @@ export class LonaRenderingEngine {
             // CLEAR
             } else if(operation == Lona.protocol.OPERATION.CLEAR) {
                 node.getAttributeNames().forEach(function(name) {
-                    if(['id', 'class', 'style', 'data-lona-node-id'].indexOf(name) > -1) {
+                    if(SPECIAL_ATTRIBUTE_NAMES.indexOf(name) > -1) {
                         return;
 
                     };
