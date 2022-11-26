@@ -8,41 +8,38 @@ app = LonaApp(__file__)
 
 @app.route('/')
 class CounterView(LonaView):
-    def handle_request(self, request):
-        counter = Span('0')
-        number_input = NumberInput(value=10, _style={'width': '3em'})
-
-        html = HTML(
-            H1('Counter: ', counter),
-
-            number_input,
-            Button('Set', _id='set'),
-
-            Button('Decrease', _id='decrease', _style={'margin-left': '1em'}),
-            Button('Increase', _id='increase'),
+    def increase_counter(self, input_event):
+        self.counter.set_text(
+            int(self.counter.get_text()) + 1,
         )
 
-        while True:
-            self.show(html)
+    def decrease_counter(self, input_event):
+        self.counter.set_text(
+            int(self.counter.get_text()) - 1,
+        )
 
-            input_event = self.await_click()
+    def set_counter(self, input_event):
+        with contextlib.suppress(TypeError):
+            self.counter.set_text(int(self.number_input.value))
 
-            # increase
-            if input_event.node_has_id('increase'):
-                counter.set_text(
-                    int(counter.get_text()) + 1,
-                )
+    def handle_request(self, request):
+        self.counter = Span('0')
+        self.number_input = NumberInput(value=10, _style={'width': '3em'})
 
-            # decrease
-            elif input_event.node_has_id('decrease'):
-                counter.set_text(
-                    int(counter.get_text()) - 1,
-                )
+        return HTML(
+            H1('Counter: ', self.counter),
 
-            # set
-            elif input_event.node_has_id('set'):
-                with contextlib.suppress(TypeError):
-                    counter.set_text(int(number_input.value))
+            self.number_input,
+            Button('Set', _id='set', handle_click=self.set_counter),
+
+            Button(
+                'Decrease',
+                _style={'margin-left': '1em'},
+                handle_click=self.decrease_counter,
+            ),
+
+            Button('Increase', handle_click=self.increase_counter),
+        )
 
 
 app.run(port=8080)
