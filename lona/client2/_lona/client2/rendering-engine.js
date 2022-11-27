@@ -37,11 +37,11 @@ export class LonaRenderingEngine {
         this.lona_window = lona_window;
         this._root = root;
 
-        this._nodes = {};
-        this._widget_data = {};
-        this._widgets = {};
-        this._widgets_to_setup = [];
-        this._widgets_to_update = [];
+        this._nodes = new Map();
+        this._widget_data = new Map();
+        this._widgets = new Map();
+        this._widgets_to_setup = new Array();
+        this._widgets_to_update = new Array();
     };
 
     // helper -----------------------------------------------------------------
@@ -65,11 +65,11 @@ export class LonaRenderingEngine {
     };
 
     _get_node(node_id) {
-        if(!(node_id in this._nodes)) {
+        if(!(this._nodes.has(node_id))) {
             throw(`unknown node id: ${node_id}`);
         }
 
-        return this._nodes[node_id];
+        return this._nodes.get(node_id);
     };
 
     _insert_node(node, node_id, index) {
@@ -91,7 +91,7 @@ export class LonaRenderingEngine {
     _remove_node(node_id) {
         const node = this._get_node(node_id);
 
-        delete this._nodes[node_id];
+        this._nodes.delete(node_id);
         node.remove();
     };
 
@@ -104,26 +104,24 @@ export class LonaRenderingEngine {
     // node cache -------------------------------------------------------------
     _clear_node_cache() {
         // running widget deconstructors
-        for(let key in this._widgets) {
-            if(this._widgets[key].deconstruct !== undefined) {
-                this._widgets[key].deconstruct();
+        this._widgets.forEach(widget => {
+            if(widget.deconstruct !== undefined) {
+                widget.deconstruct();
             };
-        };
+        });
 
         // resetting node state
-        this._nodes = {};
-        this._widget_data = {};
-        this._widgets = {}
-        this._widgets_to_setup = [];
-        this._widgets_to_update = [];
+        this._nodes.clear();
+        this._widget_data.clear();
+        this._widgets.clear();
+        this._widgets_to_setup.length = 0;
+        this._widgets_to_update.length = 0;
     };
 
     _clean_node_cache() {
-        Object.keys(this._nodes).forEach(node_id => {
+        this._nodes.forEach((node, node_id) => {
 
             // nodes
-            const node = this._get_node(node_id);
-
             if(this._root.contains(node)) {
                 return;
             }
@@ -131,20 +129,22 @@ export class LonaRenderingEngine {
             this._remove_node(node_id);
 
             // widgets
-            if(!(node_id in this._widgets)) {
+            if(!(this._widgets.has(node_id))) {
                 return;
             }
 
+            const widget = this._widgets.get(node_id);
+
             // run deconstructor
-            if(this._widgets[node_id].deconstruct !== undefined) {
-                this._widgets[node_id].deconstruct();
+            if(widget.deconstruct !== undefined) {
+                widget.deconstruct();
             };
 
             // remove widget
-            delete this._widgets[node_id];
+            this._widgets.delete(node_id);
 
             // remove widget data
-            delete this._widget_data[node_id];
+            this._widget_data.delete(node_id);
 
             // remove widget from _widgets_to_setup
             if(this._widgets_to_setup.indexOf(node_id) > -1) {
@@ -171,7 +171,7 @@ export class LonaRenderingEngine {
 
             const node = document.createTextNode(node_content);
 
-            this._nodes[node_id] = node;
+            this._nodes.set(node_id, node);
 
             return node;
         };
@@ -237,7 +237,7 @@ export class LonaRenderingEngine {
             node.appendChild(child_node);
         });
 
-        this._nodes[node_id] = node;
+        this._nodes.set(node_id, node);
 
         // widget
         if(widget_class_name != '') {
@@ -255,8 +255,8 @@ export class LonaRenderingEngine {
 
             const widget = new widget_class(window_shim);
 
-            this._widgets[node_id] = widget;
-            this._widget_data[node_id] = widget_data;
+            this._widgets.set(node_id, widget);
+            this._widget_data.set(node_id, widget_data);
             this._widgets_to_setup.splice(0, 0, node_id);
         }
 
@@ -270,8 +270,8 @@ export class LonaRenderingEngine {
     _run_widget_hooks() {
         // setup
         this._widgets_to_setup.forEach(node_id => {
-            const widget = this._widgets[node_id];
-            const widget_data = this._widget_data[node_id];
+            const widget = this._widgets.get(node_id);
+            const widget_data = this._widget_data.get(node_id);
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -289,8 +289,8 @@ export class LonaRenderingEngine {
 
         // data_updated
         this._widgets_to_update.forEach(node_id => {
-            const widget = this._widgets[node_id];
-            const widget_data = this._widget_data[node_id];
+            const widget = this._widgets.get(node_id);
+            const widget_data = this._widget_data.get(node_id);
 
             widget.data = JSON.parse(JSON.stringify(widget_data));
 
@@ -528,7 +528,7 @@ export class LonaRenderingEngine {
 
         // key path
         let parent_data = undefined;
-        let widget_data = this._widget_data[node_id];
+        let widget_data = this._widget_data.get(node_id);
         let new_data = undefined;
 
         key_path.forEach(key => {
@@ -543,7 +543,7 @@ export class LonaRenderingEngine {
         // RESET
         } else if(operation == Lona.protocol.OPERATION.RESET) {
             if(parent_data === undefined) {
-                this._widget_data[node_id] = data[0];
+                this._widget_data.set(node_id, data[0]);
 
             } else {
                 parent_data = data[0];
@@ -561,7 +561,7 @@ export class LonaRenderingEngine {
             };
 
             if(parent_data === undefined) {
-                this._widget_data[node_id] = new_data;
+                this._widget_data.set(node_id, new_data);
 
             } else {
                 parent_data[key_path[key_path.length-1]] = new_data;
