@@ -649,17 +649,16 @@ CLICK
 
 
     class MyLonaView(LonaView):
+        def handle_click(self, input_event):
+            print(input_event.tag_name, 'was clicked')
+
         def handle_request(self, request):
-            html = HTML(
-                Div('Click me', events=[CLICK]),
-                Button('Click Me'),  # Buttons have CLICK set by default
+            return HTML(
+                Div('Click me', events=[CLICK], handle_click=self.handle_click),
+
+                # Buttons have CLICK set by default
+                Button('Click Me', handle_click=self.handle_click),
             )
-
-            while True:
-                self.show(html)
-                input_event = self.await_click()
-
-                print(input_event.tag_name, 'was clicked')
 
 
 Click events contain meta data in ``input_event.data``.
@@ -687,16 +686,13 @@ CHANGE
 
 
     class MyLonaView(LonaView):
+        def handle_change(self, input_event):
+            print('TextInput is set to', input_event.node.value)
+
         def handle_request(self, request):
-            html = HTML(
-                TextInput(value='foo', bubble_up=True),
+            return HTML(
+                TextInput(value='foo', handle_change=self.handle_change),
             )
-
-            while True:
-                self.show(html)
-                input_event = self.await_change()
-
-                print('TextInput is set to', input_event.node.value)
 
 
 FOCUS
@@ -713,16 +709,13 @@ FOCUS
 
 
     class MyLonaView(LonaView):
+        def handle_focus(self, input_event):
+            print('TextInput got focused')
+
         def handle_request(self, request):
-            html = HTML(
-                TextInput(events=[FOCUS]),
+            return HTML(
+                TextInput(events=[FOCUS], handle_focus=self.handle_focus),
             )
-
-            while True:
-                self.show(html)
-                input_event = self.await_focus()
-
-                print('TextInput got focused')
 
 
 BLUR
@@ -739,16 +732,13 @@ BLUR
 
 
     class MyLonaView(LonaView):
+        def handle_blur(self, input_event):
+            print('TextInput got blurred')
+
         def handle_request(self, request):
-            html = HTML(
-                TextInput(events=[BLUR]),
+            return HTML(
+                TextInput(events=[BLUR], handle_blur=self.handle_blur),
             )
-
-            while True:
-                self.show(html)
-                input_event = self.await_blur()
-
-                print('TextInput got blurred')
 
 
 Input Event Attributes
@@ -788,32 +778,6 @@ InputEvent.node_has_class(name)
 ```````````````````````````````
 
     Returnes ``True`` if the node associated with this event has the given class.
-
-
-Awaiting Input Events
-~~~~~~~~~~~~~~~~~~~~~
-
-Input events can be awaited from ``handle_request()``. This makes forms or
-wizards possible.
-
-.. code-block:: python
-
-    from lona.html import HTML, H1, Button
-    from lona import LonaView
-
-
-    class MyLonaView(LonaView):
-        def handle_request(self, request):
-            html = HTML(
-                H1('Click the button'),
-                Button('click me'),
-            )
-
-            self.show(html)
-
-            input_event = self.await_click()
-
-            print(input_event.node, 'was clicked')
 
 
 Handling Input events In A Callback
@@ -860,6 +824,42 @@ Callbacks can also be set by passing them directly into nodes, using the
             )
 
             self.show(html)
+
+
+Awaiting Input Events
+~~~~~~~~~~~~~~~~~~~~~
+
+Input events can be awaited from ``handle_request()``. This makes forms or
+wizards possible.
+
+.. warning::
+
+    Using ``LonaView.await_*`` means that the calling thread blocks until
+    the awaited input events gets send by the browser. This is useful when
+    writing deamonized views for interactive wizards, but might not scale
+    when the user base of your view grows.
+
+    If thread-count and scalability are crucial for you, consider using
+    `callbacks </end-user-documentation/views.html#handling-input-events-in-a-callback>`_.
+
+.. code-block:: python
+
+    from lona.html import HTML, H1, Button
+    from lona import LonaView
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            html = HTML(
+                H1('Click the button'),
+                Button('click me'),
+            )
+
+            self.show(html)
+
+            input_event = self.await_click()
+
+            print(input_event.node, 'was clicked')
 
 
 Handling Input Events In A Hook
@@ -1054,6 +1054,14 @@ LonaView.set_title(title)
 LonaView.await_input_event\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    .. note::
+
+        ``LonaView.await_*`` blocks the current thread until a matching
+        event gets send by the browser.
+
+        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        for more information.
+
     Returns the next incoming input event.
 
     When ``nodes`` is set, the next input event issued by one of the given
@@ -1063,8 +1071,17 @@ LonaView.await_input_event\(\*nodes, html=None\)
     an input event
 
 
+
 LonaView.await_click\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        ``LonaView.await_*`` blocks the current thread until a matching
+        event gets send by the browser.
+
+        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        for more information.
 
     Returns the next incoming click event.
 
@@ -1077,6 +1094,14 @@ LonaView.await_click\(\*nodes, html=None\)
 
 LonaView.await_change\(\*nodes, html=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        ``LonaView.await_*`` blocks the current thread until a matching
+        event gets send by the browser.
+
+        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        for more information.
 
     Returns the next incoming change event.
 
@@ -1094,6 +1119,14 @@ LonaView.await_focus\(\*nodes, html=None\)
 
         Added in 1.9
 
+    .. note::
+
+        ``LonaView.await_*`` blocks the current thread until a matching
+        event gets send by the browser.
+
+        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        for more information.
+
     Returns the next incoming focus event.
 
     When ``nodes`` is set, the next input event issued by one of the given
@@ -1110,6 +1143,14 @@ LonaView.await_blur\(\*nodes, html=None\)
 
         Added in 1.9
 
+    .. note::
+
+        ``LonaView.await_*`` blocks the current thread until a matching
+        event gets send by the browser.
+
+        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        for more information.
+
     Returns the next incoming blur event.
 
     When ``nodes`` is set, the next input event issued by one of the given
@@ -1123,6 +1164,18 @@ LonaView.daemonize\(\)
 ~~~~~~~~~~~~~~~~~~~~~~
 
     Allow the view to run in background after the user disconnected.
+
+    .. note::
+
+        Daemonized views are not meant to be used to create multi-user views.
+        They are meant to create single-user views that are long running
+        (multiple minutes or hours).
+
+        For example if you write a view that process a huge amount of data, and
+        you want to push a progress bar forward.
+
+        If you want to create multi-user views, use
+        `view events </end-user-documentation/views.html?q=view_event#view-events>`_.
 
 
 LonaView.iter_objects\(\)
