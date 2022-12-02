@@ -5,7 +5,7 @@ from lona.routing import Router, Route
 
 @pytest.mark.incremental()
 class TestBasicRouting:
-    def setup(self):
+    def setup_method(self):
         self.routes = [
             Route('/foo/<arg>/', None),
             Route('/foo/', None),
@@ -52,7 +52,7 @@ class TestBasicRouting:
 
 @pytest.mark.incremental()
 class TestRoutesWithRegex:
-    def setup(self):
+    def setup_method(self):
         self.routes = [
             Route('/number/<number:[0-9]+>/', None),
         ]
@@ -75,7 +75,7 @@ class TestRoutesWithRegex:
 
 @pytest.mark.incremental()
 class TestOptionalTrailingSlash:
-    def setup(self):
+    def setup_method(self):
         self.routes = [
             Route('/foo(/)', None),
             Route('/bar/', None),
@@ -128,7 +128,7 @@ class TestOptionalTrailingSlash:
 
 @pytest.mark.incremental()
 class TestReverseMatching:
-    def setup(self):
+    def setup_method(self):
         routes = [
             Route('/foo/<arg>/', None, name='foo'),
             Route('/bar/', None, name='bar'),
