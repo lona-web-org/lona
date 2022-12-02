@@ -137,6 +137,9 @@ routes = [
           'views/window_actions/set_title.py::WindowTitleView'),
 
     # frontend
+    Route('/frontend/static-files/',
+          'views/frontend/static_files.py::StaticFilesView'),
+
     Route('/frontend/widget-data/',
           'views/frontend/widget_data.py::WidgetDataView'),
 
