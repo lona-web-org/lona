@@ -85,6 +85,7 @@ export class LonaInputEventHandler {
 
         node.onclick = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 lona_window.run_view(node.href);
@@ -104,6 +105,7 @@ export class LonaInputEventHandler {
 
         node.onclick = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 var event_data = {
@@ -142,6 +144,7 @@ export class LonaInputEventHandler {
         if(input_delay != undefined) {
             node.oninput = function(event) {
                 event.preventDefault();
+                event.stopPropagation();
 
                 try {
                     if(node.delay_timer !== undefined) {
@@ -172,6 +175,7 @@ export class LonaInputEventHandler {
         // onchange
         node.onchange = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 var value = input_event_handler._get_value(node);
@@ -194,6 +198,7 @@ export class LonaInputEventHandler {
     _patch_onsubmit(node) {
         node.onsubmit = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 // find multiple selects
@@ -262,6 +267,7 @@ export class LonaInputEventHandler {
 
         node.onfocus = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 input_event_handler.fire_input_event(
@@ -285,6 +291,7 @@ export class LonaInputEventHandler {
 
         node.onblur = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 input_event_handler.fire_input_event(
