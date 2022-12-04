@@ -30,11 +30,12 @@ export class LonaWindowShim {
         this._widget_id = widget_id;
     };
 
-    fire_input_event(node, event_type, data) {
+    fire_input_event(node, event_type, data, target_node) {
         return this._lona_window._input_event_handler.fire_input_event(
             node || this._widget_id,
             event_type,
             data,
+            target_node,
         );
     };
 

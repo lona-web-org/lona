@@ -123,6 +123,7 @@ export class LonaInputEventHandler {
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.CLICK,
                     event_data,
+                    event.target,
                 );
 
             } catch(error) {
@@ -158,6 +159,7 @@ export class LonaInputEventHandler {
                             node,
                             Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
                             value,
+                            event.target,
                         );
                     }, input_delay);
 
@@ -184,6 +186,7 @@ export class LonaInputEventHandler {
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
                     value,
+                    event.target,
                 );
 
             } catch(error) {
@@ -274,6 +277,7 @@ export class LonaInputEventHandler {
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.FOCUS,
                     undefined,
+                    event.target,
                 );
 
             } catch(error) {
@@ -298,6 +302,7 @@ export class LonaInputEventHandler {
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.BLUR,
                     undefined,
+                    event.target,
                 );
 
             } catch(error) {
@@ -381,29 +386,39 @@ export class LonaInputEventHandler {
         });
     };
 
-    fire_input_event(node, event_type, data) {
+    _get_node_info(node) {
+        var lona_node_id = undefined;
+        var node_tag_name = undefined;
+        var node_id = undefined;
+        var node_class = undefined;
+
+        if(node != undefined) {
+            if(typeof node == 'string') {
+                lona_node_id = node;
+
+            } else if(node) {
+                lona_node_id = node.getAttribute('data-lona-node-id');
+                node_tag_name = node.tagName;
+                node_id = node.id || '';
+                node_class = node.classList.value || '';
+            };
+        };
+
+        return [
+            lona_node_id,
+            node_tag_name,
+            node_id,
+            node_class,
+        ];
+    };
+
+    fire_input_event(node, event_type, data, target_node) {
         if(this.lona_window._crashed) {
             return;
         };
 
         if(data == undefined) {
             data = [];
-        };
-
-        // node info
-        var lona_node_id = undefined;
-        var node_tag_name = undefined;
-        var node_id = undefined;
-        var node_class = undefined;
-
-        if(typeof node == 'string') {
-            lona_node_id = node;
-
-        } else if(node) {
-            lona_node_id = node.getAttribute('data-lona-node-id');
-            node_tag_name = node.tagName;
-            node_id = node.id || '';
-            node_class = node.classList.value || '';
         };
 
         // send event message
@@ -413,10 +428,8 @@ export class LonaInputEventHandler {
             event_id,
             event_type,
             data,
-            lona_node_id,
-            node_tag_name,
-            node_id,
-            node_class,
+            this._get_node_info(node),
+            this._get_node_info(target_node),
         ];
 
         var message = [

@@ -752,6 +752,7 @@ Input Event Attributes
 
     ^Name        ^Description
     |node        |(lona.html.Node) Reference to the node that issued the input_event
+    |target_node |(lona.html.Node) Reference to the node that that was under the cursor (event.target in JavaScript)
     |nodes       |(list(lona.html.Node)) Contains a list of all nodes in the chain up to the root
     |data        |(Dict) For click events this contains meta data from the browser
     |tag_name    |(String) Contains the tag name of the node in the browser
