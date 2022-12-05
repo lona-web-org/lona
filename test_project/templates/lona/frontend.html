@@ -143,8 +143,10 @@
           loaded_widgets.innerHTML = '';
 
           lona_context.add_rendering_hook(function(lona_window) {
-            loaded_nodes.innerHTML = Object.keys(lona_context._windows[1]._nodes).length;
-            loaded_widgets.innerHTML = Object.keys(lona_context._windows[1]._widget_marker).length;
+            var default_window = lona_context.get_default_window();
+
+            loaded_nodes.innerHTML = Object.keys(default_window._nodes).length;
+            loaded_widgets.innerHTML = Object.keys(default_window._widget_marker).length;
           });
 
           return false;
