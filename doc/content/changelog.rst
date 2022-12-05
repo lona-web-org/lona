@@ -6,6 +6,37 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.10.5 (2022-11-05)
+
+Changes
+~~~~~~~
+
+* HTML
+
+  * Frontend Widget capabilities were added to the abstract node class
+
+    * Previously only nodes, subclassing ``lona.html.Widget``, could define a
+      frontend widget. Now, any node, besides text nodes, can do so.
+
+      This is in preparation of making the widget API obsolete at first, and
+      removing it entirely in Lona2.
+
+
+Bugfixes
+~~~~~~~~
+
+* HTML
+
+  * Handling of non-string attributes like ``True`` was fixed in string
+    representations
+
+    * Previously code like ``str(Option(bubble_up=True))`` crashed
+
+* collect-static
+
+  * A regression, added in 1.10.2, was fixed
+
+
 .. changelog-header:: 1.10.4 (2022-09-26)
 
 Changes

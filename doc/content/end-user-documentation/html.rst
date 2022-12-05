@@ -819,6 +819,10 @@ handle the event.
 Frontend Widgets
 ~~~~~~~~~~~~~~~~
 
+.. note::
+
+    Frontend widget support for ``lona.html.Node`` was added in 1.10.5
+
 Widgets and nodes can define a Javascript based frontend widget, to include
 client side code. This is useful to integrate with third party Javascript
 libraries.
