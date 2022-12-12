@@ -6,6 +6,21 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.10.5.1 (2022-12-12)
+
+Bugfixes
+~~~~~~~~
+
+* Packaging
+
+  * A ``ModuleNotFoundError``, that raised on some systems while installing
+    Lona, was fixed
+
+    * Previously the package mechanism assumed that all dependencies are fully
+      installed, before Lona gets installed. This assumption seems to be
+      incorrect on some systems.
+
+
 .. changelog-header:: 1.10.5 (2022-12-05)
 
 Changes
