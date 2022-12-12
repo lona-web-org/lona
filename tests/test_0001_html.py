@@ -812,3 +812,66 @@ class TestNumberInput:
         div = Div(state={'foo': 'bar'})
 
         assert div.state == {'foo': 'bar'}
+
+    # slices ##################################################################
+    def test_slices(self):
+        div1 = Div()
+        div2 = Div()
+        div3 = Div()
+        div4 = Div()
+        outer_div = Div(div1, div2, div3, div4)
+        outer_div.nodes = outer_div[1:-1]
+
+        assert div1 not in outer_div
+        assert div2 in outer_div
+        assert div3 in outer_div
+        assert div4 not in outer_div
+
+    # loop detection ##########################################################
+    def test_node_uniqueness(self):
+        """
+        Nodes are unique and may be mounted in only one node tree, at only one
+        location. To ensure this, unmounts nodes at their parent, if they have
+        a parent, before mounting them.
+        """
+
+        # multiple mounts of the same node
+        # the resulting node should have only one child
+        outer_div = Div()
+        inner_div = Div()
+
+        outer_div.append(inner_div)
+        outer_div.append(inner_div)
+        outer_div.append(inner_div)
+
+        assert inner_div in outer_div
+        assert len(outer_div) == 1
+
+        # unmounting
+        # the given node is already mounted somewhere else in the tree, so it
+        # has to be unmounted before mounting it somewhere else
+        inner_div = Div()
+
+        outer_div = Div(
+            Div(),
+            Div(inner_div),
+        )
+
+        outer_div[0].append(inner_div)
+
+        assert inner_div in outer_div[0]
+        assert inner_div not in outer_div[1]
+
+    def test_node_loop_detection(self):
+
+        # simple loop
+        div = Div(Div())
+
+        with pytest.raises(RuntimeError, match='loop detected'):
+            div[0].append(div)
+
+        # multi node loop
+        div = Div(Div(Div(Div())))
+
+        with pytest.raises(RuntimeError, match='loop detected'):
+            div[0][0][0].append(div[0][0])

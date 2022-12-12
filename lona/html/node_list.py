@@ -19,10 +19,10 @@ class NodeList:
         return node
 
     def _prepare_node(self, node):
-        if node.parent and node.parent is not self._node:
+        if node.parent:
             node.parent.remove(node)
 
-        elif node is self._node.root:
+        if node.root is self._node.root:
             raise RuntimeError('loop detected')
 
         node._set_parent(self._node)

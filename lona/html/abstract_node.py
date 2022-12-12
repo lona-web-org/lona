@@ -68,11 +68,16 @@ class AbstractNode:
     @property
     def root(self):
         node = self
+        visited_nodes = []
 
         while True:
+            if node.id in visited_nodes:
+                raise RuntimeError('loop detected')
+
             if node.parent is None:
                 break
 
+            visited_nodes.append(node.id)
             node = node.parent
 
         return node
