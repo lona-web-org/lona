@@ -3,12 +3,10 @@
 
 from setuptools import find_packages, setup
 
-from lona import VERSION_STRING
-
 setup(
     include_package_data=True,
     name='lona',
-    version=VERSION_STRING,
+    version='1.10.5',
     author='Florian Scherf',
     url='https://github.com/lona-web-org/lona',
     author_email='mail@florianscherf.de',
