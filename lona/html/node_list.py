@@ -111,7 +111,8 @@ class NodeList:
 
             for node in list(self._nodes):
                 node._set_parent(None)
-                self._nodes.remove(node)
+
+            self._nodes.clear()
 
             self._node.document.add_patch(
                 node_id=self._node.id,
