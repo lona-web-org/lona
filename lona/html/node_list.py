@@ -9,16 +9,14 @@ class NodeList:
         self._nodes = []
 
     # list helper #############################################################
-    def _check_node(self, node):
+    def _check_value(self, value):
+        if not isinstance(value, (AbstractNode, str, int, float, bool)):
+            raise ValueError(f'unsupported type: {type(value)}')
+
+    def _prepare_node(self, node):
         if isinstance(node, (str, int, float, bool)):
             node = TextNode(node)
 
-        if not isinstance(node, AbstractNode):
-            raise ValueError(f'unsupported type: {type(node)}')
-
-        return node
-
-    def _prepare_node(self, node):
         if node.parent:
             node.parent.remove(node)
 
@@ -27,11 +25,14 @@ class NodeList:
 
         node._set_parent(self._node)
 
-    def insert(self, index, node):
-        node = self._check_node(node)
+        return node
+
+    def insert(self, index, value):
+        self._check_value(value)
 
         with self._node.lock:
-            self._prepare_node(node)
+            node = self._prepare_node(value)
+
             self._nodes.insert(index, node)
 
             index = self._nodes.index(node)
@@ -46,11 +47,12 @@ class NodeList:
                 ],
             )
 
-    def append(self, node):
-        node = self._check_node(node)
+    def append(self, value):
+        self._check_value(value)
 
         with self._node.lock:
-            self._prepare_node(node)
+            node = self._prepare_node(value)
+
             self._nodes.append(node)
 
             index = self._nodes.index(node)
@@ -126,11 +128,12 @@ class NodeList:
         with self._node.lock:
             return self._nodes[index]
 
-    def __setitem__(self, index, node):
-        node = self._check_node(node)
+    def __setitem__(self, index, value):
+        self._check_value(value)
 
         with self._node.lock:
-            self._prepare_node(node)
+            node = self._prepare_node(value)
+
             self._nodes[index] = node
 
             self._node.document.add_patch(
@@ -181,9 +184,9 @@ class NodeList:
             return node in self._nodes
 
     # serialization ###########################################################
-    def _reset(self, value):
-        if not isinstance(value, list):
-            value = [value]
+    def _reset(self, values):
+        if not isinstance(values, list):
+            values = [values]
 
         with self._node.lock:
             for node in self._nodes:
@@ -191,9 +194,11 @@ class NodeList:
 
             self._nodes.clear()
 
-            for node in value:
-                node = self._check_node(node)
-                self._prepare_node(node)
+            for value in values:
+                self._check_value(value)
+
+                node = self._prepare_node(value)
+
                 self._nodes.append(node)
 
                 self._node.document.add_patch(
