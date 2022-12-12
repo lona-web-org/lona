@@ -186,6 +186,9 @@ class NodeList:
             value = [value]
 
         with self._node.lock:
+            for node in self._nodes:
+                node._set_parent(None)
+
             self._nodes.clear()
 
             for node in value:
