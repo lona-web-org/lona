@@ -1,6 +1,8 @@
 search_index_weight: 10
 
 
+.. TODO: rename LonaApp to App in 2.0
+
 Getting Started
 ===============
 

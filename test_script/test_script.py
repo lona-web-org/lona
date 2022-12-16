@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from lona.html import HTML, Div, H1, A
-from lona import LonaApp, View
+from lona import View, App
 
-app = LonaApp(__file__)
+app = App(__file__)
 
 app.settings.MAX_WORKER_THREADS = 10
 

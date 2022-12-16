@@ -24,7 +24,7 @@ from lona.view import View
 logger = logging.getLogger('lona.app')
 
 
-class LonaApp:
+class App:
     def __init__(self, script_path: PathLike | str) -> None:
         self.script_path: PathLike | str = script_path
         self.project_root: str = os.path.dirname(self.script_path)

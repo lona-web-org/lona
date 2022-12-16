@@ -16,13 +16,13 @@ import pytest
 from lona.shell.shell import embed_shell
 from lona.worker_pool import WorkerPool
 from lona.server import LonaServer
-from lona import LonaApp
+from lona import App
 
 
 @dataclass
 class LonaContext:
     client: TestClient
-    app: None | LonaApp
+    app: None | App
     server: LonaServer
     event_loop: AbstractEventLoop
     pytestconfig: Any
@@ -119,12 +119,12 @@ class LonaContext:
 @pytest.fixture()
 def lona_app_context(request, aiohttp_client, event_loop, pytestconfig):
     async def setup_lona_app_context(
-            setup_app: Callable[[LonaApp], None],
+            setup_app: Callable[[App], None],
             project_root: str = '',
     ) -> LonaContext:
 
         # setup lona app
-        lona_app = LonaApp(project_root or str(request.fspath))
+        lona_app = App(project_root or str(request.fspath))
         setup_app(lona_app)
 
         # setup client
