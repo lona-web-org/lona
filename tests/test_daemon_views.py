@@ -12,8 +12,9 @@ async def test_simple_daemon_view(lona_app_context):
         from lona.html import Button, HTML, Div
         from lona import LonaView
 
-        @app.route('/')
-        class DaemonView(LonaView):
+        # TODO: remove in 2.0
+        @app.route('/async/')
+        class AsyncDaemonView(LonaView):
             def handle_request(self, request):
                 self.daemonize()
 
@@ -29,30 +30,56 @@ async def test_simple_daemon_view(lona_app_context):
                 message.set_text('view stopped')
                 self.show(html)
 
+        @app.route('/sync/')
+        class SyncDaemonView(LonaView):
+            STOP_DAEMON_WHEN_VIEW_FINISHES = False
+
+            def handle_stop_button_click(self, input_event):
+                self.is_daemon = False
+                self.message.set_text('view stopped')
+
+            def handle_request(self, request):
+                self.is_daemon = True
+
+                self.message = Div(
+                    f'view started: {datetime.now()}',
+                    _id='message',
+                )
+
+                return HTML(
+                    self.message,
+                    Button(
+                        'Stop',
+                        _id='stop',
+                        handle_click=self.handle_stop_button_click,
+                    ),
+                )
+
     context = await lona_app_context(setup_app)
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch()
-        browser_context = await browser.new_context()
-        page = await browser_context.new_page()
+    for url in ('/async/', '/sync/'):
+        async with async_playwright() as p:
+            browser = await p.chromium.launch()
+            browser_context = await browser.new_context()
+            page = await browser_context.new_page()
 
-        # initial load
-        await page.goto(context.make_url('/'))
-        await page.wait_for_selector('#message')
-        message1 = await page.inner_text('#message')
+            # initial load
+            await page.goto(context.make_url(url))
+            await page.wait_for_selector('#message')
+            message1 = await page.inner_text('#message')
 
-        # second load
-        await page.goto(context.make_url('/'))
-        await page.wait_for_selector('#message')
-        message2 = await page.inner_text('#message')
+            # second load
+            await page.goto(context.make_url(url))
+            await page.wait_for_selector('#message')
+            message2 = await page.inner_text('#message')
 
-        assert message1 == message2
+            assert message1 == message2
 
-        # stop view
-        await page.click('#stop')
-        message3 = await page.inner_text('#message')
+            # stop view
+            await page.click('#stop')
+            message3 = await page.inner_text('#message')
 
-        assert message3 == 'view stopped'
+            assert message3 == 'view stopped'
 
 
 async def test_multi_tab_daemon_view(lona_app_context):

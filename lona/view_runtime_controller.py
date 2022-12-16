@@ -37,12 +37,28 @@ class ViewRuntimeController:
 
     def get_running_view_runtime(self, user, route, match_info):
         for view_runtime in self.iter_view_runtimes():
-            if (view_runtime.start_connection.user == user and
-                    view_runtime.is_daemon and
-                    view_runtime.route == route and
-                    view_runtime.match_info == match_info):
 
-                return view_runtime
+            # basic checks: only the original user can reconnect, and only
+            # when using the same route and the same match info
+            if (view_runtime.start_connection.user != user or
+                    not view_runtime.is_daemon or
+                    view_runtime.route != route or
+                    view_runtime.match_info != match_info):
+
+                continue
+
+            # TODO: remove in 2.0
+            # compatibility for older Lona application code
+            stop_daemon_when_view_finishes = getattr(
+                view_runtime.view,
+                'STOP_DAEMON_WHEN_VIEW_FINISHES',
+                True,
+            )
+
+            if stop_daemon_when_view_finishes and view_runtime.is_stopped:
+                continue
+
+            return view_runtime
 
     def remove_view_runtime(self, view_runtime):
         with contextlib.suppress(KeyError):
@@ -192,7 +208,7 @@ class ViewRuntimeController:
                 match_info=match_info,
             )
 
-            if running_view_runtime and not running_view_runtime.is_stopped:
+            if running_view_runtime:
                 views_logger.debug('reconnecting to %r', running_view_runtime)
 
                 running_view_runtime.add_connection(
