@@ -10,11 +10,11 @@ async def test_simple_daemon_view(lona_app_context):
         from datetime import datetime
 
         from lona.html import Button, HTML, Div
-        from lona import LonaView
+        from lona import View
 
         # TODO: remove in 2.0
         @app.route('/async/')
-        class AsyncDaemonView(LonaView):
+        class AsyncDaemonView(View):
             def handle_request(self, request):
                 self.daemonize()
 
@@ -31,7 +31,7 @@ async def test_simple_daemon_view(lona_app_context):
                 self.show(html)
 
         @app.route('/sync/')
-        class SyncDaemonView(LonaView):
+        class SyncDaemonView(View):
             STOP_DAEMON_WHEN_VIEW_FINISHES = False
 
             def handle_stop_button_click(self, input_event):
@@ -94,10 +94,10 @@ async def test_multi_tab_daemon_view(lona_app_context):
 
     def setup_app(app):
         from lona.html import TextInput, HTML
-        from lona import LonaView
+        from lona import View
 
         @app.route('/')
-        class DaemonView(LonaView):
+        class DaemonView(View):
             def handle_request(self, request):
                 self.daemonize()
 

@@ -12,10 +12,10 @@ from lona.html import (
     Div,
     H2,
 )
-from lona.view import LonaView
+from lona.view import View
 
 
-class DataBindingView(LonaView):
+class DataBindingView(View):
     def handle_request(self, request):
         check_box = CheckBox(bubble_up=True)
         text_input = TextInput(bubble_up=True)

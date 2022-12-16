@@ -20,11 +20,11 @@ if TYPE_CHECKING:  # pragma: no cover
     from lona.server import LonaServer
 
 T = TypeVar('T')
-V = TypeVar('V', bound='LonaView')
+V = TypeVar('V', bound='View')
 H = Union[None, AbstractNode, str]
 
 
-class LonaView:
+class View:
     STATIC_FILES: list[StaticFile] = []
     STOP_DAEMON_WHEN_VIEW_FINISHES = True  # TODO: remove in 2.0
 

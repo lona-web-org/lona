@@ -1,15 +1,15 @@
-from lona import ForbiddenError, LonaView
+from lona import ForbiddenError, View
 
 
 def setup_app(app):
 
     @app.error_403_view
-    class Error404Forbidden(LonaView):
+    class Error404Forbidden(View):
         def handle_request(self, request):
             return 'FORBIDDEN'
 
     @app.route('/url/<name>')
-    class View2(LonaView):
+    class View2(View):
         def handle_request(self, request):
             if request.match_info['name'] == 'foo':
                 raise ForbiddenError

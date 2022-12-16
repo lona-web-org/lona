@@ -3,14 +3,14 @@ import os.path
 from playwright.async_api import async_playwright
 
 from lona.static_files import StyleSheet, Script
-from lona import LonaView
+from lona import View
 
 
 def setup_app(app):
     some_existing_file = os.path.basename(__file__)
 
     @app.route('/')
-    class MyLonaView(LonaView):
+    class MyView(View):
         STATIC_FILES = [
             StyleSheet(
                 name='my-view-style',

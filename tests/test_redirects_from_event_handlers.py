@@ -1,5 +1,5 @@
 from lona.html import Widget, Button
-from lona import LonaView
+from lona import View
 
 
 def setup_app(app):
@@ -13,26 +13,26 @@ def setup_app(app):
             }
 
     @app.route('/redirect-from-handle-input-event-root/')
-    class RedirectFromHandleInputEventRootView(LonaView):
+    class RedirectFromHandleInputEventRootView(View):
         def handle_input_event_root(self, input_event):
             return {
                 'redirect': '/',
             }
 
     @app.route('/redirect-from-handle-input-event/')
-    class RedirectFromHandleInputEventView(LonaView):
+    class RedirectFromHandleInputEventView(View):
         def handle_input_event(self, input_event):
             return {
                 'redirect': '/',
             }
 
     @app.route('/redirect-from-widget/')
-    class RedirectFromWidgetView(LonaView):
+    class RedirectFromWidgetView(View):
         def handle_request(self, request):
             return RedirectWidget()
 
     @app.route('/redirect-from-on-view-event/')
-    class RedirectFromOnViewEvent(LonaView):
+    class RedirectFromOnViewEvent(View):
         def on_view_event(self, view_event):
             return {
                 'redirect': '/',
@@ -43,9 +43,9 @@ async def test_redirects_from_event_handlers(lona_app_context):
     """
     This test tests redirects from
 
-     - LonaView.handle_input_event_root()
-     - LonaView.handle_input_event()
-     - LonaView.on_view_event()
+     - View.handle_input_event_root()
+     - View.handle_input_event()
+     - View.on_view_event()
     """
 
     from playwright.async_api import async_playwright
@@ -57,7 +57,7 @@ async def test_redirects_from_event_handlers(lona_app_context):
         browser_context = await browser.new_context()
         page = await browser_context.new_page()
 
-        # test redirect from LonaView.handle_input_event_root()
+        # test redirect from View.handle_input_event_root()
         await page.goto(
             context.make_url('/redirect-from-handle-input-event-root/'),
         )
@@ -65,7 +65,7 @@ async def test_redirects_from_event_handlers(lona_app_context):
         await page.wait_for_url('/redirect-from-handle-input-event-root/')
         await page.wait_for_url('/')
 
-        # test redirect from LonaView.handle_input_event()
+        # test redirect from View.handle_input_event()
         await page.goto(
             context.make_url('/redirect-from-handle-input-event/'),
         )
@@ -84,7 +84,7 @@ async def test_redirects_from_event_handlers(lona_app_context):
 
         await page.wait_for_url('/')
 
-        # test redirect from LonaView.on_view_event()
+        # test redirect from View.on_view_event()
         await page.goto(
             context.make_url('/redirect-from-on-view-event/'),
         )

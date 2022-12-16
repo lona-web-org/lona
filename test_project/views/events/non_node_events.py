@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class NonNodeEventView(LonaView):
+class NonNodeEventView(View):
     def handle_request(self, request):
         template = """
             <h2>Non-Node Events</h2>

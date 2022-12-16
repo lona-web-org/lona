@@ -1,7 +1,7 @@
 from lona.html import Widget, Strong, Select, HTML, Div, H2, Br
 from lona.static_files import Script
-from lona.view import LonaView
 from lona._json import dumps
+from lona.view import View
 
 
 class TestWidget(Widget):
@@ -23,7 +23,7 @@ class TestWidget(Widget):
         self.server_state.set_text(dumps(self.data))
 
 
-class WidgetDataView(LonaView):
+class WidgetDataView(View):
     def handle_request(self, request):
         widget = TestWidget()
 

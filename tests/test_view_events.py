@@ -1,11 +1,11 @@
 from lona.pytest import eventually
-from lona import LonaView
+from lona import View
 
 
 def setup_app(app):
 
     @app.route('/view-1/')
-    class View1(LonaView):
+    class View1(View):
         def handle_request(self, request):
             if 'fire' in request.GET:
                 self.fire_view_event('view1', {'view1': True})
@@ -16,7 +16,7 @@ def setup_app(app):
             )
 
     @app.route('/view-2/')
-    class View2(LonaView):
+    class View2(View):
         def handle_request(self, request):
             if 'fire' in request.GET:
                 self.fire_view_event('view2', {'view2': True})
@@ -27,7 +27,7 @@ def setup_app(app):
             )
 
     @app.route('/broadcast/')
-    class FireBroadcastEvent(LonaView):
+    class FireBroadcastEvent(View):
         def handle_request(self, request):
             self.server.fire_view_event('broadcast', {'broadcast': True})
 

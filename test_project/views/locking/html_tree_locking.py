@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from lona.html import Strong, Button, Span, Div, H2, Br
-from lona.view import LonaView
+from lona.view import View
 
 
-class LockingView(LonaView):
+class LockingView(View):
     def handle_request(self, request):
         now = Span()
         self.message = Div('Button not clicked')

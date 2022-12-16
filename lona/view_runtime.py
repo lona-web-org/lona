@@ -272,10 +272,10 @@ class ViewRuntime:
             )
 
     def run_cleanup_hook(self):
-        from lona.view import LonaView
+        from lona.view import View
 
         # FIXME: this inline import is necessary to avoid circular import
-        # this can be fixed by moving runtime state changes from LonaView to
+        # this can be fixed by moving runtime state changes from View to
         # ViewRuntime
 
         def _run():
@@ -292,7 +292,7 @@ class ViewRuntime:
 
         # if on_cleanup is not defined by the view class
         # it is unnecessary to start a thread
-        if self.view_class.on_cleanup is LonaView.on_cleanup:
+        if self.view_class.on_cleanup is View.on_cleanup:
             return
 
         self.server.run_function_async(_run)

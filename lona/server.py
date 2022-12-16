@@ -35,8 +35,8 @@ from lona.connection import Connection
 from lona.settings import Settings
 from lona.request import Request
 from lona.protocol import METHOD
-from lona.view import LonaView
 from lona.state import State
+from lona.view import View
 
 DEFAULT_SETTINGS = os.path.join(
     os.path.dirname(__file__),
@@ -756,10 +756,10 @@ class LonaServer:
             route: Route | None = None,
             import_string: str | None = None,
             url: str | None = None,
-    ) -> type[LonaView] | None:
+    ) -> type[View] | None:
 
         """
-        Returns the lona.view.LonaView subclass associated with the given
+        Returns the lona.view.View subclass associated with the given
         route_name, route, import string or url.
 
         Only one argument can be set at a time.
@@ -792,7 +792,7 @@ class LonaServer:
             view = route.view
 
         return cast(
-            type[LonaView],
+            type[View],
             self._view_loader.load(view),
         )
 
@@ -803,7 +803,7 @@ class LonaServer:
             import_string: str | None = None,
             url: str | None = None,
             user: Any = None,
-    ) -> list[LonaView]:
+    ) -> list[View]:
 
         """
         Returns a list of all running Lona views associated with the given
@@ -826,7 +826,7 @@ class LonaServer:
         )
 
         views = cast(
-            list[LonaView],
+            list[View],
             self._view_runtime_controller.get_views(view_class=view_class),
         )
 
@@ -865,11 +865,11 @@ class LonaServer:
             self,
             name: str,
             data: dict | None = None,
-            view_classes: type[LonaView] | list[type[LonaView]] | None = None,
+            view_classes: type[View] | list[type[View]] | None = None,
     ) -> None:
 
         """
-        Sends a view event to all objects of the given LonaView class.
+        Sends a view event to all objects of the given View class.
         If view_classes is not set, the event becomes a broadcast event and
         gets send to all view classes.
 

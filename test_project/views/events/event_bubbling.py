@@ -1,5 +1,5 @@
 from lona.html import Widget, Select, Button, HTML, Pre, Div, H2, P
-from lona.view import LonaView
+from lona.view import View
 
 
 class BubblingWidget(Widget):
@@ -31,7 +31,7 @@ class BubblingWidget(Widget):
             return input_event
 
 
-class EventBubblingView(LonaView):
+class EventBubblingView(View):
     def handle_request(self, request):
         html = HTML(
             H2('Event Bubbling'),

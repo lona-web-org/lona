@@ -9,7 +9,7 @@ from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.protocol import encode_http_redirect, METHOD
 from lona.events.view_event import ViewEvent
 from lona.exceptions import ServerStop
-from lona.view import LonaView
+from lona.view import View
 
 input_events_logger = logging.getLogger('lona.input_events')
 view_events_logger = logging.getLogger('lona.view_events')
@@ -395,7 +395,7 @@ class ViewRuntimeController:
             self,
             name: str,
             data: dict | None = None,
-            view_classes: type[LonaView] | list[type[LonaView]] | None = None,
+            view_classes: type[View] | list[type[View]] | None = None,
     ) -> None:
 
         data = data or {}
@@ -417,7 +417,7 @@ class ViewRuntimeController:
 
             # if on_view_event is not defined by the view class
             # it is unnecessary to start a thread
-            if view_runtime.view_class.on_view_event == LonaView.on_view_event:
+            if view_runtime.view_class.on_view_event == View.on_view_event:
                 view_events_logger.debug(
                     '%r skipped (view class does not implement on_view_event())',
                     view_runtime.view,
@@ -440,10 +440,10 @@ class ViewRuntimeController:
     # public api ##############################################################
     def get_views(
         self,
-        view_class: type[LonaView],
-    ) -> list[LonaView]:
+        view_class: type[View],
+    ) -> list[View]:
 
-        views: list[LonaView] = []
+        views: list[View] = []
 
         for view_runtime in self.iter_view_runtimes():
             if view_runtime.view_class is not view_class:

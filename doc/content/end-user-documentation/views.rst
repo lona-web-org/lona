@@ -2,6 +2,8 @@ is_template: False
 search_index_weight: 15
 
 
+.. TODO: rename LonaView to View in 2.0
+
 Views
 =====
 

@@ -1,8 +1,8 @@
 from lona.html import Strong, Div, H2, P
-from lona.view import LonaView
+from lona.view import View
 
 
-class HTTPRedirectView(LonaView):
+class HTTPRedirectView(View):
     def handle_request(self, request):
         s = Strong()
 

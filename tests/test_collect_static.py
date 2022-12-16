@@ -71,7 +71,7 @@ def _check_test_project_static_files(destination: str):
 
         assert copy == original
 
-    # files defined in LonaView.STATIC_FILES and AbstractNode.STATIC_FILES
+    # files defined in View.STATIC_FILES and AbstractNode.STATIC_FILES
     static_files = [
 
         # contains: (original_path, copy_path, )

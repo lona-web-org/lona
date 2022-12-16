@@ -1,14 +1,14 @@
 def setup_app(app):
-    from lona import LonaView
+    from lona import View
 
     # root
     @app.route('/')
-    class RootView(LonaView):
+    class RootView(View):
         def handle_request(self, request):
             return 'ROOT'
 
     @app.route('/redirect-to-root/')
-    class RedirectToRoot(LonaView):
+    class RedirectToRoot(View):
         def handle_request(self, request):
             return {
                 'redirect': '/',
@@ -16,12 +16,12 @@ def setup_app(app):
 
     # absolute url
     @app.route('/absolute-url/')
-    class AbsoluteUrlView(LonaView):
+    class AbsoluteUrlView(View):
         def handle_request(self, request):
             return 'ABSOLUTE-URL'
 
     @app.route('/redirect-to-absolute-url/')
-    class RedirectToAbsoluteUrlView(LonaView):
+    class RedirectToAbsoluteUrlView(View):
         def handle_request(self, request):
             return {
                 'redirect': '/absolute-url/',
@@ -29,19 +29,19 @@ def setup_app(app):
 
     # relative urls
     @app.route('/redirect-to-relative-url/foo/')
-    class RelativeUrlView(LonaView):
+    class RelativeUrlView(View):
         def handle_request(self, request):
             return 'relative-URL'
 
     @app.route('/redirect-to-relative-url/')
-    class RelativeRedirectUrlView(LonaView):
+    class RelativeRedirectUrlView(View):
         def handle_request(self, request):
             return {
                 'redirect': 'foo/',
             }
 
     @app.route('/redirect-to-root-relatively/')
-    class RedirectToRootRelativeView(LonaView):
+    class RedirectToRootRelativeView(View):
         def handle_request(self, request):
             return {
                 'redirect': '..',
@@ -51,7 +51,7 @@ def setup_app(app):
     refreshed = False
 
     @app.route('/refresh/')
-    class RefreshView(LonaView):
+    class RefreshView(View):
         def handle_request(self, request):
             nonlocal refreshed
 

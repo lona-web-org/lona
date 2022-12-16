@@ -13,12 +13,13 @@ from typing_extensions import Literal
 from aiohttp.web import Application
 
 from lona.command_line.run_server import run_server
-from lona import default_settings, LonaView
 from lona.worker_pool import WorkerPool
 from lona.logging import setup_logging
 from lona.settings import Settings
 from lona.server import LonaServer
+from lona import default_settings
 from lona.routing import Route
+from lona.view import View
 
 logger = logging.getLogger('lona.app')
 
@@ -82,10 +83,10 @@ class LonaApp:
             name: str = '',
             interactive: bool = True,
             http_pass_through: bool = False,
-            frontend_view: None | str | LonaView = None,
-    ) -> Callable[[type[LonaView]], type[LonaView]]:
+            frontend_view: None | str | View = None,
+    ) -> Callable[[type[View]], type[View]]:
 
-        def decorator(view_class: type[LonaView]) -> type[LonaView]:
+        def decorator(view_class: type[View]) -> type[View]:
             self.routes.append(
                 Route(
                     raw_pattern=raw_pattern,
@@ -127,19 +128,19 @@ class LonaApp:
 
     # frontend
     @overload
-    def frontend_view(self) -> Callable[[type[LonaView]], None]:
+    def frontend_view(self) -> Callable[[type[View]], None]:
         ...
 
     @overload
-    def frontend_view(self, view_class: type[LonaView]) -> None:
+    def frontend_view(self, view_class: type[View]) -> None:
         ...
 
     def frontend_view(
         self,
-        view_class: None | type[LonaView] = None,
-    ) -> None | Callable[[type[LonaView]], None]:
+        view_class: None | type[View] = None,
+    ) -> None | Callable[[type[View]], None]:
 
-        def decorator(view_class: type[LonaView]) -> None:
+        def decorator(view_class: type[View]) -> None:
             self.settings.FRONTEND_VIEW = view_class
 
         if callable(view_class):
@@ -152,19 +153,19 @@ class LonaApp:
 
     # 403
     @overload
-    def error_403_view(self) -> Callable[[type[LonaView]], None]:
+    def error_403_view(self) -> Callable[[type[View]], None]:
         ...
 
     @overload
-    def error_403_view(self, view_class: type[LonaView]) -> None:
+    def error_403_view(self, view_class: type[View]) -> None:
         ...
 
     def error_403_view(
             self,
-            view_class: None | type[LonaView] = None,
-    ) -> None | Callable[[type[LonaView]], None]:
+            view_class: None | type[View] = None,
+    ) -> None | Callable[[type[View]], None]:
 
-        def decorator(view_class: type[LonaView]) -> None:
+        def decorator(view_class: type[View]) -> None:
             self.settings.ERROR_403_VIEW = view_class
 
         if callable(view_class):
@@ -177,19 +178,19 @@ class LonaApp:
 
     # 404
     @overload
-    def error_404_view(self) -> Callable[[type[LonaView]], None]:
+    def error_404_view(self) -> Callable[[type[View]], None]:
         ...
 
     @overload
-    def error_404_view(self, view_class: type[LonaView]) -> None:
+    def error_404_view(self, view_class: type[View]) -> None:
         ...
 
     def error_404_view(
             self,
-            view_class: None | type[LonaView] = None,
-    ) -> None | Callable[[type[LonaView]], None]:
+            view_class: None | type[View] = None,
+    ) -> None | Callable[[type[View]], None]:
 
-        def decorator(view_class: type[LonaView]) -> None:
+        def decorator(view_class: type[View]) -> None:
             self.settings.ERROR_404_VIEW = view_class
 
         if callable(view_class):
@@ -202,19 +203,19 @@ class LonaApp:
 
     # 500
     @overload
-    def error_500_view(self) -> Callable[[type[LonaView]], None]:
+    def error_500_view(self) -> Callable[[type[View]], None]:
         ...
 
     @overload
-    def error_500_view(self, view_class: type[LonaView]) -> None:
+    def error_500_view(self, view_class: type[View]) -> None:
         ...
 
     def error_500_view(
             self,
-            view_class: None | type[LonaView] = None,
-    ) -> None | Callable[[type[LonaView]], None]:
+            view_class: None | type[View] = None,
+    ) -> None | Callable[[type[View]], None]:
 
-        def decorator(view_class: type[LonaView]) -> None:
+        def decorator(view_class: type[View]) -> None:
             self.settings.ERROR_500_VIEW = view_class
 
         if callable(view_class):

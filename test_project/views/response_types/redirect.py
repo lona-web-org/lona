@@ -1,8 +1,8 @@
 from lona.html import Button, HTML, H2, Br, A
-from lona.view import LonaView
+from lona.view import View
 
 
-class RedirectView(LonaView):
+class RedirectView(View):
     def handle_request(self, request):
         html = HTML(
             H2('Redirect'),

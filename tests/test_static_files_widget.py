@@ -4,7 +4,7 @@ from playwright.async_api import async_playwright
 
 from lona.static_files import StyleSheet, Script
 from lona.html import Widget
-from lona import LonaView
+from lona import View
 
 
 def setup_app(app):
@@ -37,7 +37,7 @@ def setup_app(app):
         ]
 
     @app.route('/')
-    class MyLonaView(LonaView):
+    class MyView(View):
         def handle_request(self, request):
             return 'SUCCESS'
 

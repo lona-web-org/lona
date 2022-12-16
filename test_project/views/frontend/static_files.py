@@ -1,6 +1,6 @@
 from lona.static_files import StyleSheet
 from lona.html import HTML, H2, P
-from lona.view import LonaView
+from lona.view import View
 
 
 class BlueP(P):
@@ -16,7 +16,7 @@ class BlueP(P):
     ]
 
 
-class StaticFilesView(LonaView):
+class StaticFilesView(View):
     STATIC_FILES = [
         StyleSheet(
             name='view-styles',

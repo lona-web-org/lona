@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from lona.html import Widget, Button, HTML, Div, H2, Br
-from lona.view import LonaView
+from lona.view import View
 
 
 class Counter(Widget):
@@ -16,7 +16,7 @@ class Counter(Widget):
         self.button.set_text(int(str(self.button[0]))+1)
 
 
-class WidgetEventHandlerView(LonaView):
+class WidgetEventHandlerView(View):
     def handle_request(self, request):
         message = Div('Button not clicked yet')
 

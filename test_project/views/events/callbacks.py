@@ -11,10 +11,10 @@ from lona.html import (
     H2,
     Br,
 )
-from lona import LonaView
+from lona import View
 
 
-class InputEventCallbackView(LonaView):
+class InputEventCallbackView(View):
     def button(self, input_event):
         self.html.query_selector('div').set_text('Button was clicked')
 

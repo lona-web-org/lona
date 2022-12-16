@@ -2,7 +2,7 @@ from playwright.async_api import async_playwright
 
 from lona.pytest import eventually
 from lona.html import Select
-from lona import LonaView
+from lona import View
 
 GET_OPTIONS = 'e => Array.from(e.selectedOptions).map(option => option.value)'
 
@@ -19,7 +19,7 @@ async def test_selects(lona_app_context):
 
         # select ##############################################################
         @app.route('/select/nothing-selected/')
-        class NothingSelected(LonaView):
+        class NothingSelected(View):
             def handle_request(self, request):
                 select = Select(
                     values=[
@@ -38,7 +38,7 @@ async def test_selects(lona_app_context):
                 test_data['select/nothing-selected'] = select.value
 
         @app.route('/select/pre-selected/')
-        class PreSelected(LonaView):
+        class PreSelected(View):
             def handle_request(self, request):
                 select = Select(
                     values=[
@@ -58,7 +58,7 @@ async def test_selects(lona_app_context):
 
         # multi select ########################################################
         @app.route('/multi-select/nothing-selected/')
-        class MultiSelectNothingSelected(LonaView):
+        class MultiSelectNothingSelected(View):
             def handle_request(self, request):
                 select = Select(
                     values=[
@@ -78,7 +78,7 @@ async def test_selects(lona_app_context):
                 test_data['multi-select/nothing-selected'] = select.value
 
         @app.route('/multi-select/pre-selected/')
-        class MultiSelectPreSelected(LonaView):
+        class MultiSelectPreSelected(View):
             def handle_request(self, request):
                 select = Select(
                     values=[

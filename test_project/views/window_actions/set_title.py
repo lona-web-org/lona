@@ -1,8 +1,8 @@
 from lona.html import HTML, Div, H2, A
-from lona.view import LonaView
+from lona.view import View
 
 
-class WindowTitleView(LonaView):
+class WindowTitleView(View):
     def handle_request(self, request):
         div = Div()
 

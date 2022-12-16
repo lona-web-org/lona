@@ -1,10 +1,10 @@
 from pprint import pformat
 
 from lona.html import TextInput, Submit, Button, HTML, Form, Pre, Div, H2, Br
-from lona.view import LonaView
+from lona.view import View
 
 
-class FormView(LonaView):
+class FormView(View):
     def handle_request(self, request):
         request_data = {
             'GET': request.GET,

@@ -6,7 +6,7 @@ from lona.html import Button, HTML, Div
 from lona.static_files import Script
 from lona.pytest import eventually
 from lona._json import dumps
-from lona import LonaView
+from lona import View
 
 
 async def test_widgets(lona_app_context):
@@ -35,7 +35,7 @@ async def test_widgets(lona_app_context):
                 self.widget_data = {}
 
         @app.route('/')
-        class TestView(LonaView):
+        class TestView(View):
             def handle_request(self, request):
                 test_node = TestNode()
 

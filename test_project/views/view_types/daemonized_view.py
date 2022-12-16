@@ -1,8 +1,8 @@
 from lona.html import Button, Div, H2
-from lona.view import LonaView
+from lona.view import View
 
 
-class DaemonizedView(LonaView):
+class DaemonizedView(View):
     def handle_request(self, request):
         name = request.match_info.get('name', 'blank')
 

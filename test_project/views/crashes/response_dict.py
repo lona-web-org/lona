@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class ResponseDictView(LonaView):
+class ResponseDictView(View):
     def handle_request(self, request):
         return {
             'template_string': 'foo',

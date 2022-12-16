@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from lona.html import HTML, Div, H1, A
-from lona import LonaView, LonaApp
+from lona import LonaApp, View
 
 app = LonaApp(__file__)
 
@@ -21,7 +21,7 @@ class MyMiddleware:
 
 
 @app.frontend_view
-class FrontendView(LonaView):
+class FrontendView(View):
     def handle_request(self, request):
         print('>> running frontend')
 
@@ -31,7 +31,7 @@ class FrontendView(LonaView):
 
 
 @app.route('/')
-class Home(LonaView):
+class Home(View):
     def handle_request(self, request):
         return """
             <h1>Lona Test Script</h1>
@@ -43,7 +43,7 @@ class Home(LonaView):
 
 
 @app.route('/interactive-view/')
-class InteractiveView(LonaView):
+class InteractiveView(View):
     def handle_request(self, request):
         timestamp = Div()
 
@@ -62,7 +62,7 @@ class InteractiveView(LonaView):
 
 
 @app.route('/non-interactive-view/', interactive=False)
-class NoneInteractiveView(LonaView):
+class NoneInteractiveView(View):
     def handle_request(self, request):
         return """
             <h1>Non Interactive View</h1>

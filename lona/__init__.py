@@ -1,9 +1,12 @@
+# TODO: remove LonaView in 2.0
+
 try:
     from .exceptions import *  # NOQA: F403
     from .routing import MATCH_ALL, Route
     from .errors import *  # NOQA: F403
-    from .view import LonaView
+    from .view import View as LonaView
     from .app import LonaApp
+    from .view import View
 
 except ImportError as e:  # pragma: no cover
     # this can happen while installing the package and can be ignored
