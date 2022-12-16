@@ -50,7 +50,7 @@ websockets_logger = logging.getLogger('lona.server.websockets')
 T = TypeVar('T')
 
 
-class LonaServer:
+class Server:
     def __init__(self, project_root, settings_paths=None,
                  settings_pre_overrides=None, settings_post_overrides=None,
                  routes=None):

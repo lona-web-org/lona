@@ -15,7 +15,7 @@ import pytest
 
 from lona.shell.shell import embed_shell
 from lona.worker_pool import WorkerPool
-from lona.server import LonaServer
+from lona.server import Server
 from lona import App
 
 
@@ -23,7 +23,7 @@ from lona import App
 class LonaContext:
     client: TestClient
     app: None | App
-    server: LonaServer
+    server: Server
     event_loop: AbstractEventLoop
     pytestconfig: Any
 
@@ -138,7 +138,7 @@ def lona_app_context(request, aiohttp_client, event_loop, pytestconfig):
         return LonaContext(
             client=client,
             app=lona_app,
-            server=cast(LonaServer, lona_app.server),
+            server=cast(Server, lona_app.server),
             event_loop=event_loop,
             pytestconfig=pytestconfig,
         )
@@ -162,7 +162,7 @@ def lona_project_context(request, aiohttp_client, event_loop, pytestconfig):
             nonlocal server
 
             # setup lona server
-            server = LonaServer(
+            server = Server(
                 project_root=project_root or request.fspath,
                 settings_paths=settings or [],
                 settings_pre_overrides=settings_pre_overrides or {},
@@ -179,7 +179,7 @@ def lona_project_context(request, aiohttp_client, event_loop, pytestconfig):
         return LonaContext(
             client=client,
             app=None,
-            server=cast(LonaServer, server),
+            server=cast(Server, server),
             event_loop=event_loop,
             pytestconfig=pytestconfig,
         )

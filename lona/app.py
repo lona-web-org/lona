@@ -16,8 +16,8 @@ from lona.command_line.run_server import run_server
 from lona.worker_pool import WorkerPool
 from lona.logging import setup_logging
 from lona.settings import Settings
-from lona.server import LonaServer
 from lona import default_settings
+from lona.server import Server
 from lona.routing import Route
 from lona.view import View
 
@@ -30,7 +30,7 @@ class App:
         self.project_root: str = os.path.dirname(self.script_path)
 
         self.aiohttp_app: None | Application = None
-        self.server: None | LonaServer = None
+        self.server: None | Server = None
 
         # setup tempdir
         self.temp_dir: TemporaryDirectory = TemporaryDirectory()
@@ -403,7 +403,7 @@ class App:
             **(settings_post_overrides or {}),
         }
 
-        self.server = LonaServer(
+        self.server = Server(
             project_root=self.project_root,
             settings_pre_overrides=settings_pre_overrides,
             settings_post_overrides=settings_post_overrides,

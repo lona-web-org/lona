@@ -10,7 +10,7 @@ import aiohttp
 from lona.shell.shell import generate_shell_server, embed_shell
 from lona.worker_pool import WorkerPool
 from lona.logging import setup_logging
-from lona.server import LonaServer
+from lona.server import Server
 
 AIOHTTP_VERSION = tuple(
     int(part) for part in aiohttp.__version__.split('.')[:2]
@@ -26,7 +26,7 @@ def run_server(args, server=None):
     log_formatter, log_filter = setup_logging(args)
 
     # setup lona server
-    server = server or LonaServer(
+    server = server or Server(
         project_root=args.project_root,
         settings_paths=args.settings,
         settings_pre_overrides=args.settings_pre_overrides,

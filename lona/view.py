@@ -17,7 +17,7 @@ from lona.request import Request
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
     from lona.events.view_event import ViewEvent
-    from lona.server import LonaServer
+    from lona.server import Server
 
 T = TypeVar('T')
 V = TypeVar('V', bound='View')
@@ -30,17 +30,17 @@ class View:
 
     def __init__(
             self,
-            server: LonaServer,
+            server: Server,
             view_runtime: ViewRuntime,
             request: Request,
     ) -> None:
-        self._server: LonaServer = server
+        self._server: Server = server
         self._view_runtime: ViewRuntime = view_runtime
         self._request: Request = request
 
     # properties ##############################################################
     @property
-    def server(self) -> LonaServer:
+    def server(self) -> Server:
         return self._server
 
     @property

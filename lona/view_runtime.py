@@ -33,7 +33,7 @@ from lona.request import Request
 
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
-    from lona.server import LonaServer
+    from lona.server import Server
 
 
 logger = logging.getLogger('lona.view_runtime')
@@ -58,7 +58,7 @@ class ViewRuntime:
     def __init__(self, server, url, route, match_info, post_data=None,
                  frontend=False, start_connection=None):
 
-        self.server: LonaServer = server
+        self.server: Server = server
         self.url = URL(url or '')
         self.route = route
         self.match_info = match_info

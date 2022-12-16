@@ -2,7 +2,7 @@ import shutil
 import os
 
 from lona.logging import setup_logging
-from lona.server import LonaServer
+from lona.server import Server
 
 
 def collect_static(args):
@@ -46,7 +46,7 @@ def collect_static(args):
     setup_logging(args)
 
     # setup server
-    server = LonaServer(
+    server = Server(
         project_root=args.project_root,
         settings_paths=args.settings,
         settings_pre_overrides=args.settings_pre_overrides,
