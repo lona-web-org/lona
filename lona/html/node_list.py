@@ -132,6 +132,13 @@ class NodeList:
         self._check_value(value)
 
         with self._node.lock:
+
+            # unmounting old node
+            old_node = self._nodes[index]
+
+            old_node._set_parent(None)
+
+            # mounting new node
             node = self._prepare_node(value)
 
             self._nodes[index] = node
