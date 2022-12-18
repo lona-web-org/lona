@@ -85,6 +85,7 @@ export class LonaInputEventHandler {
 
         node.onclick = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 lona_window.run_view(node.href);
@@ -104,6 +105,7 @@ export class LonaInputEventHandler {
 
         node.onclick = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 var event_data = {
@@ -121,6 +123,7 @@ export class LonaInputEventHandler {
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.CLICK,
                     event_data,
+                    event.target,
                 );
 
             } catch(error) {
@@ -142,6 +145,7 @@ export class LonaInputEventHandler {
         if(input_delay != undefined) {
             node.oninput = function(event) {
                 event.preventDefault();
+                event.stopPropagation();
 
                 try {
                     if(node.delay_timer !== undefined) {
@@ -155,6 +159,7 @@ export class LonaInputEventHandler {
                             node,
                             Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
                             value,
+                            event.target,
                         );
                     }, input_delay);
 
@@ -172,6 +177,7 @@ export class LonaInputEventHandler {
         // onchange
         node.onchange = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 var value = input_event_handler._get_value(node);
@@ -180,6 +186,7 @@ export class LonaInputEventHandler {
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.CHANGE,
                     value,
+                    event.target,
                 );
 
             } catch(error) {
@@ -194,6 +201,7 @@ export class LonaInputEventHandler {
     _patch_onsubmit(node) {
         node.onsubmit = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 // find multiple selects
@@ -262,12 +270,14 @@ export class LonaInputEventHandler {
 
         node.onfocus = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 input_event_handler.fire_input_event(
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.FOCUS,
                     undefined,
+                    event.target,
                 );
 
             } catch(error) {
@@ -285,12 +295,14 @@ export class LonaInputEventHandler {
 
         node.onblur = function(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             try {
                 input_event_handler.fire_input_event(
                     node,
                     Lona.protocol.INPUT_EVENT_TYPE.BLUR,
                     undefined,
+                    event.target,
                 );
 
             } catch(error) {
@@ -374,29 +386,39 @@ export class LonaInputEventHandler {
         });
     };
 
-    fire_input_event(node, event_type, data) {
+    _get_node_info(node) {
+        var lona_node_id = undefined;
+        var node_tag_name = undefined;
+        var node_id = undefined;
+        var node_class = undefined;
+
+        if(node != undefined) {
+            if(typeof node == 'string') {
+                lona_node_id = node;
+
+            } else if(node) {
+                lona_node_id = node.getAttribute('data-lona-node-id');
+                node_tag_name = node.tagName;
+                node_id = node.id || '';
+                node_class = node.classList.value || '';
+            };
+        };
+
+        return [
+            lona_node_id,
+            node_tag_name,
+            node_id,
+            node_class,
+        ];
+    };
+
+    fire_input_event(node, event_type, data, target_node) {
         if(this.lona_window._crashed) {
             return;
         };
 
         if(data == undefined) {
             data = [];
-        };
-
-        // node info
-        var lona_node_id = undefined;
-        var node_tag_name = undefined;
-        var node_id = undefined;
-        var node_class = undefined;
-
-        if(typeof node == 'string') {
-            lona_node_id = node;
-
-        } else if(node) {
-            lona_node_id = node.getAttribute('data-lona-node-id');
-            node_tag_name = node.tagName;
-            node_id = node.id || '';
-            node_class = node.classList.value || '';
         };
 
         // send event message
@@ -406,10 +428,8 @@ export class LonaInputEventHandler {
             event_id,
             event_type,
             data,
-            lona_node_id,
-            node_tag_name,
-            node_id,
-            node_class,
+            this._get_node_info(node),
+            this._get_node_info(target_node),
         ];
 
         var message = [

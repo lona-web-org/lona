@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from html.parser import HTMLParser
 import logging
-import inspect
 
+from lona.html.abstract_node import AbstractNode
 from lona.html.text_node import TextNode
 from lona.html.node import Node
 
@@ -30,57 +30,42 @@ SELF_CLOSING_TAGS = [
 ]
 
 
-def _find_node_classes(module):
-    try:
-        for attribute_name in dir(module):
-            node_class = getattr(module, attribute_name)
-
-            if not inspect.isclass(node_class):
-                continue
-
-            if not issubclass(node_class, Node):
-                continue
-
-            # input nodes
-            if node_class.TAG_NAME == 'input':
-                if 'type' not in node_class.ATTRIBUTES:
-                    logger.warning(
-                        'WARNING: input node %r has no type set',
-                        node_class,
-                    )
-
-                    continue
-
-                if node_class.ATTRIBUTES['type'] in INPUT_NODE_CLASSES:
-                    logger.warning(
-                        "WARNING: Two input Node classes with type '%s' were found: %r and %r",
-                        node_class.ATTRIBUTES['type'],
-                        INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']],
-                        node_class,
-                    )
-
-                INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']] = node_class
-
-            # nodes
-            else:
-                if node_class.TAG_NAME in NODE_CLASSES:
-                    logger.warning(
-                        "WARNING: Two Node classes with tag name '%s' were found: %r and %r",
-                        node_class.TAG_NAME,
-                        NODE_CLASSES[node_class.TAG_NAME],
-                        node_class,
-                    )
-
-                NODE_CLASSES[node_class.TAG_NAME] = node_class
-
-    except Exception:
-        logger.exception('Exception occurred while searching for node classes')
-
-
 def _setup_node_classes_cache():
-    from lona import html
+    for node_class in AbstractNode.get_all_node_classes():
+        if not issubclass(node_class, Node):
+            continue
 
-    _find_node_classes(html)
+        # input nodes
+        if node_class.TAG_NAME == 'input':
+            if 'type' not in node_class.ATTRIBUTES:
+                logger.warning(
+                    'WARNING: input node %r has no type set',
+                    node_class,
+                )
+
+                continue
+
+            if node_class.ATTRIBUTES['type'] in INPUT_NODE_CLASSES:
+                logger.warning(
+                    "WARNING: Two input Node classes with type '%s' were found: %r and %r",
+                    node_class.ATTRIBUTES['type'],
+                    INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']],
+                    node_class,
+                )
+
+            INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']] = node_class
+
+        # nodes
+        else:
+            if node_class.TAG_NAME in NODE_CLASSES:
+                logger.warning(
+                    "WARNING: Two Node classes with tag name '%s' were found: %r and %r",
+                    node_class.TAG_NAME,
+                    NODE_CLASSES[node_class.TAG_NAME],
+                    node_class,
+                )
+
+            NODE_CLASSES[node_class.TAG_NAME] = node_class
 
 
 class NodeHTMLParser(HTMLParser):

@@ -13,6 +13,7 @@ class InputEvent:
         self.data = {}
         self.nodes = []
         self.node = None
+        self.target_node = None
         self.tag_name = ''
         self.id_list = []
         self.class_list = []
@@ -24,39 +25,53 @@ class InputEvent:
             self.type = INPUT_EVENT_TYPE.CUSTOM
             self.name = payload[1]
             self.data = payload[2]
-            self.node_info = payload[3:]
+            self.node_info = payload[3]
+            self.target_node_info = payload[4]
 
         elif payload[1] == INPUT_EVENT_TYPE.CLICK:
             self.type = INPUT_EVENT_TYPE.CLICK
             self.name = 'click'
             self.data = payload[2]
-            self.node_info = payload[3:]
+            self.node_info = payload[3]
+            self.target_node_info = payload[4]
 
         elif payload[1] == INPUT_EVENT_TYPE.CHANGE:
             self.type = INPUT_EVENT_TYPE.CHANGE
             self.name = 'change'
             self.data = payload[2]
-            self.node_info = payload[3:]
+            self.node_info = payload[3]
+            self.target_node_info = payload[4]
 
         elif payload[1] == INPUT_EVENT_TYPE.FOCUS:
             self.type = INPUT_EVENT_TYPE.FOCUS
             self.name = 'focus'
             self.data = payload[2]
-            self.node_info = payload[3:]
+            self.node_info = payload[3]
+            self.target_node_info = payload[4]
 
         elif payload[1] == INPUT_EVENT_TYPE.BLUR:
             self.type = INPUT_EVENT_TYPE.BLUR
             self.name = 'blur'
             self.data = payload[2]
-            self.node_info = payload[3:]
+            self.node_info = payload[3]
+            self.target_node_info = payload[4]
 
-        # find node
-        # node info contains a lona node id
-        if self.node_info[0]:
-            self.nodes = document.get_node(node_id=self.node_info[0])
+        # parse node info
+        with self.document.lock:
 
-            if self.nodes:
-                self.node = self.nodes[0]
+            # node
+            if self.node_info[0]:
+                self.nodes = document.get_node(node_id=self.node_info[0])
+
+                if self.nodes:
+                    self.node = self.nodes[0]
+
+            # target node
+            if self.target_node_info[0]:
+                nodes = document.get_node(node_id=self.target_node_info[0])
+
+                if nodes:
+                    self.target_node = nodes[0]
 
         self.tag_name = self.node_info[1]
         self.id_list = (self.node_info[2] or '').split(' ')

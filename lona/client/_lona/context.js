@@ -53,7 +53,7 @@ export class LonaContext {
             this.settings.scroll_to_top_on_view_start = true;
         };
 
-        this._windows = {};
+        this._windows = new Map();
         this._last_window_id = 0;
         this._connect_hooks = [];
         this._disconnect_hooks = [];
@@ -72,11 +72,11 @@ export class LonaContext {
         this._last_window_id += 1;
 
         var window_id = this._last_window_id;
+        var lona_window = new LonaWindow(this, root, window_id, url);
 
-        this._windows[window_id] = new LonaWindow(
-            this, root, window_id, url);
+        this._windows.set(window_id, lona_window);
 
-        this._windows[window_id].setup(url);
+        lona_window.setup(url);
 
         return window_id;
     };
@@ -85,10 +85,10 @@ export class LonaContext {
     patch_input_events(root_node_selector, window_id) {
         // find window
         if(window_id == undefined) {
-            window_id = 1;
-        };
-
-        var _window = this._windows[window_id];
+            var _window = this.get_default_window();
+        } else {
+            var _window = this._windows.get(window_id);
+        }
 
         // patch input events
         var node = document.querySelector(root_node_selector);
@@ -248,8 +248,8 @@ export class LonaContext {
 
         var window_id = json_data[0];
 
-        if(window_id in this.lona_context._windows) {
-            let lona_window = this.lona_context._windows[window_id];
+        if(this.lona_context._windows.has(window_id)) {
+            let lona_window = this.lona_context._windows.get(window_id);
 
             lona_window.handle_websocket_message(json_data);
         };
@@ -289,7 +289,7 @@ export class LonaContext {
     // setup ------------------------------------------------------------------
     reconnect() {
         // state
-        this._windows = {};
+        this._windows.clear();
 
         // setup websocket
         var protocol = 'ws://';
@@ -315,7 +315,7 @@ export class LonaContext {
             // setup pushstate
             if(this.lona_context.settings.update_address_bar) {
                 window.onpopstate = () => {
-                    this.lona_context._windows[window_id].run_view(
+                    this.lona_context._windows.get(window_id).run_view(
                         document.location.href,
                     );
                 };
@@ -349,7 +349,10 @@ export class LonaContext {
 
     // shortcuts --------------------------------------------------------------
     get_default_window() {
-        return this._windows[1];
+        // returns the default window
+        // the default window is always the window with the lowest id
+
+        return this._windows.get(Math.min(...this._windows.keys()));
     };
 
     run_view(url, post_data) {
