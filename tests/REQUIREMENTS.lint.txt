@@ -5,7 +5,7 @@ typing-extensions
 
 tox
 coverage
-flake8==5.0.4
+flake8==6.0.0
 flake8-2020==1.7.0
 flake8-bugbear==22.12.6
 flake8-commas==2.1.0
