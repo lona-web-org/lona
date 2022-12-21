@@ -5,8 +5,8 @@ import logging
 import inspect
 import asyncio
 
-from lona.view import LonaView
 from lona.routing import Route
+from lona.view import View
 
 logger = logging.getLogger('lona.view_loader')
 
@@ -22,8 +22,8 @@ class ViewLoader:
 
     def _gen_cache_key(
             self,
-            view: type[LonaView] | str,
-    ) -> type[LonaView] | str | int:
+            view: type[View] | str,
+    ) -> type[View] | str | int:
 
         try:
             hash(view)
@@ -33,10 +33,10 @@ class ViewLoader:
         except TypeError:
             return id(view)
 
-    def _run_checks(self, route: Route, view: type[LonaView]) -> None:
-        # check if view is instance of lona.views.LonaView
+    def _run_checks(self, route: Route, view: type[View]) -> None:
+        # check if view is instance of lona.views.View
         if (not route.http_pass_through and
-                (not inspect.isclass(view) or not issubclass(view, LonaView))):
+                (not inspect.isclass(view) or not issubclass(view, View))):
 
             logger.error('%s is no lona view', route.view)
 
@@ -67,15 +67,15 @@ class ViewLoader:
     def _generate_acquiring_error_view(
             self,
             exception: Exception,
-    ) -> type[LonaView]:
+    ) -> type[View]:
 
-        class AcquiringErrorView(LonaView):
+        class AcquiringErrorView(View):
             def handle_request(self, request):
                 raise exception
 
         return AcquiringErrorView
 
-    def _acquire(self, view: type[LonaView] | str) -> type[LonaView]:
+    def _acquire(self, view: type[View] | str) -> type[View]:
         logger.debug('loading %s', view)
 
         if isinstance(view, str):
@@ -87,12 +87,12 @@ class ViewLoader:
 
                 view = self._generate_acquiring_error_view(exception)
 
-        return cast('type[LonaView]', view)
+        return cast('type[View]', view)
 
     def _cache_view(
             self,
             route: Route | None,
-            view: type[LonaView] | str,
+            view: type[View] | str,
     ) -> None:
 
         view_class = self._acquire(view)
@@ -149,10 +149,10 @@ class ViewLoader:
                 view=import_string,
             )
 
-    def load(self, view: type[LonaView] | str) -> type[LonaView]:
+    def load(self, view: type[View] | str) -> type[View]:
         cache_key = self._gen_cache_key(view)
 
-        return cast(Type[LonaView], self._cache[cache_key])
+        return cast(Type[View], self._cache[cache_key])
 
-    def get_all_views(self) -> list[type[LonaView]]:
+    def get_all_views(self) -> list[type[View]]:
         return list(self._cache.values())

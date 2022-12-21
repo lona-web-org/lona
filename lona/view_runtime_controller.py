@@ -9,7 +9,7 @@ from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.protocol import encode_http_redirect, METHOD
 from lona.events.view_event import ViewEvent
 from lona.exceptions import ServerStop
-from lona.view import LonaView
+from lona.view import View
 
 input_events_logger = logging.getLogger('lona.input_events')
 view_events_logger = logging.getLogger('lona.view_events')
@@ -37,12 +37,28 @@ class ViewRuntimeController:
 
     def get_running_view_runtime(self, user, route, match_info):
         for view_runtime in self.iter_view_runtimes():
-            if (view_runtime.start_connection.user == user and
-                    view_runtime.is_daemon and
-                    view_runtime.route == route and
-                    view_runtime.match_info == match_info):
 
-                return view_runtime
+            # basic checks: only the original user can reconnect, and only
+            # when using the same route and the same match info
+            if (view_runtime.start_connection.user != user or
+                    not view_runtime.is_daemon or
+                    view_runtime.route != route or
+                    view_runtime.match_info != match_info):
+
+                continue
+
+            # TODO: remove in 2.0
+            # compatibility for older Lona application code
+            stop_daemon_when_view_finishes = getattr(
+                view_runtime.view,
+                'STOP_DAEMON_WHEN_VIEW_FINISHES',
+                True,
+            )
+
+            if stop_daemon_when_view_finishes and view_runtime.is_stopped:
+                continue
+
+            return view_runtime
 
     def remove_view_runtime(self, view_runtime):
         with contextlib.suppress(KeyError):
@@ -192,7 +208,7 @@ class ViewRuntimeController:
                 match_info=match_info,
             )
 
-            if running_view_runtime and not running_view_runtime.is_stopped:
+            if running_view_runtime:
                 views_logger.debug('reconnecting to %r', running_view_runtime)
 
                 running_view_runtime.add_connection(
@@ -379,7 +395,7 @@ class ViewRuntimeController:
             self,
             name: str,
             data: dict | None = None,
-            view_classes: type[LonaView] | list[type[LonaView]] | None = None,
+            view_classes: type[View] | list[type[View]] | None = None,
     ) -> None:
 
         data = data or {}
@@ -401,7 +417,7 @@ class ViewRuntimeController:
 
             # if on_view_event is not defined by the view class
             # it is unnecessary to start a thread
-            if view_runtime.view_class.on_view_event == LonaView.on_view_event:
+            if view_runtime.view_class.on_view_event == View.on_view_event:
                 view_events_logger.debug(
                     '%r skipped (view class does not implement on_view_event())',
                     view_runtime.view,
@@ -424,10 +440,10 @@ class ViewRuntimeController:
     # public api ##############################################################
     def get_views(
         self,
-        view_class: type[LonaView],
-    ) -> list[LonaView]:
+        view_class: type[View],
+    ) -> list[View]:
 
-        views: list[LonaView] = []
+        views: list[View] = []
 
         for view_runtime in self.iter_view_runtimes():
             if view_runtime.view_class is not view_class:

@@ -1,9 +1,9 @@
 from lona.html import TextInput, HTML, Div, H2, Br
-from lona.view import LonaView
 from lona.events import BLUR
+from lona.view import View
 
 
-class BlurEventsView(LonaView):
+class BlurEventsView(View):
     def handle_request(self, request):
         html = HTML(
             H2('Blur Events'),

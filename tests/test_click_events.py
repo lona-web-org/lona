@@ -8,7 +8,7 @@ async def test_click_events(lona_app_context):
 
     def setup_app(app):
         from lona.html import CLICK, HTML, Div
-        from lona import LonaView
+        from lona import View
 
         class OuterDiv(Div):
             EVENTS = [CLICK]
@@ -34,7 +34,7 @@ async def test_click_events(lona_app_context):
             EVENTS = []
 
         @app.route('/')
-        class ClickTestView(LonaView):
+        class ClickTestView(View):
             def handle_input_event(self, input_event):
                 state['input-events'].append(input_event)
 

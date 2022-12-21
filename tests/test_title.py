@@ -1,15 +1,15 @@
 def setup_app(app):
     from datetime import datetime
 
-    from lona import LonaView
+    from lona import View
 
     @app.route('/')
-    class HoweView(LonaView):
+    class HoweView(View):
         def handle_request(self, request):
             return 'HOME'
 
     @app.route('/daemonized-view/')
-    class DaemonizedView(LonaView):
+    class DaemonizedView(View):
         def handle_request(self, request):
             self.daemonize()
             self.set_title('Daemonized View')

@@ -1,4 +1,4 @@
-from lona import LonaView
+from lona import View
 
 
 def setup_app(app):
@@ -9,7 +9,7 @@ def setup_app(app):
     app.add_template('template_filters.html', "{{'foo'|custom_reverse}}")
 
     @app.route('/')
-    class TemplateFiltersView(LonaView):
+    class TemplateFiltersView(View):
         def handle_request(self, request):
             return {
                 'template': 'template_filters.html',

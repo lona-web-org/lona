@@ -1,6 +1,6 @@
 from lona.static_files import Script
 from lona.html import Widget, HTML
-from lona.view import LonaView
+from lona.view import View
 
 
 class CrashingFrontendWidget(Widget):
@@ -14,7 +14,7 @@ class CrashingFrontendWidget(Widget):
     FRONTEND_WIDGET_CLASS = 'crashing_frontend_widget'
 
 
-class CrashingFrontendWidgetView(LonaView):
+class CrashingFrontendWidgetView(View):
     def handle_request(self, request):
         html = HTML(
             CrashingFrontendWidget(),

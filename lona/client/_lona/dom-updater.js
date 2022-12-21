@@ -42,7 +42,7 @@ export class LonaDomUpdater {
     _remove_id(node, id) {
         var id_list = node.id.split(' ');
 
-        id_list.pop(id);
+        id_list = id_list.filter(_id => _id != id);
         node.id = id_list.join(' ').trim();
     };
 
@@ -379,7 +379,7 @@ export class LonaDomUpdater {
 
             // REMOVE
             } else if(operation == protocol.OPERATION.REMOVE) {
-                this.lona_window._remove_id(node, data[0]);
+                this._remove_id(node, data[0]);
 
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
@@ -404,7 +404,7 @@ export class LonaDomUpdater {
 
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
-                node.classList = '';
+                node.removeAttribute('class');
 
             };
 

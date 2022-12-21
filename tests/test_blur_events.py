@@ -1,9 +1,9 @@
 def setup_app(app):
     from lona.html import TextInput, HTML, BLUR
-    from lona import LonaView
+    from lona import View
 
     @app.route('/')
-    class MyLonaView(LonaView):
+    class MyView(View):
         def handle_request(self, request):
             html = HTML(
                 TextInput(events=[BLUR], _id='first'),

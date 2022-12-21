@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from lona.view import LonaView
 from lona.html import HTML, H2
 from lona._json import dumps
+from lona.view import View
 
 
-class CustomMessagesView(LonaView):
+class CustomMessagesView(View):
     def handle_request(self, request):
         html = HTML(
             H2('Messages'),

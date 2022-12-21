@@ -1,15 +1,15 @@
-from lona import NotFoundError, LonaView
+from lona import NotFoundError, View
 
 
 def setup_app(app):
 
     @app.error_404_view
-    class Error404NotFoundView(LonaView):
+    class Error404NotFoundView(View):
         def handle_request(self, request):
             return 'NOT FOUND'
 
     @app.route('/url/<name>')
-    class View2(LonaView):
+    class View2(View):
         def handle_request(self, request):
             if request.match_info['name'] == 'foo':
                 raise NotFoundError

@@ -15,16 +15,17 @@ import pytest
 
 from lona.shell.shell import embed_shell
 from lona.worker_pool import WorkerPool
-from lona.server import LonaServer
-from lona import LonaApp
+from lona.server import Server
+from lona import App
 
 
 @dataclass
 class LonaContext:
     client: TestClient
-    app: None | LonaApp
-    server: LonaServer
+    app: None | App
+    server: Server
     event_loop: AbstractEventLoop
+    pytestconfig: Any
 
     def make_url(self, path: str = '') -> str:
         """
@@ -43,7 +44,7 @@ class LonaContext:
             self,
             webbrowser: bool = True,
             sync: bool = False,
-            locals: Dict[str, Any] | None = None,
+            globals: Dict[str, Any] | None = None,
     ) -> Future | None:  # pragma: no cover
 
         """
@@ -66,35 +67,46 @@ class LonaContext:
                 def run_test():
                     context.debug_interactive(
                         sync=True,
-                        locals=locals(),
+                        globals=locals(),
                     )
 
                 context.event_loop.run_in_executor(None, run_test)
 
         :webbrowser: (bool) start a webbrowser that points to the test server
         :sync:       (bool) run blocking in the current thread
-        :locals:     (dict|None) variable overrides for the rlpython shell
+        :globals:    (dict|None) variable overrides for the rlpython shell
         """
 
+        capmanager = self.pytestconfig.pluginmanager.getplugin(
+            'capturemanager',
+        )
+
         def _debug_interactive():
-            # start browser
-            if webbrowser:
-                os.environ['DISPLAY'] = ':0'
-                _webbrowser.open(self.make_url())
+            try:
+                # disable stdin and stdout capturing temporarily
+                capmanager.suspend_global_capture(in_=True)
 
-            # embed shell
-            _locals = locals or {}
+                # start browser
+                if webbrowser:
+                    os.environ['DISPLAY'] = ':0'
+                    _webbrowser.open(self.make_url())
 
-            _locals = {
-                'server': self.server,
-                'lona_context': self,
-                **_locals,
-            }
+                # embed shell
+                _globals = globals or {}
 
-            embed_shell(
-                server=self.server,
-                locals=_locals,
-            )
+                _globals = {
+                    'server': self.server,
+                    'lona_context': self,
+                    **_globals,
+                }
+
+                embed_shell(
+                    server=self.server,
+                    globals=_globals,
+                )
+
+            finally:
+                capmanager.resume_global_capture()
 
         if sync:
             _debug_interactive()
@@ -105,13 +117,14 @@ class LonaContext:
 
 
 @pytest.fixture()
-def lona_app_context(request, aiohttp_client, event_loop):
+def lona_app_context(request, aiohttp_client, event_loop, pytestconfig):
     async def setup_lona_app_context(
-            setup_app: Callable[[LonaApp], None],
+            setup_app: Callable[[App], None],
             project_root: str = '',
     ) -> LonaContext:
+
         # setup lona app
-        lona_app = LonaApp(project_root or str(request.fspath))
+        lona_app = App(project_root or str(request.fspath))
         setup_app(lona_app)
 
         # setup client
@@ -125,15 +138,16 @@ def lona_app_context(request, aiohttp_client, event_loop):
         return LonaContext(
             client=client,
             app=lona_app,
-            server=cast(LonaServer, lona_app.server),
+            server=cast(Server, lona_app.server),
             event_loop=event_loop,
+            pytestconfig=pytestconfig,
         )
 
     return setup_lona_app_context
 
 
 @pytest.fixture()
-def lona_project_context(request, aiohttp_client, event_loop):
+def lona_project_context(request, aiohttp_client, event_loop, pytestconfig):
     async def setup_lona_project_context(
         project_root: str = '',
         settings: None | list[str] = None,
@@ -148,7 +162,7 @@ def lona_project_context(request, aiohttp_client, event_loop):
             nonlocal server
 
             # setup lona server
-            server = LonaServer(
+            server = Server(
                 project_root=project_root or request.fspath,
                 settings_paths=settings or [],
                 settings_pre_overrides=settings_pre_overrides or {},
@@ -165,8 +179,9 @@ def lona_project_context(request, aiohttp_client, event_loop):
         return LonaContext(
             client=client,
             app=None,
-            server=cast(LonaServer, server),
+            server=cast(Server, server),
             event_loop=event_loop,
+            pytestconfig=pytestconfig,
         )
 
     return setup_lona_project_context

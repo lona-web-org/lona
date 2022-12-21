@@ -1,8 +1,8 @@
 from lona.html import Strong, Select, HTML, Div, H2, Br
-from lona.view import LonaView
+from lona.view import View
 
 
-class InteractiveView(LonaView):
+class InteractiveView(View):
     def handle_request(self, request):
         widget = HTML()
 

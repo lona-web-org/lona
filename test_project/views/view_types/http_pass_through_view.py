@@ -1,9 +1,9 @@
 from aiohttp.web import Response
 
-from lona.view import LonaView
+from lona.view import View
 
 
-class HTTPPassThroughView(LonaView):
+class HTTPPassThroughView(View):
     def handle_request(self, request):
         return Response(
             body="""

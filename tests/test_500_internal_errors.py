@@ -1,15 +1,15 @@
-from lona import LonaView
+from lona import View
 
 
 def setup_app(app):
 
     @app.error_500_view
-    class Error500InternalErrorView(LonaView):
+    class Error500InternalErrorView(View):
         def handle_request(self, request):
             return 'INTERNAL ERROR'
 
     @app.route('/url/<name>')
-    class View2(LonaView):
+    class View2(View):
         def handle_request(self, request):
             if request.match_info['name'] == 'foo':
                 raise RuntimeError

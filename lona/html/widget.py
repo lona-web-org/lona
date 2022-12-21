@@ -46,12 +46,12 @@ class Widget(AbstractNode):
         self.parent.remove(self)
 
     # serialization ###########################################################
-    def _serialize(self):
+    def _serialize(self, include_node_ids=True):
         return [
             NODE_TYPE.WIDGET,
             self.id,
             self.FRONTEND_WIDGET_CLASS,
-            self.nodes._serialize(),
+            self.nodes._serialize(include_node_ids=include_node_ids),
             self.data._serialize(),
         ]
 

@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class URLArgsView(LonaView):
+class URLArgsView(View):
     def handle_request(self, request):
         return f"""
             <h2>URL Arguments</h2>

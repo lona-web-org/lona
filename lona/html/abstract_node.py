@@ -45,6 +45,16 @@ class AbstractNode:
             *AbstractNode._subclasses,
         ]
 
+    # comparisons #############################################################
+    def __eq__(self, other):
+        if not isinstance(other, AbstractNode):
+            return False
+
+        return (
+            self._serialize(include_node_ids=False) ==
+            other._serialize(include_node_ids=False)
+        )
+
     # id ######################################################################
     @property
     def id(self):

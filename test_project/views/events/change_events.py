@@ -1,10 +1,10 @@
 from pprint import pformat
 
 from lona.html import TextInput, CheckBox, Pre, Div, H2
-from lona.view import LonaView
+from lona.view import View
 
 
-class ChangeEventsView(LonaView):
+class ChangeEventsView(View):
     def handle_request(self, request):
         pre = Pre(
             'nothing changed',

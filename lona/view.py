@@ -17,34 +17,46 @@ from lona.request import Request
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
     from lona.events.view_event import ViewEvent
-    from lona.server import LonaServer
+    from lona.server import Server
 
 T = TypeVar('T')
-V = TypeVar('V', bound='LonaView')
+V = TypeVar('V', bound='View')
 H = Union[None, AbstractNode, str]
 
 
-class LonaView:
+class View:
     STATIC_FILES: list[StaticFile] = []
+    STOP_DAEMON_WHEN_VIEW_FINISHES = True  # TODO: remove in 2.0
 
     def __init__(
             self,
-            server: LonaServer,
+            server: Server,
             view_runtime: ViewRuntime,
             request: Request,
     ) -> None:
-        self._server: LonaServer = server
+        self._server: Server = server
         self._view_runtime: ViewRuntime = view_runtime
         self._request: Request = request
 
     # properties ##############################################################
     @property
-    def server(self) -> LonaServer:
+    def server(self) -> Server:
         return self._server
 
     @property
     def request(self) -> Request:
         return self._request
+
+    # is_daemon
+    @property
+    def is_daemon(self) -> bool:
+        return bool(self._view_runtime.is_daemon)
+
+    @is_daemon.setter
+    def is_daemon(self, value: bool) -> None:
+        self._assert_view_is_interactive()
+
+        self._view_runtime.is_daemon = bool(value)
 
     # checks ##################################################################
     def _assert_not_main_thread(self) -> None:
@@ -318,9 +330,9 @@ class LonaView:
             self._view_runtime.state = VIEW_RUNTIME_STATE.RUNNING
 
     def daemonize(self) -> None:
-        self._assert_view_is_interactive()
+        # TODO: remove in 2.0
 
-        self._view_runtime.is_daemon = True
+        self.is_daemon = True
 
     def ping(self) -> Literal['pong']:
         self._assert_view_is_interactive()

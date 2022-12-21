@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class FileResponseView(LonaView):
+class FileResponseView(View):
     def handle_request(self, request):
         return {
             'file': __file__,

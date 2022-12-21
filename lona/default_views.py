@@ -1,11 +1,11 @@
 import logging
 
-from lona.view import LonaView
+from lona.view import View
 
 logger = logging.getLogger('lona.views')
 
 
-class FallbackView(LonaView):
+class FallbackView(View):
     VIEW_SETTING = ''
     TEMPLATE_SETTING = ''
 

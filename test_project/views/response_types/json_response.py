@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class JSONResponseView(LonaView):
+class JSONResponseView(View):
     def handle_request(self, request):
         return {
             'json': {'foo': 'bar'},

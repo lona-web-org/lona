@@ -2,7 +2,7 @@ from playwright.async_api import async_playwright
 
 from lona.html import NumberInput, Select, HTML
 from lona.pytest import eventually
-from lona import LonaView
+from lona import View
 
 
 async def test_number_inputs(lona_app_context):
@@ -11,7 +11,7 @@ async def test_number_inputs(lona_app_context):
     def setup_app(app):
 
         @app.route('/')
-        class NumberInputView(LonaView):
+        class NumberInputView(View):
             def handle_number_input_change(self, input_event):
                 number_input = input_event.node
 

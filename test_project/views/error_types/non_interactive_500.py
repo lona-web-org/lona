@@ -1,6 +1,6 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class NonInteractiveErrorView(LonaView):
+class NonInteractiveErrorView(View):
     def handle_request(self, request):
         return str(1 / 0)

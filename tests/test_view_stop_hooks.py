@@ -1,18 +1,18 @@
 from lona.exceptions import UserAbort
 from lona.pytest import eventually
 from lona.html import Button
-from lona import LonaView
+from lona import View
 
 
 def setup_app(app):
 
     @app.route('/')
-    class HomeView(LonaView):
+    class HomeView(View):
         def handle_request(self, request):
             return 'HOME'
 
     @app.route('/test-view/')
-    class TestView(LonaView):
+    class TestView(View):
         def handle_request(self, request):
             self.show(Button())
             self.await_click()

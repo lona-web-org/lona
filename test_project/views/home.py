@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class HomeView(LonaView):
+class HomeView(View):
     def handle_request(self, request):
         return """
             <h2>View Types</h2>

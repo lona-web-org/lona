@@ -1,9 +1,9 @@
 from lona.html import TextInput, HTML, Div, H2, Br
-from lona.view import LonaView
 from lona.events import FOCUS
+from lona.view import View
 
 
-class FocusEventsView(LonaView):
+class FocusEventsView(View):
     def handle_request(self, request):
         html = HTML(
             H2('Focus Events'),

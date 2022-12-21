@@ -2,6 +2,8 @@ is_template: False
 search_index_weight: 15
 
 
+.. TODO: rename LonaView to View in 2.0
+
 Views
 =====
 
@@ -1164,6 +1166,13 @@ LonaView.await_blur\(\*nodes, html=None\)
 LonaView.daemonize\(\)
 ~~~~~~~~~~~~~~~~~~~~~~
 
+    .. warning::
+
+        This method is deprecated and will be removed in Lona 2.0.
+
+        Use ``LonaView.is_daemon`` instead.
+
+
     Allow the view to run in background after the user disconnected.
 
     .. note::
@@ -1177,6 +1186,28 @@ LonaView.daemonize\(\)
 
         If you want to create multi-user views, use
         `view events </end-user-documentation/views.html?q=view_event#view-events>`_.
+
+
+LonaView.is_daemon
+~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        Added in 1.11
+
+    Boolean property. When set to ``True``, the view remains on the server
+    after it finished and can be connected and reconnected by one or more
+    browsers or browser tabs of the same user.
+    The view gets removed from the server after the view explicitly sets
+    ``LonaView.is_daemon`` to ``False``.
+
+    .. note::
+
+        In all versions prior to 1.11, daemonized views got removed immediately
+        from the server when their ``LonaView.handle_requset()`` returned.
+        To maintain compatibility with older code, this new behavior is only
+        active if ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES`` is set to
+        ``False``.
 
 
 LonaView.iter_objects\(\)

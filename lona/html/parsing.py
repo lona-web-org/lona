@@ -119,6 +119,9 @@ class NodeHTMLParser(HTMLParser):
             if value is None:
                 value = ''
 
+            if name == 'data-lona-node-id':
+                continue
+
             node_attributes[name] = value
 
         # tag overrides

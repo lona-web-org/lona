@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class NonInteractiveFeatureErrorView(LonaView):
+class NonInteractiveFeatureErrorView(View):
     def handle_request(self, request):
         return {
             'json': {'foo': 'bar'},

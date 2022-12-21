@@ -1,7 +1,7 @@
-from lona.view import LonaView
+from lona.view import View
 
 
-class UnreachableView(LonaView):
+class UnreachableView(View):
     def handle_request(self, request):
         return """
             <h2>Error</h2>

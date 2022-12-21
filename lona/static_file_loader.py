@@ -12,7 +12,7 @@ from lona.imports import get_file
 
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
-    from lona.server import LonaServer
+    from lona.server import Server
 
 CLIENT_ROOT = os.path.join(os.path.dirname(__file__), 'client')
 
@@ -20,8 +20,8 @@ logger = logging.getLogger('lona.static_file_loader')
 
 
 class StaticFileLoader:
-    def __init__(self, server: LonaServer) -> None:
-        self.server: LonaServer = server
+    def __init__(self, server: Server) -> None:
+        self.server: Server = server
 
         self.static_dirs: list[str] = [
             *self.server.settings.STATIC_DIRS,

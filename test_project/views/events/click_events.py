@@ -1,11 +1,11 @@
 from pprint import pformat
 
 from lona.html import Pre, Div, H2, Br, A
-from lona.view import LonaView
 from lona.events import CLICK
+from lona.view import View
 
 
-class ClickEventView(LonaView):
+class ClickEventView(View):
     def handle_request(self, request):
         colors = ['navy', 'maroon', 'green', 'teal', 'grey', 'purple', 'aqua']
 
