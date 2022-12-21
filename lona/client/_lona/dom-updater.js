@@ -201,7 +201,7 @@ export class LonaDomUpdater {
 
         // Node
         } else {
-            target_node = this.lona_window._nodes[node_id];
+            target_node = this.lona_window._nodes[target_node_id];
 
         };
 
