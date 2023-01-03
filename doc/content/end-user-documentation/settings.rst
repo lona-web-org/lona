@@ -242,3 +242,20 @@ Server
     `aiohttp documentation <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application>`_
     for details.
     The default value is set to the aiohttp default of ``1024**2`` Bytes.
+
+
+Feature Flags
+-------------
+
+.. setting::
+    :name: STOP_DAEMON_WHEN_VIEW_FINISHES
+    :path: lona.default_settings.STOP_DAEMON_WHEN_VIEW_FINISHES
+
+    .. note::
+
+        Added in 1.11
+
+    Default for ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES``.
+
+    See `LonaView.is_daemon </end-user-documentation/views.html#lonaview-is-daemon>`_
+    for details.
