@@ -11,6 +11,7 @@ from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
 from lona.static_files import StaticFile
+from lona.exceptions import StopReason
 from lona.connection import Connection
 from lona.request import Request
 
@@ -93,7 +94,7 @@ class View:
                     if not pending_future.done():
                         pending_future.cancel()
 
-            raise self._view_runtime.stop_reason
+            raise cast(StopReason, self._view_runtime.stop_reason)
 
         return asyncio.run_coroutine_threadsafe(
             await_awaitable(),
