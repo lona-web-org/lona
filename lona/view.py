@@ -367,3 +367,6 @@ class View:
 
     def on_cleanup(self) -> None:
         pass
+
+
+LonaView = View  # TODO: remove in 2.0
