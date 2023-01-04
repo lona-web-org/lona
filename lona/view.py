@@ -241,15 +241,12 @@ class View:
             html=html,
         )
 
-    @overload
-    def await_click(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
-        ...
+    def await_click(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_click(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_click(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='click',
