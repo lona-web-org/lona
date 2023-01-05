@@ -111,8 +111,11 @@ class RenderingTestView(View):
         select = input_event.node
 
         with self.html.lock:
-            self.start.disabled = select.value != 'auto'
-            self.stop.disabled = select.value != 'auto'
+            self.start.disabled = not (select.value == 'auto' and
+                                       not self.running)
+
+            self.stop.disabled = not (select.value == 'auto' and self.running)
+
             self.next_step.disabled = select.value == 'auto'
             self.reset.disabled = self.running
 
