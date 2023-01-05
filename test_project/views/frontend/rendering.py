@@ -1,4 +1,4 @@
-from lona.html import Select, Button, Label, Span, HTML, Div, H3, H2
+from lona.html import CheckBox, Select, Button, Label, Span, HTML, Div, H3, H2
 from lona.static_files import Script
 from lona._json import dumps
 from lona import View
@@ -59,6 +59,9 @@ class RenderingTestView(View):
         with self.html.lock:
             self.reset_rendering_steps()
 
+    def handle_daemon_change(self, input_event):
+        self.is_daemon = self.daemon.value
+
     def handle_request(self, request):
 
         # setup html
@@ -91,6 +94,12 @@ class RenderingTestView(View):
             ],
         )
 
+        self.daemon = CheckBox(
+            value=False,
+            _id='daemon',
+            handle_change=self.handle_daemon_change,
+        )
+
         self.rendering_step_label = H3(
             'Step ',
             Span(_id='current'),
@@ -115,6 +124,10 @@ class RenderingTestView(View):
                 Spacer(),
 
                 Label('Interval: ', _for='interval'), self.interval,
+
+                Spacer(),
+
+                Label('Daemon:', _for='daemon'), self.daemon,
             ),
             self.rendering_step_label,
             self.rendering_root,
