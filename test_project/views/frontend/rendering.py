@@ -38,6 +38,7 @@ class RenderingTestView(View):
             self.start.disabled = select.value != 'auto'
             self.stop.disabled = select.value != 'auto'
             self.next_step.disabled = select.value == 'auto'
+            self.reset.disabled = self.running
 
     def handle_stop_click(self, input_event):
         with self.html.lock:
@@ -45,6 +46,11 @@ class RenderingTestView(View):
             self.mode.disabled = False
             self.start.disabled = False
             self.stop.disabled = True
+            self.reset.disabled = False
+
+    def handle_reset_click(self, input_event):
+        with self.html.lock:
+            self.reset_rendering_steps()
 
     def handle_request(self, request):
 
@@ -66,6 +72,7 @@ class RenderingTestView(View):
         )
 
         self.next_step = Button('Next Step', _id='next-step')
+        self.reset = Button('Reset', handle_click=self.handle_reset_click)
 
         self.rendering_step_label = H3(
             'Step ',
@@ -86,6 +93,7 @@ class RenderingTestView(View):
                 self.start,
                 self.stop,
                 self.next_step,
+                self.reset,
             ),
             self.rendering_step_label,
             self.rendering_root,
@@ -94,11 +102,7 @@ class RenderingTestView(View):
         self.server.state['rendering-root'] = self.rendering_root
 
         # setup steps
-        self.running = False
-        self.steps = self.get_rendering_steps()
-        self.current_step_index = 0
-
-        self.set_step_label(0, 'Not started')
+        self.reset_rendering_steps()
 
         # main loop
         while True:
@@ -111,6 +115,7 @@ class RenderingTestView(View):
                 self.start.disabled = True
                 self.stop.disabled = False
                 self.mode.disabled = True
+                self.reset.disabled = True
                 self.running = True
 
                 while self.running:
@@ -119,6 +124,15 @@ class RenderingTestView(View):
                     self.sleep(0.5)
 
     # rendering steps #########################################################
+    def reset_rendering_steps(self):
+        with self.html.lock:
+            self.running = False
+            self.steps = self.get_rendering_steps()
+            self.current_step_index = 0
+            self.rendering_root.clear()
+
+            self.set_step_label(0, 'Not started')
+
     def get_rendering_steps(self):
         steps = []
 
