@@ -127,6 +127,7 @@ class RenderingTestView(View):
             label = self.rendering_step_label.query_selector('#label')
             label.set_text(label_text)
 
+    # steps ###################################################################
     # node tests
     def step_01(self):
         with self.html.lock:
@@ -257,7 +258,7 @@ class RenderingTestView(View):
 
     def step_20(self):
         with self.html.lock:
-            self.set_step_label(20, 'reset attributes')
+            self.set_step_label(20, 'Reset attributes')
 
             self.rendering_root.nodes[0].attributes = {
                 'foo1': 'bar1',
@@ -266,7 +267,7 @@ class RenderingTestView(View):
 
     def step_21(self):
         with self.html.lock:
-            self.set_step_label(21, 'clear attributes')
+            self.set_step_label(21, 'Clear attributes')
 
             self.rendering_root.nodes[0].attributes.clear()
 
@@ -293,7 +294,7 @@ class RenderingTestView(View):
 
     def step_25(self):
         with self.html.lock:
-            self.set_step_label(25, 'reset style')
+            self.set_step_label(25, 'Reset style')
 
             self.rendering_root.nodes[0].style = {
                 'position': 'relative',
@@ -301,6 +302,6 @@ class RenderingTestView(View):
 
     def step_26(self):
         with self.html.lock:
-            self.set_step_label(26, 'clear style')
+            self.set_step_label(26, 'Clear style')
 
             self.rendering_root.nodes[0].style.clear()
