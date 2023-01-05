@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
+from typing import TYPE_CHECKING, TypeVar, Union, cast
 from collections.abc import Awaitable, Callable
 import threading
 import asyncio
@@ -298,15 +298,7 @@ class View:
         )
 
     # runtime #################################################################
-    @overload
-    def sleep(self, delay: float) -> None:
-        ...
-
-    @overload
-    def sleep(self, delay: float, result: T) -> T:
-        ...
-
-    def sleep(self, delay: float, result: None | T = None) -> None | T:
+    def sleep(self, delay: float, result: T | None = None) -> T | None:
         self._view_runtime.state = VIEW_RUNTIME_STATE.SLEEPING
 
         try:
