@@ -83,7 +83,7 @@ async def test_rendering(lona_project_context):
             # parse and compare html
             html = HTML(f'<div id="rendering-root">{html_string}</div>')[0]
 
-            assert html == context.server.state['rendering-root']
+            assert html.nodes == context.server.state['rendering-root'].nodes
 
         # CSS tests ###########################################################
         await check_default_styles(page)

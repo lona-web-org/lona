@@ -1,4 +1,15 @@
-from lona.html import CheckBox, Select, Button, Label, Span, HTML, Div, H3, H2
+from lona.html import (
+    CheckBox,
+    Select,
+    Button,
+    Label,
+    Span,
+    HTML,
+    Pre,
+    Div,
+    H3,
+    H2,
+)
 from lona.static_files import Script
 from lona._json import dumps
 from lona import View
@@ -26,10 +37,68 @@ class WidgetDataTestComponent(Div):
         self.server_state.set_text(dumps(self.widget_data))
 
 
+class HTMLConsole(Div):
+    WIDGET = 'HTMLConsoleWidget'
+
+    def __init__(self, root_node):
+        super().__init__()
+
+        self.widget_data = {
+            'root_node': root_node,
+            'trigger': 1,
+        }
+
+        self.nodes = [
+            Console(_class='console'),
+        ]
+
+    def update(self):
+        self.widget_data['trigger'] = self.widget_data['trigger'] * -1
+
+
 class Spacer(Div):
     STYLE = {
         'display': 'inline-block',
         'width': '1em',
+    }
+
+
+class RenderingRoot(Div):
+    STYLE = {
+        'font-size': '16px',
+        'border': '1px solid red',
+        'width': '100%',
+        'min-height': '20em',
+        'overflow': 'auto',
+    }
+
+
+class Console(Pre):
+    STYLE = {
+        'font-size': '16px',
+        'background-color': 'lightgrey',
+        'border': '1px solid lightgrey',
+        'width': '100%',
+        'min-height': '20em',
+        'padding': '0',
+        'margin': '0',
+        'overflow': 'auto',
+    }
+
+
+class LeftCol(Div):
+    STYLE = {
+        'min-height': '1px',
+        'float': 'left',
+        'width': 'calc(50% - 5px)',
+    }
+
+
+class RightCol(Div):
+    STYLE = {
+        'min-height': '1px',
+        'float': 'right',
+        'width': 'calc(50% - 5px)',
     }
 
 
@@ -110,7 +179,8 @@ class RenderingTestView(View):
             _id='step-label',
         )
 
-        self.rendering_root = Div(_id='rendering-root')
+        self.rendering_root = RenderingRoot(_id='rendering-root')
+        self.html_console = HTMLConsole(root_node='#rendering-root')
 
         self.html = HTML(
             H2('Rendering Test'),
@@ -129,8 +199,18 @@ class RenderingTestView(View):
 
                 Label('Daemon:', _for='daemon'), self.daemon,
             ),
+
             self.rendering_step_label,
-            self.rendering_root,
+            Div(
+                LeftCol(
+                    Div('Render Result'),
+                    self.rendering_root,
+                ),
+                RightCol(
+                    Div('HTML Preview'),
+                    self.html_console,
+                ),
+            ),
         )
 
         self.server.state['rendering-root'] = self.rendering_root
@@ -166,6 +246,7 @@ class RenderingTestView(View):
             self.rendering_root.clear()
 
             self.set_step_label(0, 'Not started')
+            self.html_console.update()
 
     def get_rendering_steps(self):
         steps = []
@@ -182,6 +263,7 @@ class RenderingTestView(View):
         step = self.steps[self.current_step_index]
 
         step()
+        self.html_console.update()
 
         self.current_step_index += 1
 
