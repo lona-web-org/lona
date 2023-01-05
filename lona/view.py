@@ -253,15 +253,12 @@ class View:
             html=html,
         )
 
-    @overload
-    def await_change(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
-        ...
+    def await_change(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_change(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_change(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='change',
