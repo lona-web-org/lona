@@ -277,15 +277,12 @@ class View:
             html=html,
         )
 
-    @overload
-    def await_blur(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
-        ...
+    def await_blur(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_blur(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_blur(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='blur',
