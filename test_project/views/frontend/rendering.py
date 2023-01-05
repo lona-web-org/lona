@@ -1,4 +1,4 @@
-from lona.html import Select, Button, Span, HTML, Div, H3, H2
+from lona.html import Select, Button, Label, Span, HTML, Div, H3, H2
 from lona.static_files import Script
 from lona._json import dumps
 from lona import View
@@ -24,6 +24,13 @@ class WidgetDataTestComponent(Div):
 
     def update_state(self):
         self.server_state.set_text(dumps(self.widget_data))
+
+
+class Spacer(Div):
+    STYLE = {
+        'display': 'inline-block',
+        'width': '1em',
+    }
 
 
 class RenderingTestView(View):
@@ -74,6 +81,16 @@ class RenderingTestView(View):
         self.next_step = Button('Next Step', _id='next-step')
         self.reset = Button('Reset', handle_click=self.handle_reset_click)
 
+        self.interval = Select(
+            _id='interval',
+            values=[
+                (1,    '1s',    False),
+                (0.5,  '0.5s',  True),
+                (0.25, '0.25s', False),
+                (0.01, '0.01s', False),
+            ],
+        )
+
         self.rendering_step_label = H3(
             'Step ',
             Span(_id='current'),
@@ -94,6 +111,10 @@ class RenderingTestView(View):
                 self.stop,
                 self.next_step,
                 self.reset,
+
+                Spacer(),
+
+                Label('Interval: ', _for='interval'), self.interval,
             ),
             self.rendering_step_label,
             self.rendering_root,
@@ -121,7 +142,7 @@ class RenderingTestView(View):
                 while self.running:
                     self.run_next_step()
                     self.show()
-                    self.sleep(0.5)
+                    self.sleep(float(self.interval.value))
 
     # rendering steps #########################################################
     def reset_rendering_steps(self):
