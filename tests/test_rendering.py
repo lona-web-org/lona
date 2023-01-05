@@ -16,6 +16,7 @@ async def test_rendering(lona_project_context):
     always have a value.
     """
 
+    import json
     import os
 
     from playwright.async_api import async_playwright
@@ -54,6 +55,12 @@ async def test_rendering(lona_project_context):
         assert computed_style['display'] == 'block'
         assert computed_style['position'] == 'static'
         assert computed_style['zIndex'] == 'auto'
+
+    async def parse_json(page, locator):
+        element = page.locator(locator)
+        json_string = await element.inner_html()
+
+        return json.loads(json_string)
 
     async with async_playwright() as p:
         browser = await p.chromium.launch()
@@ -128,3 +135,19 @@ async def test_rendering(lona_project_context):
         # 26 Clear Style
         await next_step(page, 26)
         await check_default_styles(page)
+
+        # widget data tests ###################################################
+        for step in range(27, 39):
+            await next_step(page, step)
+
+            server_widget_data = await parse_json(
+                page,
+                '#lona #server-widget-data',
+            )
+
+            client_widget_data = await parse_json(
+                page,
+                '#lona #client-widget-data',
+            )
+
+            assert server_widget_data == client_widget_data

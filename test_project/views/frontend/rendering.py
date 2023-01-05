@@ -1,8 +1,36 @@
 from lona.html import Select, Button, Span, HTML, Div, H3, H2
+from lona.static_files import Script
+from lona._json import dumps
 from lona import View
 
 
+class WidgetDataTestComponent(Div):
+    WIDGET = 'WidgetDataTestWidget'
+
+    def __init__(self, initial_state):
+        super().__init__()
+
+        self.server_state = Div(
+            _id='server-widget-data',
+        )
+
+        self.nodes = [
+            self.server_state,
+            Div(_id='client-widget-data'),
+        ]
+
+        self.widget_data = initial_state
+        self.update_state()
+
+    def update_state(self):
+        self.server_state.set_text(dumps(self.widget_data))
+
+
 class RenderingTestView(View):
+    STATIC_FILES = [
+        Script(name='RenderingTestWidgets', path='rendering-test-widgets.js'),
+    ]
+
     def handle_mode_change(self, input_event):
         select = input_event.node
 
@@ -305,3 +333,117 @@ class RenderingTestView(View):
             self.set_step_label(26, 'Clear style')
 
             self.rendering_root.nodes[0].style.clear()
+
+    # widget data tests
+    def step_27(self):
+        with self.html.lock:
+            self.set_step_label(27, 'Widget Data: list: setup')
+
+            self.rendering_root.nodes = [
+                WidgetDataTestComponent(
+                    initial_state={'list': []},
+                ),
+            ]
+
+    def step_28(self):
+        with self.html.lock:
+            self.set_step_label(28, 'Widget Data: list: append')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].append(1)
+            component.widget_data['list'].append(2)
+            component.widget_data['list'].append(3)
+            component.update_state()
+
+    def step_29(self):
+        with self.html.lock:
+            self.set_step_label(29, 'Widget Data: list: remove')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].remove(2)
+            component.update_state()
+
+    def step_30(self):
+        with self.html.lock:
+            self.set_step_label(30, 'Widget Data: list: insert')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].insert(0, 0)
+            component.update_state()
+
+    def step_31(self):
+        with self.html.lock:
+            self.set_step_label(31, 'Widget Data: list: clear')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].clear()
+            component.update_state()
+
+    def step_32(self):
+        with self.html.lock:
+            self.set_step_label(32, 'Widget Data: list: reset')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'] = [5, 4, 3, 2, 1]
+            component.update_state()
+
+    def step_33(self):
+        with self.html.lock:
+            self.set_step_label(33, 'Widget Data: dict: setup')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data = {'dict': {}}
+            component.update_state()
+
+    def step_34(self):
+        with self.html.lock:
+            self.set_step_label(34, 'Widget Data: dict: set')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'][1] = 1
+            component.widget_data['dict'][2] = 2
+            component.widget_data['dict'][3] = 3
+            component.update_state()
+
+    def step_35(self):
+        with self.html.lock:
+            self.set_step_label(35, 'Widget Data: dict: del')
+
+            component = self.rendering_root.nodes[0]
+
+            del component.widget_data['dict'][2]
+            component.update_state()
+
+    def step_36(self):
+        with self.html.lock:
+            self.set_step_label(36, 'Widget Data: dict: pop')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'].pop(3)
+            component.update_state()
+
+    def step_37(self):
+        with self.html.lock:
+            self.set_step_label(37, 'Widget Data: dict: clear')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'].clear()
+            component.update_state()
+
+    def step_38(self):
+        with self.html.lock:
+            self.set_step_label(38, 'Widget Data: dict: reset')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4}
+            component.update_state()
