@@ -1,4 +1,8 @@
-async def test_rendering(lona_project_context):
+import pytest
+
+
+@pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
+async def test_rendering(browser_name, lona_project_context):
     """
     This test tests all client side rendering features, using the rendering
     test view in the test project.
@@ -76,7 +80,7 @@ async def test_rendering(lona_project_context):
         return json.loads(json_string)
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await getattr(p, browser_name).launch()
         browser_context = await browser.new_context()
         page = await browser_context.new_page()
 
