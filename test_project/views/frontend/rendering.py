@@ -438,27 +438,27 @@ class RenderingTestView(View):
             self.set_step_label(22, 'Set style')
 
             self.rendering_root.nodes = [
-                Div(_style='display: none; position: absolute;'),
+                Div(_style='top: 1px; right: 2px;'),
             ]
 
     def step_23(self):
         with self.html.lock:
             self.set_step_label(23, 'Add style')
 
-            self.rendering_root.nodes[0].style['z-index'] = '1'
+            self.rendering_root.nodes[0].style['bottom'] = '3px'
 
     def step_24(self):
         with self.html.lock:
             self.set_step_label(24, 'Remove style')
 
-            del self.rendering_root.nodes[0].style['display']
+            del self.rendering_root.nodes[0].style['top']
 
     def step_25(self):
         with self.html.lock:
             self.set_step_label(25, 'Reset style')
 
             self.rendering_root.nodes[0].style = {
-                'position': 'relative',
+                'left': '4px',
             }
 
     def step_26(self):

@@ -52,9 +52,10 @@ async def test_rendering(lona_project_context):
 
         computed_style = await get_computed_style(page)
 
-        assert computed_style['display'] == 'block'
-        assert computed_style['position'] == 'static'
-        assert computed_style['zIndex'] == 'auto'
+        assert computed_style['top'] == 'auto'
+        assert computed_style['right'] == 'auto'
+        assert computed_style['bottom'] == 'auto'
+        assert computed_style['left'] == 'auto'
 
     async def parse_json(page, locator):
         element = page.locator(locator)
@@ -93,9 +94,10 @@ async def test_rendering(lona_project_context):
 
         computed_style = await get_computed_style(page)
 
-        assert computed_style['display'] == 'none'
-        assert computed_style['position'] == 'absolute'
-        assert computed_style['zIndex'] == 'auto'
+        assert computed_style['top'] == '1px'
+        assert computed_style['right'] == '2px'
+        assert computed_style['bottom'] == 'auto'
+        assert computed_style['left'] == 'auto'
 
         # 23 Add Style
         await next_step(page, 23)
@@ -103,9 +105,10 @@ async def test_rendering(lona_project_context):
         computed_style = await get_computed_style(page)
         style = get_style()
 
-        assert computed_style['display'] == style['display']
-        assert computed_style['position'] == style['position']
-        assert computed_style['zIndex'] == style['z-index']
+        assert computed_style['top'] == '1px'
+        assert computed_style['right'] == '2px'
+        assert computed_style['bottom'] == '3px'
+        assert computed_style['left'] == 'auto'
 
         # 24 Remove Style
         await next_step(page, 24)
@@ -113,11 +116,12 @@ async def test_rendering(lona_project_context):
         computed_style = await get_computed_style(page)
         style = get_style()
 
-        assert 'display' not in style
+        assert 'top' not in style
 
-        assert computed_style['display'] == 'block'
-        assert computed_style['position'] == style['position']
-        assert computed_style['zIndex'] == style['z-index']
+        assert computed_style['top'] == 'auto'
+        assert computed_style['right'] == '2px'
+        assert computed_style['bottom'] == '3px'
+        assert computed_style['left'] == 'auto'
 
         # 25 Reset Style
         await next_step(page, 25)
@@ -125,12 +129,13 @@ async def test_rendering(lona_project_context):
         computed_style = await get_computed_style(page)
         style = get_style()
 
-        assert 'display' not in style
-        assert 'z-index' not in style
+        assert 'right' not in style
+        assert 'bottom' not in style
 
-        assert computed_style['display'] == 'block'
-        assert computed_style['position'] == style['position']
-        assert computed_style['zIndex'] == 'auto'
+        assert computed_style['top'] == 'auto'
+        assert computed_style['right'] == 'auto'
+        assert computed_style['bottom'] == 'auto'
+        assert computed_style['left'] == '4px'
 
         # 26 Clear Style
         await next_step(page, 26)
