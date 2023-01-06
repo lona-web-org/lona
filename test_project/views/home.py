@@ -85,7 +85,6 @@ class HomeView(View):
             <ul>
                 <li><a href="/frontend/static-files/">Static Files</a></li>
                 <li><a href="/frontend/rendering/">Rendering</a></li>
-                <li><a href="/frontend/widget-data/">Widget Data</a></li>
                 <li><a href="/frontend/custom-event/">Custom Event</a></li>
                 <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
             </ul>

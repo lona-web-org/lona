@@ -143,9 +143,6 @@ routes = [
     Route('/frontend/rendering/',
           'views/frontend/rendering.py::RenderingTestView'),
 
-    Route('/frontend/widget-data/',
-          'views/frontend/widget_data.py::WidgetDataView'),
-
     Route('/frontend/custom-event/',
           'views/frontend/custom_event.py::CustomEventView'),
 
