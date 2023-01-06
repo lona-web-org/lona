@@ -457,7 +457,7 @@ export class LonaDomUpdater {
             // RESET
             } else if(operation == protocol.OPERATION.RESET) {
                 node.getAttributeNames().forEach(function(name) {
-                    if(['id', 'class', 'style'].indexOf(name) > -1) {
+                    if(['id', 'class', 'style', 'data-lona-node-id'].indexOf(name) > -1) {
                         return;
 
                     };
@@ -504,7 +504,7 @@ export class LonaDomUpdater {
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {
                 node.getAttributeNames().forEach(function(name) {
-                    if(['id', 'class', 'style'].indexOf(name) > -1) {
+                    if(['id', 'class', 'style', 'data-lona-node-id'].indexOf(name) > -1) {
                         return;
 
                     };
