@@ -37,7 +37,19 @@ async def test_rendering(lona_project_context):
     async def get_computed_style(page):
         return await page.eval_on_selector(
             '#rendering-root > div',
-            'e => getComputedStyle(e)',
+            """
+                element => {
+                    const computedStyle = getComputedStyle(element);
+                    const propertyNames = Array.from(computedStyle);
+                    const values = {};
+
+                    propertyNames.forEach(name => {
+                        values[name] = computedStyle.getPropertyValue(name);
+                    });
+
+                    return values;
+                }
+            """,
         )
 
     def get_style():
