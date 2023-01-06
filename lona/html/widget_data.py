@@ -368,8 +368,6 @@ class DictOverlay:
 
 
 class WidgetData:
-    _LONA_CLASS_NAME = 'WidgetData'
-
     def __init__(self, widget):
         self._widget = widget
 
