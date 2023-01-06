@@ -74,7 +74,7 @@ class ListOverlay:
 
     def index(self, *args, **kwargs):
         with self._widget.lock:
-            return self._original_data.count(*args, **kwargs)
+            return self._original_data.index(*args, **kwargs)
 
     def insert(self, index, item):
         check_value(item)
