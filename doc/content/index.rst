@@ -60,5 +60,5 @@ How does it work?
 Lona comes with a Javascript based browser library that speaks a specialized
 protocol with the backend.
 This protocol specifies messages like "hey frontend, please show $HTML" and
-"hey backend, someone clicked on node XY" 
+"hey backend, someone clicked on node XY"
 {{ link('basic-concept.rst', 'read more') }}
