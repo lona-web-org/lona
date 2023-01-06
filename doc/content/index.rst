@@ -41,7 +41,7 @@ pythonic API to write self contained views.
 
             html = HTML(
                 H1('Click the button!'),
-                message,
+                self.message,
                 Button('Click me!', handle_click=self.handle_button_click),
             )
 
