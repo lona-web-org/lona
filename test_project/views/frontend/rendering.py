@@ -1,15 +1,123 @@
-from lona.html import Select, Button, Span, HTML, Div, H3, H2
+from lona.html import (
+    CheckBox,
+    Select,
+    Button,
+    Label,
+    Span,
+    HTML,
+    Pre,
+    Div,
+    H3,
+    H2,
+)
+from lona.static_files import Script
+from lona._json import dumps
 from lona import View
 
 
+class WidgetDataTestComponent(Div):
+    WIDGET = 'WidgetDataTestWidget'
+
+    def __init__(self, initial_state):
+        super().__init__()
+
+        self.server_state = Div(
+            _id='server-widget-data',
+        )
+
+        self.nodes = [
+            self.server_state,
+            Div(_id='client-widget-data'),
+        ]
+
+        self.widget_data = initial_state
+        self.update_state()
+
+    def update_state(self):
+        self.server_state.set_text(dumps(self.widget_data))
+
+
+class HTMLConsole(Div):
+    WIDGET = 'HTMLConsoleWidget'
+
+    def __init__(self, root_node):
+        super().__init__()
+
+        self.widget_data = {
+            'root_node': root_node,
+            'trigger': 1,
+        }
+
+        self.nodes = [
+            Console(_class='console'),
+        ]
+
+    def update(self):
+        self.widget_data['trigger'] = self.widget_data['trigger'] * -1
+
+
+class Spacer(Div):
+    STYLE = {
+        'display': 'inline-block',
+        'width': '1em',
+    }
+
+
+class RenderingRoot(Div):
+    STYLE = {
+        'font-size': '16px',
+        'border': '1px solid red',
+        'width': '100%',
+        'min-height': '20em',
+        'overflow': 'auto',
+    }
+
+
+class Console(Pre):
+    STYLE = {
+        'font-size': '16px',
+        'background-color': 'lightgrey',
+        'border': '1px solid lightgrey',
+        'width': '100%',
+        'min-height': '20em',
+        'padding': '0',
+        'margin': '0',
+        'overflow': 'auto',
+    }
+
+
+class LeftCol(Div):
+    STYLE = {
+        'min-height': '1px',
+        'float': 'left',
+        'width': 'calc(50% - 5px)',
+    }
+
+
+class RightCol(Div):
+    STYLE = {
+        'min-height': '1px',
+        'float': 'right',
+        'width': 'calc(50% - 5px)',
+    }
+
+
 class RenderingTestView(View):
+    STATIC_FILES = [
+        Script(name='RenderingTestWidgets', path='rendering-test-widgets.js'),
+    ]
+
     def handle_mode_change(self, input_event):
         select = input_event.node
 
         with self.html.lock:
-            self.start.disabled = select.value != 'auto'
-            self.stop.disabled = select.value != 'auto'
+            self.start.disabled = not (select.value == 'auto' and
+                                       not self.running)
+
+            self.stop.disabled = not (select.value == 'auto' and self.running)
+
             self.next_step.disabled = select.value == 'auto'
+            self.reset.disabled = self.running
 
     def handle_stop_click(self, input_event):
         with self.html.lock:
@@ -17,6 +125,14 @@ class RenderingTestView(View):
             self.mode.disabled = False
             self.start.disabled = False
             self.stop.disabled = True
+            self.reset.disabled = False
+
+    def handle_reset_click(self, input_event):
+        with self.html.lock:
+            self.reset_rendering_steps()
+
+    def handle_daemon_change(self, input_event):
+        self.is_daemon = self.daemon.value
 
     def handle_request(self, request):
 
@@ -38,6 +154,23 @@ class RenderingTestView(View):
         )
 
         self.next_step = Button('Next Step', _id='next-step')
+        self.reset = Button('Reset', handle_click=self.handle_reset_click)
+
+        self.interval = Select(
+            _id='interval',
+            values=[
+                (1,    '1s',    False),
+                (0.5,  '0.5s',  True),
+                (0.25, '0.25s', False),
+                (0.01, '0.01s', False),
+            ],
+        )
+
+        self.daemon = CheckBox(
+            value=False,
+            _id='daemon',
+            handle_change=self.handle_daemon_change,
+        )
 
         self.rendering_step_label = H3(
             'Step ',
@@ -49,7 +182,8 @@ class RenderingTestView(View):
             _id='step-label',
         )
 
-        self.rendering_root = Div(_id='rendering-root')
+        self.rendering_root = RenderingRoot(_id='rendering-root')
+        self.html_console = HTMLConsole(root_node='#rendering-root')
 
         self.html = HTML(
             H2('Rendering Test'),
@@ -58,19 +192,34 @@ class RenderingTestView(View):
                 self.start,
                 self.stop,
                 self.next_step,
+                self.reset,
+
+                Spacer(),
+
+                Label('Interval: ', _for='interval'), self.interval,
+
+                Spacer(),
+
+                Label('Daemon:', _for='daemon'), self.daemon,
             ),
+
             self.rendering_step_label,
-            self.rendering_root,
+            Div(
+                LeftCol(
+                    Div('Render Result'),
+                    self.rendering_root,
+                ),
+                RightCol(
+                    Div('HTML Preview'),
+                    self.html_console,
+                ),
+            ),
         )
 
         self.server.state['rendering-root'] = self.rendering_root
 
         # setup steps
-        self.running = False
-        self.steps = self.get_rendering_steps()
-        self.current_step_index = 0
-
-        self.set_step_label(0, 'Not started')
+        self.reset_rendering_steps()
 
         # main loop
         while True:
@@ -83,14 +232,25 @@ class RenderingTestView(View):
                 self.start.disabled = True
                 self.stop.disabled = False
                 self.mode.disabled = True
+                self.reset.disabled = True
                 self.running = True
 
                 while self.running:
                     self.run_next_step()
                     self.show()
-                    self.sleep(0.5)
+                    self.sleep(float(self.interval.value))
 
     # rendering steps #########################################################
+    def reset_rendering_steps(self):
+        with self.html.lock:
+            self.running = False
+            self.steps = self.get_rendering_steps()
+            self.current_step_index = 0
+            self.rendering_root.clear()
+
+            self.set_step_label(0, 'Not started')
+            self.html_console.update()
+
     def get_rendering_steps(self):
         steps = []
 
@@ -106,6 +266,7 @@ class RenderingTestView(View):
         step = self.steps[self.current_step_index]
 
         step()
+        self.html_console.update()
 
         self.current_step_index += 1
 
@@ -127,6 +288,7 @@ class RenderingTestView(View):
             label = self.rendering_step_label.query_selector('#label')
             label.set_text(label_text)
 
+    # steps ###################################################################
     # node tests
     def step_01(self):
         with self.html.lock:
@@ -257,7 +419,7 @@ class RenderingTestView(View):
 
     def step_20(self):
         with self.html.lock:
-            self.set_step_label(20, 'reset attributes')
+            self.set_step_label(20, 'Reset attributes')
 
             self.rendering_root.nodes[0].attributes = {
                 'foo1': 'bar1',
@@ -266,7 +428,7 @@ class RenderingTestView(View):
 
     def step_21(self):
         with self.html.lock:
-            self.set_step_label(21, 'clear attributes')
+            self.set_step_label(21, 'Clear attributes')
 
             self.rendering_root.nodes[0].attributes.clear()
 
@@ -276,31 +438,145 @@ class RenderingTestView(View):
             self.set_step_label(22, 'Set style')
 
             self.rendering_root.nodes = [
-                Div(_style='display: none; position: absolute;'),
+                Div(_style='top: 1px; right: 2px;'),
             ]
 
     def step_23(self):
         with self.html.lock:
             self.set_step_label(23, 'Add style')
 
-            self.rendering_root.nodes[0].style['z-index'] = '1'
+            self.rendering_root.nodes[0].style['bottom'] = '3px'
 
     def step_24(self):
         with self.html.lock:
             self.set_step_label(24, 'Remove style')
 
-            del self.rendering_root.nodes[0].style['display']
+            del self.rendering_root.nodes[0].style['top']
 
     def step_25(self):
         with self.html.lock:
-            self.set_step_label(25, 'reset style')
+            self.set_step_label(25, 'Reset style')
 
             self.rendering_root.nodes[0].style = {
-                'position': 'relative',
+                'left': '4px',
             }
 
     def step_26(self):
         with self.html.lock:
-            self.set_step_label(26, 'clear style')
+            self.set_step_label(26, 'Clear style')
 
             self.rendering_root.nodes[0].style.clear()
+
+    # widget data tests
+    def step_27(self):
+        with self.html.lock:
+            self.set_step_label(27, 'Widget Data: list: setup')
+
+            self.rendering_root.nodes = [
+                WidgetDataTestComponent(
+                    initial_state={'list': []},
+                ),
+            ]
+
+    def step_28(self):
+        with self.html.lock:
+            self.set_step_label(28, 'Widget Data: list: append')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].append(1)
+            component.widget_data['list'].append(2)
+            component.widget_data['list'].append(3)
+            component.update_state()
+
+    def step_29(self):
+        with self.html.lock:
+            self.set_step_label(29, 'Widget Data: list: remove')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].remove(2)
+            component.update_state()
+
+    def step_30(self):
+        with self.html.lock:
+            self.set_step_label(30, 'Widget Data: list: insert')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].insert(0, 0)
+            component.update_state()
+
+    def step_31(self):
+        with self.html.lock:
+            self.set_step_label(31, 'Widget Data: list: clear')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'].clear()
+            component.update_state()
+
+    def step_32(self):
+        with self.html.lock:
+            self.set_step_label(32, 'Widget Data: list: reset')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['list'] = [5, 4, 3, 2, 1]
+            component.update_state()
+
+    def step_33(self):
+        with self.html.lock:
+            self.set_step_label(33, 'Widget Data: dict: setup')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data = {'dict': {}}
+            component.update_state()
+
+    def step_34(self):
+        with self.html.lock:
+            self.set_step_label(34, 'Widget Data: dict: set')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'][1] = 1
+            component.widget_data['dict'][2] = 2
+            component.widget_data['dict'][3] = 3
+            component.update_state()
+
+    def step_35(self):
+        with self.html.lock:
+            self.set_step_label(35, 'Widget Data: dict: del')
+
+            component = self.rendering_root.nodes[0]
+
+            del component.widget_data['dict'][2]
+            component.update_state()
+
+    def step_36(self):
+        with self.html.lock:
+            self.set_step_label(36, 'Widget Data: dict: pop')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'].pop(3)
+            component.update_state()
+
+    def step_37(self):
+        with self.html.lock:
+            self.set_step_label(37, 'Widget Data: dict: clear')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'].clear()
+            component.update_state()
+
+    def step_38(self):
+        with self.html.lock:
+            self.set_step_label(38, 'Widget Data: dict: reset')
+
+            component = self.rendering_root.nodes[0]
+
+            component.widget_data['dict'] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4}
+            component.update_state()

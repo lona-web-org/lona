@@ -1,4 +1,8 @@
-async def test_rendering(lona_project_context):
+import pytest
+
+
+@pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
+async def test_rendering(browser_name, lona_project_context):
     """
     This test tests all client side rendering features, using the rendering
     test view in the test project.
@@ -16,6 +20,7 @@ async def test_rendering(lona_project_context):
     always have a value.
     """
 
+    import json
     import os
 
     from playwright.async_api import async_playwright
@@ -36,7 +41,19 @@ async def test_rendering(lona_project_context):
     async def get_computed_style(page):
         return await page.eval_on_selector(
             '#rendering-root > div',
-            'e => getComputedStyle(e)',
+            """
+                element => {
+                    const computedStyle = getComputedStyle(element);
+                    const propertyNames = Array.from(computedStyle);
+                    const values = {};
+
+                    propertyNames.forEach(name => {
+                        values[name] = computedStyle.getPropertyValue(name);
+                    });
+
+                    return values;
+                }
+            """,
         )
 
     def get_style():
@@ -51,12 +68,19 @@ async def test_rendering(lona_project_context):
 
         computed_style = await get_computed_style(page)
 
-        assert computed_style['display'] == 'block'
-        assert computed_style['position'] == 'static'
-        assert computed_style['zIndex'] == 'auto'
+        assert computed_style['top'] == 'auto'
+        assert computed_style['right'] == 'auto'
+        assert computed_style['bottom'] == 'auto'
+        assert computed_style['left'] == 'auto'
+
+    async def parse_json(page, locator):
+        element = page.locator(locator)
+        json_string = await element.inner_html()
+
+        return json.loads(json_string)
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await getattr(p, browser_name).launch()
         browser_context = await browser.new_context()
         page = await browser_context.new_page()
 
@@ -76,7 +100,7 @@ async def test_rendering(lona_project_context):
             # parse and compare html
             html = HTML(f'<div id="rendering-root">{html_string}</div>')[0]
 
-            assert html == context.server.state['rendering-root']
+            assert html.nodes == context.server.state['rendering-root'].nodes
 
         # CSS tests ###########################################################
         await check_default_styles(page)
@@ -86,9 +110,10 @@ async def test_rendering(lona_project_context):
 
         computed_style = await get_computed_style(page)
 
-        assert computed_style['display'] == 'none'
-        assert computed_style['position'] == 'absolute'
-        assert computed_style['zIndex'] == 'auto'
+        assert computed_style['top'] == '1px'
+        assert computed_style['right'] == '2px'
+        assert computed_style['bottom'] == 'auto'
+        assert computed_style['left'] == 'auto'
 
         # 23 Add Style
         await next_step(page, 23)
@@ -96,9 +121,10 @@ async def test_rendering(lona_project_context):
         computed_style = await get_computed_style(page)
         style = get_style()
 
-        assert computed_style['display'] == style['display']
-        assert computed_style['position'] == style['position']
-        assert computed_style['zIndex'] == style['z-index']
+        assert computed_style['top'] == '1px'
+        assert computed_style['right'] == '2px'
+        assert computed_style['bottom'] == '3px'
+        assert computed_style['left'] == 'auto'
 
         # 24 Remove Style
         await next_step(page, 24)
@@ -106,11 +132,12 @@ async def test_rendering(lona_project_context):
         computed_style = await get_computed_style(page)
         style = get_style()
 
-        assert 'display' not in style
+        assert 'top' not in style
 
-        assert computed_style['display'] == 'block'
-        assert computed_style['position'] == style['position']
-        assert computed_style['zIndex'] == style['z-index']
+        assert computed_style['top'] == 'auto'
+        assert computed_style['right'] == '2px'
+        assert computed_style['bottom'] == '3px'
+        assert computed_style['left'] == 'auto'
 
         # 25 Reset Style
         await next_step(page, 25)
@@ -118,13 +145,30 @@ async def test_rendering(lona_project_context):
         computed_style = await get_computed_style(page)
         style = get_style()
 
-        assert 'display' not in style
-        assert 'z-index' not in style
+        assert 'right' not in style
+        assert 'bottom' not in style
 
-        assert computed_style['display'] == 'block'
-        assert computed_style['position'] == style['position']
-        assert computed_style['zIndex'] == 'auto'
+        assert computed_style['top'] == 'auto'
+        assert computed_style['right'] == 'auto'
+        assert computed_style['bottom'] == 'auto'
+        assert computed_style['left'] == '4px'
 
         # 26 Clear Style
         await next_step(page, 26)
         await check_default_styles(page)
+
+        # widget data tests ###################################################
+        for step in range(27, 39):
+            await next_step(page, step)
+
+            server_widget_data = await parse_json(
+                page,
+                '#lona #server-widget-data',
+            )
+
+            client_widget_data = await parse_json(
+                page,
+                '#lona #client-widget-data',
+            )
+
+            assert server_widget_data == client_widget_data

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, cast, Any
+from typing import TYPE_CHECKING, Tuple, List, Dict, cast, Any
 from collections.abc import Container, Awaitable
 from concurrent.futures import CancelledError
 from datetime import datetime
@@ -29,7 +29,9 @@ from lona.unique_ids import generate_unique_id
 from lona.events.input_event import InputEvent
 from lona.imports import get_object_repr
 from lona.html.document import Document
+from lona.connection import Connection
 from lona.request import Request
+from lona.routing import Route
 
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
@@ -55,8 +57,12 @@ class VIEW_RUNTIME_STATE(Enum):
 
 
 class ViewRuntime:
-    def __init__(self, server, url, route, match_info, post_data=None,
-                 frontend=False, start_connection=None):
+    def __init__(
+            self, server: Server, url: str, route: Route,
+            match_info: Dict[str, Any],
+            post_data: Dict[str, Any] | None = None, frontend: bool = False,
+            start_connection: Connection | None = None,
+    ):
 
         self.server: Server = server
         self.url = URL(url or '')
@@ -95,11 +101,7 @@ class ViewRuntime:
         )
 
         # setup state
-        self.connections = {}
-        # contains: {
-        #     connection: (window_id, url),
-        # }
-
+        self.connections: Dict[Connection, Tuple[int, URL]] = {}
         self.document = Document()
 
         self.stopped: asyncio.Future[Literal[True]] = asyncio.Future(loop=self.server.loop)  # NOQA: LN001
@@ -114,7 +116,7 @@ class ViewRuntime:
         self.started_at = None
         self.stopped_at = None
 
-        self.pending_input_events = {
+        self.pending_input_events: Dict[str, None | List[Awaitable[InputEvent] | Container[AbstractNode] | None]] = {  # NOQA: LN001
             'event': None,
             'click': None,
             'change': None,
@@ -166,7 +168,7 @@ class ViewRuntime:
             request=self.request,
         )
 
-        view_kwargs = {
+        view_kwargs: Dict[str, Any] = {
             'request': self.request,
         }
 

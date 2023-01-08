@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload, TypeVar, Union, cast
+from typing import TYPE_CHECKING, TypeVar, Union, cast
 from collections.abc import Awaitable, Callable
 import threading
 import asyncio
@@ -11,6 +11,7 @@ from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
 from lona.static_files import StaticFile
+from lona.exceptions import StopReason
 from lona.connection import Connection
 from lona.request import Request
 
@@ -93,7 +94,7 @@ class View:
                     if not pending_future.done():
                         pending_future.cancel()
 
-            raise self._view_runtime.stop_reason
+            raise cast(StopReason, self._view_runtime.stop_reason)
 
         return asyncio.run_coroutine_threadsafe(
             await_awaitable(),
@@ -228,75 +229,60 @@ class View:
         finally:
             self._view_runtime.state = VIEW_RUNTIME_STATE.RUNNING
 
-    @overload
-    def await_input_event(self, *nodes: AbstractNode, html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
+    def await_input_event(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_input_event(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_input_event(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='event',
             html=html,
         )
 
-    @overload
-    def await_click(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
-        ...
+    def await_click(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_click(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_click(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='click',
             html=html,
         )
 
-    @overload
-    def await_change(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
-        ...
+    def await_change(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_change(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_change(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='change',
             html=html,
         )
 
-    @overload
-    def await_focus(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
-        ...
+    def await_focus(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_focus(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_focus(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='focus',
             html=html,
         )
 
-    @overload
-    def await_blur(self, *nodes: AbstractNode, html: H = None) -> InputEvent:
-        ...
+    def await_blur(
+            self,
+            *nodes: list[AbstractNode],
+            html: H = None,
+    ) -> InputEvent:
 
-    @overload
-    def await_blur(self, __nodes: list[AbstractNode], html: H = None) -> InputEvent:  # NOQA: LN001
-        ...
-
-    def await_blur(self, *nodes, html=None):
         return self._await_specific_input_event(
             *nodes,
             event_type='blur',
@@ -312,15 +298,7 @@ class View:
         )
 
     # runtime #################################################################
-    @overload
-    def sleep(self, delay: float) -> None:
-        ...
-
-    @overload
-    def sleep(self, delay: float, result: T) -> T:
-        ...
-
-    def sleep(self, delay: float, result: None | T = None) -> None | T:
+    def sleep(self, delay: float, result: T | None = None) -> T | None:
         self._view_runtime.state = VIEW_RUNTIME_STATE.SLEEPING
 
         try:
@@ -366,3 +344,6 @@ class View:
 
     def on_cleanup(self) -> None:
         pass
+
+
+LonaView = View  # TODO: remove in 2.0

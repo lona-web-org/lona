@@ -52,7 +52,7 @@ class ViewRuntimeController:
             stop_daemon_when_view_finishes = getattr(
                 view_runtime.view,
                 'STOP_DAEMON_WHEN_VIEW_FINISHES',
-                True,
+                self.server.settings.STOP_DAEMON_WHEN_VIEW_FINISHES,
             )
 
             if stop_daemon_when_view_finishes and view_runtime.is_stopped:

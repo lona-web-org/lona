@@ -464,3 +464,6 @@ class App:
             args=server_args,
             server=self.server,
         )
+
+
+LonaApp = App  # TODO: remove in 2.0

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import overload, Callable, TypeVar, cast, Any
+from typing import overload, Callable, TypeVar, List, Dict, cast, Any
 from concurrent.futures import Future
 from collections.abc import Awaitable
 from functools import reduce
@@ -29,6 +29,7 @@ from lona.static_file_loader import StaticFileLoader
 from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
+from lona.worker_pool import WorkerPool
 from lona.view_loader import ViewLoader
 from lona.routing import Router, Route
 from lona.connection import Connection
@@ -51,16 +52,17 @@ T = TypeVar('T')
 
 
 class Server:
-    def __init__(self, project_root, settings_paths=None,
-                 settings_pre_overrides=None, settings_post_overrides=None,
-                 routes=None):
+    def __init__(self, project_root: str,
+                 settings_paths: List[str] | None = None,
+                 settings_pre_overrides: Dict[str, Any] | None = None,
+                 settings_post_overrides: Dict[str, Any] | None = None,
+                 routes: List[Route] | None = None):
 
         self._project_root = os.path.abspath(project_root)
 
-        self._websocket_connections = []
-        self._loop = None
-        self._worker_pool = None
-        self._app: Application = None
+        self._websocket_connections: List[Connection] = []
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._worker_pool: WorkerPool | None = None
 
         # setup settings
         server_logger.debug('setup settings')
@@ -189,11 +191,17 @@ class Server:
         return self._project_root
 
     @property
-    def loop(self):
+    def loop(self) -> asyncio.AbstractEventLoop:
+        if self._loop is None:
+            raise RuntimeError('loop is not set')
+
         return self._loop
 
     @property
-    def worker_pool(self):
+    def worker_pool(self) -> WorkerPool:
+        if self._worker_pool is None:
+            raise RuntimeError('worker_pool is not set')
+
         return self._worker_pool
 
     @property
@@ -529,7 +537,7 @@ class Server:
             wait: None | bool = True,
     ) -> Future[T] | T:
 
-        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self._loop)
+        future = asyncio.run_coroutine_threadsafe(coroutine, loop=self.loop)
 
         if wait:
             return future.result()
@@ -560,8 +568,8 @@ class Server:
 
         return cast(
             Future,
-            self._loop.run_in_executor(
-                self._worker_pool.get_executor(executor_name),
+            self.loop.run_in_executor(
+                self.worker_pool.get_executor(executor_name),
                 _function,
             ),
         )
@@ -791,10 +799,7 @@ class Server:
             route = cast(Route, route)
             view = route.view
 
-        return cast(
-            type[View],
-            self._view_loader.load(view),
-        )
+        return self._view_loader.load(view)
 
     def get_views(
             self,
@@ -825,10 +830,10 @@ class Server:
             url=url,
         )
 
-        views = cast(
-            list[View],
-            self._view_runtime_controller.get_views(view_class=view_class),
-        )
+        if not view_class:
+            return []
+
+        views = self._view_runtime_controller.get_views(view_class=view_class)
 
         if user:
             for view in views.copy():
