@@ -26,6 +26,7 @@ PLUGINS = [
     'plugins/changelog.py::Changelog',
     'plugins/api_doc.py::ApiDoc',
     'plugins/version_prefix.py::VersionPrefix',
+    'plugins/rst_directives.py::rstDirectives',
 ]
 
 MENU = [

@@ -2,9 +2,9 @@ a.icon-home img {
     max-width: 200px !important;
 }
 
-.rst-content a,
-.rst-content a:active,
-.rst-content a:visited {
+.rst-content a:not(.btn),
+.rst-content a:not(.btn):active,
+.rst-content a:not(.btn):visited {
     color: #2980B9 !important;
 }
 
