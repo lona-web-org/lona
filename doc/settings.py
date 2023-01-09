@@ -32,6 +32,63 @@ PLUGINS = [
 MENU = [
     ['Lona', [
         ['Basic Concept', 'basic-concept.rst'],
+
+        ['Demos', [
+            ['Counter', 'demos/counter/index.rst'],
+
+            ['Bootstrap 5 Confirmation Popup',
+            'demos/bootstrap-5-confirmation-popup/index.rst'],
+
+            ['Chart.js Click Analyzer', 'demos/chartjs-click-analyzer/index.rst'],
+            ['Daemonized View', 'demos/daemonized-view/index.rst'],
+            ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
+            ['Game Of Life', 'demos/game-of-life/index.rst'],
+        ]],
+
+        ['API Reference', [
+            ['Getting Started', 'api-reference/getting-started.rst'],
+            ['Lona Scripts', 'api-reference/lona-scripts.rst'],
+            ['Views', 'api-reference/views.rst'],
+            ['Server', 'api-reference/server.rst'],
+            ['HTML', 'api-reference/html.rst'],
+            ['Frontends', 'api-reference/frontends.rst'],
+            ['Error Views', 'api-reference/error-views.rst'],
+            ['Middlewares', 'api-reference/middlewares.rst'],
+            ['Settings', 'api-reference/settings.rst'],
+            ['Sessions', 'api-reference/sessions.rst'],
+            ['Testing', 'api-reference/testing.rst'],
+            ['Lona Shell', 'api-reference/lona-shell.rst'],
+            ['Debugging', 'api-reference/debugging.rst'],
+            ['Deployment', 'api-reference/deployment.rst'],
+        ]],
+
+        [['Contrib'], [
+            ['Django', 'contrib/django/index.rst'],
+            ['Bootstrap 5', 'contrib/bootstrap-5/index.rst'],
+            ['Chart.js', 'contrib/chartjs/index.rst'],
+        ]],
+
+        ['Cookbook', [
+            ['Using Traditional HTML', 'cookbook/using-traditional-html.rst'],
+            ['Writing A Lona Form', 'cookbook/writing-a-lona-form.rst'],
+
+            ['Writing A Traditional Form',
+            'cookbook/writing-a-traditional-form.rst'],
+
+            ['Auto-Reconnect', 'cookbook/auto-reconnect.rst'],
+            ['URL Reverse Resolving', 'cookbook/url-reverse-resolving.rst'],
+            ['Using Server State', 'cookbook/using-server-state.rst'],
+
+            ['Integrating A Frontend Library',
+            'cookbook/integrating-a-frontend-library.rst'],
+
+            ['Integrating Django', 'cookbook/integrating-django.rst'],
+            ['Limit Concurrent Views', 'cookbook/limit-concurrent-views.rst'],
+
+            ['Adding A Custom Command To Lona Shell',
+            'cookbook/adding-a-custom-command-to-lona-shell.rst'],
+        ]],
+
         ['FAQ', 'faq.rst'],
         ['News / Getting Help', 'news-getting-help.rst'],
         ['How To Contribute', 'how-to-contribute.rst'],
@@ -39,62 +96,6 @@ MENU = [
         ['Changelog', 'changelog.rst'],
         ['License', 'license.rst'],
         ['Stickers', 'stickers.rst'],
-    ]],
-
-    ['Demos', [
-        ['Counter', 'demos/counter/index.rst'],
-
-        ['Bootstrap 5 Confirmation Popup',
-         'demos/bootstrap-5-confirmation-popup/index.rst'],
-
-        ['Chart.js Click Analyzer', 'demos/chartjs-click-analyzer/index.rst'],
-        ['Daemonized View', 'demos/daemonized-view/index.rst'],
-        ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
-        ['Game Of Life', 'demos/game-of-life/index.rst'],
-    ]],
-
-    ['API Reference', [
-        ['Getting Started', 'api-reference/getting-started.rst'],
-        ['Lona Scripts', 'api-reference/lona-scripts.rst'],
-        ['Views', 'api-reference/views.rst'],
-        ['Server', 'api-reference/server.rst'],
-        ['HTML', 'api-reference/html.rst'],
-        ['Frontends', 'api-reference/frontends.rst'],
-        ['Error Views', 'api-reference/error-views.rst'],
-        ['Middlewares', 'api-reference/middlewares.rst'],
-        ['Settings', 'api-reference/settings.rst'],
-        ['Sessions', 'api-reference/sessions.rst'],
-        ['Testing', 'api-reference/testing.rst'],
-        ['Lona Shell', 'api-reference/lona-shell.rst'],
-        ['Debugging', 'api-reference/debugging.rst'],
-        ['Deployment', 'api-reference/deployment.rst'],
-    ]],
-
-    [['Contrib'], [
-        ['Django', 'contrib/django/index.rst'],
-        ['Bootstrap 5', 'contrib/bootstrap-5/index.rst'],
-        ['Chart.js', 'contrib/chartjs/index.rst'],
-    ]],
-
-    ['Cookbook', [
-        ['Using Traditional HTML', 'cookbook/using-traditional-html.rst'],
-        ['Writing A Lona Form', 'cookbook/writing-a-lona-form.rst'],
-
-        ['Writing A Traditional Form',
-         'cookbook/writing-a-traditional-form.rst'],
-
-        ['Auto-Reconnect', 'cookbook/auto-reconnect.rst'],
-        ['URL Reverse Resolving', 'cookbook/url-reverse-resolving.rst'],
-        ['Using Server State', 'cookbook/using-server-state.rst'],
-
-        ['Integrating A Frontend Library',
-         'cookbook/integrating-a-frontend-library.rst'],
-
-        ['Integrating Django', 'cookbook/integrating-django.rst'],
-        ['Limit Concurrent Views', 'cookbook/limit-concurrent-views.rst'],
-
-        ['Adding A Custom Command To Lona Shell',
-         'cookbook/adding-a-custom-command-to-lona-shell.rst'],
     ]],
 ]
 
