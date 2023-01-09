@@ -5,6 +5,32 @@ from flamingo.plugins.redirects import HTML_TEMPLATE
 from bs4 import BeautifulSoup
 
 
+class RemoveEmptyMenuSections:
+    def contents_parsed(self, context):
+        prefix = 'lona/'
+
+        for content in context.contents:
+
+            # prefix
+            if content['output'].startswith(prefix):
+                content['output'] = content['output'][len(prefix):]
+
+            # menu_path
+            if not content['menu_path']:
+                continue
+
+            if content['menu_path'][0].name == '':
+                content['menu_path'].pop(0)
+
+        # remove empty section index
+        section_index = context.contents.get(
+            type='menu/index',
+            output='index.html',
+        )
+
+        section_index['output'] = '/dev/null'
+
+
 class VersionPrefix:
     def get_prefix(self):
         return self.settings.VERSION_PREFIX

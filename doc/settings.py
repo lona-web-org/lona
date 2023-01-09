@@ -25,12 +25,13 @@ PLUGINS = [
     'plugins/fix_search.py::FixSearch',
     'plugins/changelog.py::Changelog',
     'plugins/api_doc.py::ApiDoc',
-    'plugins/version_prefix.py::VersionPrefix',
+    'plugins/prefixes.py::RemoveEmptyMenuSections',
+    'plugins/prefixes.py::VersionPrefix',
     'plugins/rst_directives.py::rstDirectives',
 ]
 
 MENU = [
-    ['Lona', [
+    ['', [
         ['Basic Concept', 'basic-concept.rst'],
 
         ['Demos', [
