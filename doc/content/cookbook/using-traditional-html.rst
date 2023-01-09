@@ -40,5 +40,5 @@ simpler to use traditional HTML syntax.
             modal_body.set_text('Hello World')
 
 **More information:**
-`Using HTML Strings </end-user-documentation/html.html#using-html-strings>`_,
-`Selectors </end-user-documentation/html.html#selectors>`_
+`Using HTML Strings </api-reference/html.html#using-html-strings>`_,
+`Selectors </api-reference/html.html#selectors>`_

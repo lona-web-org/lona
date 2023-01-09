@@ -98,4 +98,4 @@ Server.embed_shell\(\)
     Embeds a `rlpython <https://pypi.org/project/rlpython/>`_ based shell in
     the server context.
     More info on shells:
-    `Debugging </end-user-documentation/debugging.html>`_.
+    `Debugging </api-reference/debugging.html>`_.

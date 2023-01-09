@@ -13,7 +13,7 @@ the data does not get returned. When the data does not get returned, Lona regard
 data as handled.
 
 Middlewares can be live analyzed by using the
-{{ link('end-user-documentation/lona-shell.rst', 'Lona Shell') }} command
+{{ link('api-reference/lona-shell.rst', 'Lona Shell') }} command
 ``%lona_middlewares``.
 
 .. code-block:: python
@@ -102,6 +102,6 @@ Gets called for every request is made by any user.
 
 If the data gets returned, the view associated with this request gets started.
 
-If a `Response Object </end-user-documentation/views.html#response-objects>`_
+If a `Response Object </api-reference/views.html#response-objects>`_
 is returned, the view gets not started and the user gets the returned response
 object shown.

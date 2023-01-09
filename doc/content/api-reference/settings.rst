@@ -5,7 +5,7 @@ Settings
 ========
 
 Settings can be live analyzed by using the
-{{ link('end-user-documentation/lona-shell.rst', 'Lona Shell') }} command
+{{ link('api-reference/lona-shell.rst', 'Lona Shell') }} command
 ``%lona_settings``.
 
 Threads
@@ -257,7 +257,7 @@ Feature Flags
 
     Default for ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES``.
 
-    See `LonaView.is_daemon </end-user-documentation/views.html#lonaview-is-daemon>`_
+    See `LonaView.is_daemon </api-reference/views.html#lonaview-is-daemon>`_
     for details.
 
 .. setting::

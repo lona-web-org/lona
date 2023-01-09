@@ -739,7 +739,7 @@ To raise a forbidden error and run the 403 view you can raise
 ``lona.errors.ForbiddenError``.
 
 **More information:**
-`Error views </end-user-documentation/error-views.html>`_
+`Error views </api-reference/error-views.html>`_
 
 .. code-block:: python
 
@@ -765,7 +765,7 @@ To raise a not found error and run the 404 view you can raise
 ``lona.NotFoundError``.
 
 **More information:**
-`Error views </end-user-documentation/error-views.html>`_
+`Error views </api-reference/error-views.html>`_
 
 .. code-block:: python
 
@@ -817,8 +817,8 @@ Input events can, but don't have to, contain a node that issued the event in
 ``input_event.node``.
 
 Input event handler can also return
-`redirects </end-user-documentation/views.html#redirects>`_, even after
-`handle_request() </end-user-documentation/views.html#id2>`_ stopped.
+`redirects </api-reference/views.html#redirects>`_, even after
+`handle_request() </api-reference/views.html#id2>`_ stopped.
 
 
 Input Event types
@@ -1028,7 +1028,7 @@ wizards possible.
     when the user base of your view grows.
 
     If thread-count and scalability are crucial for you, consider using
-    `callbacks </end-user-documentation/views.html#handling-input-events-in-a-callback>`_.
+    `callbacks </api-reference/views.html#handling-input-events-in-a-callback>`_.
 
 .. code-block:: python
 
@@ -1193,8 +1193,8 @@ object of the same view class. To send events to multiple view classes
 handled by ``LonaView.on_view_event()``.
 
 View event handler can return
-`redirects </end-user-documentation/views.html#redirects>`_, even after
-`handle_request() </end-user-documentation/views.html#id2>`_ stopped.
+`redirects </api-reference/views.html#redirects>`_, even after
+`handle_request() </api-reference/views.html#id2>`_ stopped.
 
 .. code-block:: python
 
@@ -1226,7 +1226,7 @@ LonaView.show\(html=None, template=None, template_string=None, title=None, templ
     before, Lona sends only updates, not the entire HTML tree all over again.
 
     **More information on HTML trees:**
-    `HTML </end-user-documentation/html.html>`_
+    `HTML </api-reference/html.html>`_
 
 
 LonaView.set_title(title)
@@ -1247,7 +1247,7 @@ LonaView.await_input_event\(\*nodes, html=None\)
         ``LonaView.await_*`` blocks the current thread until a matching
         event gets send by the browser.
 
-        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        Read `Awaiting Input Events </api-reference/views.html#awaiting-input-events>`_
         for more information.
 
     Returns the next incoming input event.
@@ -1268,7 +1268,7 @@ LonaView.await_click\(\*nodes, html=None\)
         ``LonaView.await_*`` blocks the current thread until a matching
         event gets send by the browser.
 
-        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        Read `Awaiting Input Events </api-reference/views.html#awaiting-input-events>`_
         for more information.
 
     Returns the next incoming click event.
@@ -1288,7 +1288,7 @@ LonaView.await_change\(\*nodes, html=None\)
         ``LonaView.await_*`` blocks the current thread until a matching
         event gets send by the browser.
 
-        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        Read `Awaiting Input Events </api-reference/views.html#awaiting-input-events>`_
         for more information.
 
     Returns the next incoming change event.
@@ -1312,7 +1312,7 @@ LonaView.await_focus\(\*nodes, html=None\)
         ``LonaView.await_*`` blocks the current thread until a matching
         event gets send by the browser.
 
-        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        Read `Awaiting Input Events </api-reference/views.html#awaiting-input-events>`_
         for more information.
 
     Returns the next incoming focus event.
@@ -1336,7 +1336,7 @@ LonaView.await_blur\(\*nodes, html=None\)
         ``LonaView.await_*`` blocks the current thread until a matching
         event gets send by the browser.
 
-        Read `Awaiting Input Events </end-user-documentation/views.html#awaiting-input-events>`_
+        Read `Awaiting Input Events </api-reference/views.html#awaiting-input-events>`_
         for more information.
 
     Returns the next incoming blur event.
@@ -1370,7 +1370,7 @@ LonaView.daemonize\(\)
         you want to push a progress bar forward.
 
         If you want to create multi-user views, use
-        `view events </end-user-documentation/views.html?q=view_event#view-events>`_.
+        `view events </api-reference/views.html?q=view_event#view-events>`_.
 
 
 LonaView.is_daemon
@@ -1456,7 +1456,7 @@ LonaView.send_str\(string, broadcast=False, filter_connections=lambda connection
     connection message queues.
 
     **More information:**
-    `Sending custom messages </end-user-documentation/frontends.html#sending-custom-messages>`_
+    `Sending custom messages </api-reference/frontends.html#sending-custom-messages>`_
 
 
 LonaView.sleep\(\*\*args, \*\*kwargs\)
@@ -1501,4 +1501,4 @@ LonaView.embed_shell\(\)
 
     Embeds a `rlpython <https://pypi.org/project/rlpython/>`_ based shell.
     More info on shells:
-    `Debugging </end-user-documentation/debugging.html>`_.
+    `Debugging </api-reference/debugging.html>`_.

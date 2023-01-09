@@ -342,7 +342,7 @@ Locking
 
 Lona is multithreaded and up to three threads can be involved at the same time
 to run a view (more information:
-`Resource management </end-user-documentation/views.html#resource-management>`_)
+`Resource management </api-reference/views.html#resource-management>`_)
 
 To avoid race conditions between threads you can use
 ``lona.html.AbstractNode.lock``.
@@ -826,7 +826,7 @@ with template tags.
     {{ Lona.load_stylesheets() }}
 
 
-**More information:** `Frontends </end-user-documentation/frontends.html>`_
+**More information:** `Frontends </api-reference/frontends.html>`_
 
 
 Widgets

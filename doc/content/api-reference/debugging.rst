@@ -26,7 +26,7 @@ Lona Server Command Line Options
 .. note::
 
     When using a GNU make based project like in the
-    `Getting Started </end-user-documentation/getting-started.html>`_ you
+    `Getting Started </api-reference/getting-started.html>`_ you
     can use ``args=""`` to set command line options
 
     ``make server args="--host=0.0.0.0 --port=80 --shell"``
@@ -66,7 +66,7 @@ files together, to make Chrome Inspector work as expected.
 TEST_VIEW_START_TIMEOUT
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To test `View Start Timeouts </end-user-documentation/frontends.html#view-start-timeout>`_
+To test `View Start Timeouts </api-reference/frontends.html#view-start-timeout>`_
 you can set ``settings.TEST_VIEW_START_TIMEOUT`` to ``True`` or use
 ``-O TEST_VIEW_START_TIMEOUT=True`` from the command line.
 
@@ -78,7 +78,7 @@ started.
 TEST_INPUT_EVENT_TIMEOUT
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-To test `View Input Event Timeouts </end-user-documentation/frontends.html#input-event-timeout>`_
+To test `View Input Event Timeouts </api-reference/frontends.html#input-event-timeout>`_
 you can set ``settings.TEST_INPUT_EVENT_TIMEOUT`` to ``True`` or use
 ``-O TEST_INPUT_EVENT_TIMEOUT=True`` from the command line.
 
@@ -136,7 +136,7 @@ To attach run
     $ rlpython localhost:8080
 
 or if you use the project template from
-{{ link('end-user-documentation/getting-started.rst', 'Getting Started') }}
+{{ link('api-reference/getting-started.rst', 'Getting Started') }}
 you can run
 
 .. code-block:: txt

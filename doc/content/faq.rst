@@ -44,7 +44,7 @@ sense to make decisions, like if a button is clickable or not, there.
 There are cases where it makes more sense to handle events in Javascript
 directly, because they fire very often per second or have sensitive timing
 constrains. In this case you can add a
-`Frontend Widget </end-user-documentation/html.html#frontend-widgets>`_
+`Frontend Widget </api-reference/html.html#frontend-widgets>`_
 which can contain some Javascript code, to handle your events directly in the
 browser.
 
@@ -53,7 +53,7 @@ If your application has very sensitive timing constrains Lona will be the wrong
 tool. For "normal" interaction, the latency is not noticeable.
 
 To notice latencies the Lona Javascript client defines some
-`Hooks </end-user-documentation/frontends.html#view-start-timeout>`_. These
+`Hooks </api-reference/frontends.html#view-start-timeout>`_. These
 can be used to inform the user or the admin that the server is slow.
 
 

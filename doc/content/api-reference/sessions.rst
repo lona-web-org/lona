@@ -8,7 +8,7 @@ Lona has built-in, HTTP cookie based session system that provides user sessions
 without login. This makes personal daemonized views possible.
 
 **Settings:**
-`Session Settings </end-user-documentation/settings.html#sessions>`_
+`Session Settings </api-reference/settings.html#sessions>`_
 
 .. code-block:: python
 

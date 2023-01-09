@@ -47,7 +47,7 @@ python script.
     app.run(port=8080)
 
 **More information:**
-{{ link('end-user-documentation/lona-scripts.rst', 'Lona Scripts') }}
+{{ link('api-reference/lona-scripts.rst', 'Lona Scripts') }}
 
 
 Starting A Lona Project From The Project Template
@@ -112,7 +112,7 @@ view.
 The new view should now be accessible on ``http://localhost:8080/count-to-ten/``.
 
 **More information:**
-{{ link('end-user-documentation/views.rst', 'Views') }}
+{{ link('api-reference/views.rst', 'Views') }}
 
 
 Adding HTML and CSS

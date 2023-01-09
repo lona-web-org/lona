@@ -51,7 +51,7 @@ pythonic API to write self contained views.
     app.run(port=8080)
 
 **More information:**
-{{ link('end-user-documentation/getting-started.rst', 'Getting Started') }}
+{{ link('api-reference/getting-started.rst', 'Getting Started') }}
 
 
 How does it work?

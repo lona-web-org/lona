@@ -19,8 +19,8 @@ Adding A Frontend Library To Your Project
 
 Adding a frontend library to a Lona on a project basis works like in
 traditional web frameworks: You add your static files to a
-`static directory </end-user-documentation/frontends.html#loading-static-files>`_
-write a `custom frontend template </end-user-documentation/frontends.html#custom-templates>`_
+`static directory </api-reference/frontends.html#loading-static-files>`_
+write a `custom frontend template </api-reference/frontends.html#custom-templates>`_
 and produce the right HTML.
 
 .. code-block:: text
@@ -130,7 +130,7 @@ in ``Node.STATIC_FILES``.
 
 This example shows how a package of Bootstrap 5 buttons would look like.
 
-**More information:** `Adding Javascript And CSS To HTML Nodes </end-user-documentation/html.html#adding-javascript-and-css-to-frontend-widgets>`_
+**More information:** `Adding Javascript And CSS To HTML Nodes </api-reference/html.html#adding-javascript-and-css-to-frontend-widgets>`_
 
 .. code-block:: text
 

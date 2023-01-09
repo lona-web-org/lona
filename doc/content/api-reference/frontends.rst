@@ -163,7 +163,7 @@ On the server all messages get handled by middlewares.
             print(message)
 
 **More information:**
-`Middlewares </end-user-documentation/middlewares.html>`_
+`Middlewares </api-reference/middlewares.html>`_
 
 
 Server To Client

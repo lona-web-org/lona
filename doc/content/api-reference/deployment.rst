@@ -71,7 +71,7 @@ Deploying A Lona Script
 -----------------------
 
 In this section we will deploy a simple
-`Lona Script </end-user-documentation/lona-scripts.html>`_ using
+`Lona Script </api-reference/lona-scripts.html>`_ using
 `systemd <https://systemd.io/>`_ and `Apache2 <https://httpd.apache.org/>`_
 as `reverse proxy <https://en.wikipedia.org/wiki/Reverse_proxy>`_
 
@@ -176,12 +176,12 @@ Lona collects all static file at startup once and places them in
 ``/srv/lona/static`` to make them available for Apache.
 
 The Lona server service sets up a
-`Lona Shell Server </end-user-documentation/debugging.html#lona-shell>`_ using
+`Lona Shell Server </api-reference/debugging.html#lona-shell>`_ using
 a unix domain socket in ``/srv/lona/lona-project-template/lona_project`` for
 debugging and monitoring.
 
 When the project is deployed like defined here, you can attach a
-`Lona Shell </end-user-documentation/lona-shell.html>`_ when the server is
+`Lona Shell </api-reference/lona-shell.html>`_ when the server is
 running.
 
 .. code-block:: txt

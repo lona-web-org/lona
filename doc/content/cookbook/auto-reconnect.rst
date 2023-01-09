@@ -8,7 +8,7 @@ reconnects automatically when the server restarts.
 
 This example implements a simple clock that updates the current time once per
 second. The script adds a simple snipped to the frontend, which uses the
-`server disconnect hook </end-user-documentation/frontends.html#server-disconnect>`_
+`server disconnect hook </api-reference/frontends.html#server-disconnect>`_
 to try to reconnect the Lona client once per second, when the server restarts.
 
 

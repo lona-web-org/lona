@@ -50,7 +50,7 @@ Command Line Arguments
     ``--syslog-priorities`` and ``syslog_priorities`` were added in 1.8.3
 
 ``LonaApp.run()`` supports command line arguments, like
-`Lona Server </end-user-documentation/debugging.html#lona-server-command-line-options>`_,
+`Lona Server </api-reference/debugging.html#lona-server-command-line-options>`_,
 to make calls like ``python your-script.py --port=8081`` work.
 
 .. table::
@@ -80,7 +80,7 @@ LonaApp.run\(\) Arguments
     |syslog_priorities  |'auto'      |(Str) Adds syslog priorities to log [no,auto,always]
     |shutdown_timeout   |0           |(Int) aiohttp server shutdown timeout
     |shell              |False       |(Bool) Embed a shell in the same process as the server
-    |shell_server_url   |''          |(Str) Lona Shell Server URL<br>More information: <a href="/end-user-documentation/debugging.html#lona-shell">Lona Shell</a>
+    |shell_server_url   |''          |(Str) Lona Shell Server URL<br>More information: <a href="/api-reference/debugging.html#lona-shell">Lona Shell</a>
 
 
 Settings
@@ -89,7 +89,7 @@ Settings
 A Lona settings object is available in ``LonaApp.settings``.
 
 **More Information:**
-{{ link('end-user-documentation/settings.rst', 'Settings') }}
+{{ link('api-reference/settings.rst', 'Settings') }}
 
 .. code-block:: python
 
@@ -109,7 +109,7 @@ Views can be added by using the ``LonaApp.route()`` decorator or by setting
 ``LonaApp.route()`` takes the same arguments like ``lona.routing.Route``.
 
 **More information:**
-{{ link('end-user-documentation/views.rst', 'Views') }}
+{{ link('api-reference/views.rst', 'Views') }}
 
 .. code-block:: python
 
@@ -135,7 +135,7 @@ The frontend view can be set by using ``LonaApp.settings.FRONTEND_VIEW`` or
 by using the ``LonaApp.frontend_view()`` decorator.
 
 **More information:**
-`Writing A Custom Frontend </end-user-documentation/frontends.html#writing-a-custom-frontend-view>`_
+`Writing A Custom Frontend </api-reference/frontends.html#writing-a-custom-frontend-view>`_
 
 .. code-block:: python
 
@@ -160,7 +160,7 @@ setting ``LonaApp.settings.MIDDLEWARES`` to a list of middleware classes
 or import strings.
 
 **More information:**
-{{ link('end-user-documentation/middlewares.rst', 'Middlewares') }}
+{{ link('api-reference/middlewares.rst', 'Middlewares') }}
 
 .. code-block:: python
 
@@ -188,7 +188,7 @@ All paths, besides paths starting with ``/``, have to be relative to the python
 script.
 
 **More information on extending the frontend template:**
-`Custom Templates </end-user-documentation/frontends.html#custom-templates>`_
+`Custom Templates </api-reference/frontends.html#custom-templates>`_
 
 .. code-block:: python
 
@@ -242,7 +242,7 @@ Custom error views can be set using the decorators ``LonaApp.error_403_view``,
 ``LonaApp.error_404_view`` and ``LonaApp.error_500_view``.
 
 **More information on error views:**
-`Error Views </end-user-documentation/error-views.html>`_
+`Error Views </api-reference/error-views.html>`_
 
 .. code-block:: python
 

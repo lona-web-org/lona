@@ -14,10 +14,10 @@ on pytest-aiohttp. The plugin contains two fixtures:
 
 `lona_app_context <#lona-app-context-example>`_ spins up a test server using an
 API like the
-`Lona script interface </end-user-documentation/getting-started.html#running-lona-from-a-script>`_,
+`Lona script interface </api-reference/getting-started.html#running-lona-from-a-script>`_,
 `lona_project_context <#lona-project-context-example>`_ takes the project root
 and settings of a
-`Lona project </end-user-documentation/getting-started.html#starting-a-lona-project-from-the-project-template>`_
+`Lona project </api-reference/getting-started.html#starting-a-lona-project-from-the-project-template>`_
 to start the test server. Lona test servers run on an unprivileged random port.
 
 The Lona testing infrastructure is meant to be used together with a browser
@@ -105,7 +105,7 @@ LonaContext.app
 LonaContext.server
 ~~~~~~~~~~~~~~~~~~
 
-    Reference to the `Server </end-user-documentation/server.html>`_ object of
+    Reference to the `Server </api-reference/server.html>`_ object of
     the running test server.
 
 
@@ -169,7 +169,7 @@ Accessing View Variables From A Test
 
 To access the variables of a Lona view, you can get your running view object
 using
-`Server.get_views() </end-user-documentation/server.html#server-get-views>`_.
+`Server.get_views() </api-reference/server.html#server-get-views>`_.
 
 .. code-block:: python
 
