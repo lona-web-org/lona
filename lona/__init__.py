@@ -8,5 +8,5 @@ from .app import App as LonaApp
 from .view import View
 from .app import App
 
-VERSION = (1, 10, 5, 1)
+VERSION = (1, 11)
 VERSION_STRING = '.'.join(str(i) for i in VERSION)

@@ -748,7 +748,9 @@ Input Event Attributes
 
 .. note::
 
-    Added in 1.5: ``InputEvent.nodes``
+    **Added in 1.5:** ``InputEvent.nodes``
+
+    **Added in 1.11:** ``InputEvent.target_node``
 
 .. table::
 

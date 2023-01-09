@@ -6,6 +6,189 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.11 (2023-09-01)
+
+Changes
+~~~~~~~
+
+* HTML
+
+  * An initial value for ``Node.state`` now can be set while creating a node,
+    using ``Node(state={})``
+
+  * The ``AbstractNode`` class supports comparisons now
+
+    .. code-block:: python
+
+        >>> Div() == Div()            # True
+        >>> Div() is Div()            # False
+        >>> Div(a=1) == Div()         # False
+        >>> Span() == Div()           # False
+        >>> Div(Div()) == Div(Div())  # True
+
+  * ``index()`` in lists, in widget data was fixed
+
+    * Due a copy-paste issue, ``index()`` in lists, in ``WidgetData`` objects,
+      called ``count()`` instead of ``index()``, in their inner data
+      structures, in all Lona versions, prior to 1.11.
+
+* Input Events
+
+  * ``target_node`` attribute was added to the ``InputEvent`` class
+
+    * In JavaScript, when an event listener for a click event is attached to a
+      node, the resulting event can be originally issued by one of its child
+      nodes, but catched by the node that defined the event listener.
+
+      Previously, when setting up events on a Lona node, there was no way to
+      determine if an event was issued by this exact node or by one of its
+      child nodes.
+
+      This resulted in problems when using clickable nodes inside clickable
+      nodes, which can be a valid use-case, for example for clickable backdrops
+      that contain buttons.
+
+      To solve this problem, a new attribute, named ``target_node``, was added
+      to the ``InputEvent`` class, which is the equivalent to ``event.target``
+      in JavaScript.
+
+* Testing
+
+  * ``lona.pytest.LonaContext.debug_interactive``
+
+    * stdin and stdout capturing is now disabled during runtime
+
+      * ``lona.pytest.LonaContext.debug_interactive`` starts a rlpython shell
+        that reads and writes to stdin and stdout, which are captured by pytest
+        by default.
+
+        Previously this had to be disabled by hand, by setting ``-s`` in the
+        pytest command line (or respective pytest config variable) to make the
+        shell work.
+
+        ``lona.pytest.LonaContext.debug_interactive`` now disables pytests
+        capturing before rlpython starts, and reenables it after rlpython
+        stops.
+
+* Views
+
+  * Daemonizing support for short running views was added
+
+    * Previously daemonizing required views their ``handle_request()`` method
+      to run as long as they wanted to be daemonized, blocking one thread for
+      the entire lifetime of the view.
+
+      The view runtime checks got changed, so that daemonized views can be
+      finished without getting removed from the server.
+
+      Previously a view got daemonized by calling ``LonaView.daemonize()`` and
+      "undaemonized" and removed from the server by simply returning from
+      ``handle_request()``. ``LonaView`` now has a new boolean property, called
+      ``is_daemon``, which enables or disables if a view should be a daemon or
+      get removed from the server.
+
+      Because this potentially changes the flow of existing user application
+      code, the new behavior is only active when
+      ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES`` is set to ``False``, which
+      is set to ``True`` by default.
+
+
+Bugfixes
+~~~~~~~~
+
+* HTML
+
+  * Multiple tree unmounting and loop-detection issues were fixed
+
+    * Lona nodes have to be unique, because they are meant to represent exactly
+      one node in the browser DOM. This means, when a node gets mounted into a
+      node tree, it has to be unmounted at its previous parent node tree, if
+      present.
+
+      Previously this mechanism was flawed, and there were scenarios in which a
+      node could appear in multiple node trees, or appear multiple times in the
+      same node tree. In these cases the loop detection sometimes ended up in
+      an endless loop.
+
+* Client
+
+  * Handling of the default Lona window was fixed
+
+    * In Lona protocol, window ids are set by the client. The client holds an
+      id counter starting at ``1`` and increments it for every new window. If
+      reconnect is configured, like shown in
+      ``https://lona-web.org/1.x/cookbook/auto-reconnect.html``, the counter
+      gets incremented on every reconnect.
+
+      ``LonaContext`` defines
+      ``patch_input_events(root_node_selector, window_id)``, which is meant to
+      patch the input events on global navigation, or search-bars.
+      If no ``window_id`` is given, ``LonaContext.get_default_window()`` is
+      called, which previously always tried to return a window with the id
+      ``1``. This hard coded value worked until the first reconnect. After
+      that, ``LonaContext.get_default_window()`` returns ``undefined`` and this
+      JavaScript exception got thrown, when running
+      ``LonaContext.patch_input_events()``:
+
+      .. code-block::
+
+          Uncaught TypeError: Cannot read properties of undefined (reading '_input_event_handler')
+              at context.js:98:21
+              at NodeList.forEach (<anonymous>)
+              at LonaContext.patch_input_events (context.js:97:41)
+              at (index):125:24
+              at LonaContext._run_connect_hooks (context.js:131:13)
+              at _ws.onopen (context.js:324:31)
+
+      This issue was fixed, by changing ``LonaContext.get_default_window()`` to
+      always return the window with the lowest window id.
+
+  * Implementation of ``id_list.remove()`` was fixed
+
+    * The previous, client side, implementation of ``Node.id_list.remove()``
+      did not remove a specific id from the id list, but removed the last
+      id in the list.
+
+  * Class attribute clearing was fixed
+
+    * Previously the class attribute was cleared by setting its value to an
+      empty string, but that does not remove it completely. Now, the attribute
+      gets removed using ``Node.removeAttribute()`` in JavaScript.
+
+* Input Events
+
+  * Event bubbling in the browser client was fixed
+
+    * Previously the browser client did not stop the propagation of events
+      that were already send to the server. That meant that events continued
+      bubbling up the tree, getting catched and send to the server multiple
+      times.
+
+      This issue was fixed, by adding an ``event.stopPropagation`` call to
+      all intern input event listeners, to stop already catched input events
+      from bubbling up any further.
+
+* Testing
+
+  * ``lona.pytest.LonaContext.debug_interactive``
+
+    * ``locals`` vs. ``global`` issue was fixed
+
+      * All rlpython versions before 0.9 made a distinction between globals and
+        locals, which resulted in scoping issues. In
+
+        .. code-block::
+
+          128ff5bc9278 ("repl: fix locals and globals issues")
+          (https://github.com/fscherf/rlpython/commit/128ff5bc9278314f3f44e53773a1dfc4f4229ca6)
+
+        globals and locals were consolidated to replicate the behavior of the
+        Python standard REPL more closely.
+
+        The call into the rlpython API was changed, to accommodate for the
+        upstream fix.
+
+
 .. changelog-header:: 1.10.5.1 (2022-12-12)
 
 Bugfixes

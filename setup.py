@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 setup(
     include_package_data=True,
     name='lona',
-    version='1.10.5.1',
+    version='1.11',
     author='Florian Scherf',
     url='https://github.com/lona-web-org/lona',
     author_email='mail@florianscherf.de',

@@ -8,6 +8,18 @@ HTML API
 Nodes
 -----
 
+.. note::
+
+    **Changed in 1.11:** Nodes are comparable now
+
+    .. code-block:: python
+
+        >>> Div() == Div()            # True
+        >>> Div() is Div()            # False
+        >>> Div(a=1) == Div()         # False
+        >>> Span() == Div()           # False
+        >>> Div(Div()) == Div(Div())  # True
+
 In Lona every HTML element is represented as a python object, derived from
 ``lona.html.Node``.
 
@@ -388,6 +400,9 @@ State
 .. note::
 
     Added in 1.10
+
+    **Changed in 1.11:** ``Node.state`` now can be initialized using
+    ``Node(state={})``
 
 Lona nodes can store state that is not send to the client in
 ``node.state``. This data store can be used to transport state between
