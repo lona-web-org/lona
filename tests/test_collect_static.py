@@ -151,3 +151,73 @@ def test_non_empty_destinations():
         assert not os.path.exists(test_file_path)
         _check_javascript_client_src_files(destination=tmp_dir)
         _check_test_project_static_files(destination=tmp_dir)
+
+
+def test_overlapping_directories():
+    """
+    This test tests the handling of overlapping directories.
+
+    If a project has two static directories, containing overlapping paths,
+    the collect-static mechanism should override reoccurring paths.
+
+    Example:
+
+        Static Directory 1
+            /directory/file1.txt          <- should be present in the output
+            /directory/file2.txt          <- should be overridden in the output
+
+        Static Directory 2
+            /directory/file2.txt          <- should be present in the output
+    """
+
+    from lona.command_line.collect_static import collect_static
+
+    static_dir1 = TemporaryDirectory()
+    static_dir2 = TemporaryDirectory()
+    destination = TemporaryDirectory()
+
+    # setup tmp_dir1
+    os.makedirs(os.path.join(static_dir1.name, 'test-directory'))
+
+    path = os.path.join(static_dir1.name, 'test-directory/file1.txt')
+
+    with open(path, 'w+') as f:
+        f.write('tmp_dir1')
+
+    path = os.path.join(static_dir1.name, 'test-directory/file2.txt')
+
+    with open(path, 'w+') as f:
+        f.write('tmp_dir1')
+
+    # setup tmp_dir2
+    os.makedirs(os.path.join(static_dir2.name, 'test-directory'))
+
+    path = os.path.join(static_dir2.name, 'test-directory/file2.txt')
+
+    with open(path, 'w+') as f:
+        f.write('tmp_dir2')
+
+    # run collect static
+    args = _generate_command_line_args(
+        static_dirs=[
+            static_dir1.name,
+            static_dir2.name,
+        ],
+        destination=destination.name,
+        clean=False,
+    )
+
+    collect_static(args=args)
+
+    # run checks
+    file1 = os.path.join(destination.name, 'test-directory/file1.txt')
+    file2 = os.path.join(destination.name, 'test-directory/file2.txt')
+
+    assert os.path.exists(file1)
+    assert os.path.exists(file2)
+
+    file1_content = open(file1, 'r').read()
+    file2_content = open(file2, 'r').read()
+
+    assert file1_content == 'tmp_dir1'
+    assert file2_content == 'tmp_dir1'
