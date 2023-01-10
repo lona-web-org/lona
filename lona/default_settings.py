@@ -100,3 +100,4 @@ AIOHTTP_CLIENT_MAX_SIZE = 1024**2
 
 # feature flags
 STOP_DAEMON_WHEN_VIEW_FINISHES = True  # TODO: remove in 2.0
+CLIENT_VERSION = 1  # TODO: remove in 2.0

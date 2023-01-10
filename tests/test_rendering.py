@@ -1,8 +1,15 @@
 import pytest
 
 
-@pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
-async def test_rendering(browser_name, lona_project_context):
+@pytest.mark.parametrize('rendering_setup', [
+    'chromium:client-1',
+    'chromium:client-2',
+    'firefox:client-1',
+    'firefox:client-2',
+    'webkit:client-1',
+    'webkit:client-2',
+])
+async def test_rendering(rendering_setup, lona_project_context):
     """
     This test tests all client side rendering features, using the rendering
     test view in the test project.
@@ -33,9 +40,15 @@ async def test_rendering(browser_name, lona_project_context):
 
     TEST_PROJECT_PATH = os.path.join(__file__, '../../test_project')
 
+    browser_name, client_version = rendering_setup.split(':')
+    client_version = int(client_version[7:])
+
     context = await lona_project_context(
         project_root=TEST_PROJECT_PATH,
         settings=['settings.py'],
+        settings_post_overrides={
+            'CLIENT_VERSION': client_version,
+        },
     )
 
     async def next_step(page, number):

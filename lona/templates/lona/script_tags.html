@@ -1,5 +1,5 @@
 <script type="module">
-    import { Lona } from '{{ Lona.settings.STATIC_URL_PREFIX }}/_lona/client/lona.js';
+    import { Lona } from '{{ Lona.settings.STATIC_URL_PREFIX }}/_lona/client{% if Lona.client_version != 1 %}{{ Lona.client_version }}{% endif %}/lona.js';
 
     Lona.set_protocol(JSON.parse('{{ Lona.get_protocol_as_json() }}'));
     Lona.set_settings(JSON.parse('{{ Lona.get_settings_as_json() }}'));

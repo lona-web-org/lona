@@ -3,6 +3,7 @@ PYTHON_VENV=env
 
 LONA_SHELL_SERVER_URL=file://socket
 LONA_DEFAULT_ARGS=--shell-server-url=$(LONA_SHELL_SERVER_URL)
+CLIENT_VERSION=1
 
 all: server
 
@@ -23,7 +24,8 @@ shell: | $(PYTHON_VENV)
 
 server: | $(PYTHON_VENV)
 	. $(PYTHON_VENV)/bin/activate && \
-	lona run-server $(LONA_DEFAULT_ARGS) $(args) -s settings.py
+	lona run-server $(LONA_DEFAULT_ARGS) $(args) -s settings.py \
+		--settings-post-overrides CLIENT_VERSION=$(CLIENT_VERSION)
 
 server-shell: | $(PYTHON_VENV)
 	. $(PYTHON_VENV)/bin/activate && \

@@ -259,3 +259,15 @@ Feature Flags
 
     See `LonaView.is_daemon </end-user-documentation/views.html#lonaview-is-daemon>`_
     for details.
+
+.. setting::
+    :name: CLIENT_VERSION
+    :path: lona.default_settings.CLIENT_VERSION
+
+    Lona 2.0 will have a new JavaScript client implementation. The new
+    client can be used, in compatible Lona 1 projects, by setting this value to
+    ``2``.
+
+    The currently set client version can be checked, using
+    ``lona.compat.get_client_version()``, and in the frontend using
+    ``{{ Lona.client_version }}``.
