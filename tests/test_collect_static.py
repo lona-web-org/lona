@@ -47,11 +47,11 @@ def _check_javascript_client_src_files(destination: str) -> None:
 
     CLIENT_ROOT = os.path.join(
         os.path.dirname(lona.__file__),
-        'client/_lona',
+        'client/_lona/client/',
     )
 
     for client_src_file in os.listdir(CLIENT_ROOT):
-        abs_path = os.path.join(destination, '_lona/', client_src_file)
+        abs_path = os.path.join(destination, '_lona/client/', client_src_file)
 
         # check existence
         assert os.path.exists(abs_path)
