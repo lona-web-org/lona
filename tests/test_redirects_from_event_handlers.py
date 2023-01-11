@@ -1,12 +1,9 @@
-from lona.html import Widget, Button
+from lona.html import Button
 from lona import View
 
 
 def setup_app(app):
-    class RedirectWidget(Widget):
-        def __init__(self):
-            self.nodes = [Button()]
-
+    class RedirectButton(Button):
         def handle_input_event(self, input_event):
             return {
                 'redirect': '/',
@@ -26,10 +23,10 @@ def setup_app(app):
                 'redirect': '/',
             }
 
-    @app.route('/redirect-from-widget/')
-    class RedirectFromWidgetView(View):
+    @app.route('/redirect-from-button/')
+    class RedirectFromButtonView(View):
         def handle_request(self, request):
-            return RedirectWidget()
+            return RedirectButton()
 
     @app.route('/redirect-from-on-view-event/')
     class RedirectFromOnViewEvent(View):
@@ -73,12 +70,12 @@ async def test_redirects_from_event_handlers(lona_app_context):
         await page.wait_for_url('/redirect-from-handle-input-event/')
         await page.wait_for_url('/')
 
-        # test redirect from widget
+        # test redirect from button
         await page.goto(
-            context.make_url('/redirect-from-widget/'),
+            context.make_url('/redirect-from-button/'),
         )
 
-        await page.wait_for_url('/redirect-from-widget/')
+        await page.wait_for_url('/redirect-from-button/')
 
         await page.click('button')
 
