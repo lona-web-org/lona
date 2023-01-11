@@ -10,6 +10,7 @@ from lona.html import (
     H3,
     H2,
 )
+from lona.html.widgets import HTML as LegacyHTML
 from lona.static_files import Script
 from lona._json import dumps
 from lona import View
@@ -543,3 +544,85 @@ class RenderingTestView(View):
 
         component.widget_data['dict'] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4}
         component.update_state()
+
+    # legacy widgets ##########################################################
+    # TODO: remove in 2.0
+    def step_39(self):
+        self.set_step_label(39, 'Legacy Widgets: Setup')
+
+        self.rendering_root.clear()
+
+        self.rendering_root.nodes = [
+            LegacyHTML(
+                Div('1.1'),
+                Div('1.2'),
+            ),
+            Div('2.1'),
+            LegacyHTML(
+                Div('3.1'),
+                Div('3.2'),
+            ),
+        ]
+
+    def step_40(self):
+        self.set_step_label(40, 'Legacy Widgets: Append Nodes')
+
+        widget1 = self.rendering_root.nodes[0]
+        widget1.append(Div('1.3'))
+
+        widget2 = self.rendering_root.nodes[2]
+        widget2.append(Div('3.3'))
+
+        self.rendering_root.append(Div('4.1'))
+
+    def step_41(self):
+        self.set_step_label(41, 'Legacy Widgets: Set Nodes')
+
+        widget1 = self.rendering_root.nodes[0]
+        widget1.nodes[1] = Div('1.2.1')
+
+        widget1 = self.rendering_root.nodes[2]
+        widget1.nodes[1] = Div('3.2.1')
+
+    def step_42(self):
+        self.set_step_label(42, 'Legacy Widgets: Reset Nodes')
+
+        widget1 = self.rendering_root.nodes[0]
+
+        widget1.nodes = [
+            Div('1.1.1'),
+            Div('1.2.1'),
+            Div('1.3.1'),
+        ]
+
+        self.rendering_root[1] = Div('2.1.1')
+
+        widget2 = self.rendering_root.nodes[2]
+
+        widget2.nodes = [
+            Div('3.1.1'),
+            Div('3.2.1'),
+            Div('3.3.1'),
+        ]
+
+        self.rendering_root[3] = Div('4.1.1')
+
+    def step_43(self):
+        self.set_step_label(43, 'Legacy Widgets: Insert Nodes')
+
+        widget1 = self.rendering_root[0]
+        widget1.nodes.insert(2, Div('1.2.1.1'))
+
+        self.rendering_root.insert(2, Div('2.2'))
+
+        widget2 = self.rendering_root[3]
+        widget2.nodes.insert(2, Div('3.2.1.1'))
+
+    def step_44(self):
+        self.set_step_label(44, 'Legacy Widgets: Remove Nodes')
+
+        widget1 = self.rendering_root[0]
+        widget1.nodes.pop(2)
+
+        widget2 = self.rendering_root[3]
+        widget2.nodes.pop(2)

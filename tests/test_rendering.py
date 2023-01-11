@@ -18,6 +18,10 @@ async def test_rendering(browser_name, lona_project_context):
     the clients style attributes, because Lona does not define defaults for
     properties that are not set by the user. In the browser all CSS properties
     always have a value.
+
+    TODO: remove in 2.0
+    This test has a last phase, that tests node-list operations using the
+    legacy widget API.
     """
 
     import json
@@ -172,3 +176,16 @@ async def test_rendering(browser_name, lona_project_context):
             )
 
             assert server_widget_data == client_widget_data
+
+        # legacy widgets tests ################################################
+        # TODO: remove in 2.0
+
+        for step in range(39, 45):
+            await next_step(page, step)
+
+            client_html_string = await rendering_root_element.inner_html()
+
+            client_html = HTML(client_html_string)
+            server_html = HTML(str(context.server.state['rendering-root']))[0]
+
+            assert client_html.nodes == server_html.nodes
