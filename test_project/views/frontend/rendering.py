@@ -604,7 +604,7 @@ class RenderingTestView(View):
     # legacy widgets ##########################################################
     # TODO: remove in 2.0
 
-    @client_version(1, 2)
+    @client_version(1)
     def step_39(self):
         self.set_step_label(39, 'Legacy Widgets: Setup')
 
@@ -622,7 +622,7 @@ class RenderingTestView(View):
             ),
         ]
 
-    @client_version(1, 2)
+    @client_version(1)
     def step_40(self):
         self.set_step_label(40, 'Legacy Widgets: Append Nodes')
 
@@ -634,7 +634,7 @@ class RenderingTestView(View):
 
         self.rendering_root.append(Div('4.1'))
 
-    @client_version(1, 2)
+    @client_version(1)
     def step_41(self):
         self.set_step_label(41, 'Legacy Widgets: Set Nodes')
 
@@ -644,7 +644,7 @@ class RenderingTestView(View):
         widget1 = self.rendering_root.nodes[2]
         widget1.nodes[1] = Div('3.2.1')
 
-    @client_version(1, 2)
+    @client_version(1)
     def step_42(self):
         self.set_step_label(42, 'Legacy Widgets: Reset Nodes')
 
@@ -668,7 +668,7 @@ class RenderingTestView(View):
 
         self.rendering_root[3] = Div('4.1.1')
 
-    @client_version(1, 2)
+    @client_version(1)
     def step_43(self):
         self.set_step_label(43, 'Legacy Widgets: Insert Nodes')
 
@@ -680,7 +680,7 @@ class RenderingTestView(View):
         widget2 = self.rendering_root[3]
         widget2.nodes.insert(2, Div('3.2.1.1'))
 
-    @client_version(1, 2)
+    @client_version(1)
     def step_44(self):
         self.set_step_label(44, 'Legacy Widgets: Remove Nodes')
 

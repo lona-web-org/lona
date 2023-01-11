@@ -270,4 +270,19 @@ Feature Flags
 
     The currently set client version can be checked, using
     ``lona.compat.get_client_version()``, and in the frontend using
-    ``{{ Lona.client_version }}``.
+    ``Lona.client_version``.
+
+    When the new client gets used:
+
+        * All HTML components have to have exactly one root node (Widgets
+          supported multiple root nodes until Lona 2)
+
+        * ``lona.html.Widget`` objects are no longer supported, and can not
+          be rendered in the browser
+
+        * ``lona.html.HTML`` no longer returns a widget but exactly one
+          ``lona.html.AbstractNode``.
+
+          When ``lona.html.HTML`` gets initialized with multiple nodes, or
+          the parsing result contains multiple nodes on the first level,
+          ``lona.html.HTML`` wraps all nodes into one ``div`` node

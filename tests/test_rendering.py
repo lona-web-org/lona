@@ -36,7 +36,8 @@ async def test_rendering(rendering_setup, lona_project_context):
 
     from playwright.async_api import async_playwright
 
-    from lona.html import HTML
+    from lona.compat import get_client_version
+    from lona.html import Widget, HTML
 
     TEST_PROJECT_PATH = os.path.join(__file__, '../../test_project')
 
@@ -115,7 +116,10 @@ async def test_rendering(rendering_setup, lona_project_context):
             html_string = await rendering_root_element.inner_html()
 
             # parse and compare html
-            html = HTML(f'<div id="rendering-root">{html_string}</div>')[0]
+            html = HTML(f'<div id="rendering-root">{html_string}</div>')
+
+            if isinstance(html, Widget):
+                html = html[0]
 
             assert html.nodes == context.server.state['rendering-root'].nodes
 
@@ -192,6 +196,9 @@ async def test_rendering(rendering_setup, lona_project_context):
 
         # legacy widgets tests ################################################
         # TODO: remove in 2.0
+
+        if get_client_version() != 1:
+            return
 
         for step in range(39, 45):
             await next_step(page, step)
