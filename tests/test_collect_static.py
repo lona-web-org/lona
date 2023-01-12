@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from tempfile import TemporaryDirectory
 from argparse import Namespace
+from typing import List
 import os
 
 TEST_PROJECT_PATH = os.path.join(
@@ -11,15 +14,16 @@ TEST_PROJECT_PATH = os.path.join(
 def _generate_command_line_args(
         destination: str,
         clean: bool = False,
+        static_dirs: List[str] | None = None,
 ) -> Namespace:
 
-    return Namespace(
+    namespace = Namespace(
 
         # basic configuration
         project_root=TEST_PROJECT_PATH,
         settings=['settings.py'],
-        settings_pre_overrides=[],
-        settings_post_overrides=[],
+        settings_pre_overrides={},
+        settings_post_overrides={},
         debug_mode='',
         log_level='info',
         loggers=[],
@@ -31,6 +35,11 @@ def _generate_command_line_args(
         silent=False,
         dry_run=False,
     )
+
+    if static_dirs:
+        namespace.settings_post_overrides['STATIC_DIRS'] = static_dirs
+
+    return namespace
 
 
 def _check_javascript_client_src_files(destination: str) -> None:
