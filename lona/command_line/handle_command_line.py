@@ -45,6 +45,7 @@ def handle_command_line(argv):
     )
 
     # the keyword 'required' is not available in python versions lower than 3.7
+    # TODO: remove after Python3.7 was removed
     if sys.version_info < (3, 7):
         sub_parsers = parser.add_subparsers(
             dest='command',
@@ -229,6 +230,7 @@ def handle_command_line(argv):
     args = parser.parse_args(argv[1:])
 
     # this can happen on python versions lower than 3.7
+    # TODO: remove after Python3.7 was removed
     if not args.command:
         exit('no sub command was given')
 
