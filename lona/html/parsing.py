@@ -144,7 +144,7 @@ class NodeHTMLParser(HTMLParser):
         node_kwargs['self_closing_tag'] = self_closing
 
         # setup node
-        for key in ('id', 'class', 'style'):
+        for key in ('id', 'class', 'style', 'value'):
             if key in node_attributes:
                 node_kwargs[key] = node_attributes.pop(key)
 
