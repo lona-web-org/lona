@@ -21,7 +21,15 @@ class Select(Node):
 
     def handle_input_event(self, input_event):
         if input_event.name == 'change':
-            self.value = input_event.data
+            new_value = []
+
+            for index, value in enumerate(self.values):
+                if index not in input_event.data:
+                    continue
+
+                new_value.append(value[0])
+
+            self.value = new_value
 
             input_event = self.handle_change(input_event)
 

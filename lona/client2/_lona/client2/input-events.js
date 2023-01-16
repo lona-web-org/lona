@@ -59,14 +59,17 @@ export class LonaInputEventHandler {
         if(node.getAttribute('type') == 'checkbox') {
             value = node.checked;
 
-        // select multiple
-        } else if(node.type == 'select-multiple') {
+        // select
+        } else if(node.type == 'select-one' ||
+                  node.type == 'select-multiple') {
+
+            var options = Array.from(node.options);
+
             value = [];
 
             Array.from(node.selectedOptions).forEach(option => {
-                value.push(option.value);
+                value.push(options.indexOf(option));
             });
-
         };
 
         return value;
