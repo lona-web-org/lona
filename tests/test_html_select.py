@@ -60,6 +60,25 @@ async def test_selects(browser_name, client_version, lona_app_context):
                 self.await_change(select)
                 test_data['select/pre-selected'] = select.value
 
+        @app.route('/select/value-types/')
+        class ValueTypes(View):
+            def handle_request(self, request):
+                select = Select(
+                    values=[
+                        (1,   'Integer'),
+                        (1.0, 'Float'),
+                        ('1', 'String'),
+                    ],
+                    bubble_up=True,
+                )
+
+                test_data['select/value-types'] = select.value
+
+                self.show(select)
+
+                self.await_change(select)
+                test_data['select/value-types'] = select.value
+
         # multi select ########################################################
         @app.route('/multi-select/nothing-selected/')
         class MultiSelectNothingSelected(View):
@@ -155,6 +174,46 @@ async def test_selects(browser_name, client_version, lona_app_context):
         for attempt in eventually():
             async with attempt:
                 assert test_data['select/pre-selected'] == 'foo'
+
+        # select / value types ################################################
+        # integer
+        await page.goto(context.make_url('/select/value-types/'))
+        await page.wait_for_selector('select')
+
+        await page.select_option('select', label='Integer')
+        selected_options = await page.eval_on_selector('select', GET_OPTIONS)
+
+        assert selected_options == ['1']
+
+        for attempt in eventually():
+            async with attempt:
+                assert test_data['select/value-types'] == '1'
+
+        # float
+        await page.goto(context.make_url('/select/value-types/'))
+        await page.wait_for_selector('select')
+
+        await page.select_option('select', label='Float')
+        selected_options = await page.eval_on_selector('select', GET_OPTIONS)
+
+        assert selected_options == ['1.0']
+
+        for attempt in eventually():
+            async with attempt:
+                assert test_data['select/value-types'] == '1.0'
+
+        # string
+        await page.goto(context.make_url('/select/value-types/'))
+        await page.wait_for_selector('select')
+
+        await page.select_option('select', label='String')
+        selected_options = await page.eval_on_selector('select', GET_OPTIONS)
+
+        assert selected_options == ['1']
+
+        for attempt in eventually():
+            async with attempt:
+                assert test_data['select/value-types'] == '1'
 
         # multi / nothing selected ############################################
         # initial value
