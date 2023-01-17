@@ -1,4 +1,5 @@
 from playwright.async_api import async_playwright
+import pytest
 
 from lona.pytest import eventually
 from lona.html import Select
@@ -7,7 +8,9 @@ from lona import View
 GET_OPTIONS = 'e => Array.from(e.selectedOptions).map(option => option.value)'
 
 
-async def test_selects(lona_app_context):
+@pytest.mark.parametrize('client_version', [1, 2])
+@pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
+async def test_selects(browser_name, client_version, lona_app_context):
     """
     This test tests HTML selects and multi selects, with and without pre
     selections, using a browser.
@@ -16,6 +19,7 @@ async def test_selects(lona_app_context):
     test_data = {}
 
     def setup_app(app):
+        app.settings.CLIENT_VERSION = client_version
 
         # select ##############################################################
         @app.route('/select/nothing-selected/')
@@ -100,7 +104,7 @@ async def test_selects(lona_app_context):
     context = await lona_app_context(setup_app)
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await getattr(p, browser_name).launch()
         browser_context = await browser.new_context()
         page = await browser_context.new_page()
 
