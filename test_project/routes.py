@@ -78,6 +78,59 @@ routes = [
           'views/responses/non_interactive_dict.py::CustomHeadersResponseView',
           interactive=False),
 
+    # responses
+    # interactive
+    Route('/responses/interactive/',
+          'views/responses/interactive.py::InteractiveView'),
+
+    # non-interactive
+    Route('/responses/non-interactive/',
+          'views/responses/non_interactive.py::NonInteractiveView'),
+
+    Route('/responses/non-interactive/empty-response',
+          'views/responses/non_interactive.py::EmptyResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/node-response',
+          'views/responses/non_interactive.py::NodeResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/string-response',
+          'views/responses/non_interactive.py::StringResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/template-response',
+          'views/responses/non_interactive.py::TemplateResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/template-string-response',
+          'views/responses/non_interactive.py::TemplateStringResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/redirect-response',
+          'views/responses/non_interactive.py::RedirectResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/http-redirect-response',
+          'views/responses/non_interactive.py::HttpRedirectResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/file-response',
+          'views/responses/non_interactive.py::FileResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/json-response',
+          'views/responses/non_interactive.py::JsonResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/binary-response',
+          'views/responses/non_interactive.py::BinaryResponseView',
+          interactive=False),
+
+    Route('/responses/non-interactive/custom-headers-response',
+          'views/responses/non_interactive.py::CustomHeadersResponseView',
+          interactive=False),
+
     # permissions
     Route('/permissions/access-denied-in-PermissionMiddleware/',
           'views/permissions/denied_in_middleware.py::View'),

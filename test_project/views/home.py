@@ -16,8 +16,10 @@ class HomeView(View):
 
             <h2>Responses</h2>
             <ul>
-                <li><a href="/dict-responses/interactive/">Interactive dict</a></li>
-                <li><a href="/dict-responses/non-interactive/">Non-Interactive dict</a></li>
+                <li><a href="/dict-responses/interactive/">Interactive (dict)</a></li>
+                <li><a href="/dict-responses/non-interactive/">Non-Interactive (dict)</a></li>
+                <li><a href="/responses/interactive/">Interactive</a></li>
+                <li><a href="/responses/non-interactive/">Non-Interactive</a></li>
             </ul>
 
             <h2>Permissions</h2>

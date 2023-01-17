@@ -22,7 +22,7 @@ async def get_exception_info(page):
     return info
 
 
-@pytest.mark.parametrize('url_prefix', ['dict-'])
+@pytest.mark.parametrize('url_prefix', ['dict-', ''])
 @pytest.mark.parametrize('client_version', [1, 2])
 @pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
 async def test_interactive_responses(
@@ -141,7 +141,7 @@ async def test_interactive_responses(
         assert exception_info['args'] == "('JSON, binary and file responses and headers are only available in non-interactive mode',)"
 
 
-@pytest.mark.parametrize('url_prefix', ['dict-'])
+@pytest.mark.parametrize('url_prefix', ['dict-', ''])
 async def test_non_interactive_responses(url_prefix, lona_project_context):
     import os
 

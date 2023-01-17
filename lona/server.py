@@ -14,6 +14,7 @@ import os
 
 from aiohttp.web import (
     WebSocketResponse,
+    json_response,
     FileResponse,
     Application,
     HTTPFound,
@@ -23,11 +24,20 @@ from typing_extensions import Literal
 from aiohttp import WSMsgType
 from jinja2 import Template
 
+from lona.responses import (
+    TemplateStringResponse,
+    HttpRedirectResponse,
+    TemplateResponse,
+    RedirectResponse,
+    JsonResponse,
+    HtmlResponse,
+)
 from lona.compat import set_use_future_node_classes, set_client_version
 from lona.view_runtime_controller import ViewRuntimeController
+from lona.responses import FileResponse as LonaFileResponse
 from lona.middleware_controller import MiddlewareController
 from lona.static_file_loader import StaticFileLoader
-from lona.response_parser import ResponseParser
+from lona.responses import Response as LonaResponse
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
 from lona.worker_pool import WorkerPool
@@ -170,11 +180,6 @@ class Server:
 
         self._view_loader = ViewLoader(self)
 
-        # setup response parser
-        server_logger.debug('setup response parser')
-
-        self._response_parser = ResponseParser(self)
-
         # setup views
         server_logger.debug('setup view runtime controller')
 
@@ -289,31 +294,95 @@ class Server:
             self._websocket_connections.remove(connection)
 
     # view helper #############################################################
-    def _render_response(self, response_dict):
-        if response_dict['file']:
-            return FileResponse(response_dict['file'])
+    def _render_response(self, lona_response):
+        status = 200
+        content_type = 'text/html'
 
-        if response_dict['redirect']:
-            raise HTTPFound(response_dict['redirect'])
-
-        if response_dict['http_redirect']:
-            raise HTTPFound(response_dict['http_redirect'])
-
-        default_headers = {
+        headers = {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
         }
 
-        headers = response_dict['headers'] or default_headers
+        # empty response
+        if lona_response is None:
+            return Response(
+                status=status,
+                content_type=content_type,
+                headers=headers,
+                text='',
+            )
 
-        response = Response(
-            status=response_dict['status'],
-            content_type=response_dict['content_type'],
-            text=response_dict['text'],
-            body=response_dict['body'],
-            headers=headers,
+        # html responses
+        if isinstance(lona_response, HtmlResponse):
+            return Response(
+                text=str(lona_response.html),
+                status=lona_response.status or status,
+                content_type=lona_response.content_type or content_type,
+                headers=lona_response.headers or headers,
+            )
+
+        # template response
+        if isinstance(lona_response, TemplateResponse):
+            text = self.render_template(
+                template_name=lona_response.name,
+                template_context=lona_response.context,
+            )
+
+            return Response(
+                text=text,
+                status=lona_response.status or status,
+                content_type=lona_response.content_type or content_type,
+                headers=lona_response.headers or headers,
+            )
+
+        # template string response
+        if isinstance(lona_response, TemplateStringResponse):
+            text = self.render_string(
+                template_string=lona_response.string,
+                template_context=lona_response.context,
+            )
+
+            return Response(
+                text=text,
+                status=lona_response.status or status,
+                content_type=lona_response.content_type or content_type,
+                headers=lona_response.headers or headers,
+            )
+
+        # redirect responses
+        if isinstance(lona_response, (RedirectResponse, HttpRedirectResponse)):
+            raise HTTPFound(
+                location=lona_response.url,
+                headers=lona_response.headers or headers,
+            )
+
+        # json responses
+        if isinstance(lona_response, JsonResponse):
+            content_type = 'application/json'
+
+            return json_response(
+                data=lona_response.data,
+                status=lona_response.status or status,
+                content_type=lona_response.content_type or content_type,
+                headers=lona_response.headers or headers,
+            )
+
+        # file response
+        if isinstance(lona_response, LonaFileResponse):
+            return FileResponse(
+                path=lona_response.path,
+                status=lona_response.status or status,
+                headers=lona_response.headers or headers,
+            )
+
+        # fallback
+        return Response(
+            status=lona_response.status or status,
+            content_type=lona_response.content_type or content_type,
+            headers=lona_response.headers or headers,
+            charset=lona_response.charset,
+            body=lona_response.body,
+            text=lona_response.text,
         )
-
-        return response
 
     # handle http requests ####################################################
     async def _handle_static_file_request(self, request):
@@ -465,7 +534,7 @@ class Server:
                 response = await response
 
             # render and return response
-            if isinstance(response, dict):
+            if isinstance(response, LonaResponse):
                 return await self.run_function_async(
                     self._render_response,
                     response,
@@ -499,7 +568,7 @@ class Server:
         # connection got closed by middleware
         if handled:
             if data is not None:
-                if isinstance(data, dict):
+                if isinstance(data, LonaResponse):
                     return self._render_response(data)
 
                 return data
@@ -508,7 +577,7 @@ class Server:
 
         post_data = await http_request.post()
 
-        response_dict = await self.run_function_async(
+        response = await self.run_function_async(
             self._view_runtime_controller.handle_view_message,
             connection=connection,
             window_id=None,
@@ -518,7 +587,7 @@ class Server:
             executor_name='runtime_worker',
         )
 
-        return self._render_response(response_dict)
+        return self._render_response(response)
 
     # public api ##############################################################
     @overload

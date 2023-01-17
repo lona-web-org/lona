@@ -6,6 +6,7 @@ import logging
 from yarl import URL
 
 from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
+from lona.responses import parse_view_return_value, Response
 from lona.protocol import encode_http_redirect, METHOD
 from lona.events.view_event import ViewEvent
 from lona.exceptions import ServerStop
@@ -257,17 +258,17 @@ class ViewRuntimeController:
             )
 
         # run middlewares
-        response_dict = view_runtime.run_middlewares(
+        response = view_runtime.run_middlewares(
             connection=connection,
             window_id=window_id,
             url=url,
         )
 
         # request got handled by a middleware
-        if response_dict:
+        if response:
             views_logger.debug('connection was refused by middleware')
 
-            return response_dict
+            return response
 
         self._view_runtimes[view_runtime.view_runtime_id] = view_runtime
 
@@ -287,14 +288,14 @@ class ViewRuntimeController:
             )
 
         else:
-            response_dict = view_runtime.start()
+            response = view_runtime.start()
 
             # Non interactive runtimes don't have to be held in memory, after
             # handle_request() finished, because they can't be daemonized or
             # receive input events.
             self.remove_view_runtime(view_runtime)
 
-            return response_dict
+            return response
 
         views_logger.debug('message handled')
 
@@ -357,7 +358,10 @@ class ViewRuntimeController:
                 view_event,
             )
 
-            return_value = view_runtime.view.on_view_event(view_event)
+            return_value = parse_view_return_value(
+                return_value=view_runtime.view.on_view_event(view_event),
+                interactive=view_runtime.interactive,
+            )
 
         except Exception:
             view_events_logger.exception(
@@ -367,20 +371,14 @@ class ViewRuntimeController:
 
             return
 
-        if not isinstance(return_value, (dict, type(None))):
+        if not isinstance(return_value, (Response, type(None))):
             exception = ValueError(f'{repr(view_runtime.view.on_view_event)} returned an unexpected type ({repr(return_value)})')
 
             view_runtime.issue_500_error(exception)
 
-        if isinstance(return_value, dict):
-            response_parser = self.server._response_parser
-
+        if isinstance(return_value, Response):
             try:
-                response_dict = response_parser.parse_event_response_dict(
-                    return_value,
-                )
-
-                view_runtime.handle_raw_response_dict(response_dict)
+                view_runtime.handle_response(response=return_value)
 
             except Exception as exception:
                 view_runtime.issue_500_error(exception)
