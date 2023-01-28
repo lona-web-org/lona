@@ -15,13 +15,21 @@
         <td id="application-started">-</td>
       </tr>
       <tr>
-        <th>Loaded Nodes:</th>
-        <td id="loaded-nodes">-</td>
+        {# TODO: remove in 2.0 #}
+        <th>Client Version:</th>
+        <td>{{ Lona.client_version }}</td>
       </tr>
-      <tr>
-        <th>Loaded Widgets:</th>
-        <td id="loaded-widgets">-</td>
-      </tr>
+      {# TODO: remove in 2.0 #}
+      {% if Lona.client_version == 1 %}
+        <tr>
+          <th>Loaded Nodes:</th>
+          <td id="loaded-nodes">-</td>
+        </tr>
+        <tr>
+          <th>Loaded Widgets:</th>
+          <td id="loaded-widgets">-</td>
+        </tr>
+      {% endif %}
     </table>
 
     <br />
@@ -29,7 +37,10 @@
     <div id="lona-links">
       <a href="/">Home</a> |
       <a href="/" data-lona-ignore="True">Reload Application</a> |
-      <a href="#" data-lona-ignore="True" id="enable-rendering-statistics">Enable Rendering Statistics</a>
+      {# TODO: remove in 2.0 #}
+      {% if Lona.client_version == 1 %}
+        <a href="#" data-lona-ignore="True" id="enable-rendering-statistics">Enable Rendering Statistics</a>
+      {% endif %}
     </div>
 
     <hr />
@@ -132,25 +143,28 @@
           show_message('Waiting for server...');
         });
 
-        // rendering statistics -----------------------------------------------
-        document.querySelector('#enable-rendering-statistics').onclick = function(event) {
-          event.preventDefault();
+        {# TODO: remove in 2.0 #}
+        {% if Lona.client_version == 1 %}
+          // rendering statistics ---------------------------------------------
+          document.querySelector('#enable-rendering-statistics').onclick = function(event) {
+            event.preventDefault();
 
-          var loaded_nodes = document.querySelector('#loaded-nodes');
-          var loaded_widgets = document.querySelector('#loaded-widgets');
+            var loaded_nodes = document.querySelector('#loaded-nodes');
+            var loaded_widgets = document.querySelector('#loaded-widgets');
 
-          loaded_nodes.innerHTML = '';
-          loaded_widgets.innerHTML = '';
+            loaded_nodes.innerHTML = '';
+            loaded_widgets.innerHTML = '';
 
-          lona_context.add_rendering_hook(function(lona_window) {
-            var default_window = lona_context.get_default_window();
+            lona_context.add_rendering_hook(function(lona_window) {
+              var default_window = lona_context.get_default_window();
 
-            loaded_nodes.innerHTML = Object.keys(default_window._nodes).length;
-            loaded_widgets.innerHTML = Object.keys(default_window._widget_marker).length;
-          });
+              loaded_nodes.innerHTML = Object.keys(default_window._nodes).length;
+              loaded_widgets.innerHTML = Object.keys(default_window._widget_marker).length;
+            });
 
-          return false;
-        };
+            return false;
+          };
+        {% endif %}
 
         lona_context.setup();
 

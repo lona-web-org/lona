@@ -15,6 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from lona.server import Server
 
 CLIENT_ROOT = os.path.join(os.path.dirname(__file__), 'client')
+CLIENT2_ROOT = os.path.join(os.path.dirname(__file__), 'client2')
 
 logger = logging.getLogger('lona.static_file_loader')
 
@@ -27,6 +28,7 @@ class StaticFileLoader:
             *self.server.settings.STATIC_DIRS,
             *self.server.settings.CORE_STATIC_DIRS,
             CLIENT_ROOT,
+            CLIENT2_ROOT,
         ]
 
         # resolving potential relative paths

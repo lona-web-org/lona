@@ -29,6 +29,7 @@ from lona.static_file_loader import StaticFileLoader
 from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
+from lona.compat import set_client_version
 from lona.worker_pool import WorkerPool
 from lona.view_loader import ViewLoader
 from lona.routing import Router, Route
@@ -94,6 +95,10 @@ class Server:
             server_logger.debug('applying settings post overrides')
 
             self.settings.update(settings_post_overrides)
+
+        # set client version
+        # TODO: remove in 2.0
+        set_client_version(self.settings.CLIENT_VERSION)
 
         # setup aiohttp app
         server_logger.debug("starting server in '%s'", project_root)

@@ -1,8 +1,15 @@
 import pytest
 
 
-@pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
-async def test_rendering(browser_name, lona_project_context):
+@pytest.mark.parametrize('rendering_setup', [
+    'chromium:client-1',
+    'chromium:client-2',
+    'firefox:client-1',
+    'firefox:client-2',
+    'webkit:client-1',
+    'webkit:client-2',
+])
+async def test_rendering(rendering_setup, lona_project_context):
     """
     This test tests all client side rendering features, using the rendering
     test view in the test project.
@@ -18,6 +25,10 @@ async def test_rendering(browser_name, lona_project_context):
     the clients style attributes, because Lona does not define defaults for
     properties that are not set by the user. In the browser all CSS properties
     always have a value.
+
+    TODO: remove in 2.0
+    This test has a last phase, that tests node-list operations using the
+    legacy widget API.
     """
 
     import json
@@ -25,13 +36,20 @@ async def test_rendering(browser_name, lona_project_context):
 
     from playwright.async_api import async_playwright
 
-    from lona.html import HTML
+    from lona.compat import get_client_version
+    from lona.html import Widget, HTML
 
     TEST_PROJECT_PATH = os.path.join(__file__, '../../test_project')
+
+    browser_name, client_version = rendering_setup.split(':')
+    client_version = int(client_version[7:])
 
     context = await lona_project_context(
         project_root=TEST_PROJECT_PATH,
         settings=['settings.py'],
+        settings_post_overrides={
+            'CLIENT_VERSION': client_version,
+        },
     )
 
     async def next_step(page, number):
@@ -98,7 +116,10 @@ async def test_rendering(browser_name, lona_project_context):
             html_string = await rendering_root_element.inner_html()
 
             # parse and compare html
-            html = HTML(f'<div id="rendering-root">{html_string}</div>')[0]
+            html = HTML(f'<div id="rendering-root">{html_string}</div>')
+
+            if isinstance(html, Widget):
+                html = html[0]
 
             assert html.nodes == context.server.state['rendering-root'].nodes
 
@@ -172,3 +193,19 @@ async def test_rendering(browser_name, lona_project_context):
             )
 
             assert server_widget_data == client_widget_data
+
+        # legacy widgets tests ################################################
+        # TODO: remove in 2.0
+
+        if get_client_version() != 1:
+            return
+
+        for step in range(39, 45):
+            await next_step(page, step)
+
+            client_html_string = await rendering_root_element.inner_html()
+
+            client_html = HTML(client_html_string)
+            server_html = HTML(str(context.server.state['rendering-root']))[0]
+
+            assert client_html.nodes == server_html.nodes

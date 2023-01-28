@@ -10,9 +10,22 @@ from lona.html import (
     H3,
     H2,
 )
+from lona.html.widgets import HTML as LegacyHTML
+from lona.compat import get_client_version
 from lona.static_files import Script
 from lona._json import dumps
 from lona import View
+
+
+def client_version(*client_versions):
+    # TODO: remove in 2.0
+
+    def decorator(step):
+        step.client_versions = client_versions
+
+        return step
+
+    return decorator
 
 
 class WidgetDataTestComponent(Div):
@@ -253,25 +266,32 @@ class RenderingTestView(View):
 
     def get_rendering_steps(self):
         steps = []
+        client_version = get_client_version()
 
         for attribute_name in dir(self):
             if not attribute_name.startswith('step_'):
                 continue
 
-            steps.append(getattr(self, attribute_name))
+            step = getattr(self, attribute_name)
+
+            if client_version not in step.client_versions:
+                continue
+
+            steps.append(step)
 
         return steps
 
     def run_next_step(self):
-        step = self.steps[self.current_step_index]
+        with self.html.lock:
+            step = self.steps[self.current_step_index]
 
-        step()
-        self.html_console.update()
+            step()
+            self.html_console.update()
 
-        self.current_step_index += 1
+            self.current_step_index += 1
 
-        if self.current_step_index >= len(self.steps):
-            self.current_step_index = 0
+            if self.current_step_index >= len(self.steps):
+                self.current_step_index = 0
 
     def set_step_label(self, step_number, label_text):
         with self.html.lock:
@@ -290,293 +310,382 @@ class RenderingTestView(View):
 
     # steps ###################################################################
     # node tests
+    @client_version(1, 2)
     def step_01(self):
-        with self.html.lock:
-            self.set_step_label(1, 'Clear Nodes')
+        self.set_step_label(1, 'Clear Nodes')
 
-            self.rendering_root.clear()
+        self.rendering_root.clear()
 
+    @client_version(1, 2)
     def step_02(self):
-        with self.html.lock:
-            self.set_step_label(2, 'Append Nodes')
+        self.set_step_label(2, 'Append Nodes')
 
-            self.rendering_root.append(Div('first div'))
-            self.rendering_root.append(Div('second div'))
+        self.rendering_root.append(Div('first div'))
+        self.rendering_root.append(Div('second div'))
 
+    @client_version(1, 2)
     def step_03(self):
-        with self.html.lock:
-            self.set_step_label(3, 'Set Node')
+        self.set_step_label(3, 'Set Node')
 
-            self.rendering_root[0] = Div('set div')
+        self.rendering_root[0] = Div('set div')
 
+    @client_version(1, 2)
     def step_04(self):
-        with self.html.lock:
-            self.set_step_label(4, 'Reset Nodes')
+        self.set_step_label(4, 'Reset Nodes')
 
-            self.rendering_root.nodes = [
-                Div('reset div1'),
-                Div('reset div2'),
-            ]
+        self.rendering_root.nodes = [
+            Div('reset div1'),
+            Div('reset div2'),
+        ]
 
+    @client_version(1, 2)
     def step_05(self):
-        with self.html.lock:
-            self.set_step_label(5, 'Insert Node')
+        self.set_step_label(5, 'Insert Node')
 
-            self.rendering_root.nodes.insert(1, Div('inserted div'))
+        self.rendering_root.nodes.insert(1, Div('inserted div'))
 
+    @client_version(1, 2)
     def step_06(self):
-        with self.html.lock:
-            self.set_step_label(6, 'Remove Node')
+        self.set_step_label(6, 'Remove Node')
 
-            self.rendering_root.nodes[1].remove()
+        self.rendering_root.nodes[1].remove()
 
     # id_list tests
+    @client_version(1, 2)
     def step_07(self):
-        with self.html.lock:
-            self.set_step_label(7, 'Set id')
+        self.set_step_label(7, 'Set id')
 
-            self.rendering_root.nodes = [
-                Div(_id='foo bar'),
-            ]
+        self.rendering_root.nodes = [
+            Div(_id='foo bar'),
+        ]
 
+    @client_version(1, 2)
     def step_08(self):
-        with self.html.lock:
-            self.set_step_label(8, 'Add id')
+        self.set_step_label(8, 'Add id')
 
-            self.rendering_root.nodes[0].id_list.add('baz')
+        self.rendering_root.nodes[0].id_list.add('baz')
 
+    @client_version(1, 2)
     def step_09(self):
-        with self.html.lock:
-            self.set_step_label(9, 'Remove id')
+        self.set_step_label(9, 'Remove id')
 
-            self.rendering_root.nodes[0].id_list.remove('bar')
+        self.rendering_root.nodes[0].id_list.remove('bar')
 
+    @client_version(1, 2)
     def step_10(self):
-        with self.html.lock:
-            self.set_step_label(10, 'Reset id')
+        self.set_step_label(10, 'Reset id')
 
-            self.rendering_root.nodes[0].id_list = ['foo1', 'bar1']
+        self.rendering_root.nodes[0].id_list = ['foo1', 'bar1']
 
+    @client_version(1, 2)
     def step_11(self):
-        with self.html.lock:
-            self.set_step_label(11, 'Clear id')
+        self.set_step_label(11, 'Clear id')
 
-            self.rendering_root.nodes[0].id_list.clear()
+        self.rendering_root.nodes[0].id_list.clear()
 
     # class_list tests
+    @client_version(1, 2)
     def step_12(self):
-        with self.html.lock:
-            self.set_step_label(12, 'Set class')
+        self.set_step_label(12, 'Set class')
 
-            self.rendering_root.nodes = [
-                Div(_class='foo bar'),
-            ]
+        self.rendering_root.nodes = [
+            Div(_class='foo bar'),
+        ]
 
+    @client_version(1, 2)
     def step_13(self):
-        with self.html.lock:
-            self.set_step_label(13, 'Add class')
+        self.set_step_label(13, 'Add class')
 
-            self.rendering_root.nodes[0].class_list.add('baz')
+        self.rendering_root.nodes[0].class_list.add('baz')
 
+    @client_version(1, 2)
     def step_14(self):
-        with self.html.lock:
-            self.set_step_label(14, 'Remove class')
+        self.set_step_label(14, 'Remove class')
 
-            self.rendering_root.nodes[0].class_list.remove('bar')
+        self.rendering_root.nodes[0].class_list.remove('bar')
 
+    @client_version(1, 2)
     def step_15(self):
-        with self.html.lock:
-            self.set_step_label(15, 'Reset class')
+        self.set_step_label(15, 'Reset class')
 
-            self.rendering_root.nodes[0].class_list = ['foo1', 'bar1']
+        self.rendering_root.nodes[0].class_list = ['foo1', 'bar1']
 
+    @client_version(1, 2)
     def step_16(self):
-        with self.html.lock:
-            self.set_step_label(16, 'Clear class')
+        self.set_step_label(16, 'Clear class')
 
-            self.rendering_root.nodes[0].class_list.clear()
+        self.rendering_root.nodes[0].class_list.clear()
 
     # attribute tests
+    @client_version(1, 2)
     def step_17(self):
-        with self.html.lock:
-            self.set_step_label(17, 'Set attributes')
+        self.set_step_label(17, 'Set attributes')
 
-            self.rendering_root.nodes = [
-                Div(foo='foo', bar='bar'),
-            ]
+        self.rendering_root.nodes = [
+            Div(foo='foo', bar='bar'),
+        ]
 
+    @client_version(1, 2)
     def step_18(self):
-        with self.html.lock:
-            self.set_step_label(18, 'Add attribute')
+        self.set_step_label(18, 'Add attribute')
 
-            self.rendering_root.nodes[0].attributes['baz'] = 'baz'
+        self.rendering_root.nodes[0].attributes['baz'] = 'baz'
 
+    @client_version(1, 2)
     def step_19(self):
-        with self.html.lock:
-            self.set_step_label(19, 'Remove attribute')
+        self.set_step_label(19, 'Remove attribute')
 
-            del self.rendering_root.nodes[0].attributes['foo']
+        del self.rendering_root.nodes[0].attributes['foo']
 
+    @client_version(1, 2)
     def step_20(self):
-        with self.html.lock:
-            self.set_step_label(20, 'Reset attributes')
+        self.set_step_label(20, 'Reset attributes')
 
-            self.rendering_root.nodes[0].attributes = {
-                'foo1': 'bar1',
-                'bar1': 'foo1',
-            }
+        self.rendering_root.nodes[0].attributes = {
+            'foo1': 'bar1',
+            'bar1': 'foo1',
+        }
 
+    @client_version(1, 2)
     def step_21(self):
-        with self.html.lock:
-            self.set_step_label(21, 'Clear attributes')
+        self.set_step_label(21, 'Clear attributes')
 
-            self.rendering_root.nodes[0].attributes.clear()
+        self.rendering_root.nodes[0].attributes.clear()
 
     # style tests
+    @client_version(1, 2)
     def step_22(self):
-        with self.html.lock:
-            self.set_step_label(22, 'Set style')
+        self.set_step_label(22, 'Set style')
 
-            self.rendering_root.nodes = [
-                Div(_style='top: 1px; right: 2px;'),
-            ]
+        self.rendering_root.nodes = [
+            Div(_style='top: 1px; right: 2px;'),
+        ]
 
+    @client_version(1, 2)
     def step_23(self):
-        with self.html.lock:
-            self.set_step_label(23, 'Add style')
+        self.set_step_label(23, 'Add style')
 
-            self.rendering_root.nodes[0].style['bottom'] = '3px'
+        self.rendering_root.nodes[0].style['bottom'] = '3px'
 
+    @client_version(1, 2)
     def step_24(self):
-        with self.html.lock:
-            self.set_step_label(24, 'Remove style')
+        self.set_step_label(24, 'Remove style')
 
-            del self.rendering_root.nodes[0].style['top']
+        del self.rendering_root.nodes[0].style['top']
 
+    @client_version(1, 2)
     def step_25(self):
-        with self.html.lock:
-            self.set_step_label(25, 'Reset style')
+        self.set_step_label(25, 'Reset style')
 
-            self.rendering_root.nodes[0].style = {
-                'left': '4px',
-            }
+        self.rendering_root.nodes[0].style = {
+            'left': '4px',
+        }
 
+    @client_version(1, 2)
     def step_26(self):
-        with self.html.lock:
-            self.set_step_label(26, 'Clear style')
+        self.set_step_label(26, 'Clear style')
 
-            self.rendering_root.nodes[0].style.clear()
+        self.rendering_root.nodes[0].style.clear()
 
     # widget data tests
+    @client_version(1, 2)
     def step_27(self):
-        with self.html.lock:
-            self.set_step_label(27, 'Widget Data: list: setup')
+        self.set_step_label(27, 'Widget Data: list: setup')
 
-            self.rendering_root.nodes = [
-                WidgetDataTestComponent(
-                    initial_state={'list': []},
-                ),
-            ]
+        self.rendering_root.nodes = [
+            WidgetDataTestComponent(
+                initial_state={'list': []},
+            ),
+        ]
 
+    @client_version(1, 2)
     def step_28(self):
-        with self.html.lock:
-            self.set_step_label(28, 'Widget Data: list: append')
+        self.set_step_label(28, 'Widget Data: list: append')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['list'].append(1)
-            component.widget_data['list'].append(2)
-            component.widget_data['list'].append(3)
-            component.update_state()
+        component.widget_data['list'].append(1)
+        component.widget_data['list'].append(2)
+        component.widget_data['list'].append(3)
+        component.update_state()
 
+    @client_version(1, 2)
     def step_29(self):
-        with self.html.lock:
-            self.set_step_label(29, 'Widget Data: list: remove')
+        self.set_step_label(29, 'Widget Data: list: remove')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['list'].remove(2)
-            component.update_state()
+        component.widget_data['list'].remove(2)
+        component.update_state()
 
+    @client_version(1, 2)
     def step_30(self):
-        with self.html.lock:
-            self.set_step_label(30, 'Widget Data: list: insert')
+        self.set_step_label(30, 'Widget Data: list: insert')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['list'].insert(0, 0)
-            component.update_state()
+        component.widget_data['list'].insert(0, 0)
+        component.update_state()
 
+    @client_version(1, 2)
     def step_31(self):
-        with self.html.lock:
-            self.set_step_label(31, 'Widget Data: list: clear')
+        self.set_step_label(31, 'Widget Data: list: clear')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['list'].clear()
-            component.update_state()
+        component.widget_data['list'].clear()
+        component.update_state()
 
+    @client_version(1, 2)
     def step_32(self):
-        with self.html.lock:
-            self.set_step_label(32, 'Widget Data: list: reset')
+        self.set_step_label(32, 'Widget Data: list: reset')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['list'] = [5, 4, 3, 2, 1]
-            component.update_state()
+        component.widget_data['list'] = [5, 4, 3, 2, 1]
+        component.update_state()
 
+    @client_version(1, 2)
     def step_33(self):
-        with self.html.lock:
-            self.set_step_label(33, 'Widget Data: dict: setup')
+        self.set_step_label(33, 'Widget Data: dict: setup')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data = {'dict': {}}
-            component.update_state()
+        component.widget_data = {'dict': {}}
+        component.update_state()
 
+    @client_version(1, 2)
     def step_34(self):
-        with self.html.lock:
-            self.set_step_label(34, 'Widget Data: dict: set')
+        self.set_step_label(34, 'Widget Data: dict: set')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['dict'][1] = 1
-            component.widget_data['dict'][2] = 2
-            component.widget_data['dict'][3] = 3
-            component.update_state()
+        component.widget_data['dict'][1] = 1
+        component.widget_data['dict'][2] = 2
+        component.widget_data['dict'][3] = 3
+        component.update_state()
 
+    @client_version(1, 2)
     def step_35(self):
-        with self.html.lock:
-            self.set_step_label(35, 'Widget Data: dict: del')
+        self.set_step_label(35, 'Widget Data: dict: del')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            del component.widget_data['dict'][2]
-            component.update_state()
+        del component.widget_data['dict'][2]
+        component.update_state()
 
+    @client_version(1, 2)
     def step_36(self):
-        with self.html.lock:
-            self.set_step_label(36, 'Widget Data: dict: pop')
+        self.set_step_label(36, 'Widget Data: dict: pop')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['dict'].pop(3)
-            component.update_state()
+        component.widget_data['dict'].pop(3)
+        component.update_state()
 
+    @client_version(1, 2)
     def step_37(self):
-        with self.html.lock:
-            self.set_step_label(37, 'Widget Data: dict: clear')
+        self.set_step_label(37, 'Widget Data: dict: clear')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['dict'].clear()
-            component.update_state()
+        component.widget_data['dict'].clear()
+        component.update_state()
 
+    @client_version(1, 2)
     def step_38(self):
-        with self.html.lock:
-            self.set_step_label(38, 'Widget Data: dict: reset')
+        self.set_step_label(38, 'Widget Data: dict: reset')
 
-            component = self.rendering_root.nodes[0]
+        component = self.rendering_root.nodes[0]
 
-            component.widget_data['dict'] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4}
-            component.update_state()
+        component.widget_data['dict'] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4}
+        component.update_state()
+
+    # legacy widgets ##########################################################
+    # TODO: remove in 2.0
+
+    @client_version(1)
+    def step_39(self):
+        self.set_step_label(39, 'Legacy Widgets: Setup')
+
+        self.rendering_root.clear()
+
+        self.rendering_root.nodes = [
+            LegacyHTML(
+                Div('1.1'),
+                Div('1.2'),
+            ),
+            Div('2.1'),
+            LegacyHTML(
+                Div('3.1'),
+                Div('3.2'),
+            ),
+        ]
+
+    @client_version(1)
+    def step_40(self):
+        self.set_step_label(40, 'Legacy Widgets: Append Nodes')
+
+        widget1 = self.rendering_root.nodes[0]
+        widget1.append(Div('1.3'))
+
+        widget2 = self.rendering_root.nodes[2]
+        widget2.append(Div('3.3'))
+
+        self.rendering_root.append(Div('4.1'))
+
+    @client_version(1)
+    def step_41(self):
+        self.set_step_label(41, 'Legacy Widgets: Set Nodes')
+
+        widget1 = self.rendering_root.nodes[0]
+        widget1.nodes[1] = Div('1.2.1')
+
+        widget1 = self.rendering_root.nodes[2]
+        widget1.nodes[1] = Div('3.2.1')
+
+    @client_version(1)
+    def step_42(self):
+        self.set_step_label(42, 'Legacy Widgets: Reset Nodes')
+
+        widget1 = self.rendering_root.nodes[0]
+
+        widget1.nodes = [
+            Div('1.1.1'),
+            Div('1.2.1'),
+            Div('1.3.1'),
+        ]
+
+        self.rendering_root[1] = Div('2.1.1')
+
+        widget2 = self.rendering_root.nodes[2]
+
+        widget2.nodes = [
+            Div('3.1.1'),
+            Div('3.2.1'),
+            Div('3.3.1'),
+        ]
+
+        self.rendering_root[3] = Div('4.1.1')
+
+    @client_version(1)
+    def step_43(self):
+        self.set_step_label(43, 'Legacy Widgets: Insert Nodes')
+
+        widget1 = self.rendering_root[0]
+        widget1.nodes.insert(2, Div('1.2.1.1'))
+
+        self.rendering_root.insert(2, Div('2.2'))
+
+        widget2 = self.rendering_root[3]
+        widget2.nodes.insert(2, Div('3.2.1.1'))
+
+    @client_version(1)
+    def step_44(self):
+        self.set_step_label(44, 'Legacy Widgets: Remove Nodes')
+
+        widget1 = self.rendering_root[0]
+        widget1.nodes.pop(2)
+
+        widget2 = self.rendering_root[3]
+        widget2.nodes.pop(2)

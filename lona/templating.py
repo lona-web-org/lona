@@ -5,6 +5,7 @@ import os
 
 from jinja2 import FileSystemLoader, Environment
 
+from lona.compat import get_client_version
 from lona.protocol import get_enum_values
 
 logger = logging.getLogger('lona.templating')
@@ -34,6 +35,12 @@ class Namespace:
     @property
     def state(self):
         return self.server.state
+
+    @property
+    def client_version(self):
+        # TODO: remove in Lona 2.0
+
+        return get_client_version()
 
     def load_stylesheets(self):
         return self.server._static_file_loader.style_tags_html

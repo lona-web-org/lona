@@ -259,3 +259,30 @@ Feature Flags
 
     See `LonaView.is_daemon </end-user-documentation/views.html#lonaview-is-daemon>`_
     for details.
+
+.. setting::
+    :name: CLIENT_VERSION
+    :path: lona.default_settings.CLIENT_VERSION
+
+    Lona 2.0 will have a new JavaScript client implementation. The new
+    client can be used, in compatible Lona 1 projects, by setting this value to
+    ``2``.
+
+    The currently set client version can be checked, using
+    ``lona.compat.get_client_version()``, and in the frontend using
+    ``Lona.client_version``.
+
+    When the new client gets used:
+
+        * All HTML components have to have exactly one root node (Widgets
+          supported multiple root nodes until Lona 2)
+
+        * ``lona.html.Widget`` objects are no longer supported, and can not
+          be rendered in the browser
+
+        * ``lona.html.HTML`` no longer returns a widget but exactly one
+          ``lona.html.AbstractNode``.
+
+          When ``lona.html.HTML`` gets initialized with multiple nodes, or
+          the parsing result contains multiple nodes on the first level,
+          ``lona.html.HTML`` wraps all nodes into one ``div`` node

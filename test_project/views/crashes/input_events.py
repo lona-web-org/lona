@@ -1,11 +1,13 @@
 from datetime import datetime
 
-from lona.html import Widget, Button, HTML, Div, H2, Br
+from lona.html import Button, HTML, Div, H2, Br
 from lona.view import View
 
 
-class CrashWidget(Widget):
+class CrashingNode(Div):
     def __init__(self):
+        super().__init__()
+
         self.nodes = [
             Button('Crash in widget'),
         ]
@@ -46,7 +48,7 @@ class CrashingEventHandler(View):
 
             handle_input_event_button,
 
-            CrashWidget(),
+            CrashingNode(),
         )
 
         input_event = self.await_input_event(html=html)

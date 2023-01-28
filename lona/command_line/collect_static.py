@@ -1,4 +1,6 @@
+from distutils.dir_util import copy_tree
 import shutil
+import sys
 import os
 
 from lona.logging import setup_logging
@@ -37,7 +39,35 @@ def collect_static(args):
             return
 
         if source_is_dir:
-            shutil.copytree(source, destination)
+            if sys.version_info < (3, 8):
+                # TODO: remove after Python 3.7 got removed
+                # this is necessary because the `dirs_exists_ok` flag in
+                # shutil.copytree was added in Python 3.8
+
+                for rel_source in os.listdir(source):
+                    abs_source = os.path.join(source, rel_source)
+                    abs_destination = os.path.join(destination, rel_source)
+
+                    if os.path.isdir(abs_source):
+                        if not os.path.exists(abs_destination):
+                            os.makedirs(abs_destination)
+
+                        copy_tree(
+                            src=abs_source,
+                            dst=abs_destination,
+                        )
+
+                    else:
+                        if not os.path.exists(destination):
+                            os.makedirs(destination)
+
+                        shutil.copy(
+                            src=abs_source,
+                            dst=abs_destination,
+                        )
+
+            else:
+                shutil.copytree(source, destination, dirs_exist_ok=True)
 
         else:
             shutil.copy(source, destination)
