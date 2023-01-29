@@ -1,0 +1,16 @@
+<h2>500</h2>
+<p>Internal Error</p>
+
+<table border="1">
+    <tr>
+        <th>Exception Type:</th>
+        <td id="exception-type"><pre>{{ exception.__class__.__name__ }}</pre></td>
+    </tr>
+    <tr>
+        <th>Exception Arguments:</th>
+        <td id="exception-args"><pre>{{ html_escape(repr(exception.args)) }}</pre></td>
+    </tr>
+</table>
+
+<h3>Traceback</h3>
+<pre style="background-color: lightgray;">{{ html_escape(format_exception(exception)) }}</pre>
