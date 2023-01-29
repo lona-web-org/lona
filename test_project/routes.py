@@ -25,23 +25,58 @@ routes = [
     Route('/view-types/async-view/',
           'views/view_types/async_view.py::AsyncView'),
 
-    # response types
-    Route('/response-types/template-response/',
-          'views/response_types/template_response.py::TemplateResponseView'),
+    # dict responses
+    # interactive
+    Route('/dict-responses/interactive/',
+          'views/responses/interactive_dict.py::InteractiveView'),
 
-    Route('/response-types/file-response/',
-          'views/response_types/file_response.py::FileResponseView',
+    # non-interactive
+    Route('/dict-responses/non-interactive/',
+          'views/responses/non_interactive_dict.py::NonInteractiveView'),
+
+    Route('/dict-responses/non-interactive/empty-response',
+          'views/responses/non_interactive_dict.py::EmptyResponseView',
           interactive=False),
 
-    Route('/response-types/json-response/',
-          'views/response_types/json_response.py::JSONResponseView',
+    Route('/dict-responses/non-interactive/node-response',
+          'views/responses/non_interactive_dict.py::NodeResponseView',
           interactive=False),
 
-    Route('/response-types/redirect/',
-          'views/response_types/redirect.py::RedirectView'),
+    Route('/dict-responses/non-interactive/string-response',
+          'views/responses/non_interactive_dict.py::StringResponseView',
+          interactive=False),
 
-    Route('/response-types/http-redirect/',
-          'views/response_types/http_redirect.py::HTTPRedirectView'),
+    Route('/dict-responses/non-interactive/template-response',
+          'views/responses/non_interactive_dict.py::TemplateResponseView',
+          interactive=False),
+
+    Route('/dict-responses/non-interactive/template-string-response',
+          'views/responses/non_interactive_dict.py::TemplateStringResponseView',
+          interactive=False),
+
+    Route('/dict-responses/non-interactive/redirect-response',
+          'views/responses/non_interactive_dict.py::RedirectResponseView',
+          interactive=False),
+
+    Route('/dict-responses/non-interactive/http-redirect-response',
+          'views/responses/non_interactive_dict.py::HttpRedirectResponseView',
+          interactive=False),
+
+    Route('/dict-responses/non-interactive/file-response',
+          'views/responses/non_interactive_dict.py::FileResponseView',
+          interactive=False),
+
+    Route('/dict-responses/non-interactive/json-response',
+          'views/responses/non_interactive_dict.py::JsonResponseView',
+          interactive=False),
+
+    Route('/dict-responses/non-interactive/binary-response',
+          'views/responses/non_interactive_dict.py::BinaryResponseView',
+          interactive=False),
+
+    Route('/dict-responses/non-interactive/custom-headers-response',
+          'views/responses/non_interactive_dict.py::CustomHeadersResponseView',
+          interactive=False),
 
     # permissions
     Route('/permissions/access-denied-in-PermissionMiddleware/',

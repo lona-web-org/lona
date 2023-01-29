@@ -14,13 +14,10 @@ class HomeView(View):
                 <li><a href="/view-types/async-view/">Async View</a></li>
             </ul>
 
-            <h2>Response Types</h2>
+            <h2>Responses</h2>
             <ul>
-                <li><a href="/response-types/template-response/">Template Response</a></li>
-                <li><a href="/response-types/file-response/">File Response</a></li>
-                <li><a href="/response-types/json-response/">JSON Response</a></li>
-                <li><a href="/response-types/redirect/">Redirect</a></li>
-                <li><a href="/response-types/http-redirect/">HTTP Redirect</a></li>
+                <li><a href="/dict-responses/interactive/">Interactive dict</a></li>
+                <li><a href="/dict-responses/non-interactive/">Non-Interactive dict</a></li>
             </ul>
 
             <h2>Permissions</h2>
