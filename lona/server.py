@@ -294,10 +294,10 @@ class Server:
             return FileResponse(response_dict['file'])
 
         if response_dict['redirect']:
-            return HTTPFound(response_dict['redirect'])
+            raise HTTPFound(response_dict['redirect'])
 
         if response_dict['http_redirect']:
-            return HTTPFound(response_dict['http_redirect'])
+            raise HTTPFound(response_dict['http_redirect'])
 
         default_headers = {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
