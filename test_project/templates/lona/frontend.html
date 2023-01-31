@@ -1,3 +1,4 @@
+{% set datetime = Lona.import('datetime.datetime') %}
 <html>
   <head>
     <meta charset="utf-8" />
@@ -12,7 +13,7 @@
     <table class="statistics">
       <tr>
         <th>Application Started:</th>
-        <td id="application-started">-</td>
+        <td id="application-started">{{ str(datetime.now()) }}</td>
       </tr>
       <tr>
         {# TODO: remove in 2.0 #}
@@ -167,9 +168,6 @@
         {% endif %}
 
         lona_context.setup();
-
-        // application started ------------------------------------------------
-        document.querySelector('#application-started').innerHTML = new Date();
       });
     </script>
   </body>
