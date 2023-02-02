@@ -1,5 +1,2 @@
+build
 twine
-aiohttp>=3,<4
-jinja2
-rlpython
-typing-extensions

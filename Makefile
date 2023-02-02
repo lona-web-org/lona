@@ -5,7 +5,7 @@ PYTHON_ENV_ROOT=envs
 PYTHON_DEV_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-dev
 PYTHON_PACKAGING_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-packaging-env
 
-.PHONY: clean doc sdist pytest test ci-test lint isort shell freeze
+.PHONY: clean doc dist pytest test ci-test lint isort shell freeze
 
 # development environment #####################################################
 $(PYTHON_DEV_ENV): REQUIREMENTS.dev.txt
@@ -21,7 +21,7 @@ $(PYTHON_PACKAGING_ENV): REQUIREMENTS.packaging.txt
 	$(PYTHON) -m venv $(PYTHON_PACKAGING_ENV) && \
 	. $(PYTHON_PACKAGING_ENV)/bin/activate && \
 	pip install --upgrade pip && \
-	pip install -r REQUIREMENTS.packaging.txt
+	pip install .[packaging]
 
 # environment helper ##########################################################
 clean:
@@ -60,11 +60,11 @@ isort: | $(PYTHON_DEV_ENV)
 	tox -e isort $(args)
 
 # packaging ###################################################################
-sdist: | $(PYTHON_PACKAGING_ENV)
+dist: | $(PYTHON_PACKAGING_ENV)
 	. $(PYTHON_PACKAGING_ENV)/bin/activate && \
 	rm -rf dist *.egg-info && \
-	./setup.py sdist
+	python -m build
 
-_release: sdist
+_release: dist
 	. $(PYTHON_PACKAGING_ENV)/bin/activate && \
 	twine upload --config-file ~/.pypirc.fscherf dist/*
