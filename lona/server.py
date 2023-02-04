@@ -23,13 +23,13 @@ from typing_extensions import Literal
 from aiohttp import WSMsgType
 from jinja2 import Template
 
+from lona.compat import set_use_future_node_classes, set_client_version
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.middleware_controller import MiddlewareController
 from lona.static_file_loader import StaticFileLoader
 from lona.response_parser import ResponseParser
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
-from lona.compat import set_client_version
 from lona.worker_pool import WorkerPool
 from lona.view_loader import ViewLoader
 from lona.routing import Router, Route
@@ -96,9 +96,10 @@ class Server:
 
             self.settings.update(settings_post_overrides)
 
-        # set client version
+        # set feature flags
         # TODO: remove in 2.0
         set_client_version(self.settings.CLIENT_VERSION)
+        set_use_future_node_classes(self.settings.USE_FUTURE_NODE_CLASSES)
 
         # setup aiohttp app
         server_logger.debug("starting server in '%s'", project_root)

@@ -286,3 +286,22 @@ Feature Flags
           When ``lona.html.HTML`` gets initialized with multiple nodes, or
           the parsing result contains multiple nodes on the first level,
           ``lona.html.HTML`` wraps all nodes into one ``div`` node
+
+.. setting::
+    :name: USE_FUTURE_NODE_CLASSES
+    :path: lona.default_settings.USE_FUTURE_NODE_CLASSES
+
+    .. note::
+
+        Added in 1.12
+
+    Some node classes from the standard library will be replaced, in Lona 2,
+    by their newer counter-parts. All new node classes can be used immediately,
+    but when parsing HTML strings, using ``lon.html.HTML``, the old node
+    classes get used, for compatibility reasons.
+
+
+    When ``settings.USE_FUTURE_NODE_CLASSES`` is set to ``True``:
+
+
+      1. ``lona.html.Select2`` gets used instead of ``lona.html.Select``
