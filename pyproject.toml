@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+version = "1.11"
+name = "lona"
+description = "Write responsive web apps in full python"
+
+authors = [
+  { name="Florian Scherf", email="mail@florianscherf.de" },
+]
+
+license = { file="LICENSE.txt" }
+readme = "README.rst"
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "Framework :: AsyncIO",
+  "Framework :: Django",
+  "Framework :: Pytest",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: Unix",
+  "Programming Language :: JavaScript",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Internet",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+
+requires-python = ">=3.7"
+
+dependencies = [
+  'aiohttp>=3,<4',
+  'jinja2',
+  'rlpython',
+  'typing-extensions',
+]
+
+
+[project.optional-dependencies]
+packaging = [
+  "build",
+  "twine",
+]
+
+
+[project.urls]
+"Homepage" = "https://lona-web.org"
+"Repository" = "https://github.com/lona-web-org/lona"
+"Bug Tracker" = "https://github.com/lona-web-org/lona/issues"
+
+
+[project.entry-points.pytest11]
+lona = "lona.pytest"
+
+
+[tool.setuptools]
+include-package-data = true
+script-files = [
+  "bin/lona",
+]
+
+[tool.setuptools.packages.find]
+include = ['lona*']
+
+[tool.setuptools.package-data]
+"lona.client" = ["**"]
+"lona.client2" = ["**"]
+"lona.static" = ["**"]
+"lona.templates" = ["**"]
+
+[tool.setuptools.exclude-package-data]
+"*" = [
+  ".*",
+  "~*",
+  "*.swp",
+  "*.pyc",
+]
