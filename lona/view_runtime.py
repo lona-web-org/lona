@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Tuple, List, Dict, cast, Any
+from typing import TYPE_CHECKING, Tuple, List, Dict, Any
 from collections.abc import Container, Awaitable
 from concurrent.futures import CancelledError
 from datetime import datetime
@@ -13,6 +13,16 @@ import time
 from typing_extensions import Literal
 from yarl import URL
 
+from lona.responses import (
+    parse_input_event_handler_return_value,
+    parse_view_return_value,
+    TemplateStringResponse,
+    HttpRedirectResponse,
+    TemplateResponse,
+    RedirectResponse,
+    AbstractResponse,
+    HtmlResponse,
+)
 from lona.protocol import (
     encode_input_event_ack,
     encode_http_redirect,
@@ -103,6 +113,7 @@ class ViewRuntime:
         # setup state
         self.connections: Dict[Connection, Tuple[int, URL]] = {}
         self.document = Document()
+        self.interactive: bool = bool(self.route and self.route.interactive)
 
         self.stopped: asyncio.Future[Literal[True]] = asyncio.Future(loop=self.server.loop)  # NOQA: LN001
         self.is_stopped = False
@@ -155,7 +166,7 @@ class ViewRuntime:
             send_view_start: bool = False,
             send_view_stop: bool = False,
             connections: dict | None = None,
-    ) -> Dict[str, Any]:
+    ) -> AbstractResponse | None:
 
         if send_view_start:
             self.send_view_start(connections=connections)
@@ -176,27 +187,34 @@ class ViewRuntime:
         if view_name != self.server.settings.CORE_ERROR_404_VIEW:
             view_kwargs['exception'] = exception
 
-        response_dict = self.handle_raw_response_dict(
-            view.handle_request(**view_kwargs),
+        return_value = view.handle_request(**view_kwargs)
+
+        response = parse_view_return_value(
+            return_value=return_value,
+            interactive=self.interactive,
         )
+
+        self.handle_response(response=response)
 
         if send_view_stop:
             self.send_view_stop(connections)
 
-        return cast(Dict[str, Any], response_dict)
+        return response
 
     # middlewares #############################################################
     def run_middlewares(self, connection, window_id, url):
         try:
-            handled, raw_response_dict, middleware = \
+            handled, response, middleware = \
                 self.server._middleware_controller.handle_request(
                     view=self.view,
                     request=self.request,
                 )
 
             if handled:
-                if not raw_response_dict:
-                    raw_response_dict = ''
+                response = parse_view_return_value(
+                    return_value=response,
+                    interactive=self.route and self.route.interactive,
+                )
 
                 self.send_view_start(
                     connections={
@@ -204,9 +222,7 @@ class ViewRuntime:
                     },
                 )
 
-                response_dict = self.handle_raw_response_dict(
-                    raw_response_dict,
-                )
+                self.handle_response(response=response)
 
                 self.send_view_stop(
                     connections={
@@ -214,7 +230,7 @@ class ViewRuntime:
                     },
                 )
 
-                return response_dict
+                return response
 
         # 403 Forbidden
         except ForbiddenError as exception:
@@ -317,32 +333,14 @@ class ViewRuntime:
             self.send_view_start()
 
             # run view
-            raw_response_dict = self.view.handle_request(self.request) or ''
+            response = parse_view_return_value(
+                return_value=self.view.handle_request(self.request),
+                interactive=self.route and self.route.interactive,
+            )
 
-            # response dicts
-            if isinstance(raw_response_dict, AbstractNode):
-                if self.route and not self.route.interactive:
-                    raw_response_dict = str(raw_response_dict)
+            self.handle_response(response=response)
 
-                else:
-                    self.view.show(html=raw_response_dict)
-
-                    return
-
-            # check if non-interactive features got used in
-            # interactive mode
-            if (self.route and self.route.interactive and
-                    isinstance(raw_response_dict, dict) and (
-                        'json' in raw_response_dict or
-                        'file' in raw_response_dict or
-                        'headers' in raw_response_dict or
-                        'body' in raw_response_dict)):
-
-                raise RuntimeError(
-                    'JSON, binary and file responses and headers are only available in non-interactive mode',
-                )
-
-            return self.handle_raw_response_dict(raw_response_dict)
+            return response
 
         # view got stopped from outside
         except (StopReason, CancelledError) as exception:
@@ -598,30 +596,28 @@ class ViewRuntime:
 
                 connection.send_str(message)
 
-    def handle_raw_response_dict(self, raw_response_dict, connections=None):
+    def handle_response(self, response, connections=None):
         connections = connections or self.connections
 
-        response_dict = self.server._response_parser.render_response_dict(
-            raw_response_dict=raw_response_dict,
-            view_name=self.name,
-        )
-
-        if response_dict['redirect']:
+        # redirect
+        if isinstance(response, RedirectResponse):
             self.send_redirect(
-                response_dict['redirect'],
+                response.url,
                 connections=connections,
             )
 
-        elif response_dict['http_redirect']:
+        # http redirect
+        elif isinstance(response, HttpRedirectResponse):
             self.send_http_redirect(
-                response_dict['http_redirect'],
+                response.url,
                 connections=connections,
             )
 
-        elif response_dict['text']:
+        # html response
+        elif isinstance(response, HtmlResponse):
             with self.document.lock:
                 title, data_type, data = self.document.apply(
-                    html=response_dict['text'],
+                    html=response.html,
                 )
 
                 self.send_data(
@@ -630,7 +626,37 @@ class ViewRuntime:
                     connections=connections,
                 )
 
-        return response_dict
+        # template response
+        elif isinstance(response, TemplateResponse):
+            html = self.server.render_template(
+                template_name=response.name,
+                template_context=response.context,
+            )
+
+            title, data_type, data = self.document.apply(html=html)
+
+            self.send_data(
+                title=title,
+                data=[data_type, data],
+                connections=connections,
+            )
+
+        # template string response
+        elif isinstance(response, TemplateStringResponse):
+            html = self.server.render_string(
+                template_string=response.string,
+                template_context=response.context,
+            )
+
+            title, data_type, data = self.document.apply(html=html)
+
+            self.send_data(
+                title=title,
+                data=[data_type, data],
+                connections=connections,
+            )
+
+        return response
 
     # input events ############################################################
     def await_input_event(
@@ -684,27 +710,9 @@ class ViewRuntime:
             )
 
         def run_handler(handler, input_event):
-            return_value = handler(input_event)
-
-            if not isinstance(return_value, (InputEvent, dict, type(None))):
-                raise RuntimeError(
-                    '%r returned an unexpected type (%r)',
-                    handler,
-                    return_value,
-                )
-
-            if isinstance(return_value, dict):
-                response_parser = self.server._response_parser
-
-                response_dict = response_parser.parse_event_response_dict(
-                    return_value,
-                )
-
-                self.handle_raw_response_dict(response_dict)
-
-                return response_dict
-
-            return return_value
+            return parse_input_event_handler_return_value(
+                return_value=handler(input_event),
+            )
 
         try:
             # sending input event ack

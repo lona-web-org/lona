@@ -279,6 +279,17 @@ HTML Responses
 Template Responses
 ~~~~~~~~~~~~~~~~~~
 
+Dictionary Based
+````````````````
+
+.. warning::
+
+    Dictionary based responses are deprecated since 1.12 and will be removed
+    in 2.0
+
+    Use response classes instead
+
+
 .. code-block:: python
 
     from lona import LonaView
@@ -304,9 +315,50 @@ Template Responses
                 'header': 'Hello World',
             }
 
+Class Based
+```````````
+
+.. note::
+
+    Added in 1.12
+
+.. code-block:: python
+
+    from lona import LonaView, TemplateResponse, TemplateStringResponse
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return TemplateResponse(
+                'template_name.html',
+                {
+                    'variable_name': 'foo',
+                },
+            )
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return TemplateStringResponse(
+                '{{ message }}',
+                {
+                    'variable_name': 'Template String Response',
+                },
+            )
+
 
 Redirects
 ~~~~~~~~~
+
+Dictionary Based
+````````````````
+
+.. warning::
+
+    Dictionary based responses are deprecated since 1.12 and will be removed
+    in 2.0
+
+    Use response classes instead
+
 
 .. code-block:: python
 
@@ -321,8 +373,35 @@ Redirects
             }
 
 
+Class Based
+```````````
+
+.. note::
+
+    Added in 1.12
+
+.. code-block:: python
+
+    from lona import LonaView, RedirectResponse
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return RedirectResponse('/')
+
+
 HTTP Redirects
 ~~~~~~~~~~~~~~
+
+Dictionary Based
+````````````````
+
+.. warning::
+
+    Dictionary based responses are deprecated since 1.12 and will be removed
+    in 2.0
+
+    Use response classes instead
 
 .. code-block:: python
 
@@ -336,6 +415,22 @@ HTTP Redirects
                 'http_redirect': '/',
             }
 
+Class Based
+```````````
+
+.. note::
+
+    Added in 1.12
+
+.. code-block:: python
+
+    from lona import LonaView, HttpRedirectResponse
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return HttpRedirectResponse('/')
+
 
 JSON Responses
 ~~~~~~~~~~~~~~
@@ -343,6 +438,18 @@ JSON Responses
 .. note::
 
     JSON responses are only available in non interactive views
+
+
+Dictionary Based
+````````````````
+
+.. warning::
+
+    Dictionary based responses are deprecated since 1.12 and will be removed
+    in 2.0
+
+    Use response classes instead
+
 
 .. code-block:: python
 
@@ -357,6 +464,22 @@ JSON Responses
                 },
             }
 
+Class Based
+```````````
+
+.. note::
+
+    Added in 1.12
+
+.. code-block:: python
+
+    from lona import LonaView, JsonResponse
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return JsonResponse({'foo': 'bar'})
+
 
 Binary Responses
 ~~~~~~~~~~~~~~~~
@@ -365,6 +488,16 @@ Binary Responses
 
     * Binary responses are only available in non interactive views
     * Added in 1.8
+
+Dictionary Based
+````````````````
+
+.. warning::
+
+    Dictionary based responses are deprecated since 1.12 and will be removed
+    in 2.0
+
+    Use response classes instead
 
 .. code-block:: python
 
@@ -378,6 +511,25 @@ Binary Responses
                 'body': open('foo.pdf', 'rb').read(),
             }
 
+Class Based
+```````````
+
+.. note::
+
+    Added in 1.12
+
+.. code-block:: python
+
+    from lona import LonaView, Response
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return Response(
+                content_type='application/pdf',
+                body=open('foo.pdf', 'rb').read(),
+            )
+
 
 Custom Headers
 ~~~~~~~~~~~~~~
@@ -386,6 +538,16 @@ Custom Headers
 
     * Custom headers are only available in non interactive views
     * Added in 1.8
+
+Dictionary Based
+````````````````
+
+.. warning::
+
+    Dictionary based responses are deprecated since 1.12 and will be removed
+    in 2.0
+
+    Use response classes instead
 
 .. code-block:: python
 
@@ -400,6 +562,27 @@ Custom Headers
                 },
                 'text': 'foo',
             }
+
+Class Based
+```````````
+
+.. note::
+
+    Added in 1.12
+
+.. code-block:: python
+
+    from lona import LonaView, Response
+
+
+    class MyLonaView(LonaView):
+        def handle_request(self, request):
+            return Response(
+                headers={
+                    'foo': 'bar',
+                },
+                text='foo',
+            )
 
 
 View Hooks
