@@ -4,6 +4,7 @@ from html.parser import HTMLParser
 from typing import List, Dict
 import logging
 
+from lona.compat import get_use_future_node_classes
 from lona.html.abstract_node import AbstractNode
 from lona.html.text_node import TextNode
 from lona.html.nodes import Div
@@ -31,10 +32,30 @@ SELF_CLOSING_TAGS = [
     'wbr',
 ]
 
+# TODO: remove in 2.0
+FUTURE_NODE_CLASSES: dict[str, type[Node]] = {}
+
 
 def _setup_node_classes_cache():
+
+    # TODO: remove in 2.0
+    from lona.html.data_binding.select2 import Select2, Option2
+
+    IGNORED_NODE_CLASSES = (
+        Select2,
+        Option2,
+    )
+
+    FUTURE_NODE_CLASSES.update({
+        'select': Select2,
+        'option': Option2,
+    })
+
     for node_class in AbstractNode.get_all_node_classes():
         if not issubclass(node_class, Node):
+            continue
+
+        if node_class in IGNORED_NODE_CLASSES:
             continue
 
         # input nodes
@@ -79,6 +100,9 @@ class NodeHTMLParser(HTMLParser):
         self.use_high_level_nodes = use_high_level_nodes
         self.node_classes = node_classes or {}
 
+        # TODO: remove in 2.0
+        self.use_future_node_classes = get_use_future_node_classes()
+
         super().__init__(*args, **kwargs)
 
     def set_current_node(self, node):
@@ -87,6 +111,10 @@ class NodeHTMLParser(HTMLParser):
     def get_node_class(self, tag_name, attributes):
         if not self.use_high_level_nodes:
             return Node
+
+        # TODO: remove in 2.0
+        if self.use_future_node_classes and tag_name in FUTURE_NODE_CLASSES:
+            return FUTURE_NODE_CLASSES[tag_name]
 
         # inputs
         if tag_name == 'input':
@@ -133,7 +161,7 @@ class NodeHTMLParser(HTMLParser):
         node_kwargs['self_closing_tag'] = self_closing
 
         # setup node
-        for key in ('id', 'class', 'style'):
+        for key in ('id', 'class', 'style', 'value'):
             if key in node_attributes:
                 node_kwargs[key] = node_attributes.pop(key)
 

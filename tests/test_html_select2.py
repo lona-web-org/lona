@@ -1,8 +1,8 @@
 from playwright.async_api import async_playwright
 import pytest
 
+from lona.html import Select2, Option2
 from lona.pytest import eventually
-from lona.html import Select
 from lona import View
 
 GET_OPTIONS = 'e => Array.from(e.selectedOptions).map(option => option.value)'
@@ -10,7 +10,7 @@ GET_OPTIONS = 'e => Array.from(e.selectedOptions).map(option => option.value)'
 
 @pytest.mark.parametrize('client_version', [1, 2])
 @pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
-async def test_selects(browser_name, client_version, lona_app_context):
+async def test_selects2(browser_name, client_version, lona_app_context):
     """
     This test tests HTML selects and multi selects, with and without pre
     selections, using a browser.
@@ -25,12 +25,10 @@ async def test_selects(browser_name, client_version, lona_app_context):
         @app.route('/select/nothing-selected/')
         class NothingSelected(View):
             def handle_request(self, request):
-                select = Select(
-                    values=[
-                        ('foo', 'Foo'),
-                        ('bar', 'Bar'),
-                        ('baz', 'Baz'),
-                    ],
+                select = Select2(
+                    Option2('Foo', value='foo'),
+                    Option2('Bar', value='bar'),
+                    Option2('Baz', value='baz'),
                     bubble_up=True,
                 )
 
@@ -44,12 +42,10 @@ async def test_selects(browser_name, client_version, lona_app_context):
         @app.route('/select/pre-selected/')
         class PreSelected(View):
             def handle_request(self, request):
-                select = Select(
-                    values=[
-                        ('foo', 'Foo'),
-                        ('bar', 'Bar', True),
-                        ('baz', 'Baz'),
-                    ],
+                select = Select2(
+                    Option2('Foo', value='foo'),
+                    Option2('Bar', value='bar', selected=True),
+                    Option2('Baz', value='baz'),
                     bubble_up=True,
                 )
 
@@ -63,12 +59,10 @@ async def test_selects(browser_name, client_version, lona_app_context):
         @app.route('/select/value-types/')
         class ValueTypes(View):
             def handle_request(self, request):
-                select = Select(
-                    values=[
-                        (1,   'Integer'),
-                        (1.0, 'Float'),
-                        ('1', 'String'),
-                    ],
+                select = Select2(
+                    Option2('Integer', value=1),
+                    Option2('Float', value=1.0),
+                    Option2('String', value='1'),
                     bubble_up=True,
                 )
 
@@ -83,12 +77,10 @@ async def test_selects(browser_name, client_version, lona_app_context):
         @app.route('/multi-select/nothing-selected/')
         class MultiSelectNothingSelected(View):
             def handle_request(self, request):
-                select = Select(
-                    values=[
-                        ('foo', 'Foo'),
-                        ('bar', 'Bar'),
-                        ('baz', 'Baz'),
-                    ],
+                select = Select2(
+                    Option2('Foo', value='foo'),
+                    Option2('Bar', value='bar'),
+                    Option2('Baz', value='baz'),
                     multiple=True,
                     bubble_up=True,
                 )
@@ -103,12 +95,10 @@ async def test_selects(browser_name, client_version, lona_app_context):
         @app.route('/multi-select/pre-selected/')
         class MultiSelectPreSelected(View):
             def handle_request(self, request):
-                select = Select(
-                    values=[
-                        ('foo', 'Foo', True),
-                        ('bar', 'Bar', True),
-                        ('baz', 'Baz'),
-                    ],
+                select = Select2(
+                    Option2('Foo', value='foo', selected=True),
+                    Option2('Bar', value='bar', selected=True),
+                    Option2('Baz', value='baz'),
                     multiple=True,
                     bubble_up=True,
                 )
@@ -187,7 +177,7 @@ async def test_selects(browser_name, client_version, lona_app_context):
 
         for attempt in eventually():
             async with attempt:
-                assert test_data['select/value-types'] == '1'
+                assert test_data['select/value-types'] == 1
 
         # float
         await page.goto(context.make_url('/select/value-types/'))
@@ -200,7 +190,7 @@ async def test_selects(browser_name, client_version, lona_app_context):
 
         for attempt in eventually():
             async with attempt:
-                assert test_data['select/value-types'] == '1.0'
+                assert test_data['select/value-types'] == 1.0
 
         # string
         await page.goto(context.make_url('/select/value-types/'))
@@ -226,7 +216,7 @@ async def test_selects(browser_name, client_version, lona_app_context):
 
         for attempt in eventually():
             async with attempt:
-                assert test_data['multi-select/nothing-selected'] == []
+                assert test_data['multi-select/nothing-selected'] == ()
 
         # user select
         await page.select_option('select', ['foo', 'bar'])
@@ -237,10 +227,10 @@ async def test_selects(browser_name, client_version, lona_app_context):
 
         for attempt in eventually():
             async with attempt:
-                assert test_data['multi-select/nothing-selected'] == [
+                assert test_data['multi-select/nothing-selected'] == (
                     'foo',
                     'bar',
-                ]
+                )
 
         # multi / pre selected ################################################
         # initial value
@@ -253,7 +243,7 @@ async def test_selects(browser_name, client_version, lona_app_context):
 
         for attempt in eventually():
             async with attempt:
-                assert test_data['multi-select/pre-selected'] == ['foo', 'bar']
+                assert test_data['multi-select/pre-selected'] == ('foo', 'bar')
 
         # user select
         await page.select_option('select', ['foo', 'baz'])
@@ -264,10 +254,10 @@ async def test_selects(browser_name, client_version, lona_app_context):
 
         for attempt in eventually():
             async with attempt:
-                assert test_data['multi-select/pre-selected'] == [
+                assert test_data['multi-select/pre-selected'] == (
                     'foo',
                     'baz',
-                ]
+                )
 
         # user deselect
         await page.goto(context.make_url('/multi-select/pre-selected/'))
@@ -280,4 +270,4 @@ async def test_selects(browser_name, client_version, lona_app_context):
 
         for attempt in eventually():
             async with attempt:
-                assert test_data['multi-select/pre-selected'] == []
+                assert test_data['multi-select/pre-selected'] == ()

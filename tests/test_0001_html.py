@@ -7,8 +7,11 @@ from lona.html import (
     TextInput,
     TextArea,
     CheckBox,
+    Select2,
+    Option2,
     Submit,
     Select,
+    Option,
     Button,
     Span,
     Node,
@@ -16,6 +19,7 @@ from lona.html import (
     Div,
     H1,
 )
+from lona.compat import set_use_future_node_classes
 
 
 @pytest.mark.incremental()
@@ -612,7 +616,26 @@ class TestHTMLFromStr:
         """)[0]
 
         assert type(node) == Select
+        assert type(node.nodes[0]) == Option
         assert node.value == '2'
+
+    def test_select2(self):
+        set_use_future_node_classes(True)
+
+        try:
+            node = HTML("""
+                <select>
+                    <option value="1">a</option>
+                    <option value="2" selected>b</option>
+                </select>
+            """)[0]
+
+            assert type(node) == Select2
+            assert type(node.nodes[0]) == Option2
+            assert node.value == '2'
+
+        finally:
+            set_use_future_node_classes(False)
 
 
 @pytest.mark.incremental()
