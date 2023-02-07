@@ -264,6 +264,10 @@ Feature Flags
     :name: CLIENT_VERSION
     :path: lona.default_settings.CLIENT_VERSION
 
+    .. note::
+
+        Added in 1.12
+
     Lona 2.0 will have a new JavaScript client implementation. The new
     client can be used, in compatible Lona 1 projects, by setting this value to
     ``2``.

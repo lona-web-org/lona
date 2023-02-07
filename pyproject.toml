@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-version = "1.11"
+version = "1.12"
 name = "lona"
 description = "Write responsive web apps in full python"
 

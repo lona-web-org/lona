@@ -6,6 +6,192 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.12 (2023-02-07)
+
+Changes
+~~~~~~~
+
+* Python
+
+  * Support for Python 3.11 was added
+
+  * Packaging using ``pyproject.toml`` was added
+
+    * A ``pyproject.toml`` was added, to fix two problems with the current
+      packaging at once:
+
+      1. Deprecation warnings
+
+      The previous setup, using a legacy ``setup.py``, produced this warning
+      since pip 23.0:
+
+      ::
+
+        DEPRECATION: lona is being installed using the legacy 'setup.py install'
+        method, because it does not have a 'pyproject.toml' and the 'wheel' package
+        is not installed. pip 23.1 will enforce this behaviour change. A possible
+        replacement is to enable the '--use-pep517' option. Discussion can be found
+        at https://github.com/pypa/pip/issues/8559
+
+      2. Problems with package data
+
+      On some systems, package data like the JavaScript client or templates
+      are missing, when Lona is installed using the git URL:
+
+      ::
+
+        pip install git+https://github.com/lona-web-org/lona.git
+
+* Client
+
+  * The client code was moved into the prefix ``/client/``
+
+    * The client URL was changed from ``/static/_lona/lona.js`` to
+      ``/static/_lona/client/lona.js``, to make room for the new client
+      implementation of Lona 2. It is planed to
+      support both clients until Lona 2 gets released.
+
+  * Client 2 was added
+
+    * This release adds the first version of client 2, which will be the
+      implementation for Lona 2.
+
+      Client 2 is a completely separate code base, to be fully
+      backwards-compatible, until Lona 2 gets released.
+
+      The new client can be enabled, by setting the feature flag
+      ``CLIENT_VERSION`` to ``2`` in the settings (default is ``1``).
+      On startup the server calls a new added method
+      ``lona.compat.set_client_version`` which sets the configured version in
+      the environment variable ``LONA_CLIENT_VERSION``.
+
+      This extra step through the environment is necessary, to communicate to
+      ``lona.html`` types, which client version is running, since they have no
+      access to the settings.
+
+      The currently configured client version can be checked using
+      ``lona.compat.get_client_version()``.
+
+* Client 2
+
+  * Support for legacy widget API was dropped
+
+    Lona 1 defines two types of nodes: Nodes that can be rendered in the
+    browser (text nodes and elements), and collections of nodes that can be
+    rendered (widgets). This distinction was made to make components (for
+    example a pop-up component) with multiple root nodes possible.
+
+    This feature was useful in some cases but brought much complexity and error
+    potential into the JavaScript client. Also the implications of enforcing
+    every component to have exactly one root node, are not big enough to
+    justify this level of complexity.
+
+    All widget rendering code was removed from client 2 and ``lona.html.HTML``
+    was updated to return a node instead of a widget when client 2 gets
+    used.
+
+* HTML
+
+  * Select2 was added
+
+    * Previously, the API of ``html.Select`` was quite confusing because its
+      main control mechanism over its options and their values were
+      ``html.Select.value`` and ``html.Select.values``. ``values`` was
+      represented as a list of tuples, which got parsed into ``html.Option``
+      objects with their values and attributes set.
+      Values always got converted to strings, which is the correct behavior,
+      from a browsers perspective, but it was surprising and inconvenient.
+
+      A new select implementation, named ``lona.html.Select2``, with a more
+      intuitive API, that preserves the original values of options, was added.
+
+      For compatibility reasons, ``html.HTML`` still uses ``html.Select``,
+      when parsing HTML strings.
+      The new implementation can be used by setting the feature flag
+      ``USE_FUTURE_NODE_CLASSES`` to ``True`` in the settings (default is
+      ``False``).
+
+  * The parser now uses ``value`` properties instead of setting them as
+    attribute
+
+    * ``value``, most of the time, is used in nodes like ``Select`` or
+      ``TextInput``, and is implemented as a high-level property.
+
+      Previously, ``value`` got treated as an node attribute.
+      The parsing code was changed to treat ``value`` as key word
+      argument of the node class, so all high-level properties get used.
+      If a node does not implement a high-level property for ``value``, the
+      node base-class falls back to setting ``value`` as an attribute.
+
+* Views
+
+  * Response classes were added
+
+    Previously, Lona views used special dictionaries as responses, instead of
+    proper response classes like any other Python web framework.
+
+    This is a design that was part of Lona since the very beginning. In the
+    early days of this framework, views were simple functions, that needed
+    almost no imports. The idea was to use a Python standard data structure,
+    so no classes had to be imported, and no response class names had to be
+    remembered.
+
+    This was a horrible idea, and lead to horrible code, namely the
+    ``ResponseParser`` code. Because the dictionaries could contain any key,
+    they had to be parsed.
+
+    Response classes, for any type of response Lona supports, and a
+    drop-in-replacement for the response parser code, that converts
+    dictionaries into responses, were added, to be backwards compatible.
+
+    Response dicts are deprecated now, and will be removed in Lona 2.
+
+
+Bugfixes
+~~~~~~~~
+
+* Handling of overlapping directories got fixed in ``collect-static`` command
+
+  * Previously collect-static crashed, when two static directories contained the
+    same sub directory.
+
+    Example:
+
+    ::
+
+      project/static-dir-1/directory/file.txt
+      project/static-dir-2/directory/file.txt
+
+    On Python versions after 3.7, this was fixed by setting the
+    ``dirs_exist_ok`` flag, in the ``shutil.copytree()`` call in
+    collect-static.
+
+      https://docs.python.org/3/library/shutil.html#shutil.copytree
+
+    Because this flag does not exist on Python 3.7, code was added to
+    emulates this feature, and a check which implementation should be used.
+
+* aiohttp deprecation warning was fixed
+
+  ::
+
+    .tox/python/lib/python3.8/site-packages/aiohttp/web_protocol.py:451:
+    DeprecationWarning: returning HTTPException object is deprecated (#2415)
+    and will be removed, please raise the exception instead
+
+* Multiple node caching issues in Client 2 were fixed
+
+  * Previously the rendering code sometimes accessed the node cache directly,
+    instead of using ``_get_node()``. JavaScript (being JavaScript) returned
+    ``undefined`` if no node with the given node id exists.
+    So, looking up an unknown node id "worked" but the code then crashed when
+    trying to patch the retrieved node, which was hard to debug.
+
+    These problems were fixed, by adding a node id check to ``_get_node()``,
+    which throws an exception, when an unknown node id was given, and all old
+    code, that accessed the node cache directly, was removed.
+
+
 .. changelog-header:: 1.11 (2023-01-09)
 
 Changes
