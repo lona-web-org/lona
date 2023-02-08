@@ -5,8 +5,8 @@ import logging
 
 from yarl import URL
 
+from lona.responses import parse_view_return_value, AbstractResponse
 from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
-from lona.responses import parse_view_return_value, Response
 from lona.protocol import encode_http_redirect, METHOD
 from lona.events.view_event import ViewEvent
 from lona.exceptions import ServerStop
@@ -371,12 +371,12 @@ class ViewRuntimeController:
 
             return
 
-        if not isinstance(return_value, (Response, type(None))):
+        if not isinstance(return_value, (AbstractResponse, type(None))):
             exception = ValueError(f'{repr(view_runtime.view.on_view_event)} returned an unexpected type ({repr(return_value)})')
 
             view_runtime.issue_500_error(exception)
 
-        if isinstance(return_value, Response):
+        if isinstance(return_value, AbstractResponse):
             try:
                 view_runtime.handle_response(response=return_value)
 

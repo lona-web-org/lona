@@ -107,7 +107,9 @@ async def test_redirects_from_event_handlers(lona_app_context):
         )
 
         await page.wait_for_url('/redirect-from-on-view-event/')
+        await page.wait_for_selector('#lona:has-text("REDIRECT FROM ON VIEW EVENT")')
 
         context.server.fire_view_event('foo')
 
         await page.wait_for_url('/')
+        await page.wait_for_selector('#lona:has-text("SUCCESS")')
