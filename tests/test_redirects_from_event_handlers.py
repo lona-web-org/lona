@@ -9,8 +9,16 @@ def setup_app(app):
                 'redirect': '/',
             }
 
+    @app.route('/')
+    class Index(View):
+        def handle_request(self, request):
+            return 'SUCCESS'
+
     @app.route('/redirect-from-handle-input-event-root/')
     class RedirectFromHandleInputEventRootView(View):
+        def handle_request(self, request):
+            return RedirectButton()
+
         def handle_input_event_root(self, input_event):
             return {
                 'redirect': '/',
@@ -18,6 +26,9 @@ def setup_app(app):
 
     @app.route('/redirect-from-handle-input-event/')
     class RedirectFromHandleInputEventView(View):
+        def handle_request(self, request):
+            return Button()
+
         def handle_input_event(self, input_event):
             return {
                 'redirect': '/',
@@ -60,7 +71,11 @@ async def test_redirects_from_event_handlers(lona_app_context):
         )
 
         await page.wait_for_url('/redirect-from-handle-input-event-root/')
+
+        await page.click('button')
+
         await page.wait_for_url('/')
+        await page.wait_for_selector('#lona:has-text("SUCCESS")')
 
         # test redirect from View.handle_input_event()
         await page.goto(
@@ -68,7 +83,11 @@ async def test_redirects_from_event_handlers(lona_app_context):
         )
 
         await page.wait_for_url('/redirect-from-handle-input-event/')
+
+        await page.click('button')
+
         await page.wait_for_url('/')
+        await page.wait_for_selector('#lona:has-text("SUCCESS")')
 
         # test redirect from button
         await page.goto(
@@ -80,6 +99,7 @@ async def test_redirects_from_event_handlers(lona_app_context):
         await page.click('button')
 
         await page.wait_for_url('/')
+        await page.wait_for_selector('#lona:has-text("SUCCESS")')
 
         # test redirect from View.on_view_event()
         await page.goto(

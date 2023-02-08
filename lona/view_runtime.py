@@ -710,9 +710,14 @@ class ViewRuntime:
             )
 
         def run_handler(handler, input_event):
-            return parse_input_event_handler_return_value(
+            return_value = parse_input_event_handler_return_value(
                 return_value=handler(input_event),
             )
+
+            if isinstance(return_value, AbstractResponse):
+                self.handle_response(response=return_value)
+
+            return return_value
 
         try:
             # sending input event ack
@@ -746,7 +751,7 @@ class ViewRuntime:
                 input_event,
             )
 
-            if isinstance(return_value, dict):
+            if isinstance(return_value, AbstractResponse):
                 return log_handled_message()
 
             elif not return_value:
@@ -771,7 +776,7 @@ class ViewRuntime:
                     input_event,
                 )
 
-                if isinstance(return_value, dict):
+                if isinstance(return_value, AbstractResponse):
                     return log_handled_message()
 
                 elif not return_value:
@@ -828,7 +833,7 @@ class ViewRuntime:
                 input_event,
             )
 
-            if isinstance(return_value, dict):
+            if isinstance(return_value, AbstractNode):
                 return log_handled_message()
 
             send_html_patches()
