@@ -120,6 +120,14 @@ class ViewRuntime:
         self.stop_reason = None
         self.is_daemon = False
 
+        # TODO: remove in 2.0
+        # compatibility for older Lona application code
+        self.stop_daemon_when_view_finishes = getattr(
+            self.view,
+            'STOP_DAEMON_WHEN_VIEW_FINISHES',
+            self.server.settings.STOP_DAEMON_WHEN_VIEW_FINISHES,
+        )
+
         self.view_runtime_id = generate_unique_id(name_space='view_runtimes')
         self.state = VIEW_RUNTIME_STATE.NOT_STARTED
         self.thread_ident = None
@@ -474,7 +482,10 @@ class ViewRuntime:
 
             # if the last connection gets closed and the view should
             # not continue running in background, it gets stopped
-            if not self.connections and not self.is_daemon:
+            if (not self.connections and
+                    self.stop_daemon_when_view_finishes and
+                    not self.is_daemon):
+
                 self.stop()
 
     # lona messages ###########################################################
