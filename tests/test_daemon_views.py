@@ -6,6 +6,8 @@ async def test_simple_daemon_view(lona_app_context):
 
     from playwright.async_api import async_playwright
 
+    from lona.pytest import eventually
+
     def setup_app(app):
         from datetime import datetime
 
@@ -77,9 +79,12 @@ async def test_simple_daemon_view(lona_app_context):
 
             # stop view
             await page.click('#stop')
-            message3 = await page.inner_text('#message')
 
-            assert message3 == 'view stopped'
+            for attempt in eventually():
+                async with attempt:
+                    message3 = await page.inner_text('#message')
+
+                    assert message3 == 'view stopped'
 
 
 async def test_multi_tab_daemon_view(lona_app_context):
