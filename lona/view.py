@@ -27,7 +27,6 @@ H = Union[None, AbstractNode, str]
 
 class View:
     STATIC_FILES: list[StaticFile] = []
-    STOP_DAEMON_WHEN_VIEW_FINISHES = True  # TODO: remove in 2.0
 
     def __init__(
             self,
