@@ -5,8 +5,8 @@ import logging
 
 from yarl import URL
 
+from lona.responses import parse_view_return_value, AbstractResponse
 from lona.view_runtime import VIEW_RUNTIME_STATE, ViewRuntime
-from lona.responses import parse_view_return_value, Response
 from lona.protocol import encode_http_redirect, METHOD
 from lona.events.view_event import ViewEvent
 from lona.exceptions import ServerStop
@@ -48,15 +48,9 @@ class ViewRuntimeController:
 
                 continue
 
-            # TODO: remove in 2.0
-            # compatibility for older Lona application code
-            stop_daemon_when_view_finishes = getattr(
-                view_runtime.view,
-                'STOP_DAEMON_WHEN_VIEW_FINISHES',
-                self.server.settings.STOP_DAEMON_WHEN_VIEW_FINISHES,
-            )
+            if (view_runtime.stop_daemon_when_view_finishes and
+                    view_runtime.is_stopped):
 
-            if stop_daemon_when_view_finishes and view_runtime.is_stopped:
                 continue
 
             return view_runtime
@@ -371,12 +365,12 @@ class ViewRuntimeController:
 
             return
 
-        if not isinstance(return_value, (Response, type(None))):
+        if not isinstance(return_value, (AbstractResponse, type(None))):
             exception = ValueError(f'{repr(view_runtime.view.on_view_event)} returned an unexpected type ({repr(return_value)})')
 
             view_runtime.issue_500_error(exception)
 
-        if isinstance(return_value, Response):
+        if isinstance(return_value, AbstractResponse):
             try:
                 view_runtime.handle_response(response=return_value)
 

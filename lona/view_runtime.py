@@ -120,6 +120,14 @@ class ViewRuntime:
         self.stop_reason = None
         self.is_daemon = False
 
+        # TODO: remove in 2.0
+        # compatibility for older Lona application code
+        self.stop_daemon_when_view_finishes = getattr(
+            self.view,
+            'STOP_DAEMON_WHEN_VIEW_FINISHES',
+            self.server.settings.STOP_DAEMON_WHEN_VIEW_FINISHES,
+        )
+
         self.view_runtime_id = generate_unique_id(name_space='view_runtimes')
         self.state = VIEW_RUNTIME_STATE.NOT_STARTED
         self.thread_ident = None
@@ -474,7 +482,10 @@ class ViewRuntime:
 
             # if the last connection gets closed and the view should
             # not continue running in background, it gets stopped
-            if not self.connections and not self.is_daemon:
+            if (not self.connections and
+                    self.stop_daemon_when_view_finishes and
+                    not self.is_daemon):
+
                 self.stop()
 
     # lona messages ###########################################################
@@ -710,9 +721,14 @@ class ViewRuntime:
             )
 
         def run_handler(handler, input_event):
-            return parse_input_event_handler_return_value(
+            return_value = parse_input_event_handler_return_value(
                 return_value=handler(input_event),
             )
+
+            if isinstance(return_value, AbstractResponse):
+                self.handle_response(response=return_value)
+
+            return return_value
 
         try:
             # sending input event ack
@@ -746,7 +762,7 @@ class ViewRuntime:
                 input_event,
             )
 
-            if isinstance(return_value, dict):
+            if isinstance(return_value, AbstractResponse):
                 return log_handled_message()
 
             elif not return_value:
@@ -771,7 +787,7 @@ class ViewRuntime:
                     input_event,
                 )
 
-                if isinstance(return_value, dict):
+                if isinstance(return_value, AbstractResponse):
                     return log_handled_message()
 
                 elif not return_value:
@@ -828,7 +844,7 @@ class ViewRuntime:
                 input_event,
             )
 
-            if isinstance(return_value, dict):
+            if isinstance(return_value, AbstractNode):
                 return log_handled_message()
 
             send_html_patches()
