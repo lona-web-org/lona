@@ -6,6 +6,44 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.12.1 (2023-02-10)
+
+Bugfixes
+~~~~~~~~
+
+* Views
+
+  * Handling of redirects and HTTP redirects from event handlers were fixed
+
+    * 1.12 introduced ``lona.responses.AbstractResponse`` as new data structure
+      for responses, but did not update all type checks in the event handler
+      code
+
+  * Handling of feature flag ``STOP_DAEMON_WHEN_VIEW_FINISHES`` was fixed
+
+    * Previously, only ``View.STOP_DAEMON_WHEN_VIEW_FINISHES`` worked,
+      ``settings.STOP_DAEMON_WHEN_VIEW_FINISHES`` had no effect
+
+  * Handling of ``View.is_daemon`` was fixed
+
+    * 1.12 changed the checks, if a view should be removed from the server, to
+      make short running deamon-views possible.
+
+      When ``View.STOP_DAEMON_WHEN_VIEW_FINISHES`` was set to ``False`` and
+      ``View.is_daemon`` to ``True``, the view did not get removed from the
+      server when the user closed the tab, and got reconnected to the same
+      view, when reopening the tab.
+
+      When ``View.STOP_DAEMON_WHEN_VIEW_FINISHES`` was set to ``True``, which
+      is the default, and ``View.is_daemon`` also to ``True``, the view should
+      be removed from the server, when it finishes, and the tab gets closed,
+      but instead the view remained on the server, but was not reconnected when
+      reopening the tab.
+
+      That meant that the server created a new view on every access of a page,
+      and did neither reuse or close it, so they built up indefinitely.
+
+
 .. changelog-header:: 1.12 (2023-02-07)
 
 Changes
