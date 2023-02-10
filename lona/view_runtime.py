@@ -482,9 +482,13 @@ class ViewRuntime:
 
             # if the last connection gets closed and the view should
             # not continue running in background, it gets stopped
-            if (not self.connections and
-                    self.stop_daemon_when_view_finishes and
-                    not self.is_daemon):
+            if not self.connections and not self.is_daemon:
+                self.stop()
+
+            # TODO: remove in 2.0
+            elif (self.stop_daemon_when_view_finishes and
+                    self.is_stopped and
+                    not self.connections):
 
                 self.stop()
 

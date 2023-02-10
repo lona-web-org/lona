@@ -86,6 +86,16 @@ async def test_simple_daemon_view(lona_app_context):
 
                     assert message3 == 'view stopped'
 
+            # check if views got removed from the server
+            await page.goto('about:blank')
+
+            for attempt in eventually():
+                async with attempt:
+                    view_runtime_count = len(
+                        context.server._view_runtime_controller._view_runtimes)
+
+                    assert view_runtime_count == 0
+
 
 async def test_multi_tab_daemon_view(lona_app_context):
     """

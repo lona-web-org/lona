@@ -6,6 +6,18 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.12.2 (2023-02-10)
+
+Bugfixes
+~~~~~~~~
+
+  * Handling of ``View.is_daemon`` was fixed
+
+    * The problem, described in 1.12.1, was not fixed entirely before. The
+      server still did not remove daemonized views, that were stopped,
+      correctly in all cases
+
+
 .. changelog-header:: 1.12.1 (2023-02-10)
 
 Bugfixes
