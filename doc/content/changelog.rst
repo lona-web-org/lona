@@ -6,6 +6,19 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.12.3 (2023-02-12)
+
+Bugfixes
+~~~~~~~~
+
+* JavaScript client crashes on iPhone 6 and iPad mini 2 were fixed
+
+  * Previously, the client used JavaScript public field declarations in the
+    Lona namespace class. Public field declarations are not supported in
+    Safari versions lower 14.1 and iPhone 6 and iPad mini 2 are running
+    version 12.
+
+
 .. changelog-header:: 1.12.2 (2023-02-10)
 
 Bugfixes
