@@ -17,3 +17,4 @@ This list is in chronological order.
     |Roland Hieber                 |Logo design
     |Meike Reichle                 |Lots and lots of testing
     |Jan Lübbe                     |Review
+    |Markus Gritsch                |Debugging assistance on older iOS devices
