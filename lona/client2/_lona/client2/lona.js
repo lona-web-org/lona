@@ -25,27 +25,29 @@ SOFTWARE.
 import { LonaContext } from './context.js';
 
 
-export class Lona {
-    static settings = {};
-    static protocol = {};
-    static widget_classes = {};
-    static LonaContext = LonaContext;
+class LonaNamespace {
+    constructor() {
+        this.settings = {};
+        this.protocol = {};
+        this.widget_classes = {};
+        this.LonaContext = LonaContext;
+    }
 
-    static set_protocol(protocol) {
+    set_protocol(protocol) {
         for(const [key, value] of Object.entries(protocol)) {
-            Lona.protocol[key] = value;
+            this.protocol[key] = value;
         };
     };
 
-    static set_settings(settings) {
+    set_settings(settings) {
         for(const [key, value] of Object.entries(settings)) {
-            Lona.settings[key] = value;
+            this.settings[key] = value;
         };
     };
 
-    static register_widget_class(widget_name, javascript_class) {
-        Lona.widget_classes[widget_name] = javascript_class;
+    register_widget_class(widget_name, javascript_class) {
+        this.widget_classes[widget_name] = javascript_class;
     };
 };
 
-window['Lona'] = Lona;
+export const Lona = new LonaNamespace();
