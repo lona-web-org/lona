@@ -7,7 +7,7 @@ tox
 coverage
 flake8==6.0.0
 flake8-2020==1.7.0
-flake8-bugbear==23.1.20
+flake8-bugbear==23.2.13
 flake8-commas==2.1.0
 flake8-comprehensions==3.10.1
 flake8-length==0.3.1
