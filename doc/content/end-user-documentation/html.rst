@@ -214,7 +214,7 @@ Attributes
 
 .. code-block:: html
 
-    <div data-lona-node-id="174102029578147" id="bar"></div>
+    <div data-lona-node-id="174102029578147" foo="bar"></div>
 
 .. code-block:: python
 
