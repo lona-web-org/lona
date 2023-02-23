@@ -1,0 +1,53 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g>
+        <rect id="rect" width="100" height="100" x="50" y="50" />
+    </g>
+    <style type="text/css">
+        svg {
+            background-color: aqua;
+        }
+        rect {
+            fill: blue;
+        }
+        text {
+            font-family: serif;
+            font-size: 12px;
+            fill: black;
+        }
+    </style>
+    <script type="text/javascript" xlink:href="https://code.jquery.com/jquery-3.6.3.js"></script>
+    <script type="text/javascript">
+        const rect = document.querySelector("#rect");
+        let angle = 0;
+
+        // animation
+        function animate(time) {
+            angle += 1;
+
+            if(angle >= 360) {
+                angle = 0;
+            }
+
+            rect.setAttribute("transform", `rotate(${angle} 100 100)`);
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+
+        // test external scripts
+        const element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+        element.setAttribute('x', 20);
+        element.setAttribute('y', 20);
+
+        try {
+            $('g').append(element);
+            element.innerHTML = 'jQuery loaded';
+        } catch {
+            document.querySelector('g').appendChild(element);
+            element.innerHTML = 'jQuery not loaded';
+        }
+    </script>
+</svg>

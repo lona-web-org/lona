@@ -42,6 +42,7 @@ export class LonaRenderingEngine {
         this._widgets = new Map();
         this._widgets_to_setup = new Array();
         this._widgets_to_update = new Array();
+        this._dom_parser = new DOMParser();
     };
 
     // helper -----------------------------------------------------------------
@@ -100,6 +101,13 @@ export class LonaRenderingEngine {
 
         node.innerHTML = '';
     };
+
+    _parse_html_string(html_string) {
+        return this._dom_parser.parseFromString(
+            html_string,
+            'text/html',
+        ).documentElement.textContent;
+    }
 
     // node cache -------------------------------------------------------------
     _clear_node_cache() {
@@ -167,7 +175,7 @@ export class LonaRenderingEngine {
         // TextNode
         if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {
             const node_id = node_spec[1];
-            const node_content = node_spec[2];
+            const node_content = this._parse_html_string(node_spec[2]);
 
             const node = document.createTextNode(node_content);
 
@@ -187,7 +195,19 @@ export class LonaRenderingEngine {
         const widget_class_name = node_spec[8];
         const widget_data = node_spec[9];
 
-        const node = document.createElement(node_tag_name);
+        // find namespace
+        const svg_tags = ["a", "animate", "animateMotion", "animateTransform", "circle", "clipPath", "defs", "desc", "discard", "ellipse", "feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence", "filter", "foreignObject", "g", "hatch", "hatchpath", "image", "line", "linearGradient", "marker", "mask", "metadata", "mpath", "path", "pattern", "polygon", "polyline", "radialGradient", "rect", "script", "set", "stop", "style", "svg", "switch", "symbol", "text", "textPath", "title", "tspan", "use", "view"];
+        let element_namespace = 'http://www.w3.org/1999/xhtml';
+
+        if(svg_tags.includes(node_tag_name)) {
+            element_namespace = 'http://www.w3.org/2000/svg';
+        }
+
+        // create node
+        const node = document.createElementNS(
+            element_namespace,
+            node_tag_name,
+        );
 
         // lona node id
         node.setAttribute('data-lona-node-id', node_id);
