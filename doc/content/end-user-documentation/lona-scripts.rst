@@ -86,7 +86,7 @@ LonaApp.run\(\) Arguments
 Settings
 --------
 
-A Lona settings object is a available in ``LonaApp.settings``.
+A Lona settings object is available in ``LonaApp.settings``.
 
 **More Information:**
 {{ link('end-user-documentation/settings.rst', 'Settings') }}
