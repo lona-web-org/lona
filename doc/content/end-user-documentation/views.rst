@@ -13,7 +13,7 @@ View Types
 Interactive
 ~~~~~~~~~~~
 
-By default all Lona views are interactive. Interactive Lona views run over an
+By default all Lona views are interactive. Interactive Lona views run over a
 websocket connection, which makes input events and background views possible.
 
 **More information:**
@@ -188,7 +188,7 @@ Attributes
 .. table::
 
     ^Name        ^Description
-    |interactive |(Bool) Is true when the request came in over an websocket connection
+    |interactive |(Bool) Is true when the request came in over a websocket connection
     |method      |(String) Contains either 'GET' or 'POST'
     |GET         |(Dict) Contains the URL query
     |POST        |(Dict) Contains POST arguments. Empty in case of GET requests
