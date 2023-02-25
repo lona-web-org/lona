@@ -109,7 +109,7 @@ view.
         Route('/', 'views/home.py::HomeView'),
     ]
 
-The new view should now accessible on ``http://localhost:8080/count-to-ten/``.
+The new view should now be accessible on ``http://localhost:8080/count-to-ten/``.
 
 **More information:**
 {{ link('end-user-documentation/views.rst', 'Views') }}
