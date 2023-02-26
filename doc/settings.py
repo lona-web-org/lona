@@ -61,7 +61,6 @@ MENU = [
         ]],
 
         ['API Reference', [
-            ['Getting Started', 'api-reference/getting-started.rst'],
             ['Lona Scripts', 'api-reference/lona-scripts.rst'],
             ['Views', 'api-reference/views.rst'],
             ['Server', 'api-reference/server.rst'],

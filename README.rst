@@ -74,7 +74,7 @@ pythonic API to write self contained views.
     app.run(port=8080)
 
 **More information:**
-`Getting Started <http://lona-web.org/api-reference/getting-started.html>`_
+`Getting Started <http://lona-web.org/tutorial/01-getting-started/index.html>`_
 
 
 How does it work?
