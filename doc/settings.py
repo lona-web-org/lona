@@ -77,6 +77,7 @@ MENU = [
         ]],
 
         [['Contrib'], [
+            ['Pico.css', 'contrib/lona-picocss/index.rst'],
             ['Django', 'contrib/django/index.rst'],
             ['Bootstrap 5', 'contrib/bootstrap-5/index.rst'],
             ['Chart.js', 'contrib/chartjs/index.rst'],
