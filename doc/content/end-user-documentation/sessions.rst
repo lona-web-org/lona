@@ -27,7 +27,7 @@ If ``settings.SESSIONS`` is enabled, the middleware
 ``lona.middleware.sessions.SessionMiddleware`` checks if a cookie with the name
 specified in ``settings.SESSIONS_KEY_NAME`` is set. If not, the middleware
 generates a random key using ``settings.SESSIONS_KEY_GENERATOR``, sets the
-cookie and triggers a HTTP reload to make the browser return with the new set
+cookie and triggers an HTTP reload to make the browser return with the newly set
 cookie.
 
 When the session key is present, the middleware sets up a
