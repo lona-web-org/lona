@@ -4,11 +4,11 @@ search_index_weight: 10
 Error Views
 ===========
 
-When an exception is raised in view, an URL is not available or a view
+When an exception is raised in view, a URL is not available or a view
 raised a Forbidden error, a Lona error view is called. Lona error views behave
 like normal Lona views and use the same API.
 
-Lona has error views for 403, 404 and 500 errors build in that use overrideable
+Lona has error views for 403, 404 and 500 errors built-in that use overrideable
 templates.  To customize your Lona application you can override the templates
 or the entire views.
 
@@ -16,7 +16,7 @@ or the entire views.
 Custom Templates
 ----------------
 
-Lona uses ``settings.`ERROR_403_TEMPLATE`` which is set to
+Lona uses ``settings.ERROR_403_TEMPLATE`` which is set to
 ``lona/403.html`` by default. You can reset this value or provide a
 template under this path.
 
@@ -37,7 +37,7 @@ context.
 404 Errors
 ~~~~~~~~~~
 
-Lona uses ``settings.`ERROR_404_TEMPLATE`` which is set to
+Lona uses ``settings.ERROR_404_TEMPLATE`` which is set to
 ``lona/404.html`` by default. You can reset this value or provide a
 template under this path.
 
@@ -52,7 +52,7 @@ template under this path.
 500 Errors
 ~~~~~~~~~~
 
-Lona uses ``settings.`ERROR_500_TEMPLATE`` which is set to
+Lona uses ``settings.ERROR_500_TEMPLATE`` which is set to
 ``lona/500.html`` by default. You can reset this value or provide a
 template under this path.
 
