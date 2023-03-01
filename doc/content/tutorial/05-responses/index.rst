@@ -8,7 +8,7 @@ For every incoming request, Lona instantiates an object of the class
 ``lona.Response`` object.
 
 In Lona, views can be "interactive" or "non-interactive". Interactive means
-that the browser and the view are connected via Websocket, so data can flow
+that the browser and the view are connected via a WebSocket, so data can flow
 both ways, and non-interactive means the browser uses only simple HTTP to
 connect to a view.
 

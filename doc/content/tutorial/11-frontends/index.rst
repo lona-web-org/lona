@@ -12,7 +12,7 @@ this main container, but not the page around it. In Lona, these pages are
 called "frontend".
 
 A Lona frontend is a combination of a specialized Lona view, that runs when
-a connection is made to the server, and Jinja2 template, that serves and sets
+a connection is made to the server, and a Jinja2 template, that serves and sets
 up the Lona JavaScript client. For most applications the default Frontend view
 of Lona will be enough, and only the Jinja2 template has to be changed.
 

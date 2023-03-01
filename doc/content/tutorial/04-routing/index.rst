@@ -15,12 +15,12 @@ comes in.
 
 Routes use named regexes that are generated at setup time. By default, URL
 args match every character between two slashes, because most URL schemas use
-slashes as divider. ``/user/<username>/<nickname>`` will match URLs like
+slashes as dividers. ``/user/<username>/<nickname>`` will match URLs like
 ``/user/alice/@alice_1``. To define a custom pattern add a colon to a URL arg
 like this: ``/user/<username:[a-z]{3}>/<nickname>``.
 
 To create a route that matches any given route, ``lona.MATCH_ALL`` can be used
-instead of an URL.
+instead of a URL.
 
 This example shows a simple greeting view, that uses an URL arg as name.
 
