@@ -3,7 +3,7 @@
 03 Events
 =========
 
-Lona nodes can produces events like click events, so views can react to button
+Lona nodes can produce events like click events, so views can react to button
 clicks for example. To receive input events you have to tell Lona which node
 should produce which event by setting ``Node.events``, which is a list of event
 types. Supported events are ``lona.html.CLICK``, ``lona.html.CHANGE``,
@@ -34,7 +34,7 @@ issued the event in ``input_event.node``.
 Input event handler can return redirect responses, even after
 ``View.handle_request()`` stopped.
 
-When a callback based input event event handler makes changes to the currently
+When a callback based input event handler makes changes to the currently
 shown HTML, Lona calls ``View.show()`` implicitly, to send the changes to the
 browser.
 

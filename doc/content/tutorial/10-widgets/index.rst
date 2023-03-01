@@ -28,7 +28,7 @@ node.
     and apply your change on the server.
 
 This example shows a widget that renders a rotation animation on the
-browser-side. The server-side does not render the animation it self, but
+browser-side. The server-side does not render the animation itself, but
 controls its parameters, using ``Widget.data``.
 
 .. image:: example-1.gif

@@ -81,7 +81,7 @@ There are two ways to show HTML in the browser: Returning HTML from the
 Returning HTML
 ~~~~~~~~~~~~~~
 
-This example returns a HTML tree, showing it once and exiting
+This example returns an HTML tree, showing it once and exiting
 ``View.handle_request()``.
 
 .. image:: example-1.gif
@@ -119,7 +119,7 @@ HTML Strings
 
 When initializing big HTML trees it can be more convenient to write HTML as a
 string. Lona can parse any given HTML string into a Lona Node tree, that then
-can be manipulated using the Lona node API.
+can be manipulated using the Lona node API. The HTML class is special in this respect.
 
 .. code-block:: python
 
@@ -171,7 +171,7 @@ Locking
 Lona is highly multi-threaded and ``View.show()`` gets called implicitly in
 some cases, for example when handling click events. When making multiple
 modifications to a HTML tree, it can become important that none of the
-intermediate steps get send to the browser. Let's say you want to open a popup:
+intermediate steps get sent to the browser. Let's say you want to open a popup:
 You have to create the popup, set its header, set its body, configure its
 buttons and then show it. Any state, but the last one could lead to bad
 user experience.
