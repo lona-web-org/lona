@@ -1,6 +1,6 @@
 
 
-04 Routing
+4. Routing
 ==========
 
 When a request is made to a Lona app, the routing table is used to determine
@@ -51,11 +51,11 @@ matched using ``Server.reverse()``
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 03 Events
+        :link_title: 3. Events
         :link_target: /tutorial/03-events/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 05 Responses
+        :link_title: 5. Responses
         :link_target: /tutorial/05-responses/index.rst
         :position: right

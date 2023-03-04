@@ -1,6 +1,6 @@
 
 
-02 HTML
+2. HTML
 =======
 
 In Lona, any HTML element can be represented using Python objects, derived from
@@ -238,11 +238,11 @@ custom ones, or to create high-level components, just inherit from
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 01 Getting Started
+        :link_title: 1. Getting Started
         :link_target: /tutorial/01-getting-started/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 03 Events
+        :link_title: 3. Events
         :link_target: /tutorial/03-events/index.rst
         :position: right

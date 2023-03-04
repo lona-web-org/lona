@@ -1,6 +1,6 @@
 
 
-03 Events
+3. Events
 =========
 
 Lona nodes can produce events like click events, so views can react to button
@@ -94,11 +94,11 @@ to await input of two numbers, to then display their sum.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 02 HTML
+        :link_title: 2. HTML
         :link_target: /tutorial/02-html/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 04 Routing
+        :link_title: 4. Routing
         :link_target: /tutorial/04-routing/index.rst
         :position: right

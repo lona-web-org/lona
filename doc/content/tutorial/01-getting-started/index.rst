@@ -1,6 +1,6 @@
 
 
-01 Getting Started
+1. Getting Started
 ==================
 
 Lona apps can be structured as
@@ -172,6 +172,6 @@ the server.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 02 HTML
+        :link_title: 2. HTML
         :link_target: /tutorial/02-html/index.rst
         :position: right

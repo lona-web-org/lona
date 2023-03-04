@@ -1,8 +1,8 @@
 is_template: False
 
 
-11 Frontends
-============
+11. Frontends
+=============
 
 Lona is a single page application framework. That means that the page gets
 loaded once, and when a link or button is clicked only the content of the
@@ -112,6 +112,6 @@ ship their own template.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 10 Widgets
+        :link_title: 10. Widgets
         :link_target: /tutorial/10-widgets/index.rst
         :position: left
