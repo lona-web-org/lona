@@ -83,6 +83,18 @@ Server.fire_view_event()
     .. api-doc:: lona.server.Server.fire_view_event
 
 
+Server.run_coroutine_sync()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. api-doc:: lona.server.Server.run_coroutine_sync
+
+
+Server.run_function_async()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. api-doc:: lona.server.Server.run_function_async
+
+
 Server.embed_shell\(\)
 ~~~~~~~~~~~~~~~~~~~~~~
 
