@@ -612,6 +612,16 @@ class Server:
             wait: None | bool = True,
     ) -> Future[T] | T:
 
+        """
+        Takes a coroutine, runs it thread-safe on `Server.loop` and returns
+        a `concurrent.futures.Future`. If `wait` is set to `True`, the method
+        blocks until the coroutine is done, and its return value is
+        returned, instead of the future.
+
+        :coroutine:  (Awaitable) coroutine
+        :wait:       (bool) Wait for the coroutine to return
+        """
+
         future = asyncio.run_coroutine_threadsafe(coroutine, loop=self.loop)
 
         if wait:
