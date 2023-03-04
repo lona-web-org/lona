@@ -3,18 +3,41 @@
 1. Getting Started
 ==================
 
+Introduction
+------------
+
+Lona is a full-stack web-application framework. That means it is possible to
+write a whole, self-contained, web application in pure Python. Lona runs
+completely on the server. Traditionally that would mean that Lona could only do
+"backend" tasks, like talking to a database, but no "frontend" tasks like
+responding to a click event in the browser. Lona implements a generic frontend
+that can be controlled by the backend, live, over websockets.
+
+**More information:**
+ - `Frontend and Backend (Wikipedia) <https://en.wikipedia.org/wiki/Frontend_and_backend#Back-end_focused>`_
+
+
+Apps, Projects and Scripts
+--------------------------
+
+In this tutorial we will create and discuss multiple Lona "apps" (short for
+"application"). A Lona app consists of one or more "views", which are Python
+classes, that render one page of a website, created with Lona. Every example in
+this tutorial is its own app.
+
 Lona apps can be structured as
 `projects <https://github.com/lona-web-org/lona-project-template>`_ and as
-{{ link('/api-reference/lona-scripts.rst', 'scripts') }}. Both structures have
-the same features, and can easily be migrated from one to another.
+{{ link('/api-reference/lona-scripts.rst', 'scripts') }}. The main difference
+is that Lona projects contain multiple files, and scripts can define a whole
+Lona app, using only one file. Both structures have the same features, and can
+easily be migrated from one to another.
 
 In this tutorial we will focus on scripts, because they are easier to setup,
 and the examples are easier to copy-paste.
 
-Lona is a web application server and rendering framework, so it comes with a
-very bland (or lack of) styling. We will use
+Lona comes with a very bland (or lack of) styling. We will use
 `lona-picocss <https://github.com/lona-web-org/lona-picocss#readme>`_  in this
-tutorial, so our app will look nice from the start.
+tutorial, so our apps will look nice from the start.
 
 
 Prerequisites
@@ -30,10 +53,16 @@ problems on non-unix systems.
 Installation
 ------------
 
+Lona is packaged, and distributed on `pypi <https://pypi.org/>`_. Use
+`pip <https://pip.pypa.io/en/stable>`_ to install Lona.
+
+.. code-block::
+
+    pip install lona lona-picocss
+
 If you want to use Lona locally in a project directory, and don't want to
 install Lona globally, use a
-`virtualenv <https://docs.python.org/3/library/venv.html>`_ (this step can be
-skipped).
+`virtualenv <https://docs.python.org/3/library/venv.html>`_.
 
 .. code-block::
 
@@ -43,13 +72,6 @@ skipped).
 These two commands set you up with a virtualenv, and then "source" it, so
 the virtualenv will be used in the current shell. You will have to repeat the
 second step when you close and reopen your shell.
-
-Lona is packaged, and distributed on `pypi <https://pypi.org/>`_. Use
-`pip <https://pip.pypa.io/en/stable>`_ to install Lona.
-
-.. code-block::
-
-    pip install lona lona-picocss
 
 
 Run Lona
@@ -61,9 +83,10 @@ Put this example into a new Python file.
     :include: example-1.py
 
 The script creates an app, using the ``lona.App`` class, using ``__file__`` as
-the **project root**.
+the **project root** (``__file__`` is a Python internal variable, that points
+to the current file).
 
-Every Lona script and project has a **project root**. Every path, within the
+Every Lona script and project has a **project root**. Every path within the
 app, like template paths, static directories or routes, will be relative to
 this directory.
 

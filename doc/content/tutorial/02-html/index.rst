@@ -33,15 +33,15 @@ in the first example, are available via ``Node.nodes``. Lona nodes have support
 for element classes, ids, attributes and styling via the ``Node.class_list``,
 ``Node.id_list``, ``Node.attributes`` and ``Node.style`` properties.
 
-When a node gets initialized, all arguments are treated as child nodes, of the
+When a node gets initialized, all arguments are treated as child nodes of the
 new node and all keyword arguments are treated as element attributes, later
 available in ``Node.attributes``. Special keywords like ``class``, ``id``,
 ``style`` or ``nodes`` will end up in their respective property counterparts.
 
-Nodes, the ``Node.nodes``, ``Node.id_list`` and ``Node.class_list`` properties
-behave like Python lists. They support indexing, slicing and common interfaces
-like ``append()`` or ``remove()``. ``Node.attributes`` and ``Node.style``
-behave like Python dictionaries.
+Nodes, as well as their properties ``Node.nodes``, ``Node.id_list``, and
+``Node.class_list``, behave like Python lists. They support indexing, slicing,
+and common interfaces like ``append()`` or ``remove()``. ``Node.attributes``
+and ``Node.style`` behave like Python dictionaries.
 
 All strings that get passed to a node, or to ``Node.nodes``, get converted to a
 ``lona.html.TextNode``, which behave like strings.
@@ -97,7 +97,7 @@ The second example runs ``View.show()`` in a loop continuously, to update the
 HTML that is shown in the browser.
 
 When ``View.show()`` gets called with the same HTML node object twice, Lona
-sends only updates.
+sends only updates. If the HTML was not changed ``View.show()`` does nothing.
 
 .. image:: example-2.gif
 
