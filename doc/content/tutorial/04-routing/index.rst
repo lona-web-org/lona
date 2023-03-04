@@ -1,6 +1,6 @@
 
 
-04 Routing
+4. Routing
 ==========
 
 When a request is made to a Lona app, the routing table is used to determine
@@ -13,11 +13,11 @@ a new route, with the decorated view in it, to the routing table. Therefore
 the views and routes in a Lona script get tried top to bottom when a request
 comes in.
 
-Routes use named regexes that are generated at setup time. By default, URL
-args match every character between two slashes, because most URL schemas use
-slashes as dividers. ``/user/<username>/<nickname>`` will match URLs like
-``/user/alice/@alice_1``. To define a custom pattern add a colon to a URL arg
-like this: ``/user/<username:[a-z]{3}>/<nickname>``.
+Routes use regexes with named parameters, that are generated at setup time. By
+default, URL args match every character between two slashes, because most URL
+schemas use slashes as dividers. ``/user/<username>/<nickname>`` will match
+URLs like ``/user/alice/@alice_1``. To define a custom pattern add a colon to a
+URL arg like this: ``/user/<username:[a-z]{3}>/<nickname>``.
 
 To create a route that matches any given route, ``lona.MATCH_ALL`` can be used
 instead of a URL.
@@ -51,11 +51,11 @@ matched using ``Server.reverse()``
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 03 Events
+        :link_title: 3. Events
         :link_target: /tutorial/03-events/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 05 Responses
+        :link_title: 5. Responses
         :link_target: /tutorial/05-responses/index.rst
         :position: right

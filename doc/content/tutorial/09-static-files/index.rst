@@ -1,6 +1,6 @@
 
 
-09 Static Files
+9. Static Files
 ===============
 
 Lona has a dynamic loading mechanism for static files like CSS or JavaScript.
@@ -26,11 +26,11 @@ content red.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 08 Middlewares
+        :link_title: 8. Middlewares
         :link_target: /tutorial/08-middlewares/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 10 Widgets
+        :link_title: 10. Widgets
         :link_target: /tutorial/10-widgets/index.rst
         :position: right

@@ -1,6 +1,6 @@
 
 
-03 Events
+3. Events
 =========
 
 Lona nodes can produce events like click events, so views can react to button
@@ -28,17 +28,17 @@ tree, Lona checks if ``View.handle_request()`` awaits an input event using
 ``View.await_[input_event|click|change]()``. If not,
 ``View.handle_input_event()`` gets called as last member of the chain.
 
-Input events can, but don't have to, contain a reference to the node that
-issued the event in ``input_event.node``.
+Input events contain a reference to the node that issued the event in
+``input_event.node``.
 
 Input event handler can return redirect responses, even after
 ``View.handle_request()`` stopped.
 
-When a callback based input event handler makes changes to the currently
+When a callback-based input event handler makes changes to the currently
 shown HTML, Lona calls ``View.show()`` implicitly, to send the changes to the
 browser.
 
-This example shows some simple, callback based input event handlers.
+This example shows some simple callback-based input event handlers.
 
 .. image:: example-1.gif
 
@@ -57,6 +57,9 @@ The Lona standard library defines nodes like ``lona.html.TextInput``, which
 handle their issued ``CHANGE`` events on their own to update their inner state,
 available in ``lona.html.TextInput.value``. To receive events from these nodes
 set their ``bubble_up`` property to ``True``.
+
+When a node handles an input event and updates its HTML, ``View.show()`` gets
+called implicitly, to send the updates to the browser.
 
 This example implements a simple node, that contains a counter and two buttons
 to increment or decrement it. All input events get handled internally, without
@@ -94,11 +97,11 @@ to await input of two numbers, to then display their sum.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 02 HTML
+        :link_title: 2. HTML
         :link_target: /tutorial/02-html/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 04 Routing
+        :link_title: 4. Routing
         :link_target: /tutorial/04-routing/index.rst
         :position: right

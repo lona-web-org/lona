@@ -35,17 +35,17 @@ MENU = [
         ['Basic Concept', 'basic-concept.rst'],
 
         ['Tutorial', [
-            ['01 Getting Started', 'tutorial/01-getting-started/index.rst'],
-            ['02 HTML', 'tutorial/02-html/index.rst'],
-            ['03 Events', 'tutorial/03-events/index.rst'],
-            ['04 Routing', 'tutorial/04-routing/index.rst'],
-            ['05 Responses', 'tutorial/05-responses/index.rst'],
-            ['06 Daemon Views', 'tutorial/06-daemon-views/index.rst'],
-            ['07 State', 'tutorial/07-state/index.rst'],
-            ['08 Middlewares', 'tutorial/08-middlewares/index.rst'],
-            ['09 Static Files', 'tutorial/09-static-files/index.rst'],
-            ['10 Widgets', 'tutorial/10-widgets/index.rst'],
-            ['11 Frontends', 'tutorial/11-frontends/index.rst'],
+            ['1. Getting Started', 'tutorial/01-getting-started/index.rst'],
+            ['2. HTML', 'tutorial/02-html/index.rst'],
+            ['3. Events', 'tutorial/03-events/index.rst'],
+            ['4. Routing', 'tutorial/04-routing/index.rst'],
+            ['5. Responses', 'tutorial/05-responses/index.rst'],
+            ['6. Daemon Views', 'tutorial/06-daemon-views/index.rst'],
+            ['7. State', 'tutorial/07-state/index.rst'],
+            ['8. Middlewares', 'tutorial/08-middlewares/index.rst'],
+            ['9. Static Files', 'tutorial/09-static-files/index.rst'],
+            ['10. Widgets', 'tutorial/10-widgets/index.rst'],
+            ['11. Frontends', 'tutorial/11-frontends/index.rst'],
         ]],
 
         ['Demos', [
