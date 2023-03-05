@@ -154,21 +154,35 @@ settings.
 Import Strings
 --------------
 
-Lona implements a special form of import strings, to make loading of
-application code, as easy as possible. Lona can load views, routes middlewares
-etc from modules, third-party-packages and even simple Python scripts that
-would not be importable by Python otherwise.
+If you use Lona in a
+`project <https://github.com/lona-web-org/lona-project-template>`_, views,
+settings, and routes are placed in different files. In other frameworks, these
+files would have to be valid
+`Python modules <https://docs.python.org/3/tutorial/modules.html>`_ to make
+them loadable.
+
+Lona implements a special form of import strings, that can load Python code
+from pretty much everywhere, regardless if it can be imported using the
+``import`` statement or not.
+
+Import strings are a convenience-mechanism, which is not required. You can use
+default Python imports wherever you can use import strings.
 
 .. code-block:: python
 
+    # Python import
+    from my_app.views import IndexView
+
+    Route('/', IndexView)
+
     # load from a module
-    Route('/', 'my_app.views.IndexView'),
+    Route('/', 'my_app.views.IndexView')
 
     # load from a third-party-package
-    Route('/settings', 'lona_picocss.views.SettingsView'),
+    Route('/settings', 'lona_picocss.views.SettingsView')
 
     # load from a script
-    Route('/my-view', './views.py::MyView'),
+    Route('/my-view', './views.py::MyView')
 
 
 Debugging
