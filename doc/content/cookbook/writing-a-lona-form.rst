@@ -37,7 +37,7 @@ To get notified when the value is changed set ``bubble_up`` to ``True``.
 
                 # this only works if bubble_up is set to True
                 if input_event.name == 'change':
-                    print('text_input.value was changed to: ', text_input.value
+                    print('text_input.value was changed to: ', text_input.value)
 
                 if input_event.node_has_id('print-value'):
                     print('text_input.value: ', text_input.value)
