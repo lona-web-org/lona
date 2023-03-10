@@ -66,7 +66,7 @@ ship their own template.
                     lona_context.add_connect_hook((lona_context) => {
 
                         // patch navigation links so the page does not
-                        // reload but use the websocket connection to start
+                        // reload but uses the websocket connection to start
                         // new views
                         lona_context.patch_input_events('nav#navigation');
                     });
