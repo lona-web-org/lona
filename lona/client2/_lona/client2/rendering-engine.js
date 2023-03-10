@@ -24,7 +24,7 @@ SOFTWARE.
 
 'use strict';
 
-import { LonaWindowShim } from './window-shim.js';
+import { Widget } from './widget.js';
 import { Lona } from './lona.js';
 
 const SPECIAL_ATTRIBUTE_NAMES = ['id', 'class', 'style', 'data-lona-node-id'];
@@ -38,7 +38,6 @@ export class LonaRenderingEngine {
         this._root = root;
 
         this._nodes = new Map();
-        this._widget_data = new Map();
         this._widgets = new Map();
         this._widgets_to_setup = new Array();
         this._widgets_to_update = new Array();
@@ -119,16 +118,13 @@ export class LonaRenderingEngine {
 
     // node cache -------------------------------------------------------------
     _clear_node_cache() {
-        // running widget deconstructors
+        // destroy widgets
         this._widgets.forEach(widget => {
-            if(widget.deconstruct !== undefined) {
-                widget.deconstruct();
-            };
+            widget.destroy_widget();
         });
 
         // resetting node state
         this._nodes.clear();
-        this._widget_data.clear();
         this._widgets.clear();
         this._widgets_to_setup.length = 0;
         this._widgets_to_update.length = 0;
@@ -151,16 +147,11 @@ export class LonaRenderingEngine {
 
             const widget = this._widgets.get(node_id);
 
-            // run deconstructor
-            if(widget.deconstruct !== undefined) {
-                widget.deconstruct();
-            };
+            // destroy widget
+            widget.destroy_widget();
 
             // remove widget
             this._widgets.delete(node_id);
-
-            // remove widget data
-            this._widget_data.delete(node_id);
 
             // remove widget from _widgets_to_setup
             if(this._widgets_to_setup.indexOf(node_id) > -1) {
@@ -261,18 +252,16 @@ export class LonaRenderingEngine {
                 throw(`RuntimeError: unknown widget name '${widget_class_name}'`);
             }
 
-            const widget_class = Lona.widget_classes[widget_class_name];
-
-            const window_shim = new LonaWindowShim(
+            const widget = new Widget(
                 this.lona_context,
                 this.lona_window,
+                node,
                 node_id,
+                Lona.widget_classes[widget_class_name],
+                widget_data,
             );
 
-            const widget = new widget_class(window_shim);
-
             this._widgets.set(node_id, widget);
-            this._widget_data.set(node_id, widget_data);
             this._widgets_to_setup.splice(0, 0, node_id);
         }
 
@@ -286,37 +275,24 @@ export class LonaRenderingEngine {
     _run_widget_hooks() {
         // setup
         this._widgets_to_setup.forEach(node_id => {
-            const widget = this._widgets.get(node_id);
-            const widget_data = this._widget_data.get(node_id);
-
-            widget.data = JSON.parse(JSON.stringify(widget_data));
-
-            if(widget === undefined) {
+            if(!this._widgets.has(node_id)) {
                 return;
-            };
+            }
 
-            widget.nodes = [this._get_node(node_id)];
-            widget.root_node = widget.nodes[0];
+            const widget = this._widgets.get(node_id);
 
-            if(widget.setup !== undefined) {
-                widget.setup();
-            };
+            widget.initialize_widget();
         });
 
         // data_updated
         this._widgets_to_update.forEach(node_id => {
-            const widget = this._widgets.get(node_id);
-            const widget_data = this._widget_data.get(node_id);
-
-            widget.data = JSON.parse(JSON.stringify(widget_data));
-
-            if(widget === undefined) {
+            if(!this._widgets.has(node_id)) {
                 return;
-            };
+            }
 
-            if(widget.data_updated !== undefined) {
-                widget.data_updated();
-            };
+            const widget = this._widgets.get(node_id);
+
+            widget.run_data_updated_hook();
         });
 
         this._widgets_to_setup = [];
@@ -542,9 +518,11 @@ export class LonaRenderingEngine {
         const key_path = payload[0];
         const data = payload.splice(1);
 
+        const widget = this._widgets.get(node_id);
+
         // key path
         let parent_data = undefined;
-        let widget_data = this._widget_data.get(node_id);
+        let widget_data = widget.raw_widget_data;
         let new_data = undefined;
 
         key_path.forEach(key => {
@@ -559,7 +537,7 @@ export class LonaRenderingEngine {
         // RESET
         } else if(operation == Lona.protocol.OPERATION.RESET) {
             if(parent_data === undefined) {
-                this._widget_data.set(node_id, data[0]);
+                widget.raw_widget_data = data[0];
 
             } else {
                 parent_data = data[0];
@@ -577,7 +555,7 @@ export class LonaRenderingEngine {
             };
 
             if(parent_data === undefined) {
-                this._widget_data.set(node_id, new_data);
+                widget.raw_widget_data.new_data;
 
             } else {
                 parent_data[key_path[key_path.length-1]] = new_data;
