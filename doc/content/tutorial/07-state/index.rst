@@ -11,7 +11,7 @@ can be used to share application specific data between views, middlewares and
 all other parts of a Lona app that have access to the ``server`` reference.
 
 ``server.state`` behaves like a Python dictionary, and implements the same
-locking interface like `HTML nodes </tutorial/02-html/index.html#locking>`_.
+locking interface as `HTML nodes </tutorial/02-html/index.html#locking>`_.
 
 .. code-block:: python
 
@@ -47,7 +47,7 @@ locking interface like `HTML nodes </tutorial/02-html/index.html#locking>`_.
 Node State
 ----------
 
-Every Lona node has its own state object, that is only available on the server,
+Every Lona node has its own state object that is only available on the server,
 and gets not synchronized with the browser. This can be used to attach
 sensitive data to a node, like a database id, to retrieve it later.
 
