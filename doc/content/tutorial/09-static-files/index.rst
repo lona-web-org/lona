@@ -6,8 +6,8 @@
 Lona has a dynamic loading mechanism for static files like CSS or JavaScript.
 
 Any node and view can define a list of static files in ``Node.STATIC_FILES`` or
-``VIEW.STATIC_FILES`` to tell the frontend which files are required, in order
-to render the node or view correctly. This makes packaging of components
+``VIEW.STATIC_FILES`` to tell the frontend which files are required to render
+the node or view correctly. This makes packaging of components
 possible.
 
 This example shows a custom node that ships with a CSS file to color its
