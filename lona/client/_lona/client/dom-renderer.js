@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 import { LonaWindowShim } from './window-shim.js';
+import { Widget } from '../client2/widget.js';
 import { Lona } from './lona.js';
 
 
@@ -114,18 +115,20 @@ export class LonaDomRenderer {
                     throw(`RuntimeError: unknown widget name '${widget_class_name}'`);
                 }
 
-                var widget_class = Lona.widget_classes[widget_class_name];
-
-                var window_shim = new LonaWindowShim(
+                const lona_window_shim = new LonaWindowShim(
                     this.lona_context,
                     this.lona_window,
                     node_id,
                 );
 
-                var widget = new widget_class(window_shim);
+                const widget = new Widget(
+                    lona_window_shim,
+                    Lona.widget_classes[widget_class_name],
+                    node,
+                    widget_data,
+                );
 
                 this.lona_window._widgets[node_id] = widget;
-                this.lona_window._widget_data[node_id] = widget_data;
                 this.lona_window._widgets_to_setup.splice(0, 0, node_id);
             }
 
@@ -170,18 +173,20 @@ export class LonaDomRenderer {
 
             // setup widget
             if(node_widget_class_name in Lona.widget_classes) {
-                var widget_class = Lona.widget_classes[node_widget_class_name];
-
-                var window_shim = new LonaWindowShim(
+                const lona_window_shim = new LonaWindowShim(
                     this.lona_context,
                     this.lona_window,
                     node_id,
                 );
 
-                var widget = new widget_class(window_shim);
+                const widget = new Widget(
+                    lona_window_shim,
+                    Lona.widget_classes[widget_class_name],
+                    node,
+                    widget_data,
+                );
 
                 this.lona_window._widgets[node_id] = widget;
-                this.lona_window._widget_data[node_id] = widget_data;
                 this.lona_window._widgets_to_setup.splice(0, 0, node_id);
             };
         };

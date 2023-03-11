@@ -25,7 +25,7 @@ SOFTWARE.
 import { LonaWidgetDataUpdater } from './widget-data-updater.js'
 import { LonaInputEventHandler } from './input-events.js';
 import { LonaDomRenderer } from './dom-renderer.js';
-import { LonaDomUpdater } from './dom-updater.js'
+import { LonaDomUpdater } from './dom-updater.js';
 import { Lona } from './lona.js'
 
 
@@ -120,9 +120,7 @@ export class LonaWindow {
     _clear_node_cache() {
         // running widget deconstructors
         for(var key in this._widgets) {
-            if(this._widgets[key].deconstruct !== undefined) {
-                this._widgets[key].deconstruct();
-            };
+            this._widgets[key].destroyWidget();
         };
 
         // resetting node state
@@ -159,9 +157,7 @@ export class LonaWindow {
             if(key in this._widgets) {
 
                 // run deconstructor
-                if(this._widgets[key].deconstruct !== undefined) {
-                    this._widgets[key].deconstruct();
-                };
+                this._widgets[key].destroyWidget();
 
                 // remove widget
                 delete this._widgets[key];
@@ -188,37 +184,24 @@ export class LonaWindow {
     _run_widget_hooks() {
         // setup
         this._widgets_to_setup.forEach(node_id => {
-            var widget = this._widgets[node_id];
-            var widget_data = this._widget_data[node_id];
-
-            widget.data = JSON.parse(JSON.stringify(widget_data));
-
-            if(widget === undefined) {
+            if(this._widgets[node_id] === undefined) {
                 return;
-            };
+            }
 
-            widget.nodes = this._dom_updater._get_widget_nodes(node_id);
-            widget.root_node = widget.nodes[0];
+            const widget = this._widgets[node_id];
 
-            if(widget.setup !== undefined) {
-                widget.setup();
-            };
+            widget.initializeWidget();
         });
 
         // data_updated
         this._widgets_to_update.forEach(node_id => {
-            var widget = this._widgets[node_id];
-            var widget_data = this._widget_data[node_id];
-
-            widget.data = JSON.parse(JSON.stringify(widget_data));
-
-            if(widget === undefined) {
+            if(this._widgets[node_id] === undefined) {
                 return;
-            };
+            }
 
-            if(widget.data_updated !== undefined) {
-                widget.data_updated();
-            };
+            const widget = this._widgets[node_id];
+
+            widget.runDataUpdatedHook();
         });
 
         this._widgets_to_setup = [];
