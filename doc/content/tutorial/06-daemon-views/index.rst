@@ -38,11 +38,13 @@ method returns immediately.
 
 .. note::
 
-    In all versions prior to 1.11, daemonized views got removed immediately
-    from the server when their ``LonaView.handle_request()`` returned.
-    To maintain compatibility with older code, this new behavior is only
-    active if ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES`` is set to
-    ``False``.
+    Daemonized views get removed immediately from the server when their
+    ``LonaView.handle_request()`` returns.  Since version 1.11, you can disable
+    this and keep the daemonized view running by setting
+    ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES`` to ``False``.
+
+    This behavior needs to be manually enabled due to backward compatibility,
+    but will be the default from Lona 2.0 onwards.
 
 .. image:: example-1.gif
 
