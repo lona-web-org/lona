@@ -4,17 +4,17 @@ is_template: False
 11. Frontends
 =============
 
-Lona is a single page application framework. That means that the page gets
-loaded once, and when a link or button is clicked only the content of the
+Lona is a single-page application framework. That means that the page gets
+loaded once, and when a link or button is clicked, only the content of the
 main container gets updated (this container is called the "Lona window"
 internally). Until now, all examples contained only code within
 this main container, but not the page around it. In Lona, these pages are
 called "frontend".
 
-A Lona frontend is a combination of a specialized Lona view, that runs when
-a connection is made to the server, and a Jinja2 template, that serves and sets
-up the Lona JavaScript client. For most applications the default Frontend view
-of Lona will be enough, and only the Jinja2 template has to be changed.
+A Lona frontend is a combination of a specialized Lona view that runs when a
+connection is made to the server, and a Jinja2 template that serves and sets up
+the Lona JavaScript client. For most applications the default Frontend view of
+Lona will suffice, and only the Jinja2 template needs to be changed.
 
 Packages like `lona-picocss <https://github.com/lona-web-org/lona-picocss/blob/master/lona_picocss/templates/picocss/base.html>`_
 ship their own template.
@@ -66,7 +66,7 @@ ship their own template.
                     lona_context.add_connect_hook((lona_context) => {
 
                         // patch navigation links so the page does not
-                        // reload but use the websocket connection to start
+                        // reload but uses the websocket connection to start
                         // new views
                         lona_context.patch_input_events('nav#navigation');
                     });

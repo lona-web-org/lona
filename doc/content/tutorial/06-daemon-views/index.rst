@@ -3,16 +3,16 @@
 6. Daemon Views
 ===============
 
-When a Lona view runs, and the browser, displaying the view, gets closed, the
-view gets stopped on the server. When two browsers open the same URL at the
-same time, two view instances get started. This emulates the behavior of most
-other web frameworks.
+Closing the browser that displays a Lona view will result in the view getting
+stopped on the server as well. When two browsers open the same URL at the same
+time, two view instances get started. This emulates the behavior of most other
+web frameworks.
 
-Lona views run entirely on the server, thread-safe and self-contained with all
-state in them. When ``View.is_daemon`` is set to ``True`` a view can run in the
+Lona views run entirely on the server, thread-safe, and self-contained with all
+state in them. When ``View.is_daemon`` is set to ``True``, a view can run in the
 background and be synchronized and displayed in multiple browsers at the same
-time. That also makes long running views, implementing long running tasks, that
-the user starts and later revisits, possible.
+time. That also makes long running views possible, where long running tasks can
+be started and later revisited.
 
 Daemonized views are only available to the same user that started the view.
 
@@ -38,11 +38,13 @@ method returns immediately.
 
 .. note::
 
-    In all versions prior to 1.11, daemonized views got removed immediately
-    from the server when their ``LonaView.handle_request()`` returned.
-    To maintain compatibility with older code, this new behavior is only
-    active if ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES`` is set to
-    ``False``.
+    Daemonized views get removed immediately from the server when their
+    ``LonaView.handle_request()`` returns.  Since version 1.11, you can disable
+    this and keep the daemonized view running by setting
+    ``LonaView.STOP_DAEMON_WHEN_VIEW_FINISHES`` to ``False``.
+
+    This behavior needs to be manually enabled due to backward compatibility,
+    but will be the default from Lona 2.0 onwards.
 
 .. image:: example-1.gif
 
@@ -54,11 +56,11 @@ Long Running View
 -----------------
 
 This example implements a more complex counter, that counts on its own in the
-background and can be canceled, using a popup. This style of view is called
-"long running" because its ``handle_request()`` method runs, as long as the
-view runs.
+background and can be canceled using a pop-up. This style of view is called
+"long running" because its ``handle_request()`` method runs as long as the view
+runs.
 
-This is handy to write wizards or to process huge amounts of data.
+This is handy for writing wizards or processing huge amounts of data.
 
 .. note::
 
