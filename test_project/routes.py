@@ -131,6 +131,10 @@ routes = [
           'views/responses/non_interactive.py::CustomHeadersResponseView',
           interactive=False),
 
+    # view API
+    Route('/view-api/sleep',
+          'views/view_api/sleep.py::SleepTestView'),
+
     # permissions
     Route('/permissions/access-denied-in-PermissionMiddleware/',
           'views/permissions/denied_in_middleware.py::View'),

@@ -22,6 +22,11 @@ class HomeView(View):
                 <li><a href="/responses/non-interactive/">Non-Interactive</a></li>
             </ul>
 
+            <h2>View API</h2>
+            <ul>
+                <li><a href="/view-api/sleep">View.sleep()</a></li>
+            </ul>
+
             <h2>Permissions</h2>
             <ul>
                 <li><a href="/permissions/access-denied-in-PermissionMiddleware/">Access denied in Middleware.handle_request()</a></li>
