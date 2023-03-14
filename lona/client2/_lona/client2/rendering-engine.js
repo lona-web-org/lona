@@ -42,6 +42,7 @@ export class LonaRenderingEngine {
         this._widgets = new Map();
         this._widgets_to_setup = new Array();
         this._widgets_to_update = new Array();
+        this._dom_parser = new DOMParser();
     };
 
     // helper -----------------------------------------------------------------
@@ -100,6 +101,13 @@ export class LonaRenderingEngine {
 
         node.innerHTML = '';
     };
+
+    _parse_html_string(html_string) {
+        return this._dom_parser.parseFromString(
+            html_string,
+            'text/html',
+        ).documentElement.textContent;
+    }
 
     // node cache -------------------------------------------------------------
     _clear_node_cache() {
@@ -167,7 +175,7 @@ export class LonaRenderingEngine {
         // TextNode
         if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {
             const node_id = node_spec[1];
-            const node_content = node_spec[2];
+            const node_content = this._parse_html_string(node_spec[2]);
 
             const node = document.createTextNode(node_content);
 
