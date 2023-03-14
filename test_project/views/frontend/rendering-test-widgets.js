@@ -1,4 +1,6 @@
-class WidgetDataTestWidget {
+class LegacyWidgetDataTestWidget {
+    // TODO: remove in 2.0
+
     constructor(lona_window) {
         this.lona_window = lona_window;
     }
@@ -22,6 +24,29 @@ class WidgetDataTestWidget {
 
     data_updated() {
         this.render();
+    }
+}
+
+
+class WidgetDataTestWidget {
+    constructor(lonaWindow, rootNode, widgetData) {
+        this.lonaWindow = lonaWindow;
+        this.rootNode = rootNode;
+        this.widgetData = widgetData;
+
+        this.render(this.widgetData.data);
+    }
+
+    destroy() {
+        console.log('>> destroy', this.nodes);
+    }
+
+    onDataUpdated(widgetData) {
+        this.render(widgetData.data);
+    }
+
+    render(data) {
+        this.rootNode.children[1].innerHTML = JSON.stringify(data);
     }
 }
 
@@ -87,6 +112,11 @@ class HTMLConsoleWidget {
     }
 }
 
+
+Lona.register_widget_class(
+    'LegacyWidgetDataTestWidget',
+    LegacyWidgetDataTestWidget,
+);
 
 Lona.register_widget_class('WidgetDataTestWidget', WidgetDataTestWidget);
 Lona.register_widget_class('HTMLConsoleWidget', HTMLConsoleWidget);

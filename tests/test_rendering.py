@@ -178,8 +178,24 @@ async def test_rendering(rendering_setup, lona_project_context):
         await next_step(page, 26)
         await check_default_styles(page)
 
-        # widget data tests ###################################################
+        # legacy widget data tests ############################################
         for step in range(27, 39):
+            await next_step(page, step)
+
+            server_widget_data = await parse_json(
+                page,
+                '#lona #server-widget-data',
+            )
+
+            client_widget_data = await parse_json(
+                page,
+                '#lona #client-widget-data',
+            )
+
+            assert server_widget_data == client_widget_data
+
+        # widget data tests ###################################################
+        for step in range(39, 51):
             await next_step(page, step)
 
             server_widget_data = await parse_json(
@@ -200,7 +216,7 @@ async def test_rendering(rendering_setup, lona_project_context):
         if get_client_version() != 1:
             return
 
-        for step in range(39, 45):
+        for step in range(51, 57):
             await next_step(page, step)
 
             client_html_string = await rendering_root_element.inner_html()
