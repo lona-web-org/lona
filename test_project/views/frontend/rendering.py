@@ -720,12 +720,23 @@ class RenderingTestView(View):
         component.widget_data['dict'] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4}
         component.update_state()
 
+    # html symbols ############################################################
+    @client_version(1, 2)
+    def step_51(self):
+        self.set_step_label(51, 'HTML Symbols')
+
+        self.rendering_root.nodes = [
+            '&euro;',
+            '&#8364;',
+            '&#x20AC;',
+        ]
+
     # legacy widgets ##########################################################
     # TODO: remove in 2.0
 
     @client_version(1)
-    def step_51(self):
-        self.set_step_label(51, 'Legacy Widgets: Setup')
+    def step_52(self):
+        self.set_step_label(52, 'Legacy Widgets: Setup')
 
         self.rendering_root.clear()
 
@@ -742,8 +753,8 @@ class RenderingTestView(View):
         ]
 
     @client_version(1)
-    def step_52(self):
-        self.set_step_label(52, 'Legacy Widgets: Append Nodes')
+    def step_53(self):
+        self.set_step_label(53, 'Legacy Widgets: Append Nodes')
 
         widget1 = self.rendering_root.nodes[0]
         widget1.append(Div('1.3'))
@@ -754,8 +765,8 @@ class RenderingTestView(View):
         self.rendering_root.append(Div('4.1'))
 
     @client_version(1)
-    def step_53(self):
-        self.set_step_label(53, 'Legacy Widgets: Set Nodes')
+    def step_54(self):
+        self.set_step_label(54, 'Legacy Widgets: Set Nodes')
 
         widget1 = self.rendering_root.nodes[0]
         widget1.nodes[1] = Div('1.2.1')
@@ -764,8 +775,8 @@ class RenderingTestView(View):
         widget1.nodes[1] = Div('3.2.1')
 
     @client_version(1)
-    def step_54(self):
-        self.set_step_label(54, 'Legacy Widgets: Reset Nodes')
+    def step_55(self):
+        self.set_step_label(55, 'Legacy Widgets: Reset Nodes')
 
         widget1 = self.rendering_root.nodes[0]
 
@@ -788,8 +799,8 @@ class RenderingTestView(View):
         self.rendering_root[3] = Div('4.1.1')
 
     @client_version(1)
-    def step_55(self):
-        self.set_step_label(55, 'Legacy Widgets: Insert Nodes')
+    def step_56(self):
+        self.set_step_label(56, 'Legacy Widgets: Insert Nodes')
 
         widget1 = self.rendering_root[0]
         widget1.nodes.insert(2, Div('1.2.1.1'))
@@ -800,8 +811,8 @@ class RenderingTestView(View):
         widget2.nodes.insert(2, Div('3.2.1.1'))
 
     @client_version(1)
-    def step_56(self):
-        self.set_step_label(56, 'Legacy Widgets: Remove Nodes')
+    def step_57(self):
+        self.set_step_label(57, 'Legacy Widgets: Remove Nodes')
 
         widget1 = self.rendering_root[0]
         widget1.nodes.pop(2)

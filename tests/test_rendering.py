@@ -210,13 +210,20 @@ async def test_rendering(rendering_setup, lona_project_context):
 
             assert server_widget_data == client_widget_data
 
+        # html symbols ########################################################
+        await next_step(page, 51)
+
+        html_string = await rendering_root_element.inner_html()
+
+        assert html_string == '€€€'
+
         # legacy widgets tests ################################################
         # TODO: remove in 2.0
 
         if get_client_version() != 1:
             return
 
-        for step in range(51, 57):
+        for step in range(52, 58):
             await next_step(page, step)
 
             client_html_string = await rendering_root_element.inner_html()
