@@ -452,45 +452,63 @@ class RenderingTestView(View):
 
         self.rendering_root.nodes[0].attributes.clear()
 
-    # style tests
     @client_version(1, 2)
     def step_22(self):
-        self.set_step_label(22, 'Set style')
+        self.set_step_label(22, 'HTML Symbols')
+
+        self.rendering_root.nodes = [
+            '&euro;',
+            '&#8364;',
+            '&#x20AC;',
+        ]
+
+    # style tests
+    @client_version(1, 2)
+    def step_23(self):
+        self.set_step_label(23, 'Empty style')
+
+        self.rendering_root.nodes = [
+            Div(),
+        ]
+
+    @client_version(1, 2)
+    def step_24(self):
+        self.set_step_label(24, 'Set style')
 
         self.rendering_root.nodes = [
             Div(_style='top: 1px; right: 2px;'),
         ]
 
     @client_version(1, 2)
-    def step_23(self):
-        self.set_step_label(23, 'Add style')
+    def step_25(self):
+        self.set_step_label(25, 'Add style')
 
         self.rendering_root.nodes[0].style['bottom'] = '3px'
 
     @client_version(1, 2)
-    def step_24(self):
-        self.set_step_label(24, 'Remove style')
+    def step_26(self):
+        self.set_step_label(26, 'Remove style')
 
         del self.rendering_root.nodes[0].style['top']
 
     @client_version(1, 2)
-    def step_25(self):
-        self.set_step_label(25, 'Reset style')
+    def step_27(self):
+        self.set_step_label(27, 'Reset style')
 
         self.rendering_root.nodes[0].style = {
             'left': '4px',
         }
 
     @client_version(1, 2)
-    def step_26(self):
-        self.set_step_label(26, 'Clear style')
+    def step_28(self):
+        self.set_step_label(28, 'Clear style')
 
         self.rendering_root.nodes[0].style.clear()
 
     # widget data tests
     @client_version(1, 2)
-    def step_27(self):
-        self.set_step_label(27, 'Widget Data: list: setup')
+    def step_29(self):
+        self.set_step_label(29, 'Widget Data: list: setup')
 
         self.rendering_root.nodes = [
             WidgetDataTestComponent(
@@ -499,8 +517,8 @@ class RenderingTestView(View):
         ]
 
     @client_version(1, 2)
-    def step_28(self):
-        self.set_step_label(28, 'Widget Data: list: append')
+    def step_30(self):
+        self.set_step_label(30, 'Widget Data: list: append')
 
         component = self.rendering_root.nodes[0]
 
@@ -510,8 +528,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_29(self):
-        self.set_step_label(29, 'Widget Data: list: remove')
+    def step_31(self):
+        self.set_step_label(31, 'Widget Data: list: remove')
 
         component = self.rendering_root.nodes[0]
 
@@ -519,8 +537,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_30(self):
-        self.set_step_label(30, 'Widget Data: list: insert')
+    def step_32(self):
+        self.set_step_label(32, 'Widget Data: list: insert')
 
         component = self.rendering_root.nodes[0]
 
@@ -528,8 +546,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_31(self):
-        self.set_step_label(31, 'Widget Data: list: clear')
+    def step_33(self):
+        self.set_step_label(33, 'Widget Data: list: clear')
 
         component = self.rendering_root.nodes[0]
 
@@ -537,8 +555,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_32(self):
-        self.set_step_label(32, 'Widget Data: list: reset')
+    def step_34(self):
+        self.set_step_label(34, 'Widget Data: list: reset')
 
         component = self.rendering_root.nodes[0]
 
@@ -546,8 +564,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_33(self):
-        self.set_step_label(33, 'Widget Data: dict: setup')
+    def step_35(self):
+        self.set_step_label(35, 'Widget Data: dict: setup')
 
         component = self.rendering_root.nodes[0]
 
@@ -555,8 +573,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_34(self):
-        self.set_step_label(34, 'Widget Data: dict: set')
+    def step_36(self):
+        self.set_step_label(36, 'Widget Data: dict: set')
 
         component = self.rendering_root.nodes[0]
 
@@ -566,8 +584,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_35(self):
-        self.set_step_label(35, 'Widget Data: dict: del')
+    def step_37(self):
+        self.set_step_label(37, 'Widget Data: dict: del')
 
         component = self.rendering_root.nodes[0]
 
@@ -575,8 +593,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_36(self):
-        self.set_step_label(36, 'Widget Data: dict: pop')
+    def step_38(self):
+        self.set_step_label(38, 'Widget Data: dict: pop')
 
         component = self.rendering_root.nodes[0]
 
@@ -584,8 +602,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_37(self):
-        self.set_step_label(37, 'Widget Data: dict: clear')
+    def step_39(self):
+        self.set_step_label(39, 'Widget Data: dict: clear')
 
         component = self.rendering_root.nodes[0]
 
@@ -593,8 +611,8 @@ class RenderingTestView(View):
         component.update_state()
 
     @client_version(1, 2)
-    def step_38(self):
-        self.set_step_label(38, 'Widget Data: dict: reset')
+    def step_40(self):
+        self.set_step_label(40, 'Widget Data: dict: reset')
 
         component = self.rendering_root.nodes[0]
 
@@ -605,8 +623,8 @@ class RenderingTestView(View):
     # TODO: remove in 2.0
 
     @client_version(1)
-    def step_39(self):
-        self.set_step_label(39, 'Legacy Widgets: Setup')
+    def step_41(self):
+        self.set_step_label(41, 'Legacy Widgets: Setup')
 
         self.rendering_root.clear()
 
@@ -623,8 +641,8 @@ class RenderingTestView(View):
         ]
 
     @client_version(1)
-    def step_40(self):
-        self.set_step_label(40, 'Legacy Widgets: Append Nodes')
+    def step_42(self):
+        self.set_step_label(42, 'Legacy Widgets: Append Nodes')
 
         widget1 = self.rendering_root.nodes[0]
         widget1.append(Div('1.3'))
@@ -635,8 +653,8 @@ class RenderingTestView(View):
         self.rendering_root.append(Div('4.1'))
 
     @client_version(1)
-    def step_41(self):
-        self.set_step_label(41, 'Legacy Widgets: Set Nodes')
+    def step_43(self):
+        self.set_step_label(43, 'Legacy Widgets: Set Nodes')
 
         widget1 = self.rendering_root.nodes[0]
         widget1.nodes[1] = Div('1.2.1')
@@ -645,8 +663,8 @@ class RenderingTestView(View):
         widget1.nodes[1] = Div('3.2.1')
 
     @client_version(1)
-    def step_42(self):
-        self.set_step_label(42, 'Legacy Widgets: Reset Nodes')
+    def step_44(self):
+        self.set_step_label(44, 'Legacy Widgets: Reset Nodes')
 
         widget1 = self.rendering_root.nodes[0]
 
@@ -669,8 +687,8 @@ class RenderingTestView(View):
         self.rendering_root[3] = Div('4.1.1')
 
     @client_version(1)
-    def step_43(self):
-        self.set_step_label(43, 'Legacy Widgets: Insert Nodes')
+    def step_45(self):
+        self.set_step_label(45, 'Legacy Widgets: Insert Nodes')
 
         widget1 = self.rendering_root[0]
         widget1.nodes.insert(2, Div('1.2.1.1'))
@@ -681,8 +699,8 @@ class RenderingTestView(View):
         widget2.nodes.insert(2, Div('3.2.1.1'))
 
     @client_version(1)
-    def step_44(self):
-        self.set_step_label(44, 'Legacy Widgets: Remove Nodes')
+    def step_46(self):
+        self.set_step_label(46, 'Legacy Widgets: Remove Nodes')
 
         widget1 = self.rendering_root[0]
         widget1.nodes.pop(2)

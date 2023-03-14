@@ -123,11 +123,21 @@ async def test_rendering(rendering_setup, lona_project_context):
 
             assert html.nodes == context.server.state['rendering-root'].nodes
 
+        # html symbols
+        await next_step(page, 22)
+
+        html_string = await rendering_root_element.inner_html()
+
+        assert html_string == '€€€'
+
         # CSS tests ###########################################################
+
+        # 23 Empty style
+        await next_step(page, 23)
         await check_default_styles(page)
 
-        # 22 Set Style
-        await next_step(page, 22)
+        # 24 Set Style
+        await next_step(page, 24)
 
         computed_style = await get_computed_style(page)
 
@@ -136,8 +146,8 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == 'auto'
         assert computed_style['left'] == 'auto'
 
-        # 23 Add Style
-        await next_step(page, 23)
+        # 25 Add Style
+        await next_step(page, 25)
 
         computed_style = await get_computed_style(page)
         style = get_style()
@@ -147,8 +157,8 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == '3px'
         assert computed_style['left'] == 'auto'
 
-        # 24 Remove Style
-        await next_step(page, 24)
+        # 26 Remove Style
+        await next_step(page, 26)
 
         computed_style = await get_computed_style(page)
         style = get_style()
@@ -160,8 +170,8 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == '3px'
         assert computed_style['left'] == 'auto'
 
-        # 25 Reset Style
-        await next_step(page, 25)
+        # 27 Reset Style
+        await next_step(page, 27)
 
         computed_style = await get_computed_style(page)
         style = get_style()
@@ -174,12 +184,12 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == 'auto'
         assert computed_style['left'] == '4px'
 
-        # 26 Clear Style
-        await next_step(page, 26)
+        # 28 Clear Style
+        await next_step(page, 28)
         await check_default_styles(page)
 
         # widget data tests ###################################################
-        for step in range(27, 39):
+        for step in range(29, 41):
             await next_step(page, step)
 
             server_widget_data = await parse_json(
@@ -200,7 +210,7 @@ async def test_rendering(rendering_setup, lona_project_context):
         if get_client_version() != 1:
             return
 
-        for step in range(39, 45):
+        for step in range(41, 47):
             await next_step(page, step)
 
             client_html_string = await rendering_root_element.inner_html()
