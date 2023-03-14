@@ -30,7 +30,16 @@ export class LonaDomRenderer {
     constructor(lona_context, lona_window) {
         this.lona_context = lona_context;
         this.lona_window = lona_window;
+
+        this._dom_parser = new DOMParser();
     };
+
+    _parse_html_string(html_string) {
+        return this._dom_parser.parseFromString(
+            html_string,
+            'text/html',
+        ).documentElement.textContent;
+    }
 
     // html rendering ---------------------------------------------------------
     _render_node(node_spec) {
@@ -132,7 +141,7 @@ export class LonaDomRenderer {
         // TextNode
         } else if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {
             var node_id = node_spec[1];
-            var node_content = node_spec[2];
+            var node_content = this._parse_html_string(node_spec[2]);
 
             var node = document.createTextNode(node_content);
 
