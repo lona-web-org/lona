@@ -1,27 +1,87 @@
-class WidgetDataTestWidget {
-    constructor(lona_window) {
-        this.lona_window = lona_window;
-    }
+class LegacyWidgetApiTestWidget {
+    // TODO: remove in 2.0
 
+    // helper -----------------------------------------------------------------
     render() {
         this.root_node.children[1].innerHTML = JSON.stringify(this.data);
     }
 
+    log_hook(name) {
+        const element = this.lona_window.root_node.querySelector(
+            '#widget-hooks',
+        );
+
+        if(!element) {
+            return;
+        }
+
+        if(element.innerHTML != '') {
+            element.innerHTML = `${element.innerHTML},`;
+        }
+
+        element.innerHTML = `${element.innerHTML}${name}`;
+    }
+
+    // hooks ------------------------------------------------------------------
+    constructor(lona_window) {
+        this.lona_window = lona_window;
+        this.log_hook('constructor');
+    }
+
     setup() {
         this.render();
-        console.log('>> setup', this.nodes);
+        this.log_hook('setup');
     }
 
     deconstruct() {
-        console.log('>> deconstruct', this.nodes);
-    }
-
-    nodes_updated() {
-        console.log('>> nodes updated', this.nodes);
+        this.log_hook('deconstruct');
     }
 
     data_updated() {
         this.render();
+    }
+}
+
+
+class WidgetApiTestWidget {
+
+    // helper -----------------------------------------------------------------
+    render(data) {
+        this.rootNode.children[1].innerHTML = JSON.stringify(data);
+    }
+
+    log_hook(name) {
+        const element = this.lonaWindow.root_node.querySelector(
+            '#widget-hooks',
+        );
+
+        if(!element) {
+            return;
+        }
+
+        if(element.innerHTML != '') {
+            element.innerHTML = `${element.innerHTML},`;
+        }
+
+        element.innerHTML = `${element.innerHTML}${name}`;
+    }
+
+    // hooks ------------------------------------------------------------------
+    constructor(lonaWindow, rootNode, widgetData) {
+        this.lonaWindow = lonaWindow;
+        this.rootNode = rootNode;
+        this.widgetData = widgetData;
+
+        this.render(this.widgetData.data);
+        this.log_hook('constructor');
+    }
+
+    destroy() {
+        this.log_hook('destroy');
+    }
+
+    onDataUpdated(widgetData) {
+        this.render(widgetData.data);
     }
 }
 
@@ -88,5 +148,10 @@ class HTMLConsoleWidget {
 }
 
 
-Lona.register_widget_class('WidgetDataTestWidget', WidgetDataTestWidget);
+Lona.register_widget_class(
+    'LegacyWidgetApiTestWidget',
+    LegacyWidgetApiTestWidget,
+);
+
+Lona.register_widget_class('WidgetApiTestWidget', WidgetApiTestWidget);
 Lona.register_widget_class('HTMLConsoleWidget', HTMLConsoleWidget);
