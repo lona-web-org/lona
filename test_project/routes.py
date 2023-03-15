@@ -237,6 +237,9 @@ routes = [
     Route('/frontend/custom-messages/',
           'views/frontend/custom_messages.py::CustomMessagesView'),
 
+    Route('/frontend/redirects<url:.*>',
+          'views/frontend/redirects.py::RedirectsView'),
+
     # home
     Route('/', 'views/home.py::HomeView'),
 ]
