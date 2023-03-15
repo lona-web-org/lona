@@ -1,106 +1,77 @@
-def setup_app(app):
-    from lona import View
-
-    # root
-    @app.route('/')
-    class RootView(View):
-        def handle_request(self, request):
-            return 'ROOT'
-
-    @app.route('/redirect-to-root/')
-    class RedirectToRoot(View):
-        def handle_request(self, request):
-            return {
-                'redirect': '/',
-            }
-
-    # absolute url
-    @app.route('/absolute-url/')
-    class AbsoluteUrlView(View):
-        def handle_request(self, request):
-            return 'ABSOLUTE-URL'
-
-    @app.route('/redirect-to-absolute-url/')
-    class RedirectToAbsoluteUrlView(View):
-        def handle_request(self, request):
-            return {
-                'redirect': '/absolute-url/',
-            }
-
-    # relative urls
-    @app.route('/redirect-to-relative-url/foo/')
-    class RelativeUrlView(View):
-        def handle_request(self, request):
-            return 'relative-URL'
-
-    @app.route('/redirect-to-relative-url/')
-    class RelativeRedirectUrlView(View):
-        def handle_request(self, request):
-            return {
-                'redirect': 'foo/',
-            }
-
-    @app.route('/redirect-to-root-relatively/')
-    class RedirectToRootRelativeView(View):
-        def handle_request(self, request):
-            return {
-                'redirect': '..',
-            }
-
-    # refresh
-    refreshed = False
-
-    @app.route('/refresh/')
-    class RefreshView(View):
-        def handle_request(self, request):
-            nonlocal refreshed
-
-            if not refreshed:
-                refreshed = True
-
-                return {
-                    'redirect': '.',
-                }
-
-            else:
-                return 'REFRESH'
+import pytest
 
 
-async def test_redirects(lona_app_context):
-    """
-    This test tests redirects by creating multiple views and redirecting from
-    one to another. Absolute and relative URLs are tested.
-    """
+@pytest.mark.parametrize('client_version', [1, 2])
+@pytest.mark.parametrize('browser_name', ['chromium', 'firefox', 'webkit'])
+@pytest.mark.parametrize('method', ['link', 'redirect', 'http-redirect'])
+async def test_redirects(
+        method,
+        browser_name,
+        client_version,
+        lona_project_context,
+):
+
+    import os
 
     from playwright.async_api import async_playwright
 
-    context = await lona_app_context(setup_app)
+    TEST_PROJECT_PATH = os.path.join(__file__, '../../test_project')
+    BASE_URL = '/frontend/redirects'
+
+    context = await lona_project_context(
+        project_root=TEST_PROJECT_PATH,
+        settings=['settings.py'],
+        settings_post_overrides={
+            'CLIENT_VERSION': client_version,
+        },
+    )
+
+    datasets = [
+
+        # absolute url
+        (f'{BASE_URL}/foo/bar/baz/', '/foo', '/foo'),
+
+        # relative urls
+        (f'{BASE_URL}/foo/bar/baz', '.', f'{BASE_URL}/foo/bar/'),
+        (f'{BASE_URL}/foo/bar/baz/', '.', f'{BASE_URL}/foo/bar/baz/'),
+
+        # relative forward urls
+        (f'{BASE_URL}/foo/bar/baz', './foo', f'{BASE_URL}/foo/bar/foo'),
+        (f'{BASE_URL}/foo/bar/baz/', './foo', f'{BASE_URL}/foo/bar/baz/foo'),
+
+        # relative backward urls
+        (f'{BASE_URL}/foo/bar/baz', '..', f'{BASE_URL}/foo/'),
+        (f'{BASE_URL}/foo/bar/baz/', '..', f'{BASE_URL}/foo/bar/'),
+    ]
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await getattr(p, browser_name).launch()
         browser_context = await browser.new_context()
-        page = await browser_context.new_page()
 
-        # test redirect to root
-        await page.goto(context.make_url('/redirect-to-root/'))
-        await page.wait_for_url('/')
-        await page.wait_for_selector('#lona:has-text("ROOT")')
+        for raw_initial_url, redirect_url, success_url in datasets:
+            page = await browser_context.new_page()
 
-        # test redirect to absolute url
-        await page.goto(context.make_url('/redirect-to-absolute-url/'))
-        await page.wait_for_url('/absolute-url/')
-        await page.wait_for_selector('#lona:has-text("ABSOLUTE-URL")')
+            # initial load
+            initial_url = context.make_url(raw_initial_url)
 
-        # relative url
-        await page.goto(context.make_url('/redirect-to-relative-url/'))
-        await page.wait_for_url('/redirect-to-relative-url/foo/')
-        await page.wait_for_selector('#lona:has-text("RELATIVE-URL")')
+            await page.goto(initial_url)
+            await page.wait_for_url(initial_url)
 
-        await page.goto(context.make_url('/redirect-to-root-relatively/'))
-        await page.wait_for_url('/')
-        await page.wait_for_selector('#lona:has-text("ROOT")')
+            # trigger redirect
+            await page.fill('input#url', redirect_url)
+            await page.wait_for_selector(f'a#link[href="{redirect_url}"]')
 
-        # test refresh
-        await page.goto(context.make_url('/refresh/'))
-        await page.wait_for_url('/refresh/')
-        await page.wait_for_selector('#lona:has-text("REFRESH")')
+            if method == 'link':
+                await page.click('a#link')
+
+            elif method == 'redirect':
+                await page.click('button#redirect')
+
+            elif method == 'http-redirect':
+                await page.click('button#http-redirect')
+
+            # wait for success url
+            await page.wait_for_url(success_url)
+
+            # close page
+            await page.close()
