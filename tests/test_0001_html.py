@@ -13,6 +13,7 @@ from lona.html import (
     Select,
     Option,
     Button,
+    HTML2,
     HTML1,
     Span,
     Node,
@@ -636,6 +637,51 @@ class TestLegacyHtmlParsing:
 
         finally:
             set_use_future_node_classes(False)
+
+
+@pytest.mark.incremental()
+class TestHtmlParsing:
+    def test_sub_nodes(self):
+        node = HTML2("""
+            <div>
+                <span></span>
+                <div></div>
+                <h1></h1>
+            </div>
+        """)
+
+        assert node.tag_name == 'div'
+        assert len(node.nodes) == 3
+        assert node.nodes[0].tag_name == 'span'
+        assert node.nodes[1].tag_name == 'div'
+        assert node.nodes[2].tag_name == 'h1'
+
+    def test_wrapping(self):
+        node = HTML2("""
+            <span></span>
+            <div></div>
+            <h1></h1>
+        """)
+
+        assert node.tag_name == 'div'
+        assert len(node.nodes) == 3
+        assert node.nodes[0].tag_name == 'span'
+        assert node.nodes[1].tag_name == 'div'
+        assert node.nodes[2].tag_name == 'h1'
+
+    def test_multiple_strings(self):
+        node = HTML2(
+            '<span></span><span></span>',
+            '<div></div>',
+            '<h1></h1>',
+        )
+
+        assert node.tag_name == 'div'
+        assert len(node.nodes) == 4
+        assert node.nodes[0].tag_name == 'span'
+        assert node.nodes[1].tag_name == 'span'
+        assert node.nodes[2].tag_name == 'div'
+        assert node.nodes[3].tag_name == 'h1'
 
 
 @pytest.mark.incremental()
