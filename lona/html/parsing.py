@@ -246,15 +246,17 @@ def HTML(
 
             # html string
             elif '<' in node or '>' in node:
+                parsed_nodes = html_string_to_node_list(
+                    html_string=node,
+                    use_high_level_nodes=use_high_level_nodes,
+                    node_classes=node_classes or {},
+                )
+
                 if len(nodes) > 1:
-                    _nodes.append(HTML(node))
+                    _nodes.extend(parsed_nodes)
 
                 else:
-                    _nodes = html_string_to_node_list(
-                        html_string=node,
-                        use_high_level_nodes=use_high_level_nodes,
-                        node_classes=node_classes or {},
-                    )
+                    _nodes = parsed_nodes
 
             else:
                 _nodes.append(TextNode(node))
