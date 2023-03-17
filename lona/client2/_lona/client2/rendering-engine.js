@@ -101,7 +101,35 @@ export class LonaRenderingEngine {
 
         this._nodes.delete(node_id);
         node.remove();
+
+        this._remove_widget_if_present(node_id);
     };
+
+    _remove_widget_if_present(node_id) {
+        if(!(this._widgets.has(node_id))) {
+            return;
+        }
+
+        const widget = this._widgets.get(node_id);
+
+        // destroy widget
+        widget.destroy_widget();
+
+        // remove widget
+        this._widgets.delete(node_id);
+
+        // remove widget from _widgets_to_setup
+        if(this._widgets_to_setup.indexOf(node_id) > -1) {
+            this._widgets_to_setup.splice(
+                this._widgets_to_setup.indexOf(node_id), 1);
+        };
+
+        // remove widget from _widgets_to_update
+        if(this._widgets_to_update.indexOf(node_id) > -1) {
+            this._widgets_to_update.splice(
+                this._widgets_to_update.indexOf(node_id), 1);
+        };
+    }
 
     _clear_node(node_id) {
         const node = this._get_node(node_id);
@@ -132,38 +160,12 @@ export class LonaRenderingEngine {
 
     _clean_node_cache() {
         this._nodes.forEach((node, node_id) => {
-
-            // nodes
             if(this._root.contains(node)) {
                 return;
             }
 
             this._remove_node(node_id);
-
-            // widgets
-            if(!(this._widgets.has(node_id))) {
-                return;
-            }
-
-            const widget = this._widgets.get(node_id);
-
-            // destroy widget
-            widget.destroy_widget();
-
-            // remove widget
-            this._widgets.delete(node_id);
-
-            // remove widget from _widgets_to_setup
-            if(this._widgets_to_setup.indexOf(node_id) > -1) {
-                this._widgets_to_setup.splice(
-                    this._widgets_to_setup.indexOf(node_id), 1);
-            };
-
-            // remove widget from _widgets_to_update
-            if(this._widgets_to_update.indexOf(node_id) > -1) {
-                this._widgets_to_update.splice(
-                    this._widgets_to_update.indexOf(node_id), 1);
-            };
+            this._remove_widget_if_present(node_id);
         });
     };
 
