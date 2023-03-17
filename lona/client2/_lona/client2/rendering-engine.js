@@ -73,6 +73,14 @@ export class LonaRenderingEngine {
         return this._nodes.get(node_id);
     };
 
+    _cache_node(node_id, node) {
+        if(this._nodes.has(node_id)) {
+            throw(`node with id ${node_id} is already cached`);
+        }
+
+        this._nodes.set(node_id, node);
+    };
+
     _insert_node(node, node_id, index) {
         const target_node = this._get_node(node_id);
 
@@ -179,7 +187,7 @@ export class LonaRenderingEngine {
 
             const node = document.createTextNode(node_content);
 
-            this._nodes.set(node_id, node);
+            this._cache_node(node_id, node);
 
             return node;
         };
@@ -245,7 +253,7 @@ export class LonaRenderingEngine {
             node.appendChild(child_node);
         });
 
-        this._nodes.set(node_id, node);
+        this._cache_node(node_id, node);
 
         // widget
         if(widget_class_name != '') {
