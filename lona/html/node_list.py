@@ -213,14 +213,14 @@ class NodeList:
 
                 self._nodes.append(node)
 
-                self._node.document.add_patch(
-                    node_id=self._node.id,
-                    patch_type=PATCH_TYPE.NODES,
-                    operation=OPERATION.RESET,
-                    payload=[
-                        [i._serialize() for i in self._nodes],
-                    ],
-                )
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=PATCH_TYPE.NODES,
+                operation=OPERATION.RESET,
+                payload=[
+                    [i._serialize() for i in self._nodes],
+                ],
+            )
 
     def _serialize(self, include_node_ids=True):
         return [i._serialize(include_node_ids=include_node_ids)
