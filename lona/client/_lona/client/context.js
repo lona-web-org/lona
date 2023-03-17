@@ -22,7 +22,7 @@ SOFTWARE.
 
 */
 
-import { LonaWindowShim } from './window-shim.js';
+import { LonaWindowShim } from '../client2/window-shim.js';
 import { LonaWindow } from './window.js';
 import { Lona } from './lona.js';
 
