@@ -132,6 +132,33 @@ export class LonaWindow {
         this._widgets_to_update = [];
     };
 
+    _remove_widget_if_present(node_id) {
+        if(!(node_id in this._widgets)) {
+            return;
+        }
+
+        // run deconstructor
+        this._widgets[node_id].destroy_widget();
+
+        // remove widget
+        delete this._widgets[node_id];
+
+        // remove widget data
+        delete this._widget_data[node_id];
+
+        // remove widget from _widgets_to_setup
+        if(this._widgets_to_setup.indexOf(node_id) > -1) {
+            this._widgets_to_setup.splice(
+                this._widgets_to_setup.indexOf(node_id), 1);
+        };
+
+        // remove widget from _widgets_to_update
+        if(this._widgets_to_update.indexOf(node_id) > -1) {
+            this._widgets_to_update.splice(
+                this._widgets_to_update.indexOf(node_id), 1);
+        };
+    }
+
     _clean_node_cache() {
         // nodes
         Object.keys(this._nodes).forEach(key => {
@@ -153,30 +180,8 @@ export class LonaWindow {
 
             delete this._widget_marker[key];
 
-            // widget
-            if(key in this._widgets) {
-
-                // run deconstructor
-                this._widgets[key].destroy_widget();
-
-                // remove widget
-                delete this._widgets[key];
-
-                // remove widget data
-                delete this._widget_data[key];
-
-                // remove widget from _widgets_to_setup
-                if(this._widgets_to_setup.indexOf(key) > -1) {
-                    this._widgets_to_setup.splice(
-                        this._widgets_to_setup.indexOf(key), 1);
-                };
-
-                // remove widget from _widgets_to_update
-                if(this._widgets_to_update.indexOf(key) > -1) {
-                    this._widgets_to_update.splice(
-                        this._widgets_to_update.indexOf(key), 1);
-                };
-            };
+            // frontend widget
+            this._remove_widget_if_present(key);
         });
     };
 

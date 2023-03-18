@@ -275,9 +275,12 @@ export class LonaDomUpdater {
 
     _remove_node(node_id) {
 
-        // TextNode
+        // Node
         if(node_id in this.lona_window._nodes) {
-            this.lona_window._nodes[node_id].remove();
+            node = this.lona_window._nodes[node_id];
+
+            node.remove();
+            this.lona_window._remove_widget_if_present(node_id);
 
             delete this.lona_window._nodes[node_id];
 
@@ -310,11 +313,7 @@ export class LonaDomUpdater {
                 node.remove();
             };
 
-        // Node
-        } else {
-            node = this.lona_window._nodes[node_id];
-
-            node.remove();
+            this.lona_window._remove_widget_if_present(node_id);
         };
     };
 
