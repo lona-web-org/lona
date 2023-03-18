@@ -1,6 +1,6 @@
 
 
-5. Responses
+6. Responses
 ============
 
 For every incoming request, Lona instantiates an object of the class
@@ -45,11 +45,11 @@ binary data.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 4. Routing
-        :link_target: /tutorial/04-routing/index.rst
+        :link_title: 5. Routing
+        :link_target: /tutorial/05-routing/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 6. HTML
-        :link_target: /tutorial/06-daemon-views/index.rst
+        :link_title: 7. Daemon Views
+        :link_target: /tutorial/07-daemon-views/index.rst
         :position: right

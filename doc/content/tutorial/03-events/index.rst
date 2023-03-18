@@ -102,6 +102,6 @@ to await input of two numbers, to then display their sum.
         :position: left
 
     .. rst-button::
-        :link_title: 4. Routing
-        :link_target: /tutorial/04-routing/index.rst
+        :link_title: 4. User Input
+        :link_target: /tutorial/04-user-input/index.rst
         :position: right

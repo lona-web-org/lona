@@ -1,6 +1,6 @@
 
 
-6. Daemon Views
+7. Daemon Views
 ===============
 
 Closing the browser that displays a Lona view will result in the view getting
@@ -75,11 +75,11 @@ This is handy for writing wizards or processing huge amounts of data.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 5. Responses
-        :link_target: /tutorial/05-responses/index.rst
+        :link_title: 6. Responses
+        :link_target: /tutorial/06-responses/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 7. State
-        :link_target: /tutorial/07-state/index.rst
+        :link_title: 8. State
+        :link_target: /tutorial/08-state/index.rst
         :position: right
