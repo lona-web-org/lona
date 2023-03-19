@@ -6,6 +6,94 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.12.4 (2023-03-19)
+
+Bugfixes
+~~~~~~~~
+
+* Views
+
+  * TypeError in ``View.sleep()`` on Python 3.11 was fixed
+
+    * ``View.sleep()`` uses ``View._await_sync`` internally, which previously
+      used ``asyncio.wait`` with coroutines. Since Python 3.11,
+      ``asyncio.wait`` forbids coroutines, therefore Lona now converts its
+      them to asyncio tasks before calling ``asyncio.wait``.
+
+      https://docs.python.org/3/library/asyncio-task.html#waiting-primitives
+
+* HTML
+
+  * Duplicate node reset patches were fixed
+
+    * ``NodeList.reset()`` gets called with a list of nodes when the
+      ``Node.nodes`` property gets set. ``NodeList.reset()`` then clears its
+      node list and creates a ``lona.protocol.OPERATION.RESET`` patch.
+
+      Previously, the code falsely create a patch for every new node, that
+      contained all following nodes. That resulted in a list of patches that
+      would override each other on the client.
+
+      This was no problem in the past, because the client had no checks before
+      whether a node was already sent by the server, and because the patches
+      overwrote each other, the HTML end-result always was correct.
+
+  * Incorrect node wrapping on client2 when parsing HTML strings was fixed
+
+    * Previously, when client2 was used, ``lona.html.HTML`` used
+      ``lona.html.HTML`` (itself) to parse given HTML-strings. On client2,
+      ``lona.html.HTML`` wraps all nodes on the top-level of the parsing
+      result, if the parser returned more than one root node.
+
+      This combination resulted in incorrect node wrapping, not only on the
+      top-level, but also in sub-trees.
+
+* Client
+
+  * Rendering of HTML symbols was fixed
+
+    * https://www.w3schools.com/html/html_symbols.asp
+
+  * The ``Widget.deconstruct`` was fixed
+
+    * Previously, ``Widget.deconstruct`` only ran when a node got orphaned
+      after a node clearing operation, and got collected by the
+      rendering-engine. It did not run, when a single node got removed from the
+      client.
+
+  * Relative URL resolving was fixed
+
+    * Previously, the resolving of relative URLs was a custom implementation,
+      which had multiple weird quirks, and behaved differently than the
+      browsers implementation. That was confusing, because redirects, issued by
+      the server, sometimes resulted in slightly different URLs than their
+      link-counterparts.
+
+      The client uses the browsers URL resolving implementation now, to ensure
+      that client-side and server-side issued redirects behave the same.
+
+
+Changes
+~~~~~~~
+
+* Client
+
+  * The ``WidgetData`` class was added to make room for high-level API like
+    ``WidgetData.set`` or ``WidgetData.get`` in the future
+
+  * References to the Lona window, the root node, and the widget data of a
+    widget, got added to ``Widget.constructor`` calls, to replace
+    ``Widget.setup`` in the future
+
+  * ``Widget.onDataUpdated`` was added to replace ``Widget.data_updated`` in
+    the future
+
+  * ``Widget.destroy`` was added to replace ``Widget.deconstruct`` in the
+    future
+
+  * A reference to the Lona window was added to the ``LonaWindowShim`` class
+
+
 .. changelog-header:: 1.12.3 (2023-02-12)
 
 Bugfixes
