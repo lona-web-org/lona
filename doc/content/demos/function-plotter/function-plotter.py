@@ -1,20 +1,17 @@
 import math
 
-from lona.html import TextInput, HTML, H1
+from lona_picocss.html import TextInput, Label, HTML, Grid, Sub, H1
+from lona_picocss import install_picocss
+
 from lona import View, App
 
 from lona_chartjs.html import Chart
 
 app = App(__file__)
 
-app.add_static_file('lona/style.css',"""
-#lona {
-    font-family: sans-serif;
-    color: #333333;
-    max-width: 95%;
-    margin: 0 auto;
-}
-""")
+install_picocss(app)
+
+app.settings.PICOCSS_THEME = 'light'
 
 colors = {
     'red': 'rgba(255, 99, 132, 1)',
@@ -61,7 +58,7 @@ CHART_DATA = {
     },
     'options': {
         'animation': False,
-        'responsive': False,
+        'responsive': True,
         'scales': {
             'y': {
                 'beginAtZero': True,
@@ -72,7 +69,7 @@ CHART_DATA = {
 
 
 @app.route('/')
-class MyLonaView(View):
+class Plotter(View):
     def handle_request(self, request):
         self.chart = Chart(
             width='600px',
@@ -116,14 +113,37 @@ class MyLonaView(View):
 
         html = HTML(
             H1('Function Plotter'),
-            'f<sub>1</sub>:', '&nbsp;', self.f1, '&nbsp;&nbsp;&nbsp;',
-            'f<sub>2</sub>:', '&nbsp;', self.f2, '&nbsp;&nbsp;&nbsp;',
-            'f<sub>3</sub>:', '&nbsp;', self.f3,
-            '<br>',
+            Grid(
+                Label(
+                    'f', Sub('1'),
+                    self.f1,
+                ),
+                Label(
+                    'f', Sub('2'),
+                    self.f2,
+                ),
+                Label(
+                    'f', Sub('3'),
+                    self.f3,
+                ),
+            ),
+
             self.chart,
-            'x<sub>min</sub>:', '&nbsp;', self.xmin, '&nbsp;&nbsp;&nbsp;',
-            'x<sub>max</sub>:', '&nbsp;', self.xmax, '&nbsp;&nbsp;&nbsp;',
-            'points:', '&nbsp;', self.points,
+
+            Grid(
+                Label(
+                    'x', Sub('min'),
+                    self.xmin,
+                ),
+                Label(
+                    'x', Sub('max'),
+                    self.xmax,
+                ),
+                Label(
+                    'Points',
+                    self.points,
+                ),
+            ),
         )
 
         self.handle_text_input_change(type('', (), {'data': self.f1.value}))
@@ -133,21 +153,21 @@ class MyLonaView(View):
     def handle_text_input_change(self, input_event):
         try:
             self.x_min = float(self.xmin.value)
-            self.xmin.style = {'color': 'black', 'width' : '4em'}
+            self.xmin.style = {'color': 'black'}
         except:
-            self.xmin.style = {'color': 'red', 'width' : '4em'}
+            self.xmin.style = {'color': 'red'}
         try:
             self.x_max = float(self.xmax.value)
-            self.xmax.style = {'color': 'black', 'width' : '4em'}
+            self.xmax.style = {'color': 'black'}
         except:
-            self.xmax.style = {'color': 'red', 'width' : '4em'}
+            self.xmax.style = {'color': 'red'}
         try:
             if float(self.points.value) == 0:
                 raise RuntimeError
             self.point_count = float(self.points.value)
-            self.points.style = {'color': 'black', 'width' : '4em'}
+            self.points.style = {'color': 'black'}
         except:
-            self.points.style = {'color': 'red', 'width' : '4em'}
+            self.points.style = {'color': 'red'}
         step = (self.x_max - self.x_min) / self.point_count
         f_list = [self.f1, self.f2, self.f3]
         color_list = ['blue', 'green', 'orange']
@@ -172,20 +192,6 @@ class MyLonaView(View):
                 f_list[i].style = {'color': color_list[i]}
             else:
                 f_list[i].style = {'color': 'red'}
-
-
-app.add_template('lona/frontend.js', """
-    lona_context.add_disconnect_hook(function(lona_context, event) {
-        document.querySelector('#lona').innerHTML = `
-            Server disconnected <br> Trying to reconnect...
-        `;
-
-        setTimeout(function() {
-            lona_context.reconnect();
-
-        }, 1000);
-    });
-""")
 
 
 app.run()
