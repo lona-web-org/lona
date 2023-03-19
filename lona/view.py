@@ -75,6 +75,9 @@ class View:
 
     # asyncio #################################################################
     def _await_sync(self, awaitable: Awaitable[T]) -> T:
+        if asyncio.iscoroutine(awaitable):
+            awaitable = self.server.loop.create_task(awaitable)
+
         async def await_awaitable() -> T:
             finished, pending = await asyncio.wait(
                 [
