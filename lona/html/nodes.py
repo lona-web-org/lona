@@ -129,6 +129,10 @@ class Br(Node):
     SELF_CLOSING_TAG = True
 
 
+class Sub(Node):
+    TAG_NAME = 'sub'
+
+
 # inputs ######################################################################
 class Form(Node):
     TAG_NAME = 'form'
