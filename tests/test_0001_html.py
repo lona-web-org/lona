@@ -13,9 +13,10 @@ from lona.html import (
     Select,
     Option,
     Button,
+    HTML2,
+    HTML1,
     Span,
     Node,
-    HTML,
     Div,
     H1,
 )
@@ -389,9 +390,9 @@ class TestHTMLSubnodes:
 
 
 @pytest.mark.incremental()
-class TestHTMLFromStr:
+class TestLegacyHtmlParsing:
     def test_empty_node(self):
-        node = HTML('<div></div>')[0]
+        node = HTML1('<div></div>')[0]
 
         assert node.tag_name == 'div'
         assert node.id_list == []
@@ -401,7 +402,7 @@ class TestHTMLFromStr:
         assert node.nodes == []
 
     def test_node_with_attributes(self):
-        node = HTML("""
+        node = HTML1("""
             <div id="foo" class="bar" style="color: black" foo="bar">
             </div>
         """)[0]
@@ -414,7 +415,7 @@ class TestHTMLFromStr:
         assert node.nodes == []
 
     def test_sub_nodes(self):
-        node = HTML("""
+        node = HTML1("""
             <div>
                 <span></span>
                 <div></div>
@@ -429,17 +430,17 @@ class TestHTMLFromStr:
         assert node.nodes[2].tag_name == 'h1'
 
     def test_multiple_ids(self):
-        node = HTML('<div id="foo bar baz"></div>')[0]
+        node = HTML1('<div id="foo bar baz"></div>')[0]
 
         assert node.id_list == ['foo', 'bar', 'baz']
 
     def test_multiple_classes(self):
-        node = HTML('<div class="foo bar baz"></div>')[0]
+        node = HTML1('<div class="foo bar baz"></div>')[0]
 
         assert node.class_list == ['foo', 'bar', 'baz']
 
     def test_multiple_styles(self):
-        node = HTML('<div style="color: black; display: block"></div>')[0]
+        node = HTML1('<div style="color: black; display: block"></div>')[0]
 
         assert node.style == {
             'color': 'black',
@@ -447,7 +448,7 @@ class TestHTMLFromStr:
         }
 
     def test_multiple_attributes(self):
-        node = HTML('<div foo="bar" bar="baz"></div>')[0]
+        node = HTML1('<div foo="bar" bar="baz"></div>')[0]
 
         assert node.attributes == {
             'foo': 'bar',
@@ -455,17 +456,17 @@ class TestHTMLFromStr:
         }
 
     def test_high_level_nodes(self):
-        node = HTML('<button>Click me</button>')[0]
+        node = HTML1('<button>Click me</button>')[0]
 
         assert type(node) is Button
 
     def test_boolean_property_without_value(self):
-        node = HTML('<button disabled>Click me</button>')[0]
+        node = HTML1('<button disabled>Click me</button>')[0]
 
         assert node.disabled
 
     def test_boolean_property_with_value(self):
-        node = HTML('<button disabled="true">Click me</button>')[0]
+        node = HTML1('<button disabled="true">Click me</button>')[0]
 
         assert node.disabled
 
@@ -474,69 +475,69 @@ class TestHTMLFromStr:
                 ValueError,
                 match='Invalid html: missing end tag </span>',
         ):
-            HTML('<span>')
+            HTML1('<span>')
 
     def test_wrong_end_tag(self):
         with pytest.raises(
                 ValueError,
                 match='Invalid html: </div> expected, </span> received',
         ):
-            HTML('<p><div>abc</span></p>')
+            HTML1('<p><div>abc</span></p>')
 
     def test_end_tag_without_start_tag(self):
         with pytest.raises(
                 ValueError,
                 match='Invalid html: missing start tag for </span>',
         ):
-            HTML('<div>abc</div></span>')
+            HTML1('<div>abc</div></span>')
 
     def test_missing_start_tag(self):
         with pytest.raises(
                 ValueError,
                 match='Invalid html: missing start tag for </span>',
         ):
-            HTML('</span>')
+            HTML1('</span>')
 
     def test_self_closing_tag_with_slash(self):
-        img = HTML('<div><img src="abc"/></div>')[0].nodes[0]
+        img = HTML1('<div><img src="abc"/></div>')[0].nodes[0]
 
         assert img.tag_name == 'img'
         assert img.self_closing_tag is True
 
     def test_self_closing_tag_without_slash(self):
-        img = HTML('<div><img src="abc"></div>')[0].nodes[0]
+        img = HTML1('<div><img src="abc"></div>')[0].nodes[0]
 
         assert img.tag_name == 'img'
         assert img.self_closing_tag is True
 
     def test_non_self_closing_tag(self):
-        div = HTML('<div></div>')[0]
+        div = HTML1('<div></div>')[0]
 
         assert div.tag_name == 'div'
         assert div.self_closing_tag is False
 
     def test_non_self_closing_tag_with_slash(self):
-        span = HTML('<div><span/></div>')[0].nodes[0]
+        span = HTML1('<div><span/></div>')[0].nodes[0]
 
         assert span.tag_name == 'span'
         assert span.self_closing_tag is True
 
     def test_default_input_type_is_text(self):
-        node = HTML('<input value="abc"/>')[0]
+        node = HTML1('<input value="abc"/>')[0]
 
         assert type(node) is TextInput
         assert node.value == 'abc'
         assert node.disabled is False
 
     def test_input_type_text(self):
-        node = HTML('<input type="text" value="xyz" disabled/>')[0]
+        node = HTML1('<input type="text" value="xyz" disabled/>')[0]
 
         assert type(node) is TextInput
         assert node.value == 'xyz'
         assert node.disabled is True
 
     def test_input_type_unknown(self):
-        node = HTML('<input type="unknown"/>')[0]
+        node = HTML1('<input type="unknown"/>')[0]
 
         assert type(node) is Node
 
@@ -564,51 +565,51 @@ class TestHTMLFromStr:
         ],
     )
     def test_not_implemented_input_types(self, tp):
-        node = HTML(f'<input type="{tp}"/>')[0]
+        node = HTML1(f'<input type="{tp}"/>')[0]
 
         assert type(node) is Node
 
     def test_input_type_number(self):
-        node = HTML('<input type="number" value="123.5"/>')[0]
+        node = HTML1('<input type="number" value="123.5"/>')[0]
 
         assert type(node) is NumberInput
         assert node.value == 123.5
 
     def test_input_type_checkbox(self):
-        node = HTML('<input type="checkbox"/>')[0]
+        node = HTML1('<input type="checkbox"/>')[0]
 
         assert type(node) is CheckBox
         assert node.value is False
 
     def test_input_type_checkbox_checked(self):
-        node = HTML('<input type="checkbox" checked/>')[0]
+        node = HTML1('<input type="checkbox" checked/>')[0]
 
         assert type(node) is CheckBox
         assert node.value is True
 
     def test_input_type_submit(self):
-        node = HTML('<input type="submit"/>')[0]
+        node = HTML1('<input type="submit"/>')[0]
 
         assert type(node) is Submit
 
     def test_textarea(self):
-        node = HTML('<textarea>abc</textarea>')[0]
+        node = HTML1('<textarea>abc</textarea>')[0]
 
         assert type(node) is TextArea
         assert node.value == 'abc'
 
     def test_textarea_with_self_closing_tag_inside(self):
-        textarea = HTML('<textarea>abc<br/>xyz</textarea>')[0]
+        textarea = HTML1('<textarea>abc<br/>xyz</textarea>')[0]
 
         assert textarea.value == 'abc<br/>xyz'
 
     def test_textarea_with_pair_tag_inside(self):
-        textarea = HTML('<textarea>aaa <b>bbb</b> ccc</textarea>')[0]
+        textarea = HTML1('<textarea>aaa <b>bbb</b> ccc</textarea>')[0]
 
         assert textarea.value == 'aaa <b>bbb</b> ccc'
 
     def test_select(self):
-        node = HTML("""
+        node = HTML1("""
             <select>
                 <option value="1">a</option>
                 <option value="2" selected>b</option>
@@ -623,7 +624,7 @@ class TestHTMLFromStr:
         set_use_future_node_classes(True)
 
         try:
-            node = HTML("""
+            node = HTML1("""
                 <select>
                     <option value="1">a</option>
                     <option value="2" selected>b</option>
@@ -636,6 +637,51 @@ class TestHTMLFromStr:
 
         finally:
             set_use_future_node_classes(False)
+
+
+@pytest.mark.incremental()
+class TestHtmlParsing:
+    def test_sub_nodes(self):
+        node = HTML2("""
+            <div>
+                <span></span>
+                <div></div>
+                <h1></h1>
+            </div>
+        """)
+
+        assert node.tag_name == 'div'
+        assert len(node.nodes) == 3
+        assert node.nodes[0].tag_name == 'span'
+        assert node.nodes[1].tag_name == 'div'
+        assert node.nodes[2].tag_name == 'h1'
+
+    def test_wrapping(self):
+        node = HTML2("""
+            <span></span>
+            <div></div>
+            <h1></h1>
+        """)
+
+        assert node.tag_name == 'div'
+        assert len(node.nodes) == 3
+        assert node.nodes[0].tag_name == 'span'
+        assert node.nodes[1].tag_name == 'div'
+        assert node.nodes[2].tag_name == 'h1'
+
+    def test_multiple_strings(self):
+        node = HTML2(
+            '<span></span><span></span>',
+            '<div></div>',
+            '<h1></h1>',
+        )
+
+        assert node.tag_name == 'div'
+        assert len(node.nodes) == 4
+        assert node.nodes[0].tag_name == 'span'
+        assert node.nodes[1].tag_name == 'span'
+        assert node.nodes[2].tag_name == 'div'
+        assert node.nodes[3].tag_name == 'h1'
 
 
 @pytest.mark.incremental()
@@ -660,7 +706,7 @@ class TestNumberInput:
         assert node.value == 12.3
 
     def test_parsing_no_attributes(self):
-        node = HTML('<input type="number"/>')[0]
+        node = HTML1('<input type="number"/>')[0]
 
         assert node.value is None
         assert node.min is None
@@ -668,41 +714,41 @@ class TestNumberInput:
         assert node.step is None
 
     def test_parsing_int_value(self):
-        node = HTML('<input type="number" value="123"/>')[0]
+        node = HTML1('<input type="number" value="123"/>')[0]
 
         assert node.value == 123
 
     def test_parsing_float_value(self):
-        node = HTML('<input type="number" value="12.3"/>')[0]
+        node = HTML1('<input type="number" value="12.3"/>')[0]
 
         assert node.value == 12.3
 
     def test_parsing_broken_step(self):
-        node = HTML('<input type="number" value="123" step="abc"/>')[0]
+        node = HTML1('<input type="number" value="123" step="abc"/>')[0]
 
         assert node.value == 123
         assert node.step is None
 
     def test_parsing_int_step(self):
-        node = HTML('<input type="number" value="12.3" step="3"/>')[0]
+        node = HTML1('<input type="number" value="12.3" step="3"/>')[0]
 
         assert node.value == 12.3
         assert node.step == 3
 
     def test_parsing_float_step(self):
-        node = HTML('<input type="number" value="12.3" step="0.1"/>')[0]
+        node = HTML1('<input type="number" value="12.3" step="0.1"/>')[0]
 
         assert node.value == 12.3
         assert node.step == 0.1
 
     def test_parsing_broken_value(self):
-        node = HTML('<input type="number" value="abc" step="0.1"/>')[0]
+        node = HTML1('<input type="number" value="abc" step="0.1"/>')[0]
 
         assert node.raw_value == 'abc'
         assert node.value is None
 
     def test_parsing_all_attributes(self):
-        node = HTML(
+        node = HTML1(
             '<input type="number" value="12.3" min="15.3" max="20.5" step="0.2"/>',
         )[0]
 
@@ -717,19 +763,19 @@ class TestNumberInput:
         assert node.style['font-family'] == '"Times New Roman"'
         assert node.style.to_sub_attribute_string() == 'font-family: &quot;Times New Roman&quot;'  # NOQA: E501
 
-        node = HTML(str(node))[0]
+        node = HTML1(str(node))[0]
 
         assert node.style['font-family'] == '"Times New Roman"'
 
     # selectors ###############################################################
     def test_unsupported_selector(self):
         with pytest.raises(ValueError, match='unsupported selector feature:*'):
-            HTML().query_selector('div > div')
+            HTML1().query_selector('div > div')
 
     def test_query_selector(self):
         # test selectors by tag name
         html = Div(
-            HTML(),
+            HTML1(),
             'foo',
             Div(
                 H1(),
@@ -743,7 +789,7 @@ class TestNumberInput:
 
         # test selectors by id
         html = Div(
-            HTML(),
+            HTML1(),
             'foo',
             Div(
                 Div(_id='foo'),
@@ -757,7 +803,7 @@ class TestNumberInput:
 
         # test selectors by class
         html = Div(
-            HTML(),
+            HTML1(),
             'foo',
             Div(
                 Div(_class='foo'),
@@ -771,7 +817,7 @@ class TestNumberInput:
 
         # test selectors by attribute
         html = Div(
-            HTML(),
+            HTML1(),
             'foo',
             Div(
                 Div(_type='foo'),

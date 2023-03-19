@@ -91,5 +91,6 @@ class HomeView(View):
                 <li><a href="/frontend/rendering/">Rendering</a></li>
                 <li><a href="/frontend/custom-event/">Custom Event</a></li>
                 <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
+                <li><a href="/frontend/redirects/">Redirects</a></li>
             </ul>
         """  # NOQA: LN002

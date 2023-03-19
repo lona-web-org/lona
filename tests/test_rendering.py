@@ -97,6 +97,12 @@ async def test_rendering(rendering_setup, lona_project_context):
 
         return json.loads(json_string)
 
+    async def get_widget_hooks(page):
+        element = page.locator('#lona #rendering-root #widget-hooks')
+        widget_hooks = await element.inner_html()
+
+        return widget_hooks.strip()
+
     async with async_playwright() as p:
         browser = await getattr(p, browser_name).launch()
         browser_context = await browser.new_context()
@@ -123,11 +129,21 @@ async def test_rendering(rendering_setup, lona_project_context):
 
             assert html.nodes == context.server.state['rendering-root'].nodes
 
+        # html symbols
+        await next_step(page, 22)
+
+        html_string = await rendering_root_element.inner_html()
+
+        assert html_string == '€€€'
+
         # CSS tests ###########################################################
+
+        # 23 Empty style
+        await next_step(page, 23)
         await check_default_styles(page)
 
-        # 22 Set Style
-        await next_step(page, 22)
+        # 24 Set Style
+        await next_step(page, 24)
 
         computed_style = await get_computed_style(page)
 
@@ -136,8 +152,8 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == 'auto'
         assert computed_style['left'] == 'auto'
 
-        # 23 Add Style
-        await next_step(page, 23)
+        # 25 Add Style
+        await next_step(page, 25)
 
         computed_style = await get_computed_style(page)
         style = get_style()
@@ -147,8 +163,8 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == '3px'
         assert computed_style['left'] == 'auto'
 
-        # 24 Remove Style
-        await next_step(page, 24)
+        # 26 Remove Style
+        await next_step(page, 26)
 
         computed_style = await get_computed_style(page)
         style = get_style()
@@ -160,8 +176,8 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == '3px'
         assert computed_style['left'] == 'auto'
 
-        # 25 Reset Style
-        await next_step(page, 25)
+        # 27 Reset Style
+        await next_step(page, 27)
 
         computed_style = await get_computed_style(page)
         style = get_style()
@@ -174,33 +190,68 @@ async def test_rendering(rendering_setup, lona_project_context):
         assert computed_style['bottom'] == 'auto'
         assert computed_style['left'] == '4px'
 
-        # 26 Clear Style
-        await next_step(page, 26)
+        # 28 Clear Style
+        await next_step(page, 28)
         await check_default_styles(page)
 
-        # widget data tests ###################################################
-        for step in range(27, 39):
+        # legacy widget API ###################################################
+        # TODO: remove in 2.0
+        for step in range(29, 41):
             await next_step(page, step)
 
+            # widget hooks
+            assert (await get_widget_hooks(page)) == 'constructor,setup'
+
+            # widget data
             server_widget_data = await parse_json(
                 page,
-                '#lona #server-widget-data',
+                '#lona #rendering-root #server-widget-data',
             )
 
             client_widget_data = await parse_json(
                 page,
-                '#lona #client-widget-data',
+                '#lona #rendering-root #server-widget-data',
             )
 
             assert server_widget_data == client_widget_data
 
-        # legacy widgets tests ################################################
+        # destroy
+        await next_step(page, 41)
+
+        assert (await get_widget_hooks(page)) == 'constructor,setup,deconstruct'
+
+        # widget API ##########################################################
+        for step in range(42, 54):
+            await next_step(page, step)
+
+            # widget hooks
+            assert (await get_widget_hooks(page)) == 'constructor'
+
+            # widget data
+            server_widget_data = await parse_json(
+                page,
+                '#lona #rendering-root #server-widget-data',
+            )
+
+            client_widget_data = await parse_json(
+                page,
+                '#lona #rendering-root #server-widget-data',
+            )
+
+            assert server_widget_data == client_widget_data
+
+        # destroy
+        await next_step(page, 54)
+
+        assert (await get_widget_hooks(page)) == 'constructor,destroy'
+
+        # legacy frontend widgets tests #######################################
         # TODO: remove in 2.0
 
         if get_client_version() != 1:
             return
 
-        for step in range(39, 45):
+        for step in range(55, 61):
             await next_step(page, step)
 
             client_html_string = await rendering_root_element.inner_html()

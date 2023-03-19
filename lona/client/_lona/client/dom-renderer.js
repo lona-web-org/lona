@@ -22,7 +22,7 @@ SOFTWARE.
 
 */
 
-import { LonaWindowShim } from './window-shim.js';
+import { Widget } from '../client2/widget.js';
 import { Lona } from './lona.js';
 
 
@@ -30,7 +30,16 @@ export class LonaDomRenderer {
     constructor(lona_context, lona_window) {
         this.lona_context = lona_context;
         this.lona_window = lona_window;
+
+        this._dom_parser = new DOMParser();
     };
+
+    _parse_html_string(html_string) {
+        return this._dom_parser.parseFromString(
+            html_string,
+            'text/html',
+        ).documentElement.textContent;
+    }
 
     // html rendering ---------------------------------------------------------
     _render_node(node_spec) {
@@ -114,25 +123,23 @@ export class LonaDomRenderer {
                     throw(`RuntimeError: unknown widget name '${widget_class_name}'`);
                 }
 
-                var widget_class = Lona.widget_classes[widget_class_name];
-
-                var window_shim = new LonaWindowShim(
+                const widget = new Widget(
                     this.lona_context,
                     this.lona_window,
+                    node,
                     node_id,
+                    Lona.widget_classes[widget_class_name],
+                    widget_data,
                 );
 
-                var widget = new widget_class(window_shim);
-
                 this.lona_window._widgets[node_id] = widget;
-                this.lona_window._widget_data[node_id] = widget_data;
                 this.lona_window._widgets_to_setup.splice(0, 0, node_id);
             }
 
         // TextNode
         } else if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {
             var node_id = node_spec[1];
-            var node_content = node_spec[2];
+            var node_content = this._parse_html_string(node_spec[2]);
 
             var node = document.createTextNode(node_content);
 
@@ -170,18 +177,16 @@ export class LonaDomRenderer {
 
             // setup widget
             if(node_widget_class_name in Lona.widget_classes) {
-                var widget_class = Lona.widget_classes[node_widget_class_name];
-
-                var window_shim = new LonaWindowShim(
+                const widget = new Widget(
                     this.lona_context,
                     this.lona_window,
+                    node,
                     node_id,
+                    Lona.widget_classes[widget_class_name],
+                    widget_data,
                 );
 
-                var widget = new widget_class(window_shim);
-
                 this.lona_window._widgets[node_id] = widget;
-                this.lona_window._widget_data[node_id] = widget_data;
                 this.lona_window._widgets_to_setup.splice(0, 0, node_id);
             };
         };

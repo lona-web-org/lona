@@ -40,9 +40,11 @@ export class LonaWidgetDataUpdater {
         var key_path = payload[0];
         var data = payload.splice(1);
 
+        const widget = this.lona_window._widgets[node_id];
+
         // key path
         var parent_data = undefined;
-        var widget_data = this.lona_window._widget_data[node_id];
+        let widget_data = widget.raw_widget_data;
 
         key_path.forEach(function(key) {
             parent_data = widget_data;
@@ -56,7 +58,7 @@ export class LonaWidgetDataUpdater {
         // RESET
         } else if(operation == Lona.protocol.OPERATION.RESET) {
             if(parent_data === undefined) {
-                this.lona_window._widget_data[node_id] = data[0];
+                widget.raw_widget_data = data[0];
 
             } else {
                 parent_data = data[0];
@@ -74,7 +76,7 @@ export class LonaWidgetDataUpdater {
             };
 
             if(parent_data === undefined) {
-                this.lona_window._widget_data[node_id] = new_data;
+                widget.raw_widget_data = new_data;
 
             } else {
                 parent_data[key_path[key_path.length-1]] = new_data;

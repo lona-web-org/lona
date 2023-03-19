@@ -25,7 +25,7 @@ SOFTWARE.
 import { LonaWidgetDataUpdater } from './widget-data-updater.js'
 import { LonaInputEventHandler } from './input-events.js';
 import { LonaDomRenderer } from './dom-renderer.js';
-import { LonaDomUpdater } from './dom-updater.js'
+import { LonaDomUpdater } from './dom-updater.js';
 import { Lona } from './lona.js'
 
 
@@ -59,7 +59,7 @@ export class LonaWindow {
         this._crashed = false;
         this._view_running = false;
         this._view_runtime_id = undefined;
-        this._url = '';
+        this._url = new URL(window.location);
         this._nodes = {};
         this._widget_marker = {};
         this._widget_data = {};
@@ -70,41 +70,7 @@ export class LonaWindow {
 
     // urls -------------------------------------------------------------------
     _set_url(raw_url) {
-        // parse pathname, search and hash
-        var _raw_url = new URL(raw_url, window.location.origin);
-
-        _raw_url = _raw_url.pathname + _raw_url.search + _raw_url.hash;
-
-        if(raw_url.startsWith('..')) {
-            _raw_url = '..' + _raw_url;
-
-        } else if(raw_url.startsWith('.')) {
-            _raw_url = '.' + _raw_url;
-
-        };
-
-        if(!raw_url.startsWith('http://') && !raw_url.startsWith('https://')) {
-            if(_raw_url.startsWith('/') && !raw_url.startsWith('/')) {
-                _raw_url = _raw_url.substr(1);
-            }
-        };
-
-        raw_url = _raw_url;
-
-        // handle relative URLs
-        if(!raw_url.startsWith('/')) {
-            var current_url = this._url;
-
-            if(!current_url.endsWith('/')) {
-                current_url = current_url + '/';
-            };
-
-            raw_url = current_url + raw_url;
-        };
-
-        var url = new URL(raw_url, window.location.origin);
-
-        this._url = url.pathname + url.search + url.hash;
+        this._url = new URL(raw_url, this._url);
     };
 
     get_url() {
@@ -120,9 +86,7 @@ export class LonaWindow {
     _clear_node_cache() {
         // running widget deconstructors
         for(var key in this._widgets) {
-            if(this._widgets[key].deconstruct !== undefined) {
-                this._widgets[key].deconstruct();
-            };
+            this._widgets[key].destroy_widget();
         };
 
         // resetting node state
@@ -133,6 +97,33 @@ export class LonaWindow {
         this._widgets_to_setup = [];
         this._widgets_to_update = [];
     };
+
+    _remove_widget_if_present(node_id) {
+        if(!(node_id in this._widgets)) {
+            return;
+        }
+
+        // run deconstructor
+        this._widgets[node_id].destroy_widget();
+
+        // remove widget
+        delete this._widgets[node_id];
+
+        // remove widget data
+        delete this._widget_data[node_id];
+
+        // remove widget from _widgets_to_setup
+        if(this._widgets_to_setup.indexOf(node_id) > -1) {
+            this._widgets_to_setup.splice(
+                this._widgets_to_setup.indexOf(node_id), 1);
+        };
+
+        // remove widget from _widgets_to_update
+        if(this._widgets_to_update.indexOf(node_id) > -1) {
+            this._widgets_to_update.splice(
+                this._widgets_to_update.indexOf(node_id), 1);
+        };
+    }
 
     _clean_node_cache() {
         // nodes
@@ -155,32 +146,8 @@ export class LonaWindow {
 
             delete this._widget_marker[key];
 
-            // widget
-            if(key in this._widgets) {
-
-                // run deconstructor
-                if(this._widgets[key].deconstruct !== undefined) {
-                    this._widgets[key].deconstruct();
-                };
-
-                // remove widget
-                delete this._widgets[key];
-
-                // remove widget data
-                delete this._widget_data[key];
-
-                // remove widget from _widgets_to_setup
-                if(this._widgets_to_setup.indexOf(key) > -1) {
-                    this._widgets_to_setup.splice(
-                        this._widgets_to_setup.indexOf(key), 1);
-                };
-
-                // remove widget from _widgets_to_update
-                if(this._widgets_to_update.indexOf(key) > -1) {
-                    this._widgets_to_update.splice(
-                        this._widgets_to_update.indexOf(key), 1);
-                };
-            };
+            // frontend widget
+            this._remove_widget_if_present(key);
         });
     };
 
@@ -188,37 +155,24 @@ export class LonaWindow {
     _run_widget_hooks() {
         // setup
         this._widgets_to_setup.forEach(node_id => {
-            var widget = this._widgets[node_id];
-            var widget_data = this._widget_data[node_id];
-
-            widget.data = JSON.parse(JSON.stringify(widget_data));
-
-            if(widget === undefined) {
+            if(this._widgets[node_id] === undefined) {
                 return;
-            };
+            }
 
-            widget.nodes = this._dom_updater._get_widget_nodes(node_id);
-            widget.root_node = widget.nodes[0];
+            const widget = this._widgets[node_id];
 
-            if(widget.setup !== undefined) {
-                widget.setup();
-            };
+            widget.initialize_widget();
         });
 
         // data_updated
         this._widgets_to_update.forEach(node_id => {
-            var widget = this._widgets[node_id];
-            var widget_data = this._widget_data[node_id];
-
-            widget.data = JSON.parse(JSON.stringify(widget_data));
-
-            if(widget === undefined) {
+            if(this._widgets[node_id] === undefined) {
                 return;
-            };
+            }
 
-            if(widget.data_updated !== undefined) {
-                widget.data_updated();
-            };
+            const widget = this._widgets[node_id];
+
+            widget.run_data_updated_hook();
         });
 
         this._widgets_to_setup = [];
@@ -318,7 +272,7 @@ export class LonaWindow {
             this._view_running = true;
 
             if(this.lona_context.settings.update_address_bar) {
-                history.pushState({}, '', this.get_url());
+                history.pushState({}, '', this.get_url().href);
             };
 
             this._clear();
@@ -342,7 +296,9 @@ export class LonaWindow {
         // http redirect
         } else if(method == Lona.protocol.METHOD.HTTP_REDIRECT) {
             if(this.lona_context.settings.follow_http_redirects) {
-                window.location = payload;
+                this._set_url(payload);
+
+                window.location = this.get_url().href;
 
             } else {
                 console.debug(
@@ -433,7 +389,7 @@ export class LonaWindow {
             this._window_id,
             this._view_runtime_id,
             Lona.protocol.METHOD.VIEW,
-            [this.get_url(), post_data],
+            [this.get_url().href, post_data],
         ];
 
         // update html title

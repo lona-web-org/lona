@@ -28,6 +28,8 @@ export class LonaWindowShim {
 
         this._lona_window = lona_window;
         this._widget_id = widget_id;
+
+        this.root_node = this._lona_window._root;
     };
 
     fire_input_event(node, event_type, data, target_node) {
