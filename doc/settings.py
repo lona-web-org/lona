@@ -54,7 +54,6 @@ MENU = [
             ['Bootstrap 5 Confirmation Popup',
             'demos/bootstrap-5-confirmation-popup/index.rst'],
 
-            ['Chart.js Click Analyzer', 'demos/chartjs-click-analyzer/index.rst'],
             ['Function Plotter', 'demos/function-plotter/index.rst'],
             ['Daemonized View', 'demos/daemonized-view/index.rst'],
             ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
