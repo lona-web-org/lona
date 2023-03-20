@@ -1,6 +1,6 @@
 
 
-7. State
+8. State
 ========
 
 Global State
@@ -110,11 +110,11 @@ browser-side data in one transaction.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 6. Daemon Views
-        :link_target: /tutorial/06-daemon-views/index.rst
+        :link_title: 7. Daemon Views
+        :link_target: /tutorial/07-daemon-views/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 8. Middlewares
-        :link_target: /tutorial/08-middlewares/index.rst
+        :link_title: 9. Middlewares
+        :link_target: /tutorial/09-middlewares/index.rst
         :position: right
