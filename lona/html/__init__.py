@@ -1,6 +1,7 @@
 from lona.html.nodes.content_sectioning import *  # NOQA: F403
 from lona.html.data_binding.select2 import Select2, Option2
 from lona.html.data_binding.inputs import *  # NOQA: F403
+from lona.html.nodes.text_content import *  # NOQA: F403
 from lona.html.data_binding.select import Select, Option
 from lona.html.parsing import _setup_node_classes_cache
 from lona.events.event_types import *  # NOQA: F403

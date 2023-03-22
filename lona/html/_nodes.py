@@ -11,16 +11,8 @@ class NoScript(Node):
     TAG_NAME = 'noscript'
 
 
-class Div(Node):
-    TAG_NAME = 'div'
-
-
 class Span(Node):
     TAG_NAME = 'span'
-
-
-class P(Node):
-    TAG_NAME = 'p'
 
 
 class I(Node):  # NOQA: E742
@@ -33,18 +25,6 @@ class Strong(Node):
 
 class Small(Node):
     TAG_NAME = 'small'
-
-
-class Ul(Node):
-    TAG_NAME = 'ul'
-
-
-class Ol(Node):
-    TAG_NAME = 'ol'
-
-
-class Li(Node):
-    TAG_NAME = 'li'
 
 
 class Table(Node):
@@ -81,11 +61,6 @@ class Td(Node):
 
 class Canvas(Node):
     TAG_NAME = 'canvas'
-
-
-class Hr(Node):
-    TAG_NAME = 'hr'
-    SELF_CLOSING_TAG = True
 
 
 class Br(Node):
@@ -174,21 +149,3 @@ class A(Node):
 
     def get_href(self, href):
         return self.attributes['href']
-
-
-class Pre(Node):
-    TAG_NAME = 'pre'
-
-    def write(self, string):
-        string = str(string)
-
-        if len(self.nodes) > 0 and isinstance(self.nodes[-1], str):
-            self.nodes[-1] = self.nodes[-1] + string
-
-        else:
-            self.nodes.append(string)
-
-    def write_line(self, string):
-        string = str(string) + '\n'
-
-        self.nodes.append(string)

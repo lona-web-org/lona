@@ -6,8 +6,8 @@ import logging
 
 from lona.compat import get_use_future_node_classes
 from lona.html.abstract_node import AbstractNode
+from lona.html.nodes.text_content import Div
 from lona.html.text_node import TextNode
-from lona.html._nodes import Div
 from lona.html.node import Node
 
 logger = logging.getLogger('lona')
