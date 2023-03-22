@@ -1,6 +1,26 @@
 from lona.html.node import Node
 
 
+class Address(Node):
+    TAG_NAME = 'address'
+
+
+class Article(Node):
+    TAG_NAME = 'article'
+
+
+class Aside(Node):
+    TAG_NAME = 'aside'
+
+
+class Footer(Node):
+    TAG_NAME = 'footer'
+
+
+class Header(Node):
+    TAG_NAME = 'header'
+
+
 class H1(Node):
     TAG_NAME = 'h1'
 
@@ -23,6 +43,10 @@ class H5(Node):
 
 class H6(Node):
     TAG_NAME = 'h6'
+
+
+class HGroup(Node):
+    TAG_NAME = 'hgroup'
 
 
 class Main(Node):
