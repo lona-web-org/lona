@@ -1,6 +1,15 @@
 from lona.html.node import Node
 
 
+class Caption(Node):
+    TAG_NAME = 'caption'
+
+
+class Col(Node):
+    TAG_NAME = 'col'
+    SELF_CLOSING_TAG = True
+
+
 class ColGroup(Node):
     TAG_NAME = 'colgroup'
 
