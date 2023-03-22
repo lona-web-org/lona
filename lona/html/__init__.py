@@ -6,6 +6,7 @@ from lona.html.nodes.document_metadata import *  # NOQA: F403
 from lona.html.nodes.demarcating_edits import *  # NOQA: F403
 from lona.html.nodes.embedded_content import *  # NOQA: F403
 from lona.html.nodes.sectioning_root import *  # NOQA: F403
+from lona.html.nodes.web_components import *  # NOQA: F403
 from lona.html.nodes.svg_and_mathml import *  # NOQA: F403
 from lona.html.nodes.forms.select2 import Select2, Option2
 from lona.html.nodes.table_content import *  # NOQA: F403
