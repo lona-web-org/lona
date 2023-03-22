@@ -25,6 +25,10 @@ class Button(Node):
             del self.attributes['disabled']
 
 
+class Datalist(Node):
+    TAG_NAME = 'datalist'
+
+
 class Fieldset(Node):
     TAG_NAME = 'fieldset'
 
@@ -35,6 +39,26 @@ class Form(Node):
 
 class Label(Node):
     TAG_NAME = 'label'
+
+
+class Legend(Node):
+    TAG_NAME = 'legend'
+
+
+class Meter(Node):
+    TAG_NAME = 'meter'
+
+
+class OptGroup(Node):
+    TAG_NAME = 'optgroup'
+
+
+class Output(Node):
+    TAG_NAME = 'output'
+
+
+class Progress(Node):
+    TAG_NAME = 'progress'
 
 
 class Submit(Node):
