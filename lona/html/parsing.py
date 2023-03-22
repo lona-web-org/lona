@@ -39,7 +39,7 @@ FUTURE_NODE_CLASSES: dict[str, type[Node]] = {}
 def _setup_node_classes_cache():
 
     # TODO: remove in 2.0
-    from lona.html.data_binding.select2 import Select2, Option2
+    from lona.html.nodes.forms.select2 import Select2, Option2
 
     IGNORED_NODE_CLASSES = (
         Select2,
