@@ -91,9 +91,3 @@ class Submit(Node):
         'type': 'submit',
         'value': 'Submit',
     }
-
-
-# complex html nodes ##########################################################
-class Img(Node):
-    TAG_NAME = 'img'
-    SELF_CLOSING_TAG = True
