@@ -2,6 +2,7 @@ from lona.html.nodes.inline_text_semantics import *  # NOQA: F403
 from lona.html.nodes.image_and_multimedia import *  # NOQA: F403
 from lona.html.nodes.content_sectioning import *  # NOQA: F403
 from lona.html.data_binding.select2 import Select2, Option2
+from lona.html.nodes.table_content import *  # NOQA: F403
 from lona.html.data_binding.inputs import *  # NOQA: F403
 from lona.html.nodes.text_content import *  # NOQA: F403
 from lona.html.data_binding.select import Select, Option
