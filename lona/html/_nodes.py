@@ -3,48 +3,12 @@ from lona.html.node import Node
 
 
 # simple html nodes ###########################################################
-class Nav(Node):
-    TAG_NAME = 'nav'
-
-
-class Main(Node):
-    TAG_NAME = 'main'
-
-
-class Section(Node):
-    TAG_NAME = 'section'
-
-
 class Script(Node):
     TAG_NAME = 'script'
 
 
 class NoScript(Node):
     TAG_NAME = 'noscript'
-
-
-class H1(Node):
-    TAG_NAME = 'h1'
-
-
-class H2(Node):
-    TAG_NAME = 'h2'
-
-
-class H3(Node):
-    TAG_NAME = 'h3'
-
-
-class H4(Node):
-    TAG_NAME = 'h4'
-
-
-class H5(Node):
-    TAG_NAME = 'h5'
-
-
-class H6(Node):
-    TAG_NAME = 'h6'
 
 
 class Div(Node):
