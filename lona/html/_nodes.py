@@ -2,39 +2,6 @@ from lona.events.event_types import CLICK
 from lona.html.node import Node
 
 
-# simple html nodes ###########################################################
-class Table(Node):
-    TAG_NAME = 'table'
-
-
-class THead(Node):
-    TAG_NAME = 'thead'
-
-
-class TBody(Node):
-    TAG_NAME = 'tbody'
-
-
-class TFoot(Node):
-    TAG_NAME = 'tfoot'
-
-
-class ColGroup(Node):
-    TAG_NAME = 'colgroup'
-
-
-class Tr(Node):
-    TAG_NAME = 'tr'
-
-
-class Th(Node):
-    TAG_NAME = 'th'
-
-
-class Td(Node):
-    TAG_NAME = 'td'
-
-
 # inputs ######################################################################
 class Form(Node):
     TAG_NAME = 'form'
