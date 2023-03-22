@@ -1,4 +1,5 @@
 from lona.html.nodes.inline_text_semantics import *  # NOQA: F403
+from lona.html.nodes.interactive_elements import *  # NOQA: F403
 from lona.html.nodes.image_and_multimedia import *  # NOQA: F403
 from lona.html.nodes.content_sectioning import *  # NOQA: F403
 from lona.html.nodes.document_metadata import *  # NOQA: F403
