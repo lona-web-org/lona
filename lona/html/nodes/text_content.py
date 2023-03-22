@@ -1,8 +1,32 @@
 from lona.html.node import Node
 
 
+class BlockQuote(Node):
+    TAG_NAME = 'blockquote'
+
+
+class Dd(Node):
+    TAG_NAME = 'dd'
+
+
 class Div(Node):
     TAG_NAME = 'div'
+
+
+class Dl(Node):
+    TAG_NAME = 'dl'
+
+
+class Dt(Node):
+    TAG_NAME = 'dt'
+
+
+class FigCaption(Node):
+    TAG_NAME = 'figcaption'
+
+
+class Figure(Node):
+    TAG_NAME = 'figure'
 
 
 class Hr(Node):
@@ -12,6 +36,10 @@ class Hr(Node):
 
 class Li(Node):
     TAG_NAME = 'li'
+
+
+class Menu(Node):
+    TAG_NAME = 'menu'
 
 
 class Ol(Node):
