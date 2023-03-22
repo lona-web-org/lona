@@ -3,14 +3,6 @@ from lona.html.node import Node
 
 
 # simple html nodes ###########################################################
-class Script(Node):
-    TAG_NAME = 'script'
-
-
-class NoScript(Node):
-    TAG_NAME = 'noscript'
-
-
 class Table(Node):
     TAG_NAME = 'table'
 
@@ -41,10 +33,6 @@ class Th(Node):
 
 class Td(Node):
     TAG_NAME = 'td'
-
-
-class Canvas(Node):
-    TAG_NAME = 'canvas'
 
 
 # inputs ######################################################################
