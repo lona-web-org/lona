@@ -9,7 +9,7 @@ from lona.html.data_binding.select import Select, Option
 from lona.html.parsing import _setup_node_classes_cache
 from lona.html.nodes.scripting import *  # NOQA: F403
 from lona.events.event_types import *  # NOQA: F403
-from lona.html._nodes import *  # NOQA: F403
+from lona.html.nodes.forms import *  # NOQA: F403
 from lona.html.widgets import HTML as HTML1
 from lona.html.parsing import HTML as HTML2
 from lona.compat import get_client_version
