@@ -2,19 +2,6 @@ from lona.events.event_types import CLICK
 from lona.html.node import Node
 
 
-# inputs ######################################################################
-class Form(Node):
-    TAG_NAME = 'form'
-
-
-class Fieldset(Node):
-    TAG_NAME = 'fieldset'
-
-
-class Label(Node):
-    TAG_NAME = 'label'
-
-
 class Button(Node):
     TAG_NAME = 'button'
     EVENTS = [CLICK]
@@ -36,6 +23,18 @@ class Button(Node):
             self.attributes['disabled'] = ''
         else:
             del self.attributes['disabled']
+
+
+class Fieldset(Node):
+    TAG_NAME = 'fieldset'
+
+
+class Form(Node):
+    TAG_NAME = 'form'
+
+
+class Label(Node):
+    TAG_NAME = 'label'
 
 
 class Submit(Node):
