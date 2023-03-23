@@ -56,17 +56,16 @@ async def test_rendering(rendering_setup, lona_project_context):
         await page.locator('#lona #next-step').click()
         await page.wait_for_selector(f'#lona #step-label>#current:has-text("{number}")')
 
-    async def get_computed_style(page):
+    async def get_client_style(page):
         return await page.eval_on_selector(
             '#rendering-root > div',
             """
                 element => {
-                    const computedStyle = getComputedStyle(element);
-                    const propertyNames = Array.from(computedStyle);
+                    const propertyNames = Array.from(element.style);
                     const values = {};
 
                     propertyNames.forEach(name => {
-                        values[name] = computedStyle.getPropertyValue(name);
+                        values[name] = element.style.getPropertyValue(name);
                     });
 
                     return values;
@@ -74,22 +73,17 @@ async def test_rendering(rendering_setup, lona_project_context):
             """,
         )
 
-    def get_style():
+    def get_server_style():
         return context.server.state['rendering-root'][0].style
 
-    async def check_default_styles(page):
-        """
-        All CSS properties have a specified default value.
-        Because we use window.getComputedStyle() to determine CSS values,
-        we are required to check our estimated defaults are correct.
-        """
+    async def check_empty_client_style(page):
+        client_style = await get_client_style(page)
 
-        computed_style = await get_computed_style(page)
-
-        assert computed_style['top'] == 'auto'
-        assert computed_style['right'] == 'auto'
-        assert computed_style['bottom'] == 'auto'
-        assert computed_style['left'] == 'auto'
+        assert 'top' not in client_style
+        assert 'right' not in client_style
+        assert 'bottom' not in client_style
+        assert 'left' not in client_style
+        assert '--non-standard' not in client_style
 
     async def parse_json(page, locator):
         element = page.locator(locator)
@@ -140,59 +134,54 @@ async def test_rendering(rendering_setup, lona_project_context):
 
         # 23 Empty style
         await next_step(page, 23)
-        await check_default_styles(page)
+        await check_empty_client_style(page)
 
         # 24 Set Style
         await next_step(page, 24)
 
-        computed_style = await get_computed_style(page)
+        client_style = await get_client_style(page)
 
-        assert computed_style['top'] == '1px'
-        assert computed_style['right'] == '2px'
-        assert computed_style['bottom'] == 'auto'
-        assert computed_style['left'] == 'auto'
+        assert client_style['top'] == '1px'
+        assert client_style['right'] == '2px'
+        assert client_style['--non-standard'] == '3'
 
         # 25 Add Style
         await next_step(page, 25)
 
-        computed_style = await get_computed_style(page)
-        style = get_style()
+        client_style = await get_client_style(page)
+        style = get_server_style()
 
-        assert computed_style['top'] == '1px'
-        assert computed_style['right'] == '2px'
-        assert computed_style['bottom'] == '3px'
-        assert computed_style['left'] == 'auto'
+        assert client_style['top'] == '1px'
+        assert client_style['right'] == '2px'
+        assert client_style['--non-standard'] == '3'
+        assert client_style['bottom'] == '3px'
 
         # 26 Remove Style
         await next_step(page, 26)
 
-        computed_style = await get_computed_style(page)
-        style = get_style()
+        client_style = await get_client_style(page)
+        style = get_server_style()
 
         assert 'top' not in style
 
-        assert computed_style['top'] == 'auto'
-        assert computed_style['right'] == '2px'
-        assert computed_style['bottom'] == '3px'
-        assert computed_style['left'] == 'auto'
+        assert client_style['right'] == '2px'
+        assert client_style['bottom'] == '3px'
+        assert client_style['--non-standard'] == '3'
 
         # 27 Reset Style
         await next_step(page, 27)
 
-        computed_style = await get_computed_style(page)
-        style = get_style()
+        client_style = await get_client_style(page)
+        style = get_server_style()
 
         assert 'right' not in style
         assert 'bottom' not in style
 
-        assert computed_style['top'] == 'auto'
-        assert computed_style['right'] == 'auto'
-        assert computed_style['bottom'] == 'auto'
-        assert computed_style['left'] == '4px'
+        assert client_style['left'] == '4px'
 
         # 28 Clear Style
         await next_step(page, 28)
-        await check_default_styles(page)
+        await check_empty_client_style(page)
 
         # legacy widget API ###################################################
         # TODO: remove in 2.0

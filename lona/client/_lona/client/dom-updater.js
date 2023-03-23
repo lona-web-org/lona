@@ -412,19 +412,19 @@ export class LonaDomUpdater {
 
             // SET
             if(operation == protocol.OPERATION.SET) {
-                node.style[data[0]] = data[1];
+                node.style.setProperty(data[0], data[1]);
 
             // RESET
             } else if(operation == protocol.OPERATION.RESET) {
                 node.removeAttribute('style');
 
                 for(var key in data[0]) {
-                    node.style[key] = data[0][key];
+                    node.style.setProperty(key, data[0][key]);
                 };
 
             // REMOVE
             } else if(operation == protocol.OPERATION.REMOVE) {
-                node.style[data[0]] = '';
+                node.style.setProperty(data[0], '');
 
             // CLEAR
             } else if(operation == protocol.OPERATION.CLEAR) {

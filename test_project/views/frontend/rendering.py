@@ -480,7 +480,7 @@ class RenderingTestView(View):
         self.set_step_label(24, 'Set style')
 
         self.rendering_root.nodes = [
-            Div(_style='top: 1px; right: 2px;'),
+            Div(_style='top: 1px; right: 2px; --non-standard: 3;'),
         ]
 
     @client_version(1, 2)
