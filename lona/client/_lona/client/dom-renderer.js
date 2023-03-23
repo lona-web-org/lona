@@ -81,7 +81,7 @@ export class LonaDomRenderer {
             // style
             if(Object.keys(node_style).length > 0) {
                 Object.keys(node_style).forEach(key => {
-                    node.style[key] = node_style[key];
+                    node.style.setProperty(key, node_style[key]);
                 });
             };
 
