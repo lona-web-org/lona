@@ -214,7 +214,7 @@ export class LonaRenderingEngine {
         // style
         if(Object.keys(node_style).length > 0) {
             Object.keys(node_style).forEach(key => {
-                node.style[key] = node_style[key];
+                node.style.setProperty(key, node_style[key]);
             });
         };
 
@@ -360,19 +360,19 @@ export class LonaRenderingEngine {
 
             // SET
             if(operation == Lona.protocol.OPERATION.SET) {
-                node.style[data[0]] = data[1];
+                node.style.setProperty(data[0], data[1]);
 
             // RESET
             } else if(operation == Lona.protocol.OPERATION.RESET) {
                 node.removeAttribute('style');
 
                 for(let key in data[0]) {
-                    node.style[key] = data[0][key];
+                    node.style.setProperty(key, data[0][key]);
                 };
 
             // REMOVE
             } else if(operation == Lona.protocol.OPERATION.REMOVE) {
-                node.style[data[0]] = '';
+                node.style.setProperty(data[0], '');
 
             // CLEAR
             } else if(operation == Lona.protocol.OPERATION.CLEAR) {
