@@ -59,13 +59,3 @@ class Output(Node):
 
 class Progress(Node):
     TAG_NAME = 'progress'
-
-
-class Submit(Node):
-    TAG_NAME = 'input'
-    SELF_CLOSING_TAG = True
-
-    ATTRIBUTES = {
-        'type': 'submit',
-        'value': 'Submit',
-    }
