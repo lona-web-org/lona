@@ -9,6 +9,16 @@ from lona.html.node import Node
 DEFAULT_INPUT_DELAY = 300
 
 
+class Submit(Node):
+    TAG_NAME = 'input'
+    SELF_CLOSING_TAG = True
+
+    ATTRIBUTES = {
+        'type': 'submit',
+        'value': 'Submit',
+    }
+
+
 class TextInput(Node):
     TAG_NAME = 'input'
     SELF_CLOSING_TAG = True
