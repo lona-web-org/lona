@@ -25,6 +25,8 @@ SOFTWARE.
 import { Widget } from '../client2/widget.js';
 import { Lona } from './lona.js';
 
+const DEFAULT_NODE_NAMESPACE = 'http://www.w3.org/1999/xhtml';
+
 
 export class LonaDomRenderer {
     constructor(lona_context, lona_window) {
@@ -51,16 +53,17 @@ export class LonaDomRenderer {
         // Node
         if(node_type == Lona.protocol.NODE_TYPE.NODE) {
             var node_id = node_spec[1];
-            var node_tag_name = node_spec[2];
-            var node_id_list = node_spec[3];
-            var node_class_list = node_spec[4];
-            var node_style = node_spec[5];
-            var node_attributes = node_spec[6];
-            var node_child_nodes = node_spec[7];
-            var widget_class_name = node_spec[8];
-            var widget_data = node_spec[9];
+            var node_namespace = node_spec[2] || DEFAULT_NODE_NAMESPACE;
+            var node_tag_name = node_spec[3];
+            var node_id_list = node_spec[4];
+            var node_class_list = node_spec[5];
+            var node_style = node_spec[6];
+            var node_attributes = node_spec[7];
+            var node_child_nodes = node_spec[8];
+            var widget_class_name = node_spec[9];
+            var widget_data = node_spec[10];
 
-            var node = document.createElement(node_tag_name);
+            var node = document.createElementNS(node_namespace, node_tag_name);
 
             // lona node id
             node.setAttribute('data-lona-node-id', node_id);
