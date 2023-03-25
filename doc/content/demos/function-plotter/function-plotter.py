@@ -1,6 +1,14 @@
 import math
 
-from lona_picocss.html import TextInput, Label, HTML, Grid, Sub, H1
+from lona_picocss.html import (
+    NumberInput,
+    TextInput,
+    Label,
+    HTML,
+    Grid,
+    Sub,
+    H1,
+)
 from lona_picocss import install_picocss
 
 from lona import View, App
@@ -32,29 +40,7 @@ CHART_DATA = {
     'type': 'line',
     'data': {
         'labels': [],
-        'datasets': [
-            {
-                'label': 'f₁',
-                'data': [],
-                'borderWidth': 2,
-                'borderColor': colors['blue'],
-                'backgroundColor': alpha('blue', 0.2),
-            },
-            {
-                'label': 'f₂',
-                'data': [],
-                'borderWidth': 2,
-                'borderColor': colors['green'],
-                'backgroundColor': alpha('green', 0.2),
-            },
-            {
-                'label': 'f₃',
-                'data': [],
-                'borderWidth': 2,
-                'borderColor': colors['orange'],
-                'backgroundColor': alpha('orange', 0.2),
-            },
-        ]
+        'datasets': []
     },
     'options': {
         'animation': False,
@@ -77,20 +63,14 @@ class Plotter(View):
             data=CHART_DATA,
         )
 
-        self.f1 = TextInput(
-            'x*x/30-0.5',
-            handle_change=self.handle_text_input_change,
-        )
-
-        self.f2 = TextInput(
-            'sin(x)',
-            handle_change=self.handle_text_input_change,
-        )
-
-        self.f3 = TextInput(
-            'e**(-x*x)',
-            handle_change=self.handle_text_input_change,
-        )
+        self.f_list = []
+        for f in ['x*x/30-0.5', 'sin(x)', 'e**(-x*x)', 'sin(x)/x']:
+            self.f_list.append(
+                TextInput(
+                    f,
+                    handle_change=self.handle_text_input_change,
+                )
+            )
 
         self.x_min = -6.3
         self.x_max = 6.3
@@ -106,7 +86,7 @@ class Plotter(View):
             handle_change=self.handle_text_input_change,
         )
 
-        self.points = TextInput(
+        self.points = NumberInput(
             self.point_count,
             handle_change=self.handle_text_input_change,
         )
@@ -114,18 +94,7 @@ class Plotter(View):
         html = HTML(
             H1('Function Plotter'),
             Grid(
-                Label(
-                    'f', Sub('1'),
-                    self.f1,
-                ),
-                Label(
-                    'f', Sub('2'),
-                    self.f2,
-                ),
-                Label(
-                    'f', Sub('3'),
-                    self.f3,
-                ),
+                *[Label('f', Sub(i + 1), f) for i, f in enumerate(self.f_list)],
             ),
 
             self.chart,
@@ -146,7 +115,7 @@ class Plotter(View):
             ),
         )
 
-        self.handle_text_input_change(type('', (), {'data': self.f1.value}))
+        self.handle_text_input_change(type('', (), {'data': self.f_list[0].value}))
 
         self.show(html)
 
@@ -162,16 +131,16 @@ class Plotter(View):
         except:
             self.xmax.style = {'color': 'red'}
         try:
-            if float(self.points.value) == 0:
+            if float(self.points.value) <= 0:
                 raise RuntimeError
             self.point_count = float(self.points.value)
             self.points.style = {'color': 'black'}
         except:
             self.points.style = {'color': 'red'}
         step = (self.x_max - self.x_min) / self.point_count
-        f_list = [self.f1, self.f2, self.f3]
-        color_list = ['blue', 'green', 'orange']
-        for i in range(len(f_list)):
+        color_list = ['blue', 'green', 'orange', 'yellow', 'purple', 'grey']
+        CHART_DATA['data']['datasets'].clear()
+        for i in range(len(self.f_list)):
             x_list = []
             y_list = []
             exception_count = 0
@@ -180,18 +149,26 @@ class Plotter(View):
                 x_list.append(round(x, 1))
                 y = 0
                 try:
-                    y = float(eval(f_list[i].value, math.__dict__, {'x': x}))
+                    y = float(eval(self.f_list[i].value, math.__dict__, {'x': x}))
                 except:
                     exception_count += 1
                 y_list.append(y)
                 x += step
             if exception_count < len(x_list):
                 CHART_DATA['data']['labels'] = x_list
-                CHART_DATA['data']['datasets'][i]['data'] = y_list
-                self.chart.data = CHART_DATA
-                f_list[i].style = {'color': color_list[i]}
+                CHART_DATA['data']['datasets'].append(
+                    {
+                        'label': 'f' + chr(ord('₁') + i),
+                        'data': y_list,
+                        'borderWidth': 2,
+                        'borderColor': colors[color_list[i]],
+                        'backgroundColor': alpha(color_list[i], 0.2),
+                    }
+                )
+                self.f_list[i].style = {'color': colors[color_list[i]]}
             else:
-                f_list[i].style = {'color': 'red'}
+                self.f_list[i].style = {'color': 'red'}
+            self.chart.data = CHART_DATA
 
 
 app.run()
