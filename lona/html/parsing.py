@@ -12,87 +12,14 @@ from lona.html.node import Node
 
 logger = logging.getLogger('lona')
 
-NODE_CLASSES: dict[str, type[Node]] = {}
-INPUT_NODE_CLASSES: dict[str, type[Node]] = {}
-
-SELF_CLOSING_TAGS = [
-    'area',
-    'base',
-    'br',
-    'col',
-    'embed',
-    'hr',
-    'img',
-    'input',
-    'link',
-    'meta',
-    'param',
-    'source',
-    'track',
-    'wbr',
-]
-
-# TODO: remove in 2.0
-FUTURE_NODE_CLASSES: dict[str, type[Node]] = {}
-
-
-def _setup_node_classes_cache():
-
-    # TODO: remove in 2.0
-    from lona.html.nodes.forms.select2 import Select2, Option2
-
-    IGNORED_NODE_CLASSES = (
-        Select2,
-        Option2,
-    )
-
-    FUTURE_NODE_CLASSES.update({
-        'select': Select2,
-        'option': Option2,
-    })
-
-    for node_class in AbstractNode.get_all_node_classes():
-        if not issubclass(node_class, Node):
-            continue
-
-        if node_class in IGNORED_NODE_CLASSES:
-            continue
-
-        # input nodes
-        if node_class.TAG_NAME == 'input':
-            if 'type' not in node_class.ATTRIBUTES:
-                logger.warning(
-                    'WARNING: input node %r has no type set',
-                    node_class,
-                )
-
-                continue
-
-            if node_class.ATTRIBUTES['type'] in INPUT_NODE_CLASSES:
-                logger.warning(
-                    "WARNING: Two input Node classes with type '%s' were found: %r and %r",
-                    node_class.ATTRIBUTES['type'],
-                    INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']],
-                    node_class,
-                )
-
-            INPUT_NODE_CLASSES[node_class.ATTRIBUTES['type']] = node_class
-
-        # nodes
-        else:
-            if node_class.TAG_NAME in NODE_CLASSES:
-                logger.warning(
-                    "WARNING: Two Node classes with tag name '%s' were found: %r and %r",
-                    node_class.TAG_NAME,
-                    NODE_CLASSES[node_class.TAG_NAME],
-                    node_class,
-                )
-
-            NODE_CLASSES[node_class.TAG_NAME] = node_class
-
 
 class NodeHTMLParser(HTMLParser):
     CDATA_CONTENT_ELEMENTS = HTMLParser.CDATA_CONTENT_ELEMENTS + ('textarea',)
+
+    NODE_CLASSES: dict[str, type[Node]] = {}
+    INPUT_NODE_CLASSES: dict[str, type[Node]] = {}
+    FUTURE_NODE_CLASSES: dict[str, type[Node]] = {}  # TODO: remove in 2.0
+    SELF_CLOSING_TAGS: list[str] = []
 
     def __init__(self, *args, use_high_level_nodes=True, node_classes=None,
                  **kwargs):
@@ -105,6 +32,20 @@ class NodeHTMLParser(HTMLParser):
 
         super().__init__(*args, **kwargs)
 
+    @classmethod
+    def _setup_node_classes_cache(cls):
+        # this step is necessary to avoid import loops with lona.html
+
+        from lona.html import FUTURE_NODE_CLASSES as _FUTURE_NODE_CLASSES
+        from lona.html import INPUT_NODE_CLASSES as _INPUT_NODE_CLASSES
+        from lona.html import SELF_CLOSING_TAGS as _SELF_CLOSING_TAGS
+        from lona.html import NODE_CLASSES as _NODE_CLASSES
+
+        cls.FUTURE_NODE_CLASSES.update(_FUTURE_NODE_CLASSES)
+        cls.INPUT_NODE_CLASSES.update(_INPUT_NODE_CLASSES)
+        cls.SELF_CLOSING_TAGS.extend(_SELF_CLOSING_TAGS)
+        cls.NODE_CLASSES.update(_NODE_CLASSES)
+
     def set_current_node(self, node):
         self._node = node
 
@@ -113,25 +54,27 @@ class NodeHTMLParser(HTMLParser):
             return Node
 
         # TODO: remove in 2.0
-        if self.use_future_node_classes and tag_name in FUTURE_NODE_CLASSES:
-            return FUTURE_NODE_CLASSES[tag_name]
+        if (self.use_future_node_classes and
+                tag_name in self.FUTURE_NODE_CLASSES):
+
+            return self.FUTURE_NODE_CLASSES[tag_name]
 
         # inputs
         if tag_name == 'input':
             input_type = attributes.get('type', 'text')
 
-            if input_type not in INPUT_NODE_CLASSES:
+            if input_type not in self.INPUT_NODE_CLASSES:
                 return Node
 
-            return INPUT_NODE_CLASSES[input_type]
+            return self.INPUT_NODE_CLASSES[input_type]
 
         # custom node classes
         if tag_name in self.node_classes:
             return self.node_classes[tag_name]
 
         # nodes from the standard library
-        if tag_name in NODE_CLASSES:
-            return NODE_CLASSES[tag_name]
+        if tag_name in self.NODE_CLASSES:
+            return self.NODE_CLASSES[tag_name]
 
         # generic nodes
         return Node
@@ -140,7 +83,7 @@ class NodeHTMLParser(HTMLParser):
         self.handle_starttag(tag, attrs, self_closing=True)
 
     def handle_starttag(self, tag, attrs, self_closing=False):
-        self_closing = self_closing or tag in SELF_CLOSING_TAGS
+        self_closing = self_closing or tag in self.SELF_CLOSING_TAGS
 
         # node attributes
         node_attributes = {}
