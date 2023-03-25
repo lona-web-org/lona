@@ -11,6 +11,7 @@ from lona.html.abstract_node import AbstractNode
 from lona.html.widget_data import WidgetData
 from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
+from lona.html.widget import Widget
 from lona.state import State
 
 
@@ -32,6 +33,7 @@ def parse_style_string(style_string: str) -> dict[str, str]:
 
 
 class Node(AbstractNode):
+    NAMESPACE: str = ''
     TAG_NAME = 'html'
     SELF_CLOSING_TAG = False
     ID_LIST: list[str] = []
@@ -44,6 +46,7 @@ class Node(AbstractNode):
     def __init__(
             self,
             *args,
+            namespace=None,
             tag_name=None,
             self_closing_tag=None,
             widget='',
@@ -60,6 +63,7 @@ class Node(AbstractNode):
         self._widget_data = WidgetData(widget=self)
 
         # tag overrides
+        self._namespace = namespace or self.NAMESPACE
         self.tag_name = tag_name or self.TAG_NAME
 
         if self_closing_tag is None:
@@ -181,6 +185,26 @@ class Node(AbstractNode):
                 self._attributes[name] = value
 
     # node attributes  ########################################################
+    # namespace
+    @property
+    def namespace(self):
+        if self._namespace:
+            return self._namespace
+
+        node = self
+
+        while node is not None:
+            node = node._parent
+
+            # TODO: remove in 2.0
+            if isinstance(node, Widget):
+                continue
+
+            if node and node._namespace:
+                return node._namespace
+
+        return ''
+
     # id_list
     @property
     def id_list(self):
@@ -277,6 +301,7 @@ class Node(AbstractNode):
         data = [
             NODE_TYPE.NODE,
             self.id,
+            self.namespace,
             self.tag_name,
             self._id_list._serialize(),
             self._class_list._serialize(),
