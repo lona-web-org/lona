@@ -4,6 +4,8 @@ from html.parser import HTMLParser
 from typing import List, Dict
 import logging
 
+import html5lib
+
 from lona.compat import get_use_future_node_classes
 from lona.html.abstract_node import AbstractNode
 from lona.html.nodes.text_content import Div
@@ -149,28 +151,116 @@ class NodeHTMLParser(HTMLParser):
         self.set_current_node(self._node.parent)
 
 
+def html5lib_element_to_node(
+        html5lib_element,
+        use_high_level_nodes=True,
+        node_classes=None,
+):
+
+    from lona.html import Node, NODE_CLASSES, SELF_CLOSING_TAGS, INPUT_NODE_CLASSES
+
+    # skip comments
+    if not isinstance(html5lib_element.tag, str):
+        return
+
+    namespace, tag_name = html5lib_element.tag.split('}')
+
+    # find node class
+    if use_high_level_nodes:
+
+        # inputs
+        if tag_name == 'input':
+            input_type = html5lib_element.attrib.get('type', 'text')
+            node_class = INPUT_NODE_CLASSES.get(input_type, Node)
+
+        # overrides
+        elif node_classes and tag_name in node_classes:
+            node_class = node_classes[tag_name]
+
+        else:
+            node_class = NODE_CLASSES.get(tag_name, Node)
+
+    else:
+        node_class = Node
+
+    # parse namespace
+    namespace = namespace[1:]
+
+    if namespace == 'http://www.w3.org/1999/xhtml':
+        namespace = None
+
+    # attributes
+    node_attributes = {}
+
+    for name, value in html5lib_element.attrib.items():
+        if value is None:
+            value = ''
+
+        if name == 'data-lona-node-id':
+            continue
+
+        # strip namespaces
+        if name.startswith('{'):
+            name = name.split('}')[1][1:]
+
+        node_attributes[name] = value
+
+    # initialize node
+    node = node_class(
+        namespace=namespace,
+        tag_name=tag_name,
+        self_closing_tag=tag_name in SELF_CLOSING_TAGS,
+        **node_attributes,
+    )
+
+    # child nodes
+    if html5lib_element.text:
+        text = html5lib_element.text.strip()
+
+        if text:
+            node.append(TextNode(text))
+
+    for child_html5lib_element in html5lib_element:
+        if child_html5lib_element.text:
+            text = child_html5lib_element.text.strip()
+
+            if text:
+                node.append(TextNode(text))
+
+        child_node = html5lib_element_to_node(
+            html5lib_element=child_html5lib_element,
+            use_high_level_nodes=use_high_level_nodes,
+            node_classes=node_classes,
+        )
+
+        if child_node:
+            node.append(child_node)
+
+        if child_html5lib_element.tail:
+            tail = child_html5lib_element.tail.strip()
+
+            if tail:
+                node.append(TextNode(tail))
+
+    return node
+
+
 def html_string_to_node_list(html_string, use_high_level_nodes=True,
                              node_classes=None):
 
-    root_node = Node()
+    document = html5lib.parse(html_string, treebuilder='lxml')
+    body = document.find('//{http://www.w3.org/1999/xhtml}body')
     nodes = []
 
-    html_parser = NodeHTMLParser(
-        use_high_level_nodes=use_high_level_nodes,
-        node_classes=node_classes or {},
-    )
-
-    html_parser.set_current_node(root_node)
-    html_parser.feed(html_string)
-
-    if html_parser._node is not root_node:
-        raise ValueError(
-            f'Invalid html: missing end tag </{html_parser._node.tag_name}>',
+    for html5lib_element in body:
+        child_node = html5lib_element_to_node(
+            html5lib_element=html5lib_element,
+            use_high_level_nodes=use_high_level_nodes,
+            node_classes=node_classes,
         )
 
-    for node in list(root_node.nodes):
-        node.remove()
-        nodes.append(node)
+        if child_node:
+            nodes.append(child_node)
 
     return nodes
 

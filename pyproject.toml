@@ -38,6 +38,8 @@ dependencies = [
   'jinja2',
   'rlpython',
   'typing-extensions',
+  'html5lib',
+  'lxml',
 ]
 
 
