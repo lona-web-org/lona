@@ -153,6 +153,7 @@ def html_string_to_node_list(html_string, use_high_level_nodes=True,
                              node_classes=None):
 
     root_node = Node()
+    nodes = []
 
     html_parser = NodeHTMLParser(
         use_high_level_nodes=use_high_level_nodes,
@@ -167,7 +168,11 @@ def html_string_to_node_list(html_string, use_high_level_nodes=True,
             f'Invalid html: missing end tag </{html_parser._node.tag_name}>',
         )
 
-    return list(root_node.nodes)
+    for node in list(root_node.nodes):
+        node.remove()
+        nodes.append(node)
+
+    return nodes
 
 
 def HTML(

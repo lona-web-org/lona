@@ -650,6 +650,7 @@ class TestHtmlParsing:
             </div>
         """)
 
+        assert node.parent == None
         assert node.tag_name == 'div'
         assert len(node.nodes) == 3
         assert node.nodes[0].tag_name == 'span'
