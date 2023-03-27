@@ -128,6 +128,7 @@ from lona.html.nodes.svg_and_mathml import MathML, SVG
 from lona.html.nodes.demarcating_edits import Ins, Del
 from lona.events.event_types import *  # NOQA: F403
 from lona.html.nodes.sectioning_root import Body
+from lona.html.nodes.raw_nodes import RawHTML
 from lona.html.parsing import NodeHTMLParser
 from lona.html.widgets import HTML as HTML1
 from lona.html.parsing import HTML as HTML2

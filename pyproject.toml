@@ -72,6 +72,7 @@ include = ['lona*']
 "lona.client2" = ["**"]
 "lona.static" = ["**"]
 "lona.templates" = ["**"]
+"lona.html.nodes" = ["**"]
 
 [tool.setuptools.exclude-package-data]
 "*" = [

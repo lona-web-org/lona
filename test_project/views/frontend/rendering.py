@@ -1,5 +1,6 @@
 from lona.html import (
     CheckBox,
+    RawHTML,
     Select,
     Button,
     Label,
@@ -751,12 +752,39 @@ class RenderingTestView(View):
 
         self.rendering_root.nodes.pop(0)
 
+    # raw html ################################################################
+    @client_version(1, 2)
+    def step_55(self):
+        self.set_step_label(55, 'Raw HTML: Setup')
+
+        self.rendering_root.nodes = [
+            Div(
+                RawHTML("""
+                    <div id="raw-html">Initial Raw HTML</div>
+                """),
+            ),
+        ]
+
+    @client_version(1, 2)
+    def step_56(self):
+        self.set_step_label(56, 'Raw HTML: Reset')
+
+        self.rendering_root.nodes[0][0].inner_html = """
+            <div id="raw-html">Second Raw HTML</div>
+        """
+
+    @client_version(1, 2)
+    def step_57(self):
+        self.set_step_label(57, 'Raw HTML: Clear')
+
+        self.rendering_root.nodes[0].clear()
+
     # legacy widgets ##########################################################
     # TODO: remove in 2.0
 
     @client_version(1)
-    def step_55(self):
-        self.set_step_label(55, 'Legacy Widgets: Setup')
+    def step_58(self):
+        self.set_step_label(58, 'Legacy Widgets: Setup')
 
         self.rendering_root.clear()
 
@@ -773,8 +801,8 @@ class RenderingTestView(View):
         ]
 
     @client_version(1)
-    def step_56(self):
-        self.set_step_label(56, 'Legacy Widgets: Append Nodes')
+    def step_59(self):
+        self.set_step_label(59, 'Legacy Widgets: Append Nodes')
 
         widget1 = self.rendering_root.nodes[0]
         widget1.append(Div('1.3'))
@@ -785,8 +813,8 @@ class RenderingTestView(View):
         self.rendering_root.append(Div('4.1'))
 
     @client_version(1)
-    def step_57(self):
-        self.set_step_label(57, 'Legacy Widgets: Set Nodes')
+    def step_60(self):
+        self.set_step_label(60, 'Legacy Widgets: Set Nodes')
 
         widget1 = self.rendering_root.nodes[0]
         widget1.nodes[1] = Div('1.2.1')
@@ -795,8 +823,8 @@ class RenderingTestView(View):
         widget1.nodes[1] = Div('3.2.1')
 
     @client_version(1)
-    def step_58(self):
-        self.set_step_label(58, 'Legacy Widgets: Reset Nodes')
+    def step_61(self):
+        self.set_step_label(61, 'Legacy Widgets: Reset Nodes')
 
         widget1 = self.rendering_root.nodes[0]
 
@@ -819,8 +847,8 @@ class RenderingTestView(View):
         self.rendering_root[3] = Div('4.1.1')
 
     @client_version(1)
-    def step_59(self):
-        self.set_step_label(59, 'Legacy Widgets: Insert Nodes')
+    def step_62(self):
+        self.set_step_label(62, 'Legacy Widgets: Insert Nodes')
 
         widget1 = self.rendering_root[0]
         widget1.nodes.insert(2, Div('1.2.1.1'))
@@ -831,8 +859,8 @@ class RenderingTestView(View):
         widget2.nodes.insert(2, Div('3.2.1.1'))
 
     @client_version(1)
-    def step_60(self):
-        self.set_step_label(60, 'Legacy Widgets: Remove Nodes')
+    def step_63(self):
+        self.set_step_label(63, 'Legacy Widgets: Remove Nodes')
 
         widget1 = self.rendering_root[0]
         widget1.nodes.pop(2)

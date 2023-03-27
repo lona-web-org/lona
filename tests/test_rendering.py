@@ -234,13 +234,24 @@ async def test_rendering(rendering_setup, lona_project_context):
 
         assert (await get_widget_hooks(page)) == 'constructor,destroy'
 
+        # raw HTML tests ######################################################
+        for step in range(55, 58):
+            await next_step(page, step)
+
+            client_html_string = await rendering_root_element.inner_html()
+
+            client_html = HTML(client_html_string)
+            server_html = HTML(str(context.server.state['rendering-root']))[0]
+
+            assert client_html.nodes == server_html.nodes
+
         # legacy frontend widgets tests #######################################
         # TODO: remove in 2.0
 
         if get_client_version() != 1:
             return
 
-        for step in range(55, 61):
+        for step in range(58, 64):
             await next_step(page, step)
 
             client_html_string = await rendering_root_element.inner_html()
