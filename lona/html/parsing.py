@@ -65,7 +65,7 @@ class NodeHTMLParser(HTMLParser):
                 attrvalue = attrvalue[1:-1]
             if attrvalue:
                 attrvalue = unescape(attrvalue)
-            attrs.append((attrname.lower(), attrvalue))
+            attrs.append((attrname, attrvalue))
             k = m.end()
 
         end = rawdata[k:endpos].strip()
