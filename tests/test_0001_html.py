@@ -650,6 +650,7 @@ class TestHtmlParsing:
             </div>
         """)
 
+        assert not node.parent
         assert node.tag_name == 'div'
         assert len(node.nodes) == 3
         assert node.nodes[0].tag_name == 'span'
@@ -682,6 +683,13 @@ class TestHtmlParsing:
         assert node.nodes[1].tag_name == 'span'
         assert node.nodes[2].tag_name == 'div'
         assert node.nodes[3].tag_name == 'h1'
+
+    def test_attribute_cases(self):
+        node1 = HTML1('<svg preserveAspectRatio="none"></svg>')[0]
+        node2 = HTML2('<svg preserveAspectRatio="none"></svg>')
+
+        assert node1.attributes['preserveAspectRatio'] == 'none'
+        assert node2.attributes['preserveAspectRatio'] == 'none'
 
 
 @pytest.mark.incremental()

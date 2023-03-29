@@ -7,6 +7,14 @@ class NodeList:
     def __init__(self, node):
         self._node = node
         self._nodes = []
+        self._frozen = False
+
+    def _freeze(self):
+        self._frozen = True
+
+    def _assert_not_frozen(self):
+        if self._frozen:
+            raise RuntimeError('Cannot modify frozen NodeList')
 
     # list helper #############################################################
     def _check_value(self, value):
@@ -28,6 +36,7 @@ class NodeList:
         return node
 
     def insert(self, index, value):
+        self._assert_not_frozen()
         self._check_value(value)
 
         with self._node.lock:
@@ -48,6 +57,7 @@ class NodeList:
             )
 
     def append(self, value):
+        self._assert_not_frozen()
         self._check_value(value)
 
         with self._node.lock:
@@ -68,11 +78,15 @@ class NodeList:
             )
 
     def extend(self, nodes):
+        self._assert_not_frozen()
+
         with self._node.lock:
             for node in nodes:
                 self.append(node)
 
     def remove(self, node):
+        self._assert_not_frozen()
+
         with self._node.lock:
             self._nodes.remove(node)
 
@@ -88,6 +102,8 @@ class NodeList:
             )
 
     def pop(self, index):
+        self._assert_not_frozen()
+
         with self._node.lock:
             node = self._nodes.pop(index)
 
@@ -105,6 +121,8 @@ class NodeList:
             return node
 
     def clear(self):
+        self._assert_not_frozen()
+
         with self._node.lock:
             if not self._nodes:
                 return
@@ -130,6 +148,7 @@ class NodeList:
             return self._nodes[index]
 
     def __setitem__(self, index, value):
+        self._assert_not_frozen()
         self._check_value(value)
 
         with self._node.lock:
@@ -197,6 +216,8 @@ class NodeList:
 
     # serialization ###########################################################
     def _reset(self, values):
+        self._assert_not_frozen()
+
         if not isinstance(values, list):
             values = [values]
 

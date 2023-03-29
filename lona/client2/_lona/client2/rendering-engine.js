@@ -29,6 +29,7 @@ import { Lona } from './lona.js';
 
 const SPECIAL_ATTRIBUTE_NAMES = ['id', 'class', 'style', 'data-lona-node-id'];
 const PROPERTY_NAMES = ['value', 'checked', 'selected'];
+const DEFAULT_NODE_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
 
 export class LonaRenderingEngine {
@@ -187,16 +188,17 @@ export class LonaRenderingEngine {
 
         // Node
         const node_id = node_spec[1];
-        const node_tag_name = node_spec[2];
-        const node_id_list = node_spec[3];
-        const node_class_list = node_spec[4];
-        const node_style = node_spec[5];
-        const node_attributes = node_spec[6];
-        const node_child_nodes = node_spec[7];
-        const widget_class_name = node_spec[8];
-        const widget_data = node_spec[9];
+        const node_namespace = node_spec[2] || DEFAULT_NODE_NAMESPACE;
+        const node_tag_name = node_spec[3];
+        const node_id_list = node_spec[4];
+        const node_class_list = node_spec[5];
+        const node_style = node_spec[6];
+        const node_attributes = node_spec[7];
+        const node_child_nodes = node_spec[8];
+        const widget_class_name = node_spec[9];
+        const widget_data = node_spec[10];
 
-        const node = document.createElement(node_tag_name);
+        const node = document.createElementNS(node_namespace, node_tag_name);
 
         // lona node id
         node.setAttribute('data-lona-node-id', node_id);
@@ -214,7 +216,7 @@ export class LonaRenderingEngine {
         // style
         if(Object.keys(node_style).length > 0) {
             Object.keys(node_style).forEach(key => {
-                node.style[key] = node_style[key];
+                node.style.setProperty(key, node_style[key]);
             });
         };
 
@@ -360,19 +362,19 @@ export class LonaRenderingEngine {
 
             // SET
             if(operation == Lona.protocol.OPERATION.SET) {
-                node.style[data[0]] = data[1];
+                node.style.setProperty(data[0], data[1]);
 
             // RESET
             } else if(operation == Lona.protocol.OPERATION.RESET) {
                 node.removeAttribute('style');
 
                 for(let key in data[0]) {
-                    node.style[key] = data[0][key];
+                    node.style.setProperty(key, data[0][key]);
                 };
 
             // REMOVE
             } else if(operation == Lona.protocol.OPERATION.REMOVE) {
-                node.style[data[0]] = '';
+                node.style.setProperty(data[0], '');
 
             // CLEAR
             } else if(operation == Lona.protocol.OPERATION.CLEAR) {
