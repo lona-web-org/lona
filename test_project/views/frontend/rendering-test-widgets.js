@@ -3,7 +3,17 @@ class LegacyWidgetApiTestWidget {
 
     // helper -----------------------------------------------------------------
     render() {
-        this.root_node.children[1].innerHTML = JSON.stringify(this.data);
+        let client_data;
+
+        // legacy frontend widget
+        if(this.nodes.length > 1) {
+            client_data = this.nodes[1];
+
+        } else {
+            client_data = this.nodes[0].children[1];
+        }
+
+        client_data.innerHTML = JSON.stringify(this.data);
     }
 
     log_hook(name) {
