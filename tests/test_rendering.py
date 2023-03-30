@@ -199,7 +199,7 @@ async def test_rendering(rendering_setup, lona_project_context):
 
             client_widget_data = await parse_json(
                 page,
-                '#lona #rendering-root #server-widget-data',
+                '#lona #rendering-root #client-widget-data',
             )
 
             assert server_widget_data == client_widget_data
@@ -224,7 +224,7 @@ async def test_rendering(rendering_setup, lona_project_context):
 
             client_widget_data = await parse_json(
                 page,
-                '#lona #rendering-root #server-widget-data',
+                '#lona #rendering-root #client-widget-data',
             )
 
             assert server_widget_data == client_widget_data
