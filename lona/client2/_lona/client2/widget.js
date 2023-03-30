@@ -73,6 +73,18 @@ export class Widget {
         this.widget_data = new WidgetData(this);
 
         this.widget_object = undefined;
+
+        // legacy API ---------------------------------------------------------
+        // TODO: remove in 2.0
+        this.nodes = [];
+
+        if(Array.isArray(this.root_node)) {
+            this.nodes = this.root_node;
+            this.root_node = this.root_node[0];
+
+        } else {
+            this.nodes = [this.root_node];
+        }
     }
 
     initialize_widget() {
@@ -89,7 +101,7 @@ export class Widget {
 
         // set nodes
         this.widget_object.root_node = this.root_node;
-        this.widget_object.nodes = [this.root_node];
+        this.widget_object.nodes = this.nodes;
 
         // legacy setup hook
         if(this.widget_object.setup !== undefined) {

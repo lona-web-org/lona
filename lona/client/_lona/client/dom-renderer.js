@@ -183,9 +183,9 @@ export class LonaDomRenderer {
                 const widget = new Widget(
                     this.lona_context,
                     this.lona_window,
-                    node,
+                    node_list.slice(1, -1).flat(),
                     node_id,
-                    Lona.widget_classes[widget_class_name],
+                    Lona.widget_classes[node_widget_class_name],
                     widget_data,
                 );
 
