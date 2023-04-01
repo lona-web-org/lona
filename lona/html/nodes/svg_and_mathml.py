@@ -6,5 +6,5 @@ class SVG(Node):
     TAG_NAME = 'svg'
 
 
-class MathML(Node):
+class Math(Node):
     TAG_NAME = 'math'

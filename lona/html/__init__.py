@@ -124,8 +124,8 @@ from lona.html.nodes.scripting import NoScript, Script, Canvas
 from lona.html.nodes.forms.select2 import Select2, Option2
 from lona.html.nodes.web_components import Template, Slot
 from lona.html.nodes.forms.select import Select, Option
-from lona.html.nodes.svg_and_mathml import MathML, SVG
 from lona.html.nodes.demarcating_edits import Ins, Del
+from lona.html.nodes.svg_and_mathml import Math, SVG
 from lona.events.event_types import *  # NOQA: F403
 from lona.html.nodes.sectioning_root import Body
 from lona.html.nodes.raw_nodes import RawHTML
@@ -232,7 +232,7 @@ NODE_CLASSES: dict[str, type[Node]] = {
 
     # SVG and MathMl
     'svg': SVG,
-    'math': MathML,
+    'math': Math,
 
     # scripting
     'canvas': Canvas,
