@@ -199,7 +199,7 @@ async def test_rendering(rendering_setup, lona_project_context):
 
             client_widget_data = await parse_json(
                 page,
-                '#lona #rendering-root #server-widget-data',
+                '#lona #rendering-root #client-widget-data',
             )
 
             assert server_widget_data == client_widget_data
@@ -224,7 +224,7 @@ async def test_rendering(rendering_setup, lona_project_context):
 
             client_widget_data = await parse_json(
                 page,
-                '#lona #rendering-root #server-widget-data',
+                '#lona #rendering-root #client-widget-data',
             )
 
             assert server_widget_data == client_widget_data
@@ -260,3 +260,28 @@ async def test_rendering(rendering_setup, lona_project_context):
             server_html = HTML(str(context.server.state['rendering-root']))[0]
 
             assert client_html.nodes == server_html.nodes
+
+        # legacy frontend widgets data tests ##################################
+        for step in range(64, 76):
+            await next_step(page, step)
+
+            # widget hooks
+            assert (await get_widget_hooks(page)) == 'constructor,setup'
+
+            # widget data
+            server_widget_data = await parse_json(
+                page,
+                '#lona #rendering-root #server-widget-data',
+            )
+
+            client_widget_data = await parse_json(
+                page,
+                '#lona #rendering-root #client-widget-data',
+            )
+
+            assert server_widget_data == client_widget_data
+
+        # destroy
+        await next_step(page, 76)
+
+        assert (await get_widget_hooks(page)) == 'constructor,setup,deconstruct'

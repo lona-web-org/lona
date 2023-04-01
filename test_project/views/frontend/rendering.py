@@ -1,6 +1,7 @@
 from lona.html import (
     CheckBox,
     RawHTML,
+    Widget,
     Select,
     Button,
     Label,
@@ -27,6 +28,26 @@ def client_version(*client_versions):
         return step
 
     return decorator
+
+
+class LegacyFrontendWidgetTestComponent(Widget):
+    FRONTEND_WIDGET_CLASS = 'LegacyWidgetApiTestWidget'
+
+    def __init__(self, initial_state):
+        self.server_state = Div(
+            _id='server-widget-data',
+        )
+
+        self.nodes = [
+            self.server_state,
+            Div(_id='client-widget-data'),
+        ]
+
+        self.data = initial_state
+        self.update_state()
+
+    def update_state(self):
+        self.server_state.set_text(dumps(self.data))
 
 
 class LegacyWidgetApiTestComponent(Div):
@@ -867,3 +888,124 @@ class RenderingTestView(View):
 
         widget2 = self.rendering_root[3]
         widget2.nodes.pop(2)
+
+    # legacy frontend widget api tests
+    @client_version(1)
+    def step_64(self):
+        self.set_step_label(64, 'Legacy Frontend Widget API: setup')
+
+        self.rendering_root.nodes = [
+            LegacyFrontendWidgetTestComponent(
+                initial_state={'list': []},
+            ),
+            Div(id='widget-hooks'),
+        ]
+
+    @client_version(1)
+    def step_65(self):
+        self.set_step_label(65, 'Legacy Frontend Widget API: data: list: append')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['list'].append(1)
+        component.data['list'].append(2)
+        component.data['list'].append(3)
+        component.update_state()
+
+    @client_version(1)
+    def step_66(self):
+        self.set_step_label(66, 'Legacy Frontend Widget API: data: list: remove')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['list'].remove(2)
+        component.update_state()
+
+    @client_version(1)
+    def step_67(self):
+        self.set_step_label(67, 'Legacy Frontend Widget API: data: list: insert')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['list'].insert(0, 0)
+        component.update_state()
+
+    @client_version(1)
+    def step_68(self):
+        self.set_step_label(68, 'Legacy Frontend Widget API: data: list: clear')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['list'].clear()
+        component.update_state()
+
+    @client_version(1)
+    def step_69(self):
+        self.set_step_label(69, 'Legacy Frontend Widget API: data: list: reset')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['list'] = [5, 4, 3, 2, 1]
+        component.update_state()
+
+    @client_version(1)
+    def step_70(self):
+        self.set_step_label(70, 'Legacy Frontend Widget API: data: dict: setup')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data = {'dict': {}}
+        component.update_state()
+
+    @client_version(1)
+    def step_71(self):
+        self.set_step_label(71, 'Legacy Frontend Widget API: data: dict: set')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['dict'][1] = 1
+        component.data['dict'][2] = 2
+        component.data['dict'][3] = 3
+        component.update_state()
+
+    @client_version(1)
+    def step_72(self):
+        self.set_step_label(72, 'Legacy Frontend Widget API: data: dict: del')
+
+        component = self.rendering_root.nodes[0]
+
+        del component.data['dict'][2]
+        component.update_state()
+
+    @client_version(1)
+    def step_73(self):
+        self.set_step_label(73, 'Legacy Frontend Widget API: data: dict: pop')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['dict'].pop(3)
+        component.update_state()
+
+    @client_version(1)
+    def step_74(self):
+        self.set_step_label(74, 'Legacy Frontend Widget API: data: dict: clear')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['dict'].clear()
+        component.update_state()
+
+    @client_version(1)
+    def step_75(self):
+        self.set_step_label(75, 'Legacy Frontend Widget API: data: dict: reset')
+
+        component = self.rendering_root.nodes[0]
+
+        component.data['dict'] = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4}
+        component.update_state()
+
+    @client_version(1)
+    def step_76(self):
+        self.set_step_label(76, 'Legacy Frontend Widget API: destroy')
+
+        self.rendering_root.nodes.pop(0)
