@@ -26,10 +26,22 @@ class Button(Node):
 
 
 class Datalist(Node):
+    # TODO: remove in 2.0
+
+    TAG_NAME = 'datalist'
+
+
+class DataList(Node):
     TAG_NAME = 'datalist'
 
 
 class Fieldset(Node):
+    # TODO: remove in 2.0
+
+    TAG_NAME = 'fieldset'
+
+
+class FieldSet(Node):
     TAG_NAME = 'fieldset'
 
 

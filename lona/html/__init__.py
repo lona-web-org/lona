@@ -48,6 +48,20 @@ from lona.html.nodes.content_sectioning import (
     H2,
     H1,
 )
+from lona.html.nodes.forms import (
+    Progress,
+    OptGroup,
+    Fieldset,
+    FieldSet,
+    Datalist,
+    DataList,
+    Output,
+    Legend,
+    Button,
+    Meter,
+    Label,
+    Form,
+)
 from lona.html.nodes.text_content import (
     FigCaption,
     BlockQuote,
@@ -63,18 +77,6 @@ from lona.html.nodes.text_content import (
     Dl,
     Dd,
     P,
-)
-from lona.html.nodes.forms import (
-    Progress,
-    OptGroup,
-    Fieldset,
-    Datalist,
-    Output,
-    Legend,
-    Button,
-    Meter,
-    Label,
-    Form,
 )
 from lona.html.nodes.table_content import (
     ColGroup,
@@ -291,6 +293,8 @@ INPUT_NODE_CLASSES: dict[str, type[Node]] = {
 FUTURE_NODE_CLASSES: dict[str, type[Node]] = {
     'select': Select2,
     'option': Option2,
+    'datalist': DataList,
+    'fieldset': FieldSet,
 }
 
 SELF_CLOSING_TAGS: list[str] = [
