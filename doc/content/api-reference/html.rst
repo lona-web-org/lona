@@ -206,6 +206,10 @@ To disable this and parse HTML into blank nodes you can set
 Using Raw HTML
 ~~~~~~~~~~~~~~
 
+.. note::
+
+    Added in 1.13
+
 Lona represents HTML nodes as high-level Python objects, which have an inherit
 overhead, especially when handling big HTML trees as strings, that have to be
 parsed before.

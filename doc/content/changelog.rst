@@ -6,6 +6,59 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.13 (2023-04-01)
+
+Changes
+~~~~~~~
+
+* Templates
+
+  * ``viewport`` was set in ``lona/frontend.html``, to improve scaling on
+    mobile devices
+
+* HTML
+
+  * All missing HTML5 nodes, but missing inputs, were added to the standard
+    library
+
+    Reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+
+  * Support for XML namespaces was added, to add support for SVG rendering
+
+  * Support for non-standard CSS-properties was added
+
+    * Frameworks like `bonsai.css <https://www.bonsaicss.com/>`_ use
+      non-standard CSS-properties like ``--maxw:10px``.
+
+  * ``lona.html.HTML`` parses element attributes case-sensitive now
+
+    * Previously, ``lona.html.HTML`` converted all element attributes to
+      lower-case. This is fine for XHTML, but leads to issues when parsing
+      SVGs since some of the attributes in the SVG namespace are
+      case-sensitive.
+
+  * ``lona.html.RawHTML`` was added
+
+
+Bugfixes
+~~~~~~~~
+
+* HTML
+
+  * Parsing of single nodes in HTML-strings was fixed
+
+    * Previously, when parsing HTML-strings, that contained only one node, the
+      resulting node was no root node, but it had a parent node set, that was
+      out of scope.
+
+      This lead to crashes, because Lona refuses to render nodes on the
+      top-level, which are no root-nodes.
+
+* Client
+
+  * Backwards compatibility with legacy frontend widget API was fixed
+
+
 .. changelog-header:: 1.12.4 (2023-03-19)
 
 Bugfixes
