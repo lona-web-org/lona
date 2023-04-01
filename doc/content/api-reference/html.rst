@@ -203,6 +203,26 @@ To disable this and parse HTML into blank nodes you can set
     </p>
 
 
+Using Raw HTML
+~~~~~~~~~~~~~~
+
+Lona represents HTML nodes as high-level Python objects, which have an inherit
+overhead, especially when handling big HTML trees as strings, that have to be
+parsed before.
+
+``lona.html.RawHTML`` takes HTML as a string, and does not convert it to a Lona
+node tree on the server, but renders it as HTML on the client. The HTML string
+can be updated by setting ``RawHTML.inner_html``.
+
+.. code-block:: python
+
+    >>> from lona.html import RawHTML
+    >>> RawHTML('<h1>Hello World</h1>')
+    <div data-lona-node-id="1">
+        <h1>Hello World</h1>
+    </div>
+
+
 Attributes
 ~~~~~~~~~~
 

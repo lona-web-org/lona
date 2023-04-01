@@ -141,6 +141,27 @@ can be manipulated using the Lona node API. The HTML class is special in this re
 **More information:** `Using HTML Strings </api-reference/html.html#using-html-strings>`_
 
 
+Raw HTML
+--------
+
+Lona represents HTML nodes as high-level Python objects, which have an inherit
+overhead, especially when handling big HTML trees as strings, that have to be
+parsed before.
+
+``lona.html.RawHTML`` takes HTML as a string, and does not convert it to a Lona
+node tree on the server, but renders it as HTML on the client. The HTML string
+can be updated by setting ``RawHTML.inner_html``.
+
+.. code-block:: python
+
+    >>> from lona.html import RawHTML
+
+    >>> RawHTML('<h1>Hello World</h1>')
+    <div>
+        <h1>Hello World</h1>
+    </div>
+
+
 Selectors
 ---------
 
