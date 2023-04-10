@@ -228,7 +228,7 @@ overridden.
         }
     """)
 
-    app.add_template('lona/style.css', path='lona/style.css')
+    app.add_static_file('lona/style.css', path='lona/style.css')
 
 
 Custom Error Views
