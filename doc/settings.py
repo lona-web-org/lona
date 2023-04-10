@@ -56,6 +56,10 @@ MENU = [
             'demos/bootstrap-5-confirmation-popup/index.rst'],
 
             ['Function Plotter', 'demos/function-plotter/index.rst'],
+
+            ['Styled QR Code Generator',
+             'demos/styled-qr-code-generator/index.rst'],
+
             ['Daemonized View', 'demos/daemonized-view/index.rst'],
             ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
             ['Game Of Life', 'demos/game-of-life/index.rst'],
