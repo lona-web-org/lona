@@ -65,7 +65,7 @@ times, there will never be more than one reference to the same node.
     >>> div.append(span)
     >>> div.append(span)
 
-    >>> div1
+    >>> div
     <div>
         <span></span>
     </div>
