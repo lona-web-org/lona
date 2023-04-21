@@ -65,7 +65,7 @@ class NodeList:
 
             self._nodes.append(node)
 
-            index = self._nodes.index(node)
+            index = len(self._nodes) - 1
 
             self._node.document.add_patch(
                 node_id=self._node.id,
