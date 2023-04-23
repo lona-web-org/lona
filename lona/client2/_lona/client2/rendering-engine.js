@@ -487,11 +487,12 @@ export class LonaRenderingEngine {
         } else if(operation == Lona.protocol.OPERATION.RESET) {
             const node = this._get_node(node_id);
 
+            this._clear_node(node_id);
+            this._clean_node_cache();
+
             const child_nodes = data[0].map(node_spec => {
                 return this._render_node(node_spec);
             });
-
-            this._clear_node(node_id);
 
             child_nodes.map(child_nodes => {
                 node.appendChild(child_nodes);
