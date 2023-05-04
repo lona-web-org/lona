@@ -10,4 +10,4 @@ pytest-aiohttp==1.0.4
 pytest-dependency==0.5.1
 pytest-mock==3.10.0
 pytest-timeout==2.1.0
-playwright==1.32.1
+playwright==1.33.0
