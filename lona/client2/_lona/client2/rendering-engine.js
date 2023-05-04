@@ -84,15 +84,15 @@ export class LonaRenderingEngine {
     _insert_node(node, node_id, index) {
         const target_node = this._get_node(node_id);
 
-        if(index >= target_node.children.length) {
+        if(index >= target_node.childNodes.length) {
             target_node.appendChild(node)
         } else {
-            target_node.insertBefore(node, target_node.children[index])
+            target_node.insertBefore(node, target_node.childNodes[index])
         }
     };
 
     _set_node(node, node_id, index) {
-        const target_node = this._get_node(node_id).children[index];
+        const target_node = this._get_node(node_id).childNodes[index];
 
         target_node.replaceWith(node);
     };
@@ -487,11 +487,12 @@ export class LonaRenderingEngine {
         } else if(operation == Lona.protocol.OPERATION.RESET) {
             const node = this._get_node(node_id);
 
+            this._clear_node(node_id);
+            this._clean_node_cache();
+
             const child_nodes = data[0].map(node_spec => {
                 return this._render_node(node_spec);
             });
-
-            this._clear_node(node_id);
 
             child_nodes.map(child_nodes => {
                 node.appendChild(child_nodes);
