@@ -203,6 +203,15 @@ class ListOverlay:
         with self._widget.lock:
             return bool(self._original_data)
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            other = other._original_data
+
+        elif not isinstance(other, (dict, list)):
+            return False
+
+        return self._original_data == other
+
 
 class DictOverlay:
     def __init__(self, widget_data, key_path, original_data):
@@ -366,6 +375,15 @@ class DictOverlay:
         with self._widget.lock:
             return bool(self._original_data)
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            other = other._original_data
+
+        elif not isinstance(other, (dict, list)):
+            return False
+
+        return self._original_data == other
+
 
 class WidgetData:
     def __init__(self, widget):
@@ -404,6 +422,15 @@ class WidgetData:
             *super().__dir__(),
             *dir(self._overlay),
         ]
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            other = other._data
+
+        elif not isinstance(other, (dict, list)):
+            return False
+
+        return self._data == other
 
     # serialization ###########################################################
     def _reset(self, value, initial=False):
