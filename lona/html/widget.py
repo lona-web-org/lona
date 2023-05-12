@@ -5,6 +5,7 @@ from lona.protocol import NODE_TYPE
 
 
 class Widget(AbstractNode):
+    NODE_TYPE = NODE_TYPE.WIDGET
     FRONTEND_WIDGET_CLASS = ''
 
     @property
@@ -48,7 +49,7 @@ class Widget(AbstractNode):
     # serialization ###########################################################
     def _serialize(self, include_node_ids=True):
         return [
-            NODE_TYPE.WIDGET,
+            self.NODE_TYPE,
             self.id,
             self.FRONTEND_WIDGET_CLASS,
             self.nodes._serialize(include_node_ids=include_node_ids),

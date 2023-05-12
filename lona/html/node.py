@@ -33,6 +33,7 @@ def parse_style_string(style_string: str) -> dict[str, str]:
 
 
 class Node(AbstractNode):
+    NODE_TYPE = NODE_TYPE.NODE
     NAMESPACE: str = ''
     TAG_NAME = 'html'
     SELF_CLOSING_TAG = False
@@ -299,7 +300,7 @@ class Node(AbstractNode):
             widget_data = self._widget_data._serialize()
 
         data = [
-            NODE_TYPE.NODE,
+            self.NODE_TYPE,
             self.id,
             self.namespace,
             self.tag_name,
