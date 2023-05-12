@@ -65,7 +65,7 @@ class Node(AbstractNode):
 
         # tag overrides
         self._namespace = namespace or self.NAMESPACE
-        self.tag_name = tag_name or self.TAG_NAME
+        self._tag_name = tag_name or self.TAG_NAME
 
         if self_closing_tag is None:
             self.self_closing_tag = self.SELF_CLOSING_TAG
@@ -186,6 +186,8 @@ class Node(AbstractNode):
                 self._attributes[name] = value
 
     # node attributes  ########################################################
+    # read-only
+
     # namespace
     @property
     def namespace(self):
@@ -206,6 +208,17 @@ class Node(AbstractNode):
 
         return ''
 
+    # widget
+    @property
+    def tag_name(self):
+        return self._tag_name
+
+    # widget
+    @property
+    def widget(self):
+        return self._widget
+
+    # read-write
     # id_list
     @property
     def id_list(self):
