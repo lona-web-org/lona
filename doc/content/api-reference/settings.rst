@@ -162,6 +162,17 @@ Sessions
     :name: SESSIONS_KEY_RANDOM_LENGTH
     :path: lona.default_settings.SESSIONS_KEY_RANDOM_LENGTH
 
+.. setting::
+    :name: SESSIONS_REUSE
+    :path: lona.default_settings.SESSIONS_REUSE
+
+    When set to ``False``, the session middleware will generate a random
+    session key for every new connection regardless of a session cookie is set
+    or not.
+
+    This is helpful for testing multi-user views because it gives all browser
+    tabs their own session.
+
 
 Views
 -----

@@ -58,9 +58,19 @@ class LonaSessionMiddleware:
 
             return http_request.cookies[settings.SESSIONS_KEY_NAME]
 
+        # sessions are disabled
         if not settings.SESSIONS:
             if data.connection.user is None:
                 data.connection.user = AnonymousUser()
+
+            return data
+
+        # session reuse is disabled
+        if not settings.SESSIONS_REUSE:
+            if data.connection.user is None:
+                data.connection.user = AnonymousUser(
+                    session_key=self.generate_session_key(data.connection),
+                )
 
             return data
 
