@@ -93,4 +93,9 @@ class HomeView(View):
                 <li><a href="/frontend/custom-messages/">Custom Messages</a></li>
                 <li><a href="/frontend/redirects/">Redirects</a></li>
             </ul>
+
+            <h2>Channels</h2>
+            <ul>
+                <li><a href="/channels/">Channels</a></li>
+            </ul>
         """  # NOQA: LN002

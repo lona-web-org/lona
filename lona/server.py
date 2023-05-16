@@ -47,6 +47,7 @@ from lona.connection import Connection
 from lona.settings import Settings
 from lona.request import Request
 from lona.protocol import METHOD
+from lona.channels import Worker
 from lona.state import State
 from lona.view import View
 
@@ -74,6 +75,7 @@ class Server:
         self._websocket_connections: List[Connection] = []
         self._loop: asyncio.AbstractEventLoop | None = None
         self._worker_pool: WorkerPool | None = None
+        self._channel_worker: List[Worker] = []
 
         # setup settings
         server_logger.debug('setup settings')
@@ -264,8 +266,40 @@ class Server:
 
         self._view_runtime_controller.start()
 
+        # setup channels
+        server_logger.debug('start channels')
+
+        message_broker_class = self.acquire(
+            self.settings.CHANNEL_MESSAGE_BROKER_CLASS,
+        )
+
+        task_worker_class = self.acquire(
+            self.settings.CHANNEL_TASK_WORKER_CLASS,
+        )
+
+        for _ in range(self.settings.MAX_CHANNEL_MESSAGE_BROKER_THREADS):
+            self._channel_worker.append(
+                message_broker_class(
+                    server=self,
+                    executor=self.worker_pool.get_executor('channel_worker'),
+                    timeout=self.settings.CHANNEL_WORKER_TIMEOUT,
+                ),
+            )
+
+        for _ in range(self.settings.MAX_CHANNEL_TASK_WORKER_THREADS):
+            self._channel_worker.append(
+                task_worker_class(
+                    server=self,
+                    executor=self.worker_pool.get_executor('channel_worker'),
+                    timeout=self.settings.CHANNEL_WORKER_TIMEOUT,
+                ),
+            )
+
     async def _stop(self, *args, **kwargs):
         server_logger.debug('stop')
+
+        for worker in self._channel_worker:
+            worker.shutdown()
 
         await self.run_function_async(self._view_runtime_controller.stop)
 

@@ -63,6 +63,7 @@ MENU = [
             ['Daemonized View', 'demos/daemonized-view/index.rst'],
             ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
             ['Game Of Life', 'demos/game-of-life/index.rst'],
+            ['Channels', 'demos/channels/index.rst'],
         ]],
 
         ['API Reference', [
@@ -75,6 +76,7 @@ MENU = [
             ['Middlewares', 'api-reference/middlewares.rst'],
             ['Settings', 'api-reference/settings.rst'],
             ['Sessions', 'api-reference/sessions.rst'],
+            ['Channels', 'api-reference/channels.rst'],
             ['Testing', 'api-reference/testing.rst'],
             ['Lona Shell', 'api-reference/lona-shell.rst'],
             ['Debugging', 'api-reference/debugging.rst'],

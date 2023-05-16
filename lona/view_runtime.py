@@ -297,7 +297,7 @@ class ViewRuntime:
                 self.view.on_stop,
             )
 
-    def run_cleanup_hook(self):
+    def run_cleanup_hooks(self):
         from lona.view import View
 
         # FIXME: this inline import is necessary to avoid circular import
@@ -315,6 +315,9 @@ class ViewRuntime:
                     'Exception raised while running %s',
                     self.view.on_cleanup,
                 )
+
+        # internal cleanup
+        self.view._cleanup()
 
         # if on_cleanup is not defined by the view class
         # it is unnecessary to start a thread

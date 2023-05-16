@@ -14,6 +14,13 @@ class WorkerPool:
                 max_workers=self.settings.MAX_RUNTIME_THREADS,
                 thread_name_prefix='LonaRuntimeWorker',
             ),
+            'channel_worker': ThreadPoolExecutor(
+                max_workers=(
+                    self.settings.MAX_CHANNEL_TASK_WORKER_THREADS +
+                    self.settings.MAX_CHANNEL_MESSAGE_BROKER_THREADS
+                ),
+                thread_name_prefix='LonaChannelWorker',
+            ),
             'static_worker': None,
         }
 

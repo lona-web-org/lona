@@ -23,6 +23,15 @@ Threads
     :name: MAX_RUNTIME_THREADS
     :path: lona.default_settings.MAX_RUNTIME_THREADS
 
+.. setting::
+    :name: MAX_CHANNEL_MESSAGE_BROKER_THREADS
+    :path: lona.default_settings.MAX_CHANNEL_MESSAGE_BROKER_THREADS
+
+.. setting::
+    :name: MAX_CHANNEL_TASK_WORKER_THREADS
+    :path: lona.default_settings.MAX_CHANNEL_TASK_WORKER_THREADS
+
+
 
 Routing
 -------
@@ -207,6 +216,22 @@ Error Views
 .. setting::
     :name: ERROR_500_VIEW
     :path: lona.default_settings.ERROR_500_VIEW
+
+
+Channels
+--------
+
+.. setting::
+    :name: CHANNEL_WORKER_TIMEOUT
+    :path: lona.default_settings.CHANNEL_WORKER_TIMEOUT
+
+.. setting::
+    :name: CHANNEL_MESSAGE_BROKER_CLASS
+    :path: lona.default_settings.CHANNEL_MESSAGE_BROKER_CLASS
+
+.. setting::
+    :name: CHANNEL_TASK_WORKER_CLASS
+    :path: lona.default_settings.CHANNEL_TASK_WORKER_CLASS
 
 
 Middlewares

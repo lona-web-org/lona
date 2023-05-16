@@ -244,6 +244,10 @@ routes = [
     Route('/frontend/redirects<url:.*>',
           'views/frontend/redirects.py::RedirectsView'),
 
+    # frontend
+    Route('/channels/',
+          'views/channels.py::ChannelsView'),
+
     # home
     Route('/', 'views/home.py::HomeView'),
 ]
