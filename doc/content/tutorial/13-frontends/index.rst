@@ -1,7 +1,7 @@
 is_template: False
 
 
-12. Frontends
+13. Frontends
 =============
 
 Lona is a single-page application framework. That means that the page gets
@@ -112,6 +112,6 @@ ship their own template.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 11. Widgets
-        :link_target: /tutorial/11-widgets/index.rst
+        :link_title: 12. Widgets
+        :link_target: /tutorial/12-widgets/index.rst
         :position: left

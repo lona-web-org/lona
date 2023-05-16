@@ -23,7 +23,7 @@ Daemonized views are only available to the same user that started the view.
     should be visible in multiple browsers at the same time.
 
     If you want to create multi-user views, use
-    `view events </demos/multi-user-chat/index.html>`_.
+    :link:`channels </tutorial/08-channels/index.rst>` instead.
 
 
 Short Running View
@@ -80,6 +80,6 @@ This is handy for writing wizards or processing huge amounts of data.
         :position: left
 
     .. rst-button::
-        :link_title: 8. State
-        :link_target: /tutorial/08-state/index.rst
+        :link_title: 8. Channels
+        :link_target: /tutorial/08-channels/index.rst
         :position: right

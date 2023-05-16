@@ -1,6 +1,6 @@
 
 
-11. Widgets
+12. Widgets
 ===========
 
 Lona is all about managing state and business logic on the backend, using a
@@ -44,11 +44,11 @@ controls its parameters using ``Widget.data``.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 10. Static Files
-        :link_target: /tutorial/10-static-files/index.rst
+        :link_title: 11. Static Files
+        :link_target: /tutorial/11-static-files/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 12. Frontends
-        :link_target: /tutorial/12-frontends/index.rst
+        :link_title: 13. Frontends
+        :link_target: /tutorial/13-frontends/index.rst
         :position: right
