@@ -1,6 +1,7 @@
 # source: https://github.com/pengutronix/flamingo/blob/master/flamingo/plugins/rst/pygments.py
 
 from tempfile import TemporaryDirectory
+from inspect import getsource
 import os
 
 from pygments.styles import get_style_by_name, get_all_styles
@@ -13,6 +14,8 @@ from pygments.token import Token
 from pygments import highlight
 from docutils.nodes import raw
 
+from lona.imports import acquire
+
 
 def code_block(context):
     class CodeBlock(Directive):
@@ -23,6 +26,7 @@ def code_block(context):
             'license': directives.unchanged,
             'template': directives.unchanged,
             'include': directives.unchanged,
+            'import': directives.unchanged,
         }
 
         def run(self):
@@ -31,6 +35,7 @@ def code_block(context):
             if self.content:
                 content += '\n'.join(self.content)
 
+            # include
             if 'include' in self.options:
                 if content:
                     content += '\n'
@@ -43,6 +48,11 @@ def code_block(context):
 
                 with open(path, 'r') as f:
                     content += f.read()
+
+            # import
+            elif 'import' in self.options:
+                attribute = acquire(self.options['import'])
+                content = getsource(attribute)
 
             try:
                 if self.arguments:
