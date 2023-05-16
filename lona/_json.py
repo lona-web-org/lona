@@ -10,7 +10,7 @@ def default(value):
     if isinstance(value, Enum):
         return value.value
 
-    if value.__class__.__name__ == 'WidgetData':
+    if value.__class__.__name__ in ('WidgetData', 'Overlay', 'State'):
         return value._data
 
     raise TypeError
