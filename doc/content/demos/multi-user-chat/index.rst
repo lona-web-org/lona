@@ -3,10 +3,18 @@
 Multi User Chat
 ===============
 
-.. img:: multi-user-chat.gif
+This demo showcases a multi-user chat application using
+:link:`channels </api-reference/channels.rst>`,
+:link:`server state </cookbook/using-server-state.rst>`, and
+:link:`sessions </api-reference/sessions.rst>`.
 
-This demo implements a multi user chat using
-`view events </api-reference/views.html?q=view_event#view-events>`_.
+Each user can choose a username, which is then associated with their session
+and persists across browser reloads. Users can also create chat rooms and join
+existing ones. The landing page of the demo displays a list of previously
+created chat rooms, as well as the number of users currently engaged in
+conversation.
+
+.. image:: demo.gif
 
 
 Install Dependencies
@@ -14,11 +22,11 @@ Install Dependencies
 
 .. code-block:: text
 
-    pip install lona
+    pip install lona lona-picocss
 
 
 Source code
 -----------
 
 .. code-block:: python
-    :include: multi-user-chat.py
+    :include: demo.py
