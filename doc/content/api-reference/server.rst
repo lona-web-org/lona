@@ -78,6 +78,10 @@ Server.fire_view_event()
 
     .. note::
 
+        Deprecated since 1.14. Use Channels instead
+
+    .. note::
+
         Added in 1.7.3
 
     .. api-doc:: lona.server.Server.fire_view_event

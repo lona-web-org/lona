@@ -6,6 +6,99 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.14 (2023-05-22)
+
+Changes
+~~~~~~~
+
+* Templates
+
+  * Support for favicons was added to the default frontend template
+    ``lona/frontend.html``
+
+* HTML
+
+  * Performance of ``Node.append()`` was improved
+
+    * Previously, ``Node.append()`` used ``NodeList.index()`` internally,
+      which called ``Node._serialize()`` which is an expensive operation.
+
+      ``Node.append()`` now calculates the index of the appended node itself,
+      which is much faster.
+
+  * Performance of ``Node.__eq__()`` was improved
+
+    * Previously, ``Node.__eq__()`` used ``Node._serialize()`` which is an
+      expensive operation. Now ``Node.__eq__()`` checks all attributes of two
+      nodes individually, trying to find a difference as soon as possible.
+
+  * ``Node.tag_name`` and ``Node.widget`` are read-only now
+
+    * Re-writing of these properties was never supported, so it should not be
+      possible to write them, to prevent confusion.
+
+* State
+
+  * ``State.to_json()`` was added
+
+* Sessions
+
+  * ``SESSIONS_REUSE`` setting was added
+
+    * When set to ``False`` the session middleware will create a random session
+      key for every new connection. This is useful for debugging multi-user
+      views.
+
+* Client 1&2
+
+  * Support for reconnecting without creating a window was added
+
+    * Previously, when implementing auto-reconnect, the client would reopen the
+      websocket connection, and in the case of success reload the tab. This
+      reload is crucial to ensure a connect and a reconnect result in the same
+      user experience, but has the side effect of accessing the same view
+      twice. This created problems when debugging or reading the server logs.
+
+      To account for that, the option ``create_window`` was added to
+      ``LonaContext.reconnect()``, which is set to ``true`` by default.
+
+* Channels
+
+  * Channels were added
+
+    * Channels are the successor to View Events, and are the new mechanism for
+      soft real-time communication and multi-user features.
+
+* Views
+
+  * View Events are deprecated now in favor of Channels
+
+
+Bugfixes
+~~~~~~~~
+
+* Client 1&2
+
+  * Index of inserted nodes was fixed
+
+    * Previously, the rendering engine used ``Element.children`` to insert
+      newly rendered nodes. This only works correctly when the target node only
+      contains elements and no text nodes, because ``Element.children`` only
+      contains references to child elements, in contrast to
+      ``Element.childNodes`` which contains child elements and child text
+      nodes. The usage of only this subset of nodes lead to incorrect indices,
+      and nodes ending up in wrong order, in some cases.
+
+* Client 2
+
+  * Crashes while rendering node list slices were fixed
+
+    * Previously, the rendering engine could crash when a slice of
+      ``Node.nodes`` was re-rendered. This was due incorrect node cache
+      cleaning on the client, and was fixed by cleaning the cache after every
+      node-reset-operation.
+
+
 .. changelog-header:: 1.13 (2023-04-01)
 
 Changes

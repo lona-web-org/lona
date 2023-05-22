@@ -627,6 +627,9 @@ browser URL.
             return input_event
 
         def on_view_event(self, view_event):
+            # deprecated since 1.14
+            # use Channels instead
+
             pass
 
         def on_stop(self, reason):
@@ -672,6 +675,10 @@ This hook is gets called for every input event that is not awaited in
 
 LonaView.on_view_event\(view_event\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    View events are deprecated since 1.14. Use Channels instead.
 
 This hook gets called for every incoming `view event <#view-events>`_.
 
@@ -1430,6 +1437,10 @@ LonaView.iter_objects\(\)
 
 LonaView.fire_view_event\(name, data=None\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. note::
+
+        View events are deprecated since 1.14. Use Channels instead.
 
     .. note::
 

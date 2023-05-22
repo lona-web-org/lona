@@ -3,6 +3,10 @@
 Channels
 ========
 
+.. note::
+
+    Added in 1.14
+
 Lona channels facilitate soft real-time communication between different
 components of the server side of your application by implementing a
 straightforward publish/subscribe system. They provide a means to exchange
