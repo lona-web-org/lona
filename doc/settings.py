@@ -42,11 +42,12 @@ MENU = [
             ['5. Routing', 'tutorial/05-routing/index.rst'],
             ['6. Responses', 'tutorial/06-responses/index.rst'],
             ['7. Daemon Views', 'tutorial/07-daemon-views/index.rst'],
-            ['8. State', 'tutorial/08-state/index.rst'],
-            ['9. Middlewares', 'tutorial/09-middlewares/index.rst'],
-            ['10. Static Files', 'tutorial/10-static-files/index.rst'],
-            ['11. Widgets', 'tutorial/11-widgets/index.rst'],
-            ['12. Frontends', 'tutorial/12-frontends/index.rst'],
+            ['8. Channels', 'tutorial/08-channels/index.rst'],
+            ['9. State', 'tutorial/09-state/index.rst'],
+            ['10. Middlewares', 'tutorial/10-middlewares/index.rst'],
+            ['11. Static Files', 'tutorial/11-static-files/index.rst'],
+            ['12. Widgets', 'tutorial/12-widgets/index.rst'],
+            ['13. Frontends', 'tutorial/13-frontends/index.rst'],
         ]],
 
         ['Demos', [
@@ -63,6 +64,7 @@ MENU = [
             ['Daemonized View', 'demos/daemonized-view/index.rst'],
             ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
             ['Game Of Life', 'demos/game-of-life/index.rst'],
+            ['Channels', 'demos/channels/index.rst'],
         ]],
 
         ['API Reference', [
@@ -75,6 +77,7 @@ MENU = [
             ['Middlewares', 'api-reference/middlewares.rst'],
             ['Settings', 'api-reference/settings.rst'],
             ['Sessions', 'api-reference/sessions.rst'],
+            ['Channels', 'api-reference/channels.rst'],
             ['Testing', 'api-reference/testing.rst'],
             ['Lona Shell', 'api-reference/lona-shell.rst'],
             ['Debugging', 'api-reference/debugging.rst'],

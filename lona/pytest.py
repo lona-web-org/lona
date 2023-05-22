@@ -15,6 +15,7 @@ import pytest
 
 from lona.shell.shell import embed_shell
 from lona.worker_pool import WorkerPool
+from lona.channels import Channel
 from lona.server import Server
 from lona import App
 
@@ -143,7 +144,9 @@ def lona_app_context(request, aiohttp_client, event_loop, pytestconfig):
             pytestconfig=pytestconfig,
         )
 
-    return setup_lona_app_context
+    yield setup_lona_app_context
+
+    Channel._clear_state()
 
 
 @pytest.fixture()
@@ -184,7 +187,9 @@ def lona_project_context(request, aiohttp_client, event_loop, pytestconfig):
             pytestconfig=pytestconfig,
         )
 
-    return setup_lona_project_context
+    yield setup_lona_project_context
+
+    Channel._clear_state()
 
 
 def eventually(

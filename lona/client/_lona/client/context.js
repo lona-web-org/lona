@@ -287,7 +287,11 @@ export class LonaContext {
     };
 
     // setup ------------------------------------------------------------------
-    reconnect() {
+    reconnect(options) {
+        var options = options || {
+            create_window: true,
+        };
+
         // state
         this._windows.clear();
 
@@ -302,22 +306,26 @@ export class LonaContext {
             protocol + window.location.host + window.location.pathname);
 
         this._ws.lona_context = this;
+        this._ws.options = options;
         this._ws.onmessage = this._handle_raw_websocket_message;
 
         // onopen
         this._ws.onopen = function(event) {
-            // load initial page
-            var window_id = this.lona_context.create_window(
-                this.lona_context.settings.target,
-                document.location.href,
-            );
+            if(this.options.create_window) {
 
-            // setup pushstate
-            if(this.lona_context.settings.update_address_bar) {
-                window.onpopstate = () => {
-                    this.lona_context._windows.get(window_id).run_view(
-                        document.location.href,
-                    );
+                // load initial page
+                var window_id = this.lona_context.create_window(
+                    this.lona_context.settings.target,
+                    document.location.href,
+                );
+
+                // setup pushstate
+                if(this.lona_context.settings.update_address_bar) {
+                    window.onpopstate = () => {
+                        this.lona_context._windows.get(window_id).run_view(
+                            document.location.href,
+                        );
+                    };
                 };
             };
 

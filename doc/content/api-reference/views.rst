@@ -1395,6 +1395,28 @@ LonaView.is_daemon
         ``False``.
 
 
+LonaView.subscribe\(topic, handler, implicit_show=True\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Subscribes to a `channel </api-reference/channels.html>`_ with the
+    given topic and handler, and does error handling when the handler crashes,
+    by invoking the 500 error handler. When ``implicit_show`` is set to
+    ``True``, ``LonaView.show()`` is called after every handled message.
+
+    ``LonaView.subscribe()`` maintains a list of all subscribed channels and
+    unsubscribes all of them on cleanup, when the view closes, using
+    ``LonaView.unsubscribe_from_all_channels()``.
+
+
+LonaView.unsubscribe_from_all_channels\(\)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Unsubscribes from all `channels </api-reference/channels.html>`_,
+    subscribed using ``LonaView.subscribe()``.
+
+    Gets called implicitly on cleanup when the view closes.
+
+
 LonaView.iter_objects\(\)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

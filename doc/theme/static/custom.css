@@ -89,6 +89,7 @@ a.anchor:after {
     padding: 12px 0 0 12px;
     border: 1px solid rgb(225, 228, 229);
     background: rgb(248, 248, 248);
+    margin-bottom: 24px;
 }
 
 .highlight.signature {

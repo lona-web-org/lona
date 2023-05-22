@@ -42,34 +42,49 @@ class AnonymousUser:
 
 class LonaSessionMiddleware:
     async def on_startup(self, data):
+
+        # import session key generator
         self.generate_session_key = await data.server.run_function_async(
             acquire,
             data.server.settings.SESSIONS_KEY_GENERATOR,
         )
 
     def handle_connection(self, data):
+        connection = data.connection
         http_request = data.connection.http_request
         settings = data.server.settings
         router = data.server._router
 
-        def get_session_key():
-            if settings.SESSIONS_KEY_NAME not in http_request.cookies:
-                return ''
+        # user is already set
+        # nothing to do
+        if connection.user is not None:
+            return data
 
-            return http_request.cookies[settings.SESSIONS_KEY_NAME]
-
+        # sessions are disabled
         if not settings.SESSIONS:
-            if data.connection.user is None:
-                data.connection.user = AnonymousUser()
+            connection.user = AnonymousUser()
 
             return data
 
-        if (not data.connection.interactive and
-                not get_session_key()):
+        # session reuse is disabled
+        # generating a new random session
+        if not settings.SESSIONS_REUSE:
+            connection.user = AnonymousUser(
+                session_key=self.generate_session_key(connection),
+            )
+
+            return data
+
+        # get session key
+        session_key = http_request.cookies.get(settings.SESSIONS_KEY_NAME, '')
+
+        # no previous session found
+        # setting a new session key using a redirect
+        if not connection.interactive and not session_key:
 
             # skip cookie setting and redirecting on non-interactive routes
             # without this exception REST APIs don't work as expected
-            match, route, match_info = router.resolve(http_request.path)
+            match, route, _ = router.resolve(http_request.path)
 
             if match and not route.interactive:
                 return data
@@ -81,15 +96,13 @@ class LonaSessionMiddleware:
                 text=REDIRECT_BODY.format(url=http_request.path),
             )
 
-            session_key = self.generate_session_key(data.connection)
+            session_key = self.generate_session_key(connection)
 
             response.cookies[settings.SESSIONS_KEY_NAME] = session_key
 
             return response
 
-        if data.connection.user is None:
-            data.connection.user = AnonymousUser(
-                session_key=get_session_key(),
-            )
+        # previous session found
+        connection.user = AnonymousUser(session_key=session_key)
 
         return data

@@ -6,6 +6,8 @@ import os
 MAX_WORKER_THREADS = 4
 MAX_STATIC_THREADS = 4
 MAX_RUNTIME_THREADS = 6
+MAX_CHANNEL_MESSAGE_BROKER_THREADS = 1
+MAX_CHANNEL_TASK_WORKER_THREADS = 4
 
 # routing
 ROUTING_TABLE = 'lona.default_routes.routes'
@@ -53,6 +55,7 @@ SESSIONS = True
 SESSIONS_KEY_GENERATOR = 'lona.middlewares.sessions.generate_session_key'
 SESSIONS_KEY_NAME = 'sessionid'
 SESSIONS_KEY_RANDOM_LENGTH = 28
+SESSIONS_REUSE = True
 
 # views
 CORE_FRONTEND_VIEW = 'lona.default_views.FrontendView'
@@ -75,6 +78,11 @@ CORE_MIDDLEWARES = [
 ]
 
 MIDDLEWARES: list[str] = []
+
+# channels
+CHANNEL_MESSAGE_BROKER_CLASS: str = 'lona.channels.MessageBroker'
+CHANNEL_TASK_WORKER_CLASS: str = 'lona.channels.TaskWorker'
+CHANNEL_WORKER_TIMEOUT: float = 1.0
 
 # shell
 CORE_COMMANDS = [

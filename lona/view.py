@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, Union, cast
+from typing import TYPE_CHECKING, TypeVar, Union, List, cast
 from collections.abc import Awaitable, Callable
 import threading
 import asyncio
@@ -13,6 +13,7 @@ from lona.events.input_event import InputEvent
 from lona.static_files import StaticFile
 from lona.exceptions import StopReason
 from lona.connection import Connection
+from lona.channels import Channel
 from lona.request import Request
 
 # avoid import cycles
@@ -37,6 +38,10 @@ class View:
         self._server: Server = server
         self._view_runtime: ViewRuntime = view_runtime
         self._request: Request = request
+        self._channels: List[Channel] = []
+
+    def _cleanup(self):
+        self.unsubscribe_from_all_channels()
 
     # properties ##############################################################
     @property
@@ -298,6 +303,38 @@ class View:
             data=data,
             view_classes=[self.__class__],
         )
+
+    # channels ################################################################
+    def subscribe(
+            self,
+            topic: str,
+            handler: Callable,
+            implicit_show: bool = True,
+    ) -> Channel:
+
+        def _handler(*args, **kwargs):
+            try:
+                handler(*args, **kwargs)
+
+                if implicit_show:
+                    self.show()
+
+            except Exception as exception:
+                self._view_runtime.issue_500_error(exception=exception)
+                channel.unsubscribe()
+
+                if not isinstance(exception, StopReason):
+                    raise
+
+        channel = Channel(topic=topic, handler=_handler)
+
+        self._channels.append(channel)
+
+        return channel
+
+    def unsubscribe_from_all_channels(self) -> None:
+        for channel in self._channels:
+            channel.unsubscribe()
 
     # runtime #################################################################
     def sleep(self, delay: float, result: T | None = None) -> T | None:

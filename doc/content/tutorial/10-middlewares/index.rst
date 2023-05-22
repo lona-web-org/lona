@@ -1,7 +1,7 @@
 
 
-9. Middlewares
-==============
+10. Middlewares
+===============
 
 Lona has support for middlewares to implement things like authentication,
 global logging, or start and stop hooks.
@@ -19,12 +19,12 @@ of any view if no valid password was set in the GET variable ``p``.
 .. rst-buttons::
 
     .. rst-button::
-        :link_title: 8. State
-        :link_target: /tutorial/08-state/index.rst
+        :link_title: 9. State
+        :link_target: /tutorial/09-state/index.rst
         :position: left
 
     .. rst-button::
-        :link_title: 10. Static Files
-        :link_target: /tutorial/10-static-files/index.rst
+        :link_title: 11. Static Files
+        :link_target: /tutorial/11-static-files/index.rst
         :position: right
 

@@ -1,5 +1,7 @@
 from threading import RLock
 
+from lona._json import dumps
+
 
 class Overlay:
     def __init__(self, server_state, data):
@@ -10,8 +12,12 @@ class Overlay:
     def lock(self):
         return self._server_state.lock
 
+    def to_json(self, *args, **kwargs):
+        with self.lock:
+            return dumps(self._data, *args, **kwargs)
+
     def __getattribute__(self, name):
-        if name.startswith('_') or name == 'lock':
+        if name.startswith('_') or name in ('lock', 'to_json'):
             return super().__getattribute__(name)
 
         attribute = self._data.__getattribute__(name)
@@ -85,3 +91,7 @@ class State(Overlay):
             return self._node.lock
 
         return self._lock
+
+    def to_json(self, *args, **kwargs):
+        with self.lock:
+            return dumps(self._data, *args, **kwargs)
