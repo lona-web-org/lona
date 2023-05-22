@@ -3,6 +3,8 @@ from lona.protocol import NODE_TYPE
 
 
 class TextNode(AbstractNode):
+    NODE_TYPE = NODE_TYPE.TEXT_NODE
+
     def __init__(self, string):
         self._string = str(string)
 
@@ -60,7 +62,7 @@ class TextNode(AbstractNode):
 
     # serialization ###########################################################
     def _serialize(self, include_node_ids=True):
-        data = [NODE_TYPE.TEXT_NODE, self.id, self._string]
+        data = [self.NODE_TYPE, self.id, self._string]
 
         if not include_node_ids:
             data.pop(1)

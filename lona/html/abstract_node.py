@@ -3,6 +3,7 @@ from __future__ import annotations
 from lona.unique_ids import generate_unique_id
 from lona.static_files import StaticFile
 from lona.html.selector import Selector
+from lona.protocol import NODE_TYPE
 from lona.state import State
 
 
@@ -50,10 +51,42 @@ class AbstractNode:
         if not isinstance(other, AbstractNode):
             return False
 
-        return (
-            self._serialize(include_node_ids=False) ==
-            other._serialize(include_node_ids=False)
-        )
+        if other.NODE_TYPE != self.NODE_TYPE:
+            return False
+
+        # text nodes
+        if self.NODE_TYPE == NODE_TYPE.TEXT_NODE:
+            return self._string == other._string
+
+        # nodes
+        if other.namespace != self.namespace:
+            return False
+
+        if other.tag_name != self.tag_name:
+            return False
+
+        if other.id_list != self.id_list:
+            return False
+
+        if other.class_list != self.class_list:
+            return False
+
+        if other.style != self.style:
+            return False
+
+        if other.attributes != self.attributes:
+            return False
+
+        if other.nodes != self.nodes:
+            return False
+
+        if other.widget != self.widget:
+            return False
+
+        if other.widget_data != self.widget_data:
+            return False
+
+        return True
 
     # id ######################################################################
     @property
