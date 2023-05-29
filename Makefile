@@ -1,38 +1,26 @@
 SHELL=/bin/bash
-PYTHON=python3
-
-PYTHON_ENV_ROOT=envs
-PYTHON_DEV_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-dev
-PYTHON_PACKAGING_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-packaging-env
+PYTHON=python3.10
+PYTHON_ENV=env
 
 .PHONY: clean doc dist test ci-test lint isort shell freeze
 
-# development environment #####################################################
-$(PYTHON_DEV_ENV): REQUIREMENTS.dev.txt
-	rm -rf $(PYTHON_DEV_ENV) && \
-	$(PYTHON) -m venv $(PYTHON_DEV_ENV) && \
-	. $(PYTHON_DEV_ENV)/bin/activate && \
+# python env ##################################################################
+$(PYTHON_ENV): pyproject.toml
+	rm -rf $(PYTHON_ENV) && \
+	$(PYTHON) -m venv $(PYTHON_ENV) && \
+	. $(PYTHON_ENV)/bin/activate && \
 	pip install pip --upgrade && \
-	pip install -r ./REQUIREMENTS.dev.txt
+	pip install -e .[dev,packaging]
 
-# packaging environment #######################################################
-$(PYTHON_PACKAGING_ENV): REQUIREMENTS.packaging.txt
-	rm -rf $(PYTHON_PACKAGING_ENV) && \
-	$(PYTHON) -m venv $(PYTHON_PACKAGING_ENV) && \
-	. $(PYTHON_PACKAGING_ENV)/bin/activate && \
-	pip install --upgrade pip && \
-	pip install .[packaging]
-
-# environment helper ##########################################################
 clean:
-	rm -rf $(PYTHON_ENV_ROOT)
+	rm -rf $(PYTHON_ENV)
 
-shell: | $(PYTHON_DEV_ENV)
-	. $(PYTHON_DEV_ENV)/bin/activate && \
+shell: | $(PYTHON_ENV)
+	. $(PYTHON_ENV)/bin/activate && \
 	rlpython
 
-freeze: | $(PYTHON_DEV_ENV)
-	. $(PYTHON_DEV_ENV)/bin/activate && \
+freeze: | $(PYTHON_ENV)
+	. $(PYTHON_ENV)/bin/activate && \
 	pip freeze
 
 # tests #######################################################################
@@ -49,11 +37,11 @@ isort:
 	./docker-compose run playwright tox -e isort $(args)
 
 # packaging ###################################################################
-dist: | $(PYTHON_PACKAGING_ENV)
-	. $(PYTHON_PACKAGING_ENV)/bin/activate && \
+dist: | $(PYTHON_ENV)
+	. $(PYTHON_ENV)/bin/activate && \
 	rm -rf dist *.egg-info && \
-	python -m build
+	$(PYTHON) -m build
 
 _release: dist
-	. $(PYTHON_PACKAGING_ENV)/bin/activate && \
+	. $(PYTHON_ENV)/bin/activate && \
 	twine upload --config-file ~/.pypirc.fscherf dist/*

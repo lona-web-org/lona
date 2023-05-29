@@ -25,8 +25,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -U setuptools
-        pip install -r tests/REQUIREMENTS.lint.txt
+        pip install --upgrade setuptools tox
+        pip install .[lint]
 
     - name: Run Tox
       run: tox -e lint
@@ -48,8 +48,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -U setuptools
-        pip install -r tests/REQUIREMENTS.test.txt
+        pip install --upgrade setuptools tox
+        pip install .[test]
         python -m playwright install     
         python -m playwright install-deps
 
