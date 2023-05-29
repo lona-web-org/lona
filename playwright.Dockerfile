@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/playwright:v1.34.0-jammy
 
+ARG UID=1000 GID=1000
+
 # upgrade ubuntu
 RUN apt update && apt upgrade -y
 

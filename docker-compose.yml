@@ -6,11 +6,14 @@ networks:
 
 services:
     playwright:
-        user: ${DOCKER_USER}
+        user: 1000:1000
 
         build:
             context: ./
             dockerfile: playwright.Dockerfile
+            args:
+                - UID=${UID:-1000}
+                - GID=${GID:-1000}
 
         networks:
             - net

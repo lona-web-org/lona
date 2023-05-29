@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# set the docker user to the local user so test environments and artifacts
-# can be access from inside and outside of the test container
-export DOCKER_USER=$(id -u):$(id -g)
-
-exec docker-compose $@
