@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+    net:
+        driver: bridge
+
+services:
+    playwright:
+        user: ${DOCKER_USER}
+
+        build:
+            context: ./
+            dockerfile: playwright.Dockerfile
+
+        networks:
+            - net
+
+        volumes:
+            - ./:/app
+
+        environment:
+            - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+        working_dir: "/app"
+        command: "tox"

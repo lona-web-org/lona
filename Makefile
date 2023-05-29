@@ -5,7 +5,7 @@ PYTHON_ENV_ROOT=envs
 PYTHON_DEV_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-dev
 PYTHON_PACKAGING_ENV=$(PYTHON_ENV_ROOT)/$(PYTHON)-packaging-env
 
-.PHONY: clean doc dist pytest test ci-test lint isort shell freeze
+.PHONY: clean doc dist test ci-test lint isort shell freeze
 
 # development environment #####################################################
 $(PYTHON_DEV_ENV): REQUIREMENTS.dev.txt
@@ -36,28 +36,17 @@ freeze: | $(PYTHON_DEV_ENV)
 	pip freeze
 
 # tests #######################################################################
-pytest: | $(PYTHON_DEV_ENV)
-	. $(PYTHON_DEV_ENV)/bin/activate && \
-	rm -rf htmlcov && \
-	time tox $(args)
-
-ci-test: | $(PYTHON_DEV_ENV)
-	. $(PYTHON_DEV_ENV)/bin/activate && \
-	rm -rf htmlcov && \
-	time JENKINS_URL=1 tox -r $(args)
-
 test:
-	ARGS=$(args) docker-compose -f tests/docker/docker-compose.yml run lona-tox
+	./docker-compose run playwright tox $(args)
 
-# linting #####################################################################
-lint: | $(PYTHON_DEV_ENV)
-	. $(PYTHON_DEV_ENV)/bin/activate && \
-	time tox -e lint $(args)
+ci-test:
+	./docker-compose run playwright tox -e lint,py37,py38,py39,py310,py311 $(args)
 
-# isort #######################################################################
-isort: | $(PYTHON_DEV_ENV)
-	. $(PYTHON_DEV_ENV)/bin/activate && \
-	tox -e isort $(args)
+lint:
+	./docker-compose run playwright tox -e lint $(args)
+
+isort:
+	./docker-compose run playwright tox -e isort $(args)
 
 # packaging ###################################################################
 dist: | $(PYTHON_PACKAGING_ENV)

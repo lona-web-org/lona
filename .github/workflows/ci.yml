@@ -50,6 +50,8 @@ jobs:
       run: |
         pip install -U setuptools
         pip install -r tests/REQUIREMENTS.test.txt
+        python -m playwright install     
+        python -m playwright install-deps
 
     - name: Run Tox
       # Run tox using the version of Python in `PATH`
