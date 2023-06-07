@@ -31,6 +31,12 @@ Middlewares can be live analyzed by using the
 
             return data
 
+        def handle_http_request(self, data):
+            server = data.server
+            http_request = data.http_request
+
+            return data
+
         def handle_connection(self, data):
             server = data.server
             http_request = data.http_request
@@ -80,6 +86,14 @@ Middleware.on_shutdown\(data\)
     This hook has to be a coroutine
 
 Gets called on server shutdown.
+
+
+Middleware.handle_http_request\(data\)
+--------------------------------------
+
+Gets called with every incomming HTTP request, before any other routing or
+handling happens. If ``data`` is not returned, Lona regards
+``data.http_request`` as handled.
 
 
 Middleware.handle_connection\(data\)

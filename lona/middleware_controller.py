@@ -23,6 +23,7 @@ class MiddlewareController:
         ('on_shutdown',                     True),
         ('handle_connection',              False),
         ('handle_websocket_message',       False),
+        ('handle_http_request',            False),
         ('handle_request',                 False),
     ]
 
@@ -165,6 +166,18 @@ class MiddlewareController:
 
         await self._run_middlewares_async(
             'on_shutdown',
+            data,
+        )
+
+    async def handle_http_request(self, http_request):
+        data = MiddlewareData(
+            server=self.server,
+            http_request=http_request,
+        )
+
+        return await self.server.run_function_async(
+            self._run_middlewares_sync,
+            'handle_http_request',
             data,
         )
 
