@@ -75,6 +75,7 @@ ERROR_500_VIEW = ''
 CORE_MIDDLEWARES = [
     'lona.middlewares.sessions.LonaSessionMiddleware',
     'lona.middlewares.lona_messages.LonaMessageMiddleware',
+    'lona.middlewares.file_storage.FileStorageMiddleware',
 ]
 
 MIDDLEWARES: list[str] = []
@@ -105,6 +106,9 @@ TEST_INPUT_EVENT_TIMEOUT = False
 
 # server
 AIOHTTP_CLIENT_MAX_SIZE = 1024**2
+
+# file storage
+FILE_STORAGE_URL_PREFIX = '/file-storage/'
 
 # feature flags
 STOP_DAEMON_WHEN_VIEW_FINISHES = True  # TODO: remove in 2.0
