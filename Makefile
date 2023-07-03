@@ -28,7 +28,7 @@ test:
 	docker-compose run playwright tox $(args)
 
 ci-test:
-	docker-compose run playwright tox -e lint,py37,py38,py39,py310,py311 $(args)
+	docker-compose run playwright tox -e lint,py38,py39,py310,py311 $(args)
 
 lint:
 	docker-compose run playwright tox -e lint $(args)
