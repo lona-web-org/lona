@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from lona.html.abstract_node import AbstractNode
 from lona.protocol import PATCH_TYPE, OPERATION
 from lona.html.text_node import TextNode
@@ -218,7 +220,9 @@ class NodeList:
     def _reset(self, values):
         self._assert_not_frozen()
 
-        if not isinstance(values, list):
+        if (isinstance(values, AbstractNode) or
+                not isinstance(values, Iterable)):
+
             values = [values]
 
         with self._node.lock:

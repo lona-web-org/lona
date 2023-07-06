@@ -117,3 +117,23 @@ def test_node_loop_detection():
 
     with pytest.raises(RuntimeError, match='loop detected'):
         div[0][0][0].append(div[0][0])
+
+
+def test_sub_node_reset_with_node():
+    div1 = Div()
+    div2 = Div()
+
+    div1.nodes = div2
+
+    assert len(div1.nodes) == 1
+    assert div1.nodes[0] is div2
+
+
+def test_sub_node_reset_with_node_list():
+    div1 = Div()
+    div2 = Div()
+
+    div1.nodes = [div2]
+
+    assert len(div1.nodes) == 1
+    assert div1.nodes[0] is div2
