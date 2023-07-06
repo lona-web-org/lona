@@ -386,10 +386,10 @@ class DictOverlay:
 
 
 class WidgetData:
-    def __init__(self, widget):
+    def __init__(self, widget, value=None):
         self._widget = widget
 
-        self._reset({}, initial=True)
+        self._reset(value or {}, initial=True)
 
     def __getitem__(self, *args, **kwargs):
         return self._overlay.__getitem__(*args, **kwargs)
