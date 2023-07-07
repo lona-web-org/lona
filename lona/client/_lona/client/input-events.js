@@ -55,8 +55,8 @@ export class LonaInputEventHandler {
     _get_value(node) {
         var value = node.value;
 
-        // checkbox
-        if(node.getAttribute('type') == 'checkbox') {
+        // checkbox / radiobutton
+        if(node.type == 'checkbox' || node.type == 'radio') {
             value = node.checked;
 
         // select

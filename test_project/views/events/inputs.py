@@ -3,7 +3,9 @@ import pprint
 import html
 
 from lona.html import (
+    RadioButton,
     NumberInput,
+    RadioGroup,
     TextInput,
     TextArea,
     CheckBox,
@@ -12,6 +14,7 @@ from lona.html import (
     Select,
     Button,
     Table,
+    Label,
     FOCUS,
     CLICK,
     HTML,
@@ -73,6 +76,7 @@ class InputsView(View):
         self.select2.value = 2.0
         self.multi_select.value = ['1', '2.0']
         self.multi_select2.value = [1, 2.0]
+        self.radio_group.value = 2.0
 
     def reset_inputs(self, input_event=None):
         return RedirectResponse('.')
@@ -178,6 +182,14 @@ class InputsView(View):
             _id='multi-select-2',
         )
 
+        self.radio_group = RadioGroup(
+            Div(Label('Option 1', RadioButton(value=1))),
+            Div(Label('Option 2', RadioButton(value=2.0))),
+            Div(Label('Option 3', RadioButton(value=3))),
+            handle_change=self.handle_event,
+            _id='radio-group',
+        )
+
         # focus / blur nodes
         self.text_input_focus = TextInput(
             events=[FOCUS],
@@ -245,6 +257,10 @@ class InputsView(View):
                     Tr(
                         Td('Multi Select2', width='200px'),
                         Td(self.multi_select2),
+                    ),
+                    Tr(
+                        Td('Radio Group', width='200px'),
+                        Td(self.radio_group),
                     ),
                 ),
 
@@ -316,6 +332,7 @@ class InputsView(View):
             '#select-2': self.select2,
             '#multi-select': self.multi_select,
             '#multi-select-2': self.multi_select2,
+            '#radio-group': self.radio_group,
 
             # focus / blur nodes
             '#text-input-focus': self.text_input_focus,

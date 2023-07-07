@@ -190,6 +190,21 @@ async def test_input_events(
         assert event.node is node
         assert node.value == (1, 2.0)
 
+        # radio group
+        await empty_console(page)
+
+        assert get_node('#radio-group').value is None
+
+        await page.locator('#radio-group').get_by_label('Option 2').check()
+        await event_logged(page)
+
+        node = get_node('#radio-group')
+        event = get_event()
+
+        assert event.name == 'change'
+        assert event.node is node
+        assert node.value == 2.0
+
         # focus events ########################################################
         await empty_console(page)
 

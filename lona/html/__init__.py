@@ -122,6 +122,7 @@ from lona.html.nodes.document_metadata import (
     Base,
 )
 from lona.html.nodes.interactive_elements import Summary, Details, Dialog
+from lona.html.nodes.forms.radio_button import RadioButton, RadioGroup
 from lona.html.nodes.scripting import NoScript, Script, Canvas
 from lona.html.nodes.forms.select2 import Select2, Option2
 from lona.html.nodes.web_components import Template, Slot

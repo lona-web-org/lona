@@ -1,6 +1,15 @@
 from pprint import pformat
 
-from lona.html import TextInput, CheckBox, Pre, Div, H2
+from lona.html import (
+    RadioButton,
+    RadioGroup,
+    TextInput,
+    CheckBox,
+    Label,
+    Pre,
+    Div,
+    H2,
+)
 from lona.view import View
 
 
@@ -24,6 +33,17 @@ class ChangeEventsView(View):
                             input_delay=0,
                             bubble_up=True,
                         ),
+                    ),
+                    RadioGroup(
+                        Label(
+                            'Option 1',
+                            RadioButton(value='option-1'),
+                        ),
+                        Label(
+                            'Option 2',
+                            RadioButton(value='option-2'),
+                        ),
+                        bubble_up=True,
                     ),
                     style={
                         'float': 'left',
