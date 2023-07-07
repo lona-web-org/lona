@@ -5,7 +5,7 @@ from html.parser import (  # type: ignore[attr-defined]
     tagfind_tolerant,
     HTMLParser,
 )
-from typing import List, Dict
+from typing import List, Dict, cast
 from html import unescape
 import logging
 
@@ -198,11 +198,33 @@ class NodeHTMLParser(HTMLParser):
         self.set_current_node(self._node.parent)
 
 
-def html_string_to_node_list(html_string, use_high_level_nodes=True,
-                             node_classes=None):
+def parse_html(
+        html_string: str,
+        use_high_level_nodes: bool = True,
+        node_classes: Dict[str, AbstractNode] | None = None,
+        flat: bool = True,
+) -> AbstractNode | List[AbstractNode]:
 
-    root_node = Node()
-    nodes = []
+    """
+    Takes HTML as a string and returns a Lona HTML node or a list of Lona
+    HTML nodes.
+
+    :use_high_level_nodes:  When set to True, node classes from the standard
+                            library get used. When set to False,
+                            `lona.html.Node` will be used for all returned
+                            nodes.
+
+    :node_classes:          A dict that contains node classes that should be
+                            used for the returned HTML nodes.
+
+    :flat:                  If set to True and the parsed HTML tree has exactly
+                            one root node, this root node gets returned instead
+                            of a list of one node.
+
+    """
+
+    root_node: Node = Node()
+    nodes: List[AbstractNode] = []
 
     html_parser = NodeHTMLParser(
         use_high_level_nodes=use_high_level_nodes,
@@ -221,6 +243,9 @@ def html_string_to_node_list(html_string, use_high_level_nodes=True,
         node.remove()
         nodes.append(node)
 
+    if flat and len(nodes) == 1:
+        return nodes[0]
+
     return nodes
 
 
@@ -229,6 +254,8 @@ def HTML(
         use_high_level_nodes: bool = True,
         node_classes: Dict[str, AbstractNode] | None = None,
 ) -> AbstractNode:
+
+    # TODO: remove HTML parsing in 2.0
 
     _nodes: List[AbstractNode] = []
 
@@ -243,10 +270,14 @@ def HTML(
 
             # html string
             elif '<' in node or '>' in node:
-                parsed_nodes = html_string_to_node_list(
-                    html_string=node,
-                    use_high_level_nodes=use_high_level_nodes,
-                    node_classes=node_classes or {},
+                parsed_nodes = cast(
+                    list,
+                    parse_html(
+                        html_string=node,
+                        use_high_level_nodes=use_high_level_nodes,
+                        node_classes=node_classes or {},
+                        flat=False,
+                    ),
                 )
 
                 if len(nodes) > 1:
