@@ -16,7 +16,6 @@ RUN git clone https://github.com/yyuu/pyenv.git .pyenv
 ENV PYENV_ROOT $HOME/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 
-RUN pyenv install 3.7:latest
 RUN pyenv install 3.8:latest
 RUN pyenv install 3.9:latest
 RUN pyenv install 3.10:latest
