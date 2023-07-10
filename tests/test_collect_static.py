@@ -221,3 +221,73 @@ def test_overlapping_directories():
 
     assert file1_content == 'tmp_dir1'
     assert file2_content == 'tmp_dir1'
+
+
+def test_deeply_nested_directories():
+    from lona.command_line.collect_static import collect_static
+
+    # setup temp dir
+    static_dir = TemporaryDirectory()
+    destination = TemporaryDirectory()
+
+    parent_dir = os.path.join(static_dir.name, 'a/b/c')
+    static_file = os.path.join(parent_dir, 'file.txt')
+
+    os.makedirs(parent_dir)
+
+    with open(static_file, 'w+') as f:
+        f.write('file.txt')
+
+    # run collect static
+    args = _generate_command_line_args(
+        static_dirs=[
+            static_dir.name,
+        ],
+        destination=destination.name,
+        clean=False,
+    )
+
+    collect_static(args=args)
+
+    # run checks
+    static_file = os.path.join(destination.name, 'a/b/c/file.txt')
+
+    assert os.path.exists(static_file)
+
+
+def test_deeply_nested_static_file_paths():
+    from lona.command_line.collect_static import collect_static
+    from lona.static_files import StaticFile
+    from lona.html import Node
+
+    class TestNode(Node):
+        STATIC_FILES = [
+            StaticFile(
+                name='static-file-1.txt',
+                path='static/static-file-1.txt',
+                url='static-file-1.txt',
+            ),
+            StaticFile(
+                name='static-file-2.txt',
+                path='static/a/b/c/static-file-2.txt',
+                url='a/b/c/static-file-2.txt',
+            ),
+        ]
+
+    # setup temp dir
+    destination = TemporaryDirectory()
+
+    # run collect static
+    args = _generate_command_line_args(
+        destination=destination.name,
+        clean=False,
+    )
+
+    collect_static(args=args)
+
+    # run checks
+    static_file_1 = os.path.join(destination.name, 'static-file-1.txt')
+    static_file_2 = os.path.join(destination.name, 'a/b/c/static-file-2.txt')
+
+    assert os.path.exists(static_file_1)
+    assert os.path.exists(static_file_2)
