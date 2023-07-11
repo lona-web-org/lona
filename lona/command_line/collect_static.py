@@ -24,6 +24,11 @@ def collect_static(args):
         else:
             os.unlink(path)
 
+    def _mkdir_p(path):
+        _print(f'mkdir -p {path}')
+
+        os.makedirs(path)
+
     def _cp(source, destination):
         source_is_dir = os.path.isdir(source)
 
@@ -40,6 +45,11 @@ def collect_static(args):
             shutil.copytree(source, destination, dirs_exist_ok=True)
 
         else:
+            parent_dir = os.path.dirname(destination)
+
+            if not os.path.exists(parent_dir):
+                _mkdir_p(parent_dir)
+
             shutil.copy(source, destination)
 
     # setup logging
