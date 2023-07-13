@@ -58,6 +58,11 @@ class AbstractNode:
         if self.NODE_TYPE == NODE_TYPE.TEXT_NODE:
             return self._string == other._string
 
+        # widgets
+        # TODO: remove in 2.0
+        if self.NODE_TYPE == NODE_TYPE.WIDGET:
+            return (self.nodes == other.nodes and
+                    self.data == other.data)
         # nodes
         if other.namespace != self.namespace:
             return False

@@ -43,6 +43,7 @@ class Node(AbstractNode):
     ATTRIBUTES: dict[str, str] = {}
     EVENTS: list[EventType | ChangeEventType] = []
     WIDGET: str = ''
+    WIDGET_DATA: dict | list = {}
 
     def __init__(
             self,
@@ -51,6 +52,7 @@ class Node(AbstractNode):
             tag_name=None,
             self_closing_tag=None,
             widget='',
+            widget_data=None,
             **kwargs,
     ):
 
@@ -61,7 +63,11 @@ class Node(AbstractNode):
         self._nodes = NodeList(self)
         self._events = NodeEventList(self, self.EVENTS)
         self._widget = widget or self.WIDGET
-        self._widget_data = WidgetData(widget=self)
+
+        self._widget_data = WidgetData(
+            widget=self,
+            value=widget_data or self.WIDGET_DATA,
+        )
 
         # tag overrides
         self._namespace = namespace or self.NAMESPACE

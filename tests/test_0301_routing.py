@@ -3,7 +3,6 @@ import pytest
 from lona.routing import Router, Route
 
 
-@pytest.mark.incremental()
 class TestBasicRouting:
     def setup_method(self):
         self.routes = [
@@ -50,7 +49,6 @@ class TestBasicRouting:
         assert not match
 
 
-@pytest.mark.incremental()
 class TestRoutesWithRegex:
     def setup_method(self):
         self.routes = [
@@ -73,7 +71,6 @@ class TestRoutesWithRegex:
         assert not match
 
 
-@pytest.mark.incremental()
 class TestOptionalTrailingSlash:
     def setup_method(self):
         self.routes = [
@@ -126,7 +123,6 @@ class TestOptionalTrailingSlash:
         assert match_info == {}
 
 
-@pytest.mark.incremental()
 class TestReverseMatching:
     def setup_method(self):
         routes = [

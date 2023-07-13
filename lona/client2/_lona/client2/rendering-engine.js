@@ -174,6 +174,13 @@ export class LonaRenderingEngine {
     _render_node(node_spec) {
         const node_type = node_spec[0];
 
+        // TODO: remove in 2.0
+        if(!(node_type == Lona.protocol.NODE_TYPE.NODE ||
+            node_type == Lona.protocol.NODE_TYPE.TEXT_NODE)) {
+
+            throw(`unsupported node type: ${node_type}`);
+        };
+
         // TextNode
         if(node_type == Lona.protocol.NODE_TYPE.TEXT_NODE) {
             const node_id = node_spec[1];

@@ -29,15 +29,14 @@ from lona.responses import (
     HttpRedirectResponse,
     TemplateResponse,
     RedirectResponse,
-    JsonResponse,
-    HtmlResponse,
 )
 from lona.compat import set_use_future_node_classes, set_client_version
 from lona.view_runtime_controller import ViewRuntimeController
 from lona.responses import FileResponse as LonaFileResponse
+from lona.responses import AbstractResponse as LonaResponse
 from lona.middleware_controller import MiddlewareController
+from lona.responses import JsonResponse, HtmlResponse
 from lona.static_file_loader import StaticFileLoader
-from lona.responses import Response as LonaResponse
 from lona.templating import TemplatingEngine
 from lona.imports import acquire as _acquire
 from lona.worker_pool import WorkerPool
