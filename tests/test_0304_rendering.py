@@ -100,7 +100,7 @@ async def test_rendering(browser_name, client_version, lona_project_context):
         rendering_root_element = page.locator('#lona #rendering-root')
 
         # DOM tests ###########################################################
-        for step in range(1, 24):
+        for step in range(1, 25):
             await next_step(page, step)
 
             # get rendered html
@@ -115,7 +115,7 @@ async def test_rendering(browser_name, client_version, lona_project_context):
             assert html.nodes == context.server.state['rendering-root'].nodes
 
         # html symbols
-        await next_step(page, 24)
+        await next_step(page, 25)
 
         html_string = await rendering_root_element.inner_html()
 
@@ -123,12 +123,12 @@ async def test_rendering(browser_name, client_version, lona_project_context):
 
         # CSS tests ###########################################################
 
-        # 23 Empty style
-        await next_step(page, 25)
+        # 26 Empty style
+        await next_step(page, 26)
         await check_empty_client_style(page)
 
-        # 24 Set Style
-        await next_step(page, 26)
+        # 27 Set Style
+        await next_step(page, 27)
 
         client_style = await get_client_style(page)
 
@@ -136,8 +136,8 @@ async def test_rendering(browser_name, client_version, lona_project_context):
         assert client_style['right'] == '2px'
         assert client_style['--non-standard'] == '3'
 
-        # 25 Add Style
-        await next_step(page, 27)
+        # 28 Add Style
+        await next_step(page, 28)
 
         client_style = await get_client_style(page)
         style = get_server_style()
@@ -147,8 +147,8 @@ async def test_rendering(browser_name, client_version, lona_project_context):
         assert client_style['--non-standard'] == '3'
         assert client_style['bottom'] == '3px'
 
-        # 26 Remove Style
-        await next_step(page, 28)
+        # 29 Remove Style
+        await next_step(page, 29)
 
         client_style = await get_client_style(page)
         style = get_server_style()
@@ -159,8 +159,8 @@ async def test_rendering(browser_name, client_version, lona_project_context):
         assert client_style['bottom'] == '3px'
         assert client_style['--non-standard'] == '3'
 
-        # 27 Reset Style
-        await next_step(page, 29)
+        # 30 Reset Style
+        await next_step(page, 30)
 
         client_style = await get_client_style(page)
         style = get_server_style()
@@ -170,13 +170,13 @@ async def test_rendering(browser_name, client_version, lona_project_context):
 
         assert client_style['left'] == '4px'
 
-        # 28 Clear Style
-        await next_step(page, 30)
+        # 31 Clear Style
+        await next_step(page, 31)
         await check_empty_client_style(page)
 
         # legacy widget API ###################################################
         # TODO: remove in 2.0
-        for step in range(31, 43):
+        for step in range(32, 44):
             await next_step(page, step)
 
             # widget hooks
@@ -196,12 +196,12 @@ async def test_rendering(browser_name, client_version, lona_project_context):
             assert server_widget_data == client_widget_data
 
         # destroy
-        await next_step(page, 43)
+        await next_step(page, 44)
 
         assert (await get_widget_hooks(page)) == 'constructor,setup,deconstruct'
 
         # widget API ##########################################################
-        for step in range(44, 56):
+        for step in range(45, 57):
             await next_step(page, step)
 
             # widget hooks
@@ -221,12 +221,12 @@ async def test_rendering(browser_name, client_version, lona_project_context):
             assert server_widget_data == client_widget_data
 
         # destroy
-        await next_step(page, 56)
+        await next_step(page, 57)
 
         assert (await get_widget_hooks(page)) == 'constructor,destroy'
 
         # raw HTML tests ######################################################
-        for step in range(57, 60):
+        for step in range(58, 61):
             await next_step(page, step)
 
             client_html_string = await rendering_root_element.inner_html()
@@ -242,7 +242,7 @@ async def test_rendering(browser_name, client_version, lona_project_context):
         if get_client_version() != 1:
             return
 
-        for step in range(60, 66):
+        for step in range(61, 67):
             await next_step(page, step)
 
             client_html_string = await rendering_root_element.inner_html()
@@ -253,7 +253,7 @@ async def test_rendering(browser_name, client_version, lona_project_context):
             assert client_html.nodes == server_html.nodes
 
         # legacy frontend widgets data tests ##################################
-        for step in range(66, 78):
+        for step in range(67, 79):
             await next_step(page, step)
 
             # widget hooks
@@ -273,6 +273,6 @@ async def test_rendering(browser_name, client_version, lona_project_context):
             assert server_widget_data == client_widget_data
 
         # destroy
-        await next_step(page, 78)
+        await next_step(page, 79)
 
         assert (await get_widget_hooks(page)) == 'constructor,setup,deconstruct'

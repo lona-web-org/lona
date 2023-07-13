@@ -104,6 +104,7 @@ export class LonaRenderingEngine {
         node.remove();
 
         this._remove_widget_if_present(node_id);
+        this._clean_node_cache();
     };
 
     _remove_widget_if_present(node_id) {
