@@ -1,5 +1,5 @@
-from lona.html.parsing import html_string_to_node_list
 from lona.html.text_node import TextNode
+from lona.html.parsing import parse_html
 from lona.html.widget import Widget
 
 
@@ -22,10 +22,11 @@ class HTML(Widget):
                         self.nodes.append(HTML(node))
 
                     else:
-                        self.nodes = html_string_to_node_list(
+                        self.nodes = parse_html(
                             html_string=node,
                             use_high_level_nodes=use_high_level_nodes,
                             node_classes=node_classes or {},
+                            flat=False,
                         )
 
                 else:

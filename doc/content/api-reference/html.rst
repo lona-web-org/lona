@@ -174,6 +174,40 @@ given selector.
 Using HTML Strings
 ~~~~~~~~~~~~~~~~~~
 
+To initialize an HTML tree you can use ``lona.html.parse_html``, which returns
+a Lona HTML node or a list of Lona HTML nodes.
+
+``lona.html.parse_html`` uses high level nodes from the standard library like
+``lona.html.TextInput`` which implement high level methods and properties.
+To disable this and parse HTML into blank nodes you can set
+``use_high_level_nodes=False``.
+
+When ``lona.html.parse_html`` parses a HTML string, that results in a HTML
+tree with exacly one root node, and ``flat`` is set to ``True``, which is the
+default, ``lona.html.parse_html`` will flatten the tree, by returning the root
+node instead of the list.
+
+.. code-block:: python
+
+    from lona.html import parse_html
+
+    >>> parse_html('<h1>Hello World</h1><p>Lorem Ipsum</p>')
+    [<h1 data-lona-node-id="9">
+      Hello World
+    </h1>,
+     <p data-lona-node-id="11">
+      Lorem Ipsum
+    </p>]
+
+    >>> parse_html('<h1>Hello World</h1>')
+    <h1 data-lona-node-id="14">
+      Hello World
+    </h1>
+
+
+Using lona.html.HTML
+++++++++++++++++++++
+
 .. note::
 
     Added in 1.5: Support for high level nodes, the keyword

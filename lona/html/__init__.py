@@ -125,13 +125,13 @@ from lona.html.nodes.interactive_elements import Summary, Details, Dialog
 from lona.html.nodes.scripting import NoScript, Script, Canvas
 from lona.html.nodes.forms.select2 import Select2, Option2
 from lona.html.nodes.web_components import Template, Slot
+from lona.html.parsing import NodeHTMLParser, parse_html
 from lona.html.nodes.forms.select import Select, Option
 from lona.html.nodes.demarcating_edits import Ins, Del
 from lona.html.nodes.svg_and_mathml import Math, SVG
 from lona.events.event_types import *  # NOQA: F403
 from lona.html.nodes.sectioning_root import Body
 from lona.html.nodes.raw_nodes import RawHTML
-from lona.html.parsing import NodeHTMLParser
 from lona.html.widgets import HTML as HTML1
 from lona.html.parsing import HTML as HTML2
 from lona.compat import get_client_version
