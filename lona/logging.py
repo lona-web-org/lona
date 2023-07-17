@@ -10,6 +10,7 @@ from lona.command_line.terminal import (
     terminal_supports_colors,
     colors_are_enabled,
 )
+from lona.errors import ClientError
 
 try:
     # syslog is only on unix based systems available
@@ -62,9 +63,10 @@ class LogFilter(logging.Filter):
         self.excluded.append(logger_name)
 
     def filter(self, record):
-        # filter exceptions that lona.command_line.run_server.run_server
-        # handles it self
         if record.exc_info:
+
+            # filter exceptions that lona.command_line.run_server.run_server
+            # handles it self
 
             # OSErrors
             if (isinstance(record.exc_info[1], OSError) and
@@ -76,6 +78,11 @@ class LogFilter(logging.Filter):
             if (isinstance(record.exc_info[1], socket.gaierror) and
                     record.exc_info[1].errno in (-2, )):
 
+                return False
+
+            # filter exceptions that Lona logs it-self to avoid
+            # duplicate logs
+            if isinstance(record.exc_info[1], ClientError):
                 return False
 
         if record.name == 'lona':
