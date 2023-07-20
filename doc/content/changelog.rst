@@ -6,6 +6,109 @@ is_template: False
 Changelog
 =========
 
+
+.. changelog-header:: 1.15 (2023-07-20)
+
+Changes
+~~~~~~~
+
+* Python
+
+  * Support for Python 3.7 was dropped
+
+    * Python 3.7 is `end of life <https://endoflife.date/python>`_ since
+      June of 2023
+
+* Client2
+
+  * A check for unsupported node types was added
+
+    * Previously, the rendering engine would just crash with an cryptic error
+      message, when attempting to render an unsupported node type
+
+* HTML
+
+  * ``Node.nodes`` accepts node lists now
+
+    * Previously, the list of sub nodes of a node could only be reset with a
+      list or a tuple. Code like ``div2.nodes = div1.nodes`` created a
+      ``TypeError``.
+
+  * ``Node.widget_data`` now can be initialized via the constructor or by
+    setting ``WIDGET_DATA`` in the class scope
+
+  * ``lona.html.parse_html`` was added
+
+    * Previously, ``lona.html.HTML`` was used to parse HTML strings. Because
+      ``lona.html.HTML`` works like a normal node and is mainly used to
+      communicate that a function returns HTML, the community decided that
+      these two concerns should be split up.
+
+     ``lona.html.HTML`` is no deprecated for HTML string parsing, and this
+     feature will be removed from it in version 2.
+
+* Logging
+
+  * Obsolete information when logging ``lona.errors.ClientError`` exceptions
+    were removed
+
+    * Previously, a raised ``lona.errors.ClientError`` was logged two times.
+      Once by the worker, that received the error, and a second time by the
+      general logging setup of Lona. The first log entry contained the
+      JavaScript traceback, raised by the browser, the second log entry
+      contained the full Python traceback from the server side.
+
+      The second log entry did not contain any meaningful information, since
+      the Python traceback only contained Lona framework code, never
+      application code.
+
+      The second log entry was removed, because it made these errors only
+      harder to read.
+
+
+Bugfixes
+~~~~~~~~
+
+* collect-static
+
+  * Handling of deeply nested directories was fixed
+
+    * Previously, the ``collect-static`` command crashed when a static directory
+      was deeply nested but contained only one file
+
+* HTML
+
+  * Node comparisons between nodes and legacy widgets was fixed
+
+    * Previously, node comparisons, using ``==``, crashed when one of the two
+      nodes was a legacy widget
+
+* Client2
+
+  * Moving an already rendered node was fixed
+
+    * Previously, client2 crashed when an already rendered node was moved by
+      appending or inserting it twice within the same HTML tree.
+
+      .. code-block:: python
+
+          moving_node = Div('node 3')
+
+          html = HTML(
+              Div(
+                  'node 1',
+                  moving_node,
+              ),
+              Div('node 2'),
+          )
+
+          self.show(html)
+
+          html[1].append(moving_node)
+
+          self.show(html)  # resulted in: ERROR  lona.view_runtime  client error raised: node with id 952 is already cached
+
+
 .. changelog-header:: 1.14 (2023-05-22)
 
 Changes

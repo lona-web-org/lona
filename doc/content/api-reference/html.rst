@@ -174,6 +174,10 @@ given selector.
 Using HTML Strings
 ~~~~~~~~~~~~~~~~~~
 
+.. note::
+
+    Added in 1.15
+
 To initialize an HTML tree you can use ``lona.html.parse_html``, which returns
 a Lona HTML node or a list of Lona HTML nodes.
 
@@ -207,6 +211,11 @@ node instead of the list.
 
 Using lona.html.HTML
 ++++++++++++++++++++
+
+.. warning::
+
+    Using ``lona.html.HTML`` for HTML string parsing is deprecated as of
+    1.15. Use ``lona.html.parse_html`` instead.
 
 .. note::
 
