@@ -45,9 +45,6 @@ class Counter(Div):
 
 @app.route('/')
 class Index(View):
-    def handle_click(self, input_event):
-        input_event.node.set_text('Success!')
-
     def handle_request(self, request):
         return HTML(
             H1('Counter'),
