@@ -204,13 +204,16 @@ by another thread.
 
 .. code-block:: python
 
-    >>> from lona_picocss.html import Modal
+    >>> from lona_picocss.html import Modal, H3, P
 
     >>> modal = Modal()
 
     >>> with modal.lock:
-            modal.set_header('Hello World')
-            modal.set_body('Lorem ipsum')
+            modal.get_body().nodes = [
+                H3('Lorem'),
+                P('Lorem ipsum'),
+            ]
+
             modal.open()
 
 **More information:** `Locking </api-reference/html.html#locking>`_
