@@ -23,7 +23,7 @@ expensive.
 
 With Lona, and the Lona widgets i created for the accounting system, i can give
 them a very simple, abstract and pythonic API for common
-tasks like "show an table and then update it", "show a progressbar with an
+tasks like "show a table and then update it", "show a progressbar with an
 abort button" or "show a popup with 3 buttons". The code is more readable for
 everyone involved, and the application developers can solve most of their
 problems on their own now.
@@ -38,7 +38,7 @@ Since all events get sent to the server and get handled in Python, how high is t
 **fscherf:** Because all state has to go through network back an forth there is
 some latency. But you would have this kind of latency anyway, when you have to
 access server state, what most applications do at some point. In the kind of
-projects i work on, all interesting state is on the server, and it makes more
+projects I work on, all interesting state is on the server, and it makes more
 sense to make decisions, like if a button is clickable or not, there.
 
 There are cases where it makes more sense to handle events in Javascript
@@ -90,5 +90,5 @@ events, if files get changed fast after each other, like in a git rebase.
 Also people use different editors that save files at different times and
 sometimes multiple times and/or periodically.
 
-Its hard to get this right, therefore i focused on making the server fast to
+It's hard to get this right, therefore I focused on making the server fast to
 restart and easier to maintain.
