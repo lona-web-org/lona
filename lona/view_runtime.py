@@ -344,8 +344,19 @@ class ViewRuntime:
             self.send_view_start()
 
             # run view
+            handle_request_return_value = self.view.handle_request(self.request)
+            if isinstance(handle_request_return_value, dict):
+                co = self.view.handle_request.__func__.__code__
+                logger.warning(
+                   'Deprecated use of dict as return value of method handle_request {co_fn}, line {co_fln}',
+                   extra=dict(co_fn=co.co_filename, cofln=co.co_firstlineno),
+                )
+                logger.warning(
+                    '  (see: https://lona-web.org/1.x/api-reference/views.html#response-objects)',
+                )
+
             response = parse_view_return_value(
-                return_value=self.view.handle_request(self.request),
+                return_value=handle_request_return_value,
                 interactive=self.route and self.route.interactive,
             )
 
