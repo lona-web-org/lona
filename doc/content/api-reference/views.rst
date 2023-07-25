@@ -43,14 +43,12 @@ To mark a view non interactive, use the ``interactive`` keyword in the
 
     # views/json_api.py
 
-    from lona import LonaView
+    from lona import LonaView, JsonResponse
 
 
     class JSONAPIView(LonaView):
         def handle_request(self, request):
-            return {
-                'json': {'exit_code': 0, 'value': 'foo'},
-            }
+            return JsonResponse({'exit_code': 0, 'value': 'foo'})
 
 
 HTTP Pass Through
@@ -162,6 +160,8 @@ The following route matches any URL beginning with ``prefix``:
 
 Trailing Slashes
 ~~~~~~~~~~~~~~~~
+
+Make the trailing slash in a URL optional by ending the route with ``(/)``):
 
 .. code-block:: python
 
