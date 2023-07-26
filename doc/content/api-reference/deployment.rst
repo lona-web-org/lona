@@ -13,7 +13,7 @@ That means that every hook of a ``lona.LonaView`` like ``handle_request()`` or
 ``handle_input_event()`` block one thread each until your business logic
 finishes.
 
-When planing resources for your application keep in mind that every view that
+When planning resources for your application keep in mind that every view that
 runs can use up to three threads at a time (one for ``handle_request()``, one
 for ``handle_input_event()`` and one for messaging between server and client).
 
