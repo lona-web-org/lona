@@ -28,6 +28,7 @@ _org_formatwarning = org_warnings.formatwarning
 
 def my_formatwarning(message, category, filename, lineno, line):
     if (
+        not isinstance(message, str) and
         isinstance(message.args[0], tuple)
         and len(message.args[0]) == 5
         and message.args[0][0] == 'callee'
