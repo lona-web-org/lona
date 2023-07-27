@@ -1,8 +1,8 @@
-import warnings as org_warnings
+import warnings as orginal_warnings
 
 
 class ExtendedWarn:
-    warn = org_warnings.warn
+    warn = orginal_warnings.warn
 
     def __call__(
         self, message, category=None, stacklevel=1, source=None, callee=None,
@@ -21,33 +21,35 @@ class ExtendedWarn:
         self.warn(message, category, stacklevel, source)  # NOQA: G010
 
 
-org_warnings.warn = warn = ExtendedWarn()  # type: ignore
+warn = ExtendedWarn()  # type: ignore
+orginal_warnings.warn = warn
 
-_org_formatwarning = org_warnings.formatwarning
+_original_formatwarning = orginal_warnings.formatwarning
 
 
-def my_formatwarning(message, category, filename, lineno, line):
-    if (
-        not isinstance(message, str) and
-        isinstance(message.args[0], tuple)
-        and len(message.args[0]) == 5
-        and message.args[0][0] == 'callee'
-    ):
-        try:
+def _formatwarning_with_callee(message, category, filename, lineno, line):
+    try:
+        if (
+            not isinstance(message, str)
+            and isinstance(message.args[0], tuple)
+            and len(message.args[0]) == 5
+            and message.args[0][0] == 'callee'
+        ):
             _, message, filename, lineno, category = message.args[0]
-        except ValueError:  # in case there was no tuple provided
-            pass
-            raise
-    return _org_formatwarning(message, category, filename, lineno, line)
+    except Exception:
+        # show original e.g. when message is not a string,
+        # but has not .args attribute
+        pass
+    return _original_formatwarning(message, category, filename, lineno, line)
 
 
-org_warnings.formatwarning = my_formatwarning  # type: ignore
+orginal_warnings.formatwarning = _formatwarning_with_callee  # type: ignore
 
 
 class DictResponseDeprecationWarning(PendingDeprecationWarning):
     pass
 
 
-org_warnings.simplefilter(
+orginal_warnings.simplefilter(
     'once', category=DictResponseDeprecationWarning,
 )
