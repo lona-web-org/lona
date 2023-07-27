@@ -350,7 +350,7 @@ class ViewRuntime:
                 lona.warnings.warn(  # NOQA: G010
                     'Deprecated use of dict as return value of method handle_request\n  (see: https://lona-web.org/1.x/api-reference/views.html#response-objects)',
                     lona.warnings.DictResponseDeprecationWarning,
-                    callee=self.view.handle_request
+                    callee=self.view.handle_request,
                 )
 
             response = parse_view_return_value(

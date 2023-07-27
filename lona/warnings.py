@@ -5,7 +5,7 @@ class ExtendedWarn:
     warn = org_warnings.warn
 
     def __call__(
-        self, message, category=None, stacklevel=1, source=None, callee=None
+        self, message, category=None, stacklevel=1, source=None, callee=None,
     ):
         # Check if message is already a Warning object
         if isinstance(message, Warning):
@@ -18,10 +18,10 @@ class ExtendedWarn:
                 message = ('callee', message, filename, lineno, category)
         else:
             stacklevel += 1
-        self.warn(message, category, stacklevel, source)  # NOQA
+        self.warn(message, category, stacklevel, source)  # NOQA: G010
 
 
-org_warnings.warn = warn = ExtendedWarn()
+org_warnings.warn = warn = ExtendedWarn()  # type: ignore
 
 _org_formatwarning = org_warnings.formatwarning
 
@@ -40,7 +40,7 @@ def my_formatwarning(message, category, filename, lineno, line):
     return _org_formatwarning(message, category, filename, lineno, line)
 
 
-org_warnings.formatwarning = my_formatwarning
+org_warnings.formatwarning = my_formatwarning  # type: ignore
 
 
 class DictResponseDeprecationWarning(PendingDeprecationWarning):
