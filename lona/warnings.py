@@ -21,8 +21,8 @@ class ExtendedWarn:
         self.warn(message, category, stacklevel, source)  # NOQA: G010
 
 
-warn = ExtendedWarn()  # type: ignore
-orginal_warnings.warn = warn
+warn = ExtendedWarn()
+orginal_warnings.warn = warn  # type: ignore
 
 _original_formatwarning = orginal_warnings.formatwarning
 
