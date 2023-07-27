@@ -42,6 +42,7 @@ from lona.html.document import Document
 from lona.connection import Connection
 from lona.request import Request
 from lona.routing import Route
+import lona.warnings
 
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
@@ -344,8 +345,16 @@ class ViewRuntime:
             self.send_view_start()
 
             # run view
+            handle_request_return_value = self.view.handle_request(self.request)
+            if isinstance(handle_request_return_value, dict):
+                lona.warnings.warn(  # NOQA: G010
+                    'Deprecated use of dict as return value of method handle_request\n  (see: https://lona-web.org/1.x/api-reference/views.html#response-objects)',
+                    lona.warnings.DictResponseDeprecationWarning,
+                    callee=self.view.handle_request
+                )
+
             response = parse_view_return_value(
-                return_value=self.view.handle_request(self.request),
+                return_value=handle_request_return_value,
                 interactive=self.route and self.route.interactive,
             )
 
