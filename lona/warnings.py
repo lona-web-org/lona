@@ -53,3 +53,11 @@ class DictResponseDeprecationWarning(PendingDeprecationWarning):
 orginal_warnings.simplefilter(
     'once', category=DictResponseDeprecationWarning,
 )
+
+class DaemonizeDeprecationWarning(PendingDeprecationWarning):
+    pass
+
+
+orginal_warnings.simplefilter(
+    'once', category=DaemonizeDeprecationWarning,
+)

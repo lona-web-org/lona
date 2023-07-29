@@ -46,7 +46,7 @@ class DaemonView(LonaView):
         )
 
         # tell Lona to not kill the view when the page gets refreshed
-        self.daemonize()
+        self.is_daemon = True
 
         while True:
             self.show(html)
