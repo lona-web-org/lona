@@ -85,6 +85,7 @@ MENU = [
 
         ['Deployment', [
             ['Resource Management', 'deployment/resource-management.rst'],
+            ['Deploying on Docker', 'deployment/deploying-on-docker.rst'],
             ['Deploying on Linux', 'deployment/deploying-on-linux.rst'],
         ]],
 
