@@ -1,14 +1,14 @@
 from lona.events.event_types import CHANGE
-from lona.html.node import Node
+from lona.html.node import DeprecatedNode
 
 
-class Option(Node):
+class Option(DeprecatedNode):
     # TODO: remove in 2.0
 
     TAG_NAME = 'option'
 
 
-class Select(Node):
+class Select(DeprecatedNode):
     # TODO: remove in 2.0
 
     TAG_NAME = 'select'

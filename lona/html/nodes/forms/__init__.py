@@ -1,5 +1,5 @@
+from lona.html.node import DeprecatedNode, Node
 from lona.events.event_types import CLICK
-from lona.html.node import Node
 
 
 class Button(Node):
@@ -25,7 +25,7 @@ class Button(Node):
             del self.attributes['disabled']
 
 
-class Datalist(Node):
+class Datalist(DeprecatedNode):
     # TODO: remove in 2.0
 
     TAG_NAME = 'datalist'
@@ -35,7 +35,7 @@ class DataList(Node):
     TAG_NAME = 'datalist'
 
 
-class Fieldset(Node):
+class Fieldset(DeprecatedNode):
     # TODO: remove in 2.0
 
     TAG_NAME = 'fieldset'

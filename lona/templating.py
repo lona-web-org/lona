@@ -7,6 +7,7 @@ from jinja2 import FileSystemLoader, Environment
 
 from lona.compat import get_client_version
 from lona.protocol import get_enum_values
+import lona.warnings
 
 logger = logging.getLogger('lona.templating')
 
@@ -40,6 +41,7 @@ class Namespace:
     def client_version(self):
         # TODO: remove in Lona 2.0
 
+        lona.warning.remove_2_0()
         return get_client_version()
 
     def load_stylesheets(self):

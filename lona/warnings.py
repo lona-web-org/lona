@@ -1,8 +1,9 @@
-import warnings as orginal_warnings
+import warnings as original_warnings
+import inspect
 
 
 class ExtendedWarn:
-    warn = orginal_warnings.warn
+    warn = original_warnings.warn
 
     def __call__(
         self, message, category=None, stacklevel=1, source=None, callee=None,
@@ -22,9 +23,9 @@ class ExtendedWarn:
 
 
 warn = ExtendedWarn()
-orginal_warnings.warn = warn  # type: ignore
+original_warnings.warn = warn  # type: ignore
 
-_original_formatwarning = orginal_warnings.formatwarning
+_original_formatwarning = original_warnings.formatwarning
 
 
 def _formatwarning_with_callee(message, category, filename, lineno, line):
@@ -43,13 +44,35 @@ def _formatwarning_with_callee(message, category, filename, lineno, line):
     return _original_formatwarning(message, category, filename, lineno, line)
 
 
-orginal_warnings.formatwarning = _formatwarning_with_callee  # type: ignore
+original_warnings.formatwarning = _formatwarning_with_callee  # type: ignore
 
 
-class DictResponseDeprecationWarning(PendingDeprecationWarning):
+class Lona_2_0_DeprecationWarning(PendingDeprecationWarning):
     pass
 
 
-orginal_warnings.simplefilter(
-    'once', category=DictResponseDeprecationWarning,
+original_warnings.simplefilter(
+    'once', category=Lona_2_0_DeprecationWarning,
 )
+
+
+class DictResponseDeprecationWarning(Lona_2_0_DeprecationWarning):
+    pass
+
+
+class DaemonizeDeprecationWarning(Lona_2_0_DeprecationWarning):
+    pass
+
+
+def remove_2_0(msg=None, _class=False):
+    if msg is None:
+        if _class:
+            msg = 'class '
+            msg += inspect.stack()[1].frame.f_locals['self'].__class__.__name__
+        else:
+            msg = inspect.stack()[1].function + '()'
+    original_warnings.warn(  # NOQA: G010
+        msg + ' will be removed in 2.0',  # NOQA: G003
+        Lona_2_0_DeprecationWarning,
+        stacklevel=2,
+    )
