@@ -81,7 +81,11 @@ MENU = [
             ['Testing', 'api-reference/testing.rst'],
             ['Lona Shell', 'api-reference/lona-shell.rst'],
             ['Debugging', 'api-reference/debugging.rst'],
-            ['Deployment', 'api-reference/deployment.rst'],
+        ]],
+
+        ['Deployment', [
+            ['Resource Management', 'deployment/resource-management.rst'],
+            ['Deploying on Linux', 'deployment/deploying-on-linux.rst'],
         ]],
 
         [['Contrib'], [
