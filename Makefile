@@ -2,7 +2,7 @@ SHELL=/bin/bash
 PYTHON=python3.10
 PYTHON_ENV=env
 
-.PHONY: clean doc dist test ci-test lint isort shell freeze
+.PHONY: clean doc dist build test ci-test lint isort shell freeze
 
 # python env ##################################################################
 $(PYTHON_ENV): pyproject.toml
@@ -24,6 +24,9 @@ freeze: | $(PYTHON_ENV)
 	pip freeze
 
 # tests #######################################################################
+build:
+	docker-compose build $(args)
+
 test:
 	docker-compose run playwright tox $(args)
 
