@@ -1,9 +1,9 @@
 # hello-world.py
 
-from lona.html import HTML, H1
-from lona import App, View
-
 from lona_picocss import install_picocss
+
+from lona.html import HTML, H1
+from lona import View, App
 
 app = App(__file__)
 
