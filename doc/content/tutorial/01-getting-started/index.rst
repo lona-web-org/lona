@@ -101,6 +101,9 @@ Run the script using:
 
 ``app.run()`` takes keywords like ``host`` or ``port`` for configuration, and
 also parses the command line. Run ``python example.py -h`` to print the help.
+If port 8080 is taken by another application, you can set environment
+variable ``LONA_DEFAULT_PORT`` to some other port, affecting all examples that 
+do not set the port explicitly.
 
 The script should print that it opened a webserver on
 ``http://localhost:8080``. If you navigate your browser there, you should see

@@ -16,6 +16,11 @@ Documentation: lona-web.org
 Code: https://github.com/lona-web-org/lona
 """.strip()
 
+EPILOG = """\
+You can set environment variables LONA_DEFAULT_HOST and LONA_DEFAULT_PORT,
+to override built-in defaults ('localhost' resp. '8080').
+""".rstrip()
+
 
 def parse_overrides(raw_overrides):
     environment = Environment()
@@ -110,13 +115,13 @@ def handle_command_line(argv):
     parser_run_server.add_argument(
         '--host',
         type=str,
-        default='localhost',
+        default=os.environ.get('LONA_DEFAULT_HOST', 'localhost'),
     )
 
     parser_run_server.add_argument(
         '--port',
         type=int,
-        default=8080,
+        default=os.environ.get('LONA_DEFAULT_PORT', '8080'),
     )
 
     parser_run_server.add_argument(
