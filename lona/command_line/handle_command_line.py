@@ -2,6 +2,7 @@ from argparse import RawTextHelpFormatter, ArgumentParser
 import logging
 import os
 
+from watchfiles import run_process
 from jinja2 import Environment
 
 from lona.command_line.collect_static import collect_static
@@ -136,6 +137,11 @@ def handle_command_line(argv):
         default='',
     )
 
+    parser_run_server.add_argument(
+        '--live-reload',
+        action='store_true',
+    )
+
     # collect-static ##########################################################
     parser_collect_static = sub_parsers.add_parser(
         'collect-static',
@@ -230,7 +236,15 @@ def handle_command_line(argv):
 
     # run
     if args.command == 'run-server':
-        run_server(args)
+        if args.live_reload:
+            run_process(
+                args.project_root,
+                target=run_server,
+                args=(args, ),
+            )
+
+        else:
+            run_server(args)
 
     elif args.command == 'collect-static':
         collect_static(args)
