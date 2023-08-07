@@ -54,4 +54,5 @@ to try to reconnect the Lona client once per second, when the server restarts.
     """)
 
 
-    app.run(port=8080)
+    if __name__ == '__main__':
+        app.run(port=8080)

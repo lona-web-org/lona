@@ -49,6 +49,9 @@ def run_server(args, server=None):
     server._worker_pool = worker_pool
 
     # run server
+    if args.live_reload:
+        logger.warning('live-reload is enabled')
+
     if args.shell:
         async def start_shell(server):
             def _start_shell():

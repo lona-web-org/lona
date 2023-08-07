@@ -35,4 +35,5 @@ class Index(View):
             self.sleep(1)
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()

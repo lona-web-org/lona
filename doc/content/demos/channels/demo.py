@@ -93,4 +93,5 @@ class ClockView(View):
         Channel('clock.leave').send()
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()

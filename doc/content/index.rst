@@ -48,7 +48,8 @@ pythonic API to write self contained views.
             return html
 
 
-    app.run(port=8080)
+    if __name__ == '__main__':
+        app.run(port=8080)
 
 **More information:**
 {{ link('/tutorial/01-getting-started/index.rst', 'Getting Started') }}

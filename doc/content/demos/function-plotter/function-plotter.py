@@ -171,4 +171,5 @@ class Plotter(View):
             self.chart.data = CHART_DATA
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()

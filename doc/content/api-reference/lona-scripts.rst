@@ -39,7 +39,8 @@ python script.
                 self.sleep(1)
 
 
-    app.run()
+    if __name__ == '__main__':
+        app.run()
 
 
 Command Line Arguments
@@ -125,7 +126,8 @@ Views can be added by using the ``LonaApp.route()`` decorator or by setting
             return H1('Hello World')
 
 
-    app.run()
+    if __name__ == '__main__':
+        app.run()
 
 
 Setting The Frontend View
@@ -269,4 +271,5 @@ Custom error views can be set using the decorators ``LonaApp.error_403_view``,
             return '500: Internal Error'
 
 
-    app.run()
+    if __name__ == '__main__':
+        app.run()

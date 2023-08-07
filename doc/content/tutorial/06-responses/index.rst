@@ -32,7 +32,8 @@ traditional views, like JSON-APIs for example:
             )
 
 
-    app.run()
+    if __name__ == '__main__':
+        app.run()
 
 Lona responses can be used for redirects, HTTP-redirects, to return JSON or
 binary data.

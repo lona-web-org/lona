@@ -33,4 +33,5 @@ class Index(View):
         self.show(self.html)
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()
