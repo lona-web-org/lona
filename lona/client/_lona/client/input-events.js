@@ -202,6 +202,8 @@ export class LonaInputEventHandler {
     };
 
     _patch_onsubmit(node) {
+        var lona_window = this.lona_window;
+
         node.onsubmit = function(event) {
             event.preventDefault();
             event.stopPropagation();

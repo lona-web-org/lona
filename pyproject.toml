@@ -123,3 +123,6 @@ include = ['lona*']
   "*.swp",
   "*.pyc",
 ]
+
+[tools.black]
+skip-string-normalization = "true"
