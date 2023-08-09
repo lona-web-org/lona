@@ -299,12 +299,14 @@ class App:
         from lona.command_line.handle_command_line import (
             parse_overrides,
             DESCRIPTION,
+            EPILOG,
         )
 
         parser = ArgumentParser(
             prog=str(self.script_path),
             formatter_class=RawTextHelpFormatter,
             description=DESCRIPTION,
+            epilog=EPILOG,
         )
 
         parser.add_argument(
@@ -428,8 +430,8 @@ class App:
 
         # setup arguments
         server_args = Namespace(
-            host='localhost',
-            port=8080,
+            host=os.environ.get('LONA_DEFAULT_HOST', 'localhost'),
+            port=os.environ.get('LONA_DEFAULT_PORT', '8080'),
             shell_server_url='',
             shutdown_timeout=0,
             log_level='info',
