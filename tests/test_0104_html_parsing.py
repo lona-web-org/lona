@@ -274,8 +274,8 @@ def test_select():
         </select>
     """)[0]
 
-    assert type(node) == Select
-    assert type(node.nodes[0]) == Option
+    assert type(node) is Select
+    assert type(node.nodes[0]) is Option
     assert node.value == '2'
 
 
@@ -290,8 +290,8 @@ def test_select2():
             </select>
         """)[0]
 
-        assert type(node) == Select2
-        assert type(node.nodes[0]) == Option2
+        assert type(node) is Select2
+        assert type(node.nodes[0]) is Option2
         assert node.value == '2'
 
     finally:
