@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-PYTHON=python3.10
+PYTHON=python3.11
 PYTHON_ENV=env
 
 .PHONY: clean doc dist build test ci-test lint isort shell freeze
