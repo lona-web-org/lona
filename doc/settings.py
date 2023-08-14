@@ -121,6 +121,7 @@ MENU = [
         ['News / Getting Help', 'news-getting-help.rst'],
         ['How To Contribute', 'how-to-contribute.rst'],
         ['Contributors', 'contributors.rst'],
+        ['Roadmap', 'roadmap.rst'],
         ['Changelog', 'changelog.rst'],
         ['License', 'license.rst'],
         ['Stickers', 'stickers.rst'],
