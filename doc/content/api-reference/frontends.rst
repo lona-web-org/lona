@@ -34,36 +34,7 @@ The default frontend template includes ``lona/style.css`` which can be
 overridden.
 
 .. code-block:: html
-
-    <!-- templates/lona/frontend.html -->
-    <html>
-        <head>
-            <meta charset="utf-8" />
-            {{ Lona.load_stylesheets() }}
-            <link href="{{ Lona.load_static_file('lona/style.css') }}" rel="stylesheet">
-        </head>
-        <body>
-            {% include "lona/header.html" %}
-            <div id="lona"></div>
-            {% include "lona/footer.html" %}
-            {{ Lona.load_scripts() }}
-            <script>
-                var lona_context = new Lona.LonaContext({
-                    target: '#lona',
-                    title: 'Lona',
-                    update_address_bar: true,
-                    update_title: true,
-                    follow_redirects: true,
-                    follow_http_redirects: true,
-                });
-
-                {% include "lona/frontend.js" %}
-
-                lona_context.setup();
-            </script>
-        </body>
-    </html>
-
+    :include: ../../../lona/templates/lona/frontend.html
 
 
 Loading static files

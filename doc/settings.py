@@ -103,7 +103,6 @@ MENU = [
             ['Writing A Traditional Form',
             'cookbook/writing-a-traditional-form.rst'],
 
-            ['Auto-Reconnect', 'cookbook/auto-reconnect.rst'],
             ['URL Reverse Resolving', 'cookbook/url-reverse-resolving.rst'],
             ['Using Server State', 'cookbook/using-server-state.rst'],
 
