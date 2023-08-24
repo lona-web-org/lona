@@ -62,16 +62,11 @@ class HomeView(View):
 
             <h2>Events</h2>
             <ul>
-                <li><a href="/events/click-events/">Click Events</a></li>
-                <li><a href="/events/change-events/">Change Events</a></li>
-                <li><a href="/events/focus-events/">Focus Events</a></li>
-                <li><a href="/events/blur-events/">Blur Events</a></li>
-                <li><a href="/events/data-binding/">Data Binding</a></li>
+                <li><a href="/events/inputs/">Inputs</a></li>
                 <li><a href="/events/non-node-events/">Non-Node Events</a></li>
                 <li><a href="/events/widget-event-handler/">Widget Event Handler</a></li>
                 <li><a href="/events/class-based-view/">Class Based View</a></li>
                 <li><a href="/events/event-bubbling/">Event Bubbling</a></li>
-                <li><a href="/events/callbacks/">Callbacks</a></li>
             </ul>
 
             <h2>Locking</h2>

@@ -187,17 +187,8 @@ routes = [
           'views/routing/url_args.py::URLArgsView'),
 
     # events
-    Route('/events/click-events/',
-          'views/events/click_events.py::ClickEventView'),
-
-    Route('/events/change-events/',
-          'views/events/change_events.py::ChangeEventsView'),
-
-    Route('/events/focus-events/',
-          'views/events/focus_events.py::FocusEventsView'),
-
-    Route('/events/blur-events/',
-          'views/events/blur_events.py::BlurEventsView'),
+    Route('/events/inputs/',
+          'views/events/inputs.py::InputsView'),
 
     Route('/events/non-node-events/',
           'views/events/non_node_events.py::NonNodeEventView'),
@@ -210,12 +201,6 @@ routes = [
 
     Route('/events/event-bubbling/',
           'views/events/event_bubbling.py::EventBubblingView'),
-
-    Route('/events/data-binding/',
-          'views/events/data_binding.py::DataBindingView'),
-
-    Route('/events/callbacks/',
-          'views/events/callbacks.py::InputEventCallbackView'),
 
     # locking
     Route('/locking/html-tree/',
