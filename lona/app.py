@@ -11,6 +11,7 @@ import os
 
 from typing_extensions import Literal
 from aiohttp.web import Application
+from watchfiles import run_process
 
 from lona.command_line.run_server import run_server
 from lona.worker_pool import WorkerPool
@@ -354,6 +355,11 @@ class App:
         )
 
         parser.add_argument(
+            '--live-reload',
+            action='store_true',
+        )
+
+        parser.add_argument(
             '--shutdown-timeout',
             type=float,
         )
@@ -421,6 +427,18 @@ class App:
         self.server._loop = loop
         self.server._worker_pool = worker_pool
 
+    def _run(self, loop, server_args):
+        self.setup_server(
+            loop=loop,
+            settings_pre_overrides=server_args.settings_pre_overrides,
+            settings_post_overrides=server_args.settings_post_overrides,
+        )
+
+        run_server(
+            args=server_args,
+            server=self.server,
+        )
+
     def run(
             self,
             loop: None | AbstractEventLoop = None,
@@ -432,6 +450,7 @@ class App:
         server_args = Namespace(
             host=os.environ.get('LONA_DEFAULT_HOST', 'localhost'),
             port=os.environ.get('LONA_DEFAULT_PORT', '8080'),
+            live_reload=False,
             shell_server_url='',
             shutdown_timeout=0,
             log_level='info',
@@ -454,18 +473,15 @@ class App:
 
         setup_logging(server_args)
 
-        # setup server
-        self.setup_server(
-            loop=loop,
-            settings_pre_overrides=server_args.settings_pre_overrides,
-            settings_post_overrides=server_args.settings_post_overrides,
-        )
+        if server_args.live_reload:
+            run_process(
+                self.project_root,
+                target=self._run,
+                args=(loop, server_args),
+            )
 
-        # start server
-        run_server(
-            args=server_args,
-            server=self.server,
-        )
+        else:
+            self._run(loop, server_args)
 
 
 LonaApp = App  # TODO: remove in 2.0

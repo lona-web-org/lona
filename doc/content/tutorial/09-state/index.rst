@@ -41,7 +41,8 @@ locking interface as `HTML nodes </tutorial/02-html/index.html#locking>`_.
             )
 
 
-    app.run()
+    if __name__ == '__main__':
+        app.run()
 
 
 Node State
@@ -104,7 +105,8 @@ browser-side data in one transaction.
             return html
 
 
-    app.run()
+    if __name__ == '__main__':
+        app.run()
 
 
 .. rst-buttons::

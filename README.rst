@@ -71,7 +71,8 @@ pythonic API to write self contained views.
             return html
 
 
-    app.run(port=8080)
+    if __name__ == '__main__':
+        app.run(port=8080, live_reload=True)
 
 **More information:**
 `Getting Started <http://lona-web.org/tutorial/01-getting-started/index.html>`_

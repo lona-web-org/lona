@@ -93,4 +93,5 @@ your view.
             self.show(html)
 
 
-    app.run()
+    if __name__ == '__main__':
+        app.run()

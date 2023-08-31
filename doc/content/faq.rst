@@ -72,23 +72,3 @@ he had to add ~20 lines of extra Python code.
 Web is a very powerful tool for visualization and interaction. Python is a
 powerful tool for an unlimited range of tasks. Lona tries to bridge this gap
 and is designed to be very accessible and good for rapid prototyping.
-
-
-Why has Lona no live-reload feature like aiohttp-devtools?
-----------------------------------------------------------
-
-**fscherf:** Early versions of Lona had such a feature, but it got removed due
-bad user experience: Reloading your view helps when the view is fully self
-contained, but when it uses widgets or helper functions from another module,
-things become inconsistent.
-
-To make that a reliable feature you would have to maintain a list of all loaded
-files and directories and track changes, file removes and addition of new
-files. And you would have to maintain this list between restarts, to not miss
-events, if files get changed fast after each other, like in a git rebase.
-
-Also people use different editors that save files at different times and
-sometimes multiple times and/or periodically.
-
-It's hard to get this right, therefore I focused on making the server fast to
-restart and easier to maintain.

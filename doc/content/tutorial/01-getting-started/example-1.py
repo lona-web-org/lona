@@ -6,4 +6,6 @@ app = App(__file__)
 
 install_picocss(app, debug=True)
 
-app.run()
+
+if __name__ == '__main__':
+    app.run(port=8080, live_reload=True)

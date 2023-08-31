@@ -1,3 +1,4 @@
+<!-- templates/lona/frontend.html -->
 <html>
   <head>
     <meta charset="utf-8" />
@@ -12,8 +13,8 @@
     {% include "lona/footer.html" %}
     {{ Lona.load_scripts() }}
     <script>
-      window.addEventListener('load', function() {
-        var lona_context = new Lona.LonaContext({
+      window.addEventListener('load', () => {
+        const lona_context = new Lona.LonaContext({
           target: '#lona',
           title: 'Lona',
           update_address_bar: true,
@@ -22,9 +23,62 @@
           follow_http_redirects: true,
         });
 
+        {% if Lona.settings.CLIENT_AUTO_RECONNECT %}
+          const auto_reconnect = true;
+        {% else %}
+          const auto_reconnect = false;
+        {% endif %}
+
+        let first_connect = true;
+
+        lona_context.add_connect_hook((lona_context) => {
+
+          // reconnect
+          // reload whole page in case static files changed
+          if(!first_connect) {
+            window.location = window.location;
+
+            return;
+          }
+
+          // first connect
+          first_connect = false;
+        });
+
+        // disconnect
+        lona_context.add_disconnect_hook((lona_context) => {
+          document.querySelector('#lona').innerHTML = `{% include "lona/disconnect-message.html" %}`;
+
+          if(!auto_reconnect) {
+            return;
+          }
+
+          setTimeout(() => {
+            lona_context.reconnect({
+
+              // we don't create a window and start a view on the server
+              // since we reload the page once the client reconnects anyway
+              create_window: false,
+            });
+          }, {{ Lona.settings.CLIENT_AUTO_RECONNECT_TIMEOUT }});
+        });
+
+        // waiting for server messages
+        lona_context.add_view_timeout_hook((lona_context, lona_window) => {
+          lona_window.set_html(`{% include "lona/waiting-for-server-message.html" %}`);
+        });
+
+        lona_context.add_input_event_timeout_hook((lona_context, lona_window) => {
+          alert(`{% include "lona/waiting-for-server-message.html" %}`);
+        });
+
+        // custom hooks
         {% include "lona/frontend.js" %}
 
+        // setup
         lona_context.setup();
+
+        window['lona_context'] = lona_context;
       });
     </script>
   </body>

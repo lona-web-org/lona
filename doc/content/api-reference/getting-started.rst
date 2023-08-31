@@ -44,7 +44,8 @@ python script.
                 self.sleep(1)
 
 
-    app.run(port=8080)
+    if __name__ == '__main__':
+        app.run(port=8080)
 
 **More information:**
 {{ link('api-reference/lona-scripts.rst', 'Lona Scripts') }}

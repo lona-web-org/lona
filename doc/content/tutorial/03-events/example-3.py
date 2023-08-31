@@ -45,4 +45,6 @@ class Index(View):
             P(f'{first_number} + {second_number} = {first_number+second_number}')
         )
 
-app.run()
+
+if __name__ == '__main__':
+    app.run()

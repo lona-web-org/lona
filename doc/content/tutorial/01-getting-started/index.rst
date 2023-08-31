@@ -91,8 +91,7 @@ app, like template paths, static directories or routes, will be relative to
 this directory.
 
 The last line of the script (``app.run()``), will run the application server,
-and block until ``CTRL-C`` was hit.
-
+and block until ``CTRL-C`` was hit. 
 Run the script using:
 
 .. code-block::
@@ -104,6 +103,9 @@ also parses the command line. Run ``python example.py -h`` to print the help.
 If port 8080 is taken by another application, you can set environment
 variable ``LONA_DEFAULT_PORT`` to some other port, affecting all examples that 
 do not set the port explicitly.
+
+When ``live_reload`` is set to ``True`` Lona will watch the scripts project
+root and restart the server when a file in it gets written.
 
 The script should print that it opened a webserver on
 ``http://localhost:8080``. If you navigate your browser there, you should see

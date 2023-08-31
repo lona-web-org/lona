@@ -1,7 +1,7 @@
 PYTHON=python3
 PYTHON_VENV=env
 
-LONA_SHELL_SERVER_URL=file://socket
+LONA_SHELL_SERVER_URL=file://../socket
 LONA_DEFAULT_ARGS=--shell-server-url=$(LONA_SHELL_SERVER_URL)
 CLIENT_VERSION=2
 
