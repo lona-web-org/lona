@@ -60,7 +60,7 @@ test = [
 
   "coverage==7.3.1",
   "pytest==7.4.1",
-  "pytest-aiohttp==1.0.4",
+  "pytest-aiohttp==1.0.5",
   "pytest-mock==3.11.1",
   "pytest-timeout==2.1.0",
   "playwright==1.37.0",
