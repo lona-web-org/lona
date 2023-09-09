@@ -1,18 +1,10 @@
-from lona.static_files import SORT_ORDER, Script
-from lona.html.node import Node
+from lona.html.mixins import FrontendComponent
+from lona.html import Div
 
 
-class RawHTML(Node):
+class RawHTML(FrontendComponent, Div):
     TAG_NAME = 'div'
     WIDGET = 'lona.RawHtmlWidget'
-
-    STATIC_FILES = [
-        Script(
-            name='_lona/widgets.js',
-            path='widgets.js',
-            sort_order=SORT_ORDER.FRAMEWORK,
-        ),
-    ]
 
     def __init__(self, inner_html='', **kwargs):
         super().__init__(**kwargs)
