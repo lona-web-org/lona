@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.37.1-jammy
+FROM mcr.microsoft.com/playwright:v1.38.0-jammy
 
 ARG UID=1000 GID=1000
 
