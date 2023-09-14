@@ -1,5 +1,6 @@
 import logging
 
+from lona.responses import TemplateResponse
 from lona.view import View
 
 logger = logging.getLogger('lona.views')
@@ -12,11 +13,13 @@ class FallbackView(View):
     def render_default_template(self, request, **extra_context):
         template_setting = request.server.settings.get(self.TEMPLATE_SETTING)
 
-        return {
-            'template': template_setting,
-            'request': request,
-            **extra_context,
-        }
+        return TemplateResponse(
+            name=template_setting,
+            context={
+                'request': request,
+                **extra_context,
+            },
+        )
 
     def handle_request(self, request, **extra_context):
         view_setting = request.server.settings.get(self.VIEW_SETTING, '')

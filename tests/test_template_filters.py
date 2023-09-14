@@ -1,4 +1,4 @@
-from lona import View
+from lona import TemplateResponse, View
 
 
 def setup_app(app):
@@ -11,9 +11,7 @@ def setup_app(app):
     @app.route('/')
     class TemplateFiltersView(View):
         def handle_request(self, request):
-            return {
-                'template': 'template_filters.html',
-            }
+            return TemplateResponse('template_filters.html')
 
 
 async def test_template_filters(lona_app_context):

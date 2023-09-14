@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import Union, Dict, Any
-from dataclasses import dataclass
 
 from lona.html.abstract_node import AbstractNode
 from lona.events.input_event import InputEvent
@@ -55,7 +55,7 @@ class HtmlResponse(AbstractResponse):
 @dataclass
 class TemplateResponse(AbstractResponse):
     name: str
-    context: dict | None
+    context: dict = field(default_factory=dict)
     status: int | None = None
     content_type: str | None = None
     headers: dict | None = None
@@ -71,7 +71,7 @@ class TemplateResponse(AbstractResponse):
 @dataclass
 class TemplateStringResponse(AbstractResponse):
     string: str
-    context: dict | None = None
+    context: dict = field(default_factory=dict)
     status: int | None = None
     content_type: str | None = None
     headers: dict | None = None
