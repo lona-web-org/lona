@@ -128,8 +128,22 @@ class AttributeDict:
                 issuer=issuer,
             )
 
-    def __delitem__(self, name):
-        self.pop(name, None)
+    def __delitem__(self, name, issuer=None):
+        with self._node.lock:
+            if name not in self._attributes:
+                return
+
+            del self._attributes[name]
+
+            self._node.document.add_patch(
+                node_id=self._node.id,
+                patch_type=self.PATCH_TYPE,
+                operation=OPERATION.REMOVE,
+                payload=[
+                    name,
+                ],
+                issuer=issuer,
+            )
 
     def __eq__(self, other):
         with self._node.lock:

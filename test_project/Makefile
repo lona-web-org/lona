@@ -1,4 +1,4 @@
-PYTHON=python3
+PYTHON=python3.11
 PYTHON_VENV=env
 
 LONA_SHELL_SERVER_URL=file://../socket

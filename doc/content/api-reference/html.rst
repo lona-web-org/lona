@@ -827,6 +827,73 @@ select is no multi select, all other options get unselected automatically.
     |style             |(Dict) contains all styling attributes
 
 
+RadioGroup and RadioButton
+++++++++++++++++++++++++++
+
+.. code-block:: python
+
+    from lona.html import RadioGroup, RadioButton, Label
+
+    radio_group = RadioGroup(
+        Label('Option 1', RadioButton(value=1)),
+        Label('Option 2', RadioButton(value=2.0)),
+        Label('Option 3', RadioButton(value='3', checked=True)),
+    )
+
+    # adding radio buttons
+    # `RadioGroup.add_button()` takes any amount of nodes and connects
+    # the first `Label` with the first `RadioButton` object, using a
+    # random number and the HTML attribute `for`
+    radio_group.add_button(Label('Foo'), RadioButton(value='foo'))
+    radio_group.add_button(Div(Label('Foo'), RadioButton(value='foo')))
+
+    # if two non-node values are given, and the first one is a string,
+    # a `Label` and a `RadioButton` get inserted automatically
+    radio_group.add_button('Foo', 'foo')
+
+A ``RadioGroup`` consist of one or more ``RadioButton`` and ``Label`` object
+pairs, which hold information on value, checked state, and disabled state.
+
+``RadioButton`` objects consist of a value and a checked state. The value can
+be anything. If ``RadioButton.render_value`` is set, which is set by default,
+the content of ``RadioButton.value`` gets typecasted to a string and rendered
+into the HTML tree. This can be disabled if the actually values of the select
+shouldn't be disclosed to end users.
+
+``RadioGroup.value`` returns the value of the radio button that is currently
+checked.
+
+A radio button can be checked by setting ``RadioGroup.value`` to the value of
+the radio button that should be checked, or by setting ``RadioButton.checked``.
+
+**RadioGroup Attributes:**
+
+.. table::
+
+    ^Name                  ^Description
+    |bubble_up             |(Bool) Pass input events further
+    |radio_buttons         |(Tuple) tuple of all radio buttons
+    |checked_radio_button  |(Tuple) tuple of all selected options
+    |value                 |Value of the currently checked radio button
+    |values                |(Tuple) tuple of all possible values
+    |id_list               |(List) contains all ids
+    |class_list            |(List) contains all classes
+    |style                 |(Dict) contains all styling attributes
+
+**RadioButton Attributes:**
+
+.. table::
+
+    ^Name              ^Description
+    |name              |name of the radio button
+    |value             |value of the radio button
+    |checked           |(Bool) sets checked state
+    |disabled          |(Bool) sets the HTML attribute "disabled"
+    |id_list           |(List) contains all ids
+    |class_list        |(List) contains all classes
+    |style             |(Dict) contains all styling attributes
+
+
 Adding Javascript And CSS To HTML Nodes
 ---------------------------------------
 
