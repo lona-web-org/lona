@@ -602,7 +602,10 @@ class Server:
         if handled:
             if data is not None:
                 if isinstance(data, LonaResponse):
-                    return self._render_response(data)
+                    return await self.run_function_async(
+                        self._render_response,
+                        response,
+                    )
 
                 return data
 
@@ -620,7 +623,10 @@ class Server:
             executor_name='runtime_worker',
         )
 
-        return self._render_response(response)
+        return await self.run_function_async(
+            self._render_response,
+            response,
+        )
 
     # public api ##############################################################
     @overload
