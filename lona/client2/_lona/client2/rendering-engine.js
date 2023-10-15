@@ -104,7 +104,6 @@ export class LonaRenderingEngine {
         node.remove();
 
         this._remove_widget_if_present(node_id);
-        this._clean_node_cache();
     };
 
     _remove_widget_if_present(node_id) {
@@ -490,6 +489,7 @@ export class LonaRenderingEngine {
             const node = this._render_node(data[1]);
 
             this._set_node(node, node_id, data[0]);
+            this._clean_node_cache();
 
         // RESET
         } else if(operation == Lona.protocol.OPERATION.RESET) {
@@ -509,6 +509,7 @@ export class LonaRenderingEngine {
         // CLEAR
         } else if(operation == Lona.protocol.OPERATION.CLEAR) {
             this._clear_node(node_id);
+            this._clean_node_cache();
 
         // INSERT
         } else if(operation == Lona.protocol.OPERATION.INSERT) {
@@ -519,6 +520,7 @@ export class LonaRenderingEngine {
         // REMOVE
         } else if(operation == Lona.protocol.OPERATION.REMOVE) {
             this._remove_node(data[0]);
+            this._clean_node_cache();
 
         };
     };
@@ -635,8 +637,6 @@ export class LonaRenderingEngine {
             data.forEach(patch => {
                 this._apply_patch(patch);
             });
-
-            this._clean_node_cache();
         };
 
         this._run_widget_hooks();
