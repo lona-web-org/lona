@@ -10,5 +10,5 @@ from .channels import Channel
 from .view import View
 from .app import App
 
-VERSION = (1, 15)
+VERSION = (1, 16)
 VERSION_STRING = '.'.join(str(i) for i in VERSION)

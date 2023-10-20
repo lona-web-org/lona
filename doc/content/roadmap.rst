@@ -11,7 +11,7 @@ Getting Feature Complete
 
   - [ ] Add missing inputs
 
-    - [ ] Add radio buttons and radio groups
+    - [x] Add radio buttons and radio groups
 
     - [ ] Add date inputs
 

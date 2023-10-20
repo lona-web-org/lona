@@ -830,6 +830,10 @@ select is no multi select, all other options get unselected automatically.
 RadioGroup and RadioButton
 ++++++++++++++++++++++++++
 
+.. note::
+
+    Added in 1.16
+
 .. code-block:: python
 
     from lona.html import RadioGroup, RadioButton, Label

@@ -138,12 +138,20 @@ Client
     :name: CLIENT_AUTO_RECONNECT
     :path: lona.default_settings.CLIENT_AUTO_RECONNECT
 
+    .. note::
+
+        Added in 1.16
+
     When set to ``True`` the client will try to reconnect to the server
     periodically when the websocket connection closes
 
 .. setting::
     :name: CLIENT_AUTO_RECONNECT_TIMEOUT
     :path: lona.default_settings.CLIENT_AUTO_RECONNECT_TIMEOUT
+
+    .. note::
+
+        Added in 1.16
 
     Auto reconnect timeout in ms
 

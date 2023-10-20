@@ -6,6 +6,51 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.16 (2023-10-20)
+
+Changes
+~~~~~~~
+
+* Views
+
+  * All internal views use response classes instead of dict responses now
+  * dict based responses issue deprecation warnings now
+  * ``context`` in ``TemplateResponse`` and ``TemplateStringResponse`` are
+    optional now
+
+* Server
+
+  * Default host and port now can be set using the environment variables
+    ``LONA_DEFAULT_HOST`` and ``LONA_DEFAULT_PORT``.
+
+  * Live reload was added (``--live-reload``)
+
+* Frontend
+
+  * Auto reconnect was added
+
+* HTML
+
+  * ``lona.html.RadioButton`` and ``lona.html.RadioGroup`` were added
+
+
+Bugfixes
+~~~~~~~~
+
+* Client & Client2
+
+  * Form submit in interactive views was fixed
+
+    * Previously, the ``onsubmit`` handler crashed because of an reference
+      error
+
+* Client2
+
+  * Call stack limit problems in node cache were fixed
+
+    * Previously, the rendering of Client2 would crash when too many nodes
+      were removed at the same time
+
 
 .. changelog-header:: 1.15 (2023-07-20)
 
