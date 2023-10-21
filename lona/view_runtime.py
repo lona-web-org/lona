@@ -299,33 +299,21 @@ class ViewRuntime:
             )
 
     def run_cleanup_hooks(self):
-        from lona.view import View
 
-        # FIXME: this inline import is necessary to avoid circular import
-        # this can be fixed by moving runtime state changes from View to
-        # ViewRuntime
+        # view.on_cleanup()
+        logger.debug('running %s', self.view.on_cleanup)
 
-        def _run():
-            logger.debug('running %s', self.view.on_cleanup)
+        try:
+            self.view.on_cleanup()
 
-            try:
-                self.view.on_cleanup()
-
-            except Exception:
-                logger.exception(
-                    'Exception raised while running %s',
-                    self.view.on_cleanup,
-                )
+        except Exception:
+            logger.exception(
+                'Exception raised while running %s',
+                self.view.on_cleanup,
+            )
 
         # internal cleanup
         self.view._cleanup()
-
-        # if on_cleanup is not defined by the view class
-        # it is unnecessary to start a thread
-        if self.view_class.on_cleanup is View.on_cleanup:
-            return
-
-        self.server.run_function_async(_run)
 
     def start(self):
         try:
