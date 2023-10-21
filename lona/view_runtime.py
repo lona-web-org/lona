@@ -282,7 +282,16 @@ class ViewRuntime:
             )
 
     # start and stop ##########################################################
-    def run_stop_hook(self):
+    def run_stop_hooks(self):
+
+        # middleware.on_view_stop()
+        self.server._middleware_controller.on_view_stop(
+            request=self.request,
+            view=self.view,
+            reason=self.stop_reason,
+        )
+
+        # view.on_stop()
         logger.debug(
             'running %s with stop reason %s',
             self.view.on_stop,
@@ -299,6 +308,12 @@ class ViewRuntime:
             )
 
     def run_cleanup_hooks(self):
+
+        # middleware.on_view_cleanup()
+        self.server._middleware_controller.on_view_cleanup(
+            request=self.request,
+            view=self.view,
+        )
 
         # view.on_cleanup()
         logger.debug('running %s', self.view.on_cleanup)
@@ -393,7 +408,7 @@ class ViewRuntime:
             self.is_stopped = True
             self.stopped_at = datetime.now()
             self.send_view_stop()
-            self.run_stop_hook()
+            self.run_stop_hooks()
 
     def stop(self, reason=UserAbort, clean_up=True):
         self.stop_reason = reason

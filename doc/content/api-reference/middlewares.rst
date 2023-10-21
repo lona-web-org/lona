@@ -59,6 +59,23 @@ Middlewares can be live analyzed by using the
 
             return data
 
+        def on_view_stop(self, data):
+            server = data.server
+            connection = data.connection
+            request = data.request
+            view = data.view
+            reason = data.reason
+
+            return data
+
+        def on_view_cleanup(self, data):
+            server = data.server
+            connection = data.connection
+            request = data.request
+            view = data.view
+
+            return data
+
 .. code-block:: python
 
     # settings.py
@@ -119,3 +136,15 @@ If the data gets returned, the view associated with this request gets started.
 If a `Response Object </api-reference/views.html#response-objects>`_
 is returned, the view gets not started and the user gets the returned response
 object shown.
+
+
+Middleware.on_view_stop\(data\)
+-------------------------------
+
+Gets called before `View.on_stop </api-reference/views.html#lonaview-on-stop-reason>`_
+
+
+Middleware.on_view_cleanup\(data\)
+----------------------------------
+
+Gets called before `View.on_cleanup </api-reference/views.html#lonaview-on-cleanup>`_

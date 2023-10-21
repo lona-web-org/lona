@@ -25,6 +25,8 @@ class MiddlewareController:
         ('handle_websocket_message',       False),
         ('handle_http_request',            False),
         ('handle_request',                 False),
+        ('on_view_stop',                   False),
+        ('on_view_cleanup',                False),
     ]
 
     def __init__(self, server):
@@ -217,5 +219,32 @@ class MiddlewareController:
 
         return self._run_middlewares_sync(
             'handle_request',
+            data,
+        )
+
+    def on_view_stop(self, request, view, reason):
+        data = MiddlewareData(
+            server=self.server,
+            connection=request.connection,
+            request=request,
+            view=view,
+            reason=reason,
+        )
+
+        return self._run_middlewares_sync(
+            'on_view_stop',
+            data,
+        )
+
+    def on_view_cleanup(self, request, view):
+        data = MiddlewareData(
+            server=self.server,
+            connection=request.connection,
+            request=request,
+            view=view,
+        )
+
+        return self._run_middlewares_sync(
+            'on_view_cleanup',
             data,
         )
