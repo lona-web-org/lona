@@ -1,4 +1,5 @@
 from threading import Lock
+from uuid import uuid1
 
 
 class UniqueIDGenerator:
@@ -22,3 +23,7 @@ _name_spaces = {
 
 def generate_unique_id(name_space=''):
     return _name_spaces[name_space]()
+
+
+def generate_unique_id2():
+    return str(uuid1())
