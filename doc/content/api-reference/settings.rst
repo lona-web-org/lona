@@ -255,6 +255,16 @@ Channels
     :path: lona.default_settings.CHANNEL_TASK_WORKER_CLASS
 
 
+Buckets
+-------
+
+.. setting::
+    :name: BUCKETS_URL_PREFIX
+    :path: lona.default_settings.BUCKETS_URL_PREFIX
+
+    Default prefix for :link:`bucket </api-reference/buckets.rst>` urls
+
+
 Middlewares
 -----------
 

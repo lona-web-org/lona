@@ -8,6 +8,7 @@ from .view import View as LonaView
 from .app import App as LonaApp
 from .channels import Channel
 from .request import Request
+from .buckets import Bucket
 from .view import View
 from .app import App
 
