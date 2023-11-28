@@ -6,7 +6,7 @@ is_template: False
 Changelog
 =========
 
-.. changelog-header:: 1.16 (2023-11-28)
+.. changelog-header:: 1.16.1 (2023-11-28)
 
 Changes
 ~~~~~~~
