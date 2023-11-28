@@ -184,10 +184,12 @@ Attributes
 
     * ``request.user`` is writable since 1.4
     * ``request.interactive`` was added in 1.4
+    * ``request.id`` was added in 1.16.1
 
 .. table::
 
     ^Name        ^Description
+    |id          |(String) Unique identifier
     |interactive |(Bool) Is true when the request came in over a websocket connection
     |method      |(String) Contains either 'GET' or 'POST'
     |GET         |(Dict) Contains the URL query

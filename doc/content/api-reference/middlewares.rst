@@ -108,6 +108,10 @@ Gets called on server shutdown.
 Middleware.handle_http_request\(data\)
 --------------------------------------
 
+.. note::
+
+    Added in 1.16.1
+
 Gets called with every incomming HTTP request, before any other routing or
 handling happens. If ``data`` is not returned, Lona regards
 ``data.http_request`` as handled.
@@ -141,10 +145,18 @@ object shown.
 Middleware.on_view_stop\(data\)
 -------------------------------
 
+.. note::
+
+    Added in 1.16.1
+
 Gets called before `View.on_stop </api-reference/views.html#lonaview-on-stop-reason>`_
 
 
 Middleware.on_view_cleanup\(data\)
 ----------------------------------
+
+.. note::
+
+    Added in 1.16.1
 
 Gets called before `View.on_cleanup </api-reference/views.html#lonaview-on-cleanup>`_

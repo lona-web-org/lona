@@ -6,6 +6,24 @@ is_template: False
 Changelog
 =========
 
+.. changelog-header:: 1.16 (2023-11-28)
+
+Changes
+~~~~~~~
+
+* Buckets for file uploads were added
+
+* Middlewares
+
+  * ``handle_http_request`` hook was added
+  * ``on_view_stop`` hook was added
+  * ``on_view_cleanup`` hook was added
+
+* Requests
+
+  * ``Request.id`` was added
+
+
 .. changelog-header:: 1.16 (2023-10-20)
 
 Changes
