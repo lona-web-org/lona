@@ -54,7 +54,7 @@ MENU = [
             ['Counter', 'demos/counter/index.rst'],
 
             ['Bootstrap 5 Confirmation Popup',
-            'demos/bootstrap-5-confirmation-popup/index.rst'],
+             'demos/bootstrap-5-confirmation-popup/index.rst'],
 
             ['Function Plotter', 'demos/function-plotter/index.rst'],
 
@@ -65,6 +65,7 @@ MENU = [
             ['Multi User Chat', 'demos/multi-user-chat/index.rst'],
             ['Game Of Life', 'demos/game-of-life/index.rst'],
             ['Channels', 'demos/channels/index.rst'],
+            ['File Upload', 'demos/file-upload/index.rst'],
         ]],
 
         ['API Reference', [
@@ -77,6 +78,7 @@ MENU = [
             ['Middlewares', 'api-reference/middlewares.rst'],
             ['Settings', 'api-reference/settings.rst'],
             ['Sessions', 'api-reference/sessions.rst'],
+            ['Buckets', 'api-reference/buckets.rst'],
             ['Channels', 'api-reference/channels.rst'],
             ['Testing', 'api-reference/testing.rst'],
             ['Lona Shell', 'api-reference/lona-shell.rst'],
@@ -101,19 +103,19 @@ MENU = [
             ['Writing A Lona Form', 'cookbook/writing-a-lona-form.rst'],
 
             ['Writing A Traditional Form',
-            'cookbook/writing-a-traditional-form.rst'],
+             'cookbook/writing-a-traditional-form.rst'],
 
             ['URL Reverse Resolving', 'cookbook/url-reverse-resolving.rst'],
             ['Using Server State', 'cookbook/using-server-state.rst'],
 
             ['Integrating A Frontend Library',
-            'cookbook/integrating-a-frontend-library.rst'],
+             'cookbook/integrating-a-frontend-library.rst'],
 
             ['Integrating Django', 'cookbook/integrating-django.rst'],
             ['Limit Concurrent Views', 'cookbook/limit-concurrent-views.rst'],
 
             ['Adding A Custom Command To Lona Shell',
-            'cookbook/adding-a-custom-command-to-lona-shell.rst'],
+             'cookbook/adding-a-custom-command-to-lona-shell.rst'],
         ]],
 
         ['FAQ', 'faq.rst'],

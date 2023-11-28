@@ -22,7 +22,7 @@ Getting Feature Complete
     - [ ] Add range input
     - [ ] Add color input
 
-- [ ] Add support for file uploads
+- [x] Add support for file uploads
 - [ ] Add support for JavaScript Modules
 
 

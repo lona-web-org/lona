@@ -31,6 +31,12 @@ Middlewares can be live analyzed by using the
 
             return data
 
+        def handle_http_request(self, data):
+            server = data.server
+            http_request = data.http_request
+
+            return data
+
         def handle_connection(self, data):
             server = data.server
             http_request = data.http_request
@@ -46,6 +52,23 @@ Middlewares can be live analyzed by using the
             return data
 
         def handle_request(self, data):
+            server = data.server
+            connection = data.connection
+            request = data.request
+            view = data.view
+
+            return data
+
+        def on_view_stop(self, data):
+            server = data.server
+            connection = data.connection
+            request = data.request
+            view = data.view
+            reason = data.reason
+
+            return data
+
+        def on_view_cleanup(self, data):
             server = data.server
             connection = data.connection
             request = data.request
@@ -82,6 +105,14 @@ Middleware.on_shutdown\(data\)
 Gets called on server shutdown.
 
 
+Middleware.handle_http_request\(data\)
+--------------------------------------
+
+Gets called with every incomming HTTP request, before any other routing or
+handling happens. If ``data`` is not returned, Lona regards
+``data.http_request`` as handled.
+
+
 Middleware.handle_connection\(data\)
 ------------------------------------
 
@@ -105,3 +136,15 @@ If the data gets returned, the view associated with this request gets started.
 If a `Response Object </api-reference/views.html#response-objects>`_
 is returned, the view gets not started and the user gets the returned response
 object shown.
+
+
+Middleware.on_view_stop\(data\)
+-------------------------------
+
+Gets called before `View.on_stop </api-reference/views.html#lonaview-on-stop-reason>`_
+
+
+Middleware.on_view_cleanup\(data\)
+----------------------------------
+
+Gets called before `View.on_cleanup </api-reference/views.html#lonaview-on-cleanup>`_

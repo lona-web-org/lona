@@ -1,0 +1,54 @@
+<!-- templates/lona/bucket_index.html -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lona Bucket {{ bucket.id }}</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+
+      .delete-form {
+        display: inline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Lona Bucket {{ bucket.id }}</h1>
+    <table>
+      <tr>
+        <th>Max Files</th>
+        <td>{{ repr(bucket.max_files) }}</td>
+      </tr>
+      <tr>
+        <th>Max Size</th>
+        <td>{{ repr(bucket.max_size) }}</td>
+      </tr>
+    </table>
+
+    <h2>Add File</h2>
+    <form class="add-form" action="{{ bucket.get_add_url() }}?redirect={{ bucket.get_url() }}" method="POST" enctype="multipart/form-data">
+      <input type="file" name="files[]" multiple />
+      <input type="submit" value="Add" />
+    </form>
+
+    <h2>Files</h2>
+    {% set file_names=bucket.get_file_names() %}
+    {% if file_names %}
+      <ul>
+        {% for file_name in file_names %}
+          <li>
+            <a href="{{ bucket.get_url(file_name=file_name) }}">{{ file_name }}</a>
+            <form class="delete-form" action="{{ bucket.get_delete_url() }}?redirect={{ bucket.get_url() }}" method="POST">
+              <input type="hidden" name="name" value="{{ file_name }}" />
+              <input type="submit" value="Delete" />
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No files yet</p>
+    {% endif %}
+  </body>
+</html>

@@ -77,6 +77,7 @@ ERROR_500_VIEW = ''
 CORE_MIDDLEWARES = [
     'lona.middlewares.sessions.LonaSessionMiddleware',
     'lona.middlewares.lona_messages.LonaMessageMiddleware',
+    'lona.buckets.BucketsMiddleware',
 ]
 
 MIDDLEWARES: list[str] = []
@@ -94,6 +95,7 @@ CORE_COMMANDS = [
     'lona.shell.commands.lona_middlewares.LonaMiddlewaresCommand',
     'lona.shell.commands.lona_templates.LonaTemplatesCommand',
     'lona.shell.commands.lona_settings.LonaSettingsCommand',
+    'lona.shell.commands.lona_buckets.LonaBucketsCommand',
     'lona.shell.commands.lona_routes.LonaRoutesCommand',
     'lona.shell.commands.lona_views.LonaViewsCommand',
     'lona.shell.commands.lona_info.LonaInfoCommand',
@@ -107,6 +109,9 @@ TEST_INPUT_EVENT_TIMEOUT = False
 
 # server
 AIOHTTP_CLIENT_MAX_SIZE = 1024**2
+
+# buckets
+BUCKETS_URL_PREFIX = '/buckets/'
 
 # feature flags
 STOP_DAEMON_WHEN_VIEW_FINISHES = True  # TODO: remove in 2.0

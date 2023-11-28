@@ -524,6 +524,20 @@ class Server:
     async def _handle_http_request(self, http_request):
         http_logger.debug('http request incoming')
 
+        # middleware hook 'handle_http_request'
+        handled, return_value, middleware = \
+            await self._middleware_controller.handle_http_request(
+                http_request,
+            )
+
+        if handled:
+            http_logger.debug('http request got handled by %r', middleware)
+
+            if isinstance(return_value, LonaResponse):
+                return self._render_response(return_value)
+
+            return return_value
+
         # resolve path
         http_logger.debug('resolving path %r', http_request.path)
 

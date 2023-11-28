@@ -1,8 +1,12 @@
+from lona.unique_ids import generate_unique_id2
+
+
 class Request:
     def __init__(self, view_runtime, connection):
         self._view_runtime = view_runtime
         self.connection = connection
 
+        self._id = generate_unique_id2()
         self.url = self._view_runtime.url
 
         if self.url:
@@ -14,6 +18,10 @@ class Request:
             self.POST = {}
 
         self.method = 'POST' if self.POST else 'GET'
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def interactive(self):

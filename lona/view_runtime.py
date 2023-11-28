@@ -282,7 +282,16 @@ class ViewRuntime:
             )
 
     # start and stop ##########################################################
-    def run_stop_hook(self):
+    def run_stop_hooks(self):
+
+        # middleware.on_view_stop()
+        self.server._middleware_controller.on_view_stop(
+            request=self.request,
+            view=self.view,
+            reason=self.stop_reason,
+        )
+
+        # view.on_stop()
         logger.debug(
             'running %s with stop reason %s',
             self.view.on_stop,
@@ -299,33 +308,27 @@ class ViewRuntime:
             )
 
     def run_cleanup_hooks(self):
-        from lona.view import View
 
-        # FIXME: this inline import is necessary to avoid circular import
-        # this can be fixed by moving runtime state changes from View to
-        # ViewRuntime
+        # middleware.on_view_cleanup()
+        self.server._middleware_controller.on_view_cleanup(
+            request=self.request,
+            view=self.view,
+        )
 
-        def _run():
-            logger.debug('running %s', self.view.on_cleanup)
+        # view.on_cleanup()
+        logger.debug('running %s', self.view.on_cleanup)
 
-            try:
-                self.view.on_cleanup()
+        try:
+            self.view.on_cleanup()
 
-            except Exception:
-                logger.exception(
-                    'Exception raised while running %s',
-                    self.view.on_cleanup,
-                )
+        except Exception:
+            logger.exception(
+                'Exception raised while running %s',
+                self.view.on_cleanup,
+            )
 
         # internal cleanup
         self.view._cleanup()
-
-        # if on_cleanup is not defined by the view class
-        # it is unnecessary to start a thread
-        if self.view_class.on_cleanup is View.on_cleanup:
-            return
-
-        self.server.run_function_async(_run)
 
     def start(self):
         try:
@@ -405,7 +408,7 @@ class ViewRuntime:
             self.is_stopped = True
             self.stopped_at = datetime.now()
             self.send_view_stop()
-            self.run_stop_hook()
+            self.run_stop_hooks()
 
     def stop(self, reason=UserAbort, clean_up=True):
         self.stop_reason = reason
