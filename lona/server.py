@@ -992,8 +992,8 @@ class Server:
         return cast(
             str,
             self._router.reverse(
-                route_name=route_name,
                 *args,
+                route_name=route_name,
                 **kwargs,
             ),
         )
