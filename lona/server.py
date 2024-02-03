@@ -174,7 +174,7 @@ class Server:
             '*', static_url, self._handle_static_file_request)
 
         self._app.router.add_route(
-            '*', '/{path_info:.*}', self._handle_http_request)
+            '*', '/{path_info:.*}', self._shielded_handle_http_request)
 
         # setup view loader
         server_logger.debug('setup view loader')
@@ -635,6 +635,18 @@ class Server:
         )
 
         return self._render_response(response)
+
+    async def _shielded_handle_http_request(self, request):
+        """
+        Runs `Server._handle_http_request` shielded from cancelation
+
+        aiohttp 3.9 introduced web handler cancellation
+        (https://docs.aiohttp.org/en/v3.9.0/web_advanced.html#web-handler-cancellation)
+        which creates race conditions in the connections teardown code when
+        enabled.
+        """
+
+        return await asyncio.shield(self._handle_http_request(request))
 
     # public api ##############################################################
     @overload
