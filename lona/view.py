@@ -15,6 +15,7 @@ from lona.exceptions import StopReason
 from lona.connection import Connection
 from lona.channels import Channel
 from lona.request import Request
+import lona.warnings
 
 # avoid import cycles
 if TYPE_CHECKING:  # pragma: no cover
@@ -349,6 +350,11 @@ class View:
     def daemonize(self) -> None:
         # TODO: remove in 2.0
 
+        lona.warnings.warn(  # NOQA: G010
+            '.daemonize() is deprecated, use .is_daemon = True\n  (see: https://lona-web.org/1.x/api-reference/views.html#lonaview-daemonize)',
+            lona.warnings.DaemonizeDeprecationWarning,
+            stacklevel=2,
+        )
         self.is_daemon = True
 
     def ping(self) -> Literal['pong']:

@@ -13,6 +13,7 @@ from lona.html.node_list import NodeList
 from lona.protocol import NODE_TYPE
 from lona.html.widget import Widget
 from lona.state import State
+import lona.warnings
 
 
 def parse_style_string(style_string: str) -> dict[str, str]:
@@ -457,3 +458,10 @@ class Node(AbstractNode):
         with self.lock:
             if 'display' in self.style and self.style['display'] == 'none':
                 del self.style['display']
+
+
+class DeprecatedNode(Node):
+
+    def __init__(self, *args, **kwargs):
+        lona.warnings.remove_2_0(_class=True)
+        super().__init__(*args, **kwargs)

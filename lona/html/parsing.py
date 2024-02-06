@@ -14,6 +14,7 @@ from lona.html.abstract_node import AbstractNode
 from lona.html.nodes.text_content import Div
 from lona.html.text_node import TextNode
 from lona.html.node import Node
+import lona.warnings
 
 logger = logging.getLogger('lona')
 
@@ -270,6 +271,7 @@ def HTML(
 
             # html string
             elif '<' in node or '>' in node:
+                lona.warnings.remove_2_0('HTML parsing')
                 parsed_nodes = cast(
                     list,
                     parse_html(
