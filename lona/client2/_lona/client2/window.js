@@ -104,10 +104,6 @@ export class LonaWindow {
             this._view_runtime_id = view_runtime_id;
             this._view_running = true;
 
-            if(this.lona_context.settings.update_address_bar) {
-                history.pushState({}, '', this.get_url().href);
-            };
-
             this._rendering_engine._clear();
             this._rendering_engine._clear_node_cache();
 
@@ -118,7 +114,7 @@ export class LonaWindow {
             // TODO: implement loop detection
 
             if(this.lona_context.settings.follow_redirects) {
-                this.run_view(payload);
+                this.run_view(payload, {}, true);
 
             } else {
                 console.debug(
@@ -188,7 +184,7 @@ export class LonaWindow {
         };
     };
 
-    run_view(url, post_data) {
+    run_view(url, post_data, add_to_history) {
         // Save the requested url to only show HTML messages that are related
         // to this request.
         // This prevents glitches when switching urls fast.
@@ -201,6 +197,11 @@ export class LonaWindow {
         this._view_running = false;
         this._view_runtime_id = undefined;
         this._set_url(url);
+
+        // add url to history                                                
+        if(this.lona_context.settings.update_address_bar && add_to_history) {
+            history.pushState({}, '', this.get_url().href);                  
+        };                                                                   
 
         // reset view start timeout
         if(this._view_start_timeout != undefined) {
@@ -245,6 +246,6 @@ export class LonaWindow {
     };
 
     setup(url) {
-        this.run_view(url);
+        this.run_view(url, {}, false);
     };
 };
