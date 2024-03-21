@@ -41,7 +41,7 @@ class Namespace:
     def client_version(self):
         # TODO: remove in Lona 2.0
 
-        lona.warning.remove_2_0()
+        lona.warnings.remove_2_0()
         return get_client_version()
 
     def load_stylesheets(self):

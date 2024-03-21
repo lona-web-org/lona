@@ -91,7 +91,7 @@ export class LonaInputEventHandler {
             event.stopPropagation();
 
             try {
-                lona_window.run_view(node.href);
+                lona_window.run_view(node.href, {}, true);
 
             } catch(error) {
                 lona_window.crash(error);
@@ -253,10 +253,10 @@ export class LonaInputEventHandler {
                         href += '?' + query;
                     };
 
-                    lona_window.run_view(href);
+                    lona_window.run_view(href, {}, true);
 
                 } else if(method == 'post') {
-                    lona_window.run_view(action, form_data);
+                    lona_window.run_view(action, form_data, true);
 
                 };
 
