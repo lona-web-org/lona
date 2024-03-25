@@ -6,6 +6,17 @@ is_template: False
 Changelog
 =========
 
+
+.. changelog-header:: 1.16.2 (2024-03-25)
+
+Bugfixes
+~~~~~~~~
+
+* Client & Client2
+
+  * Multiple browser history bugs were fixed
+
+
 .. changelog-header:: 1.16.1 (2023-11-28)
 
 Changes

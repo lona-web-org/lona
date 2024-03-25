@@ -12,5 +12,5 @@ from .buckets import Bucket
 from .view import View
 from .app import App
 
-VERSION = (1, 16, 1)
+VERSION = (1, 16, 2)
 VERSION_STRING = '.'.join(str(i) for i in VERSION)
