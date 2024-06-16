@@ -79,7 +79,7 @@ lint = [
   "flake8-commas==4.0.0",
   "flake8-comprehensions==3.14.0",
   "flake8-length==0.3.1",
-  "flake8-logging-format==0.9.0",
+  "flake8-logging-format==2024.24.12",
   "flake8-mutable==1.2.0",
   "flake8-noqa==1.4.0",
   "flake8-pytest-style==1.7.2",
