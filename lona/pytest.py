@@ -117,7 +117,7 @@ class LonaContext:
         return self.event_loop.run_in_executor(None, _debug_interactive)
 
 
-@pytest.fixture()
+@pytest.fixture
 def lona_app_context(request, aiohttp_client, event_loop, pytestconfig):
     async def setup_lona_app_context(
             setup_app: Callable[[App], None],
@@ -149,7 +149,7 @@ def lona_app_context(request, aiohttp_client, event_loop, pytestconfig):
     Channel._clear_state()
 
 
-@pytest.fixture()
+@pytest.fixture
 def lona_project_context(request, aiohttp_client, event_loop, pytestconfig):
     async def setup_lona_project_context(
         project_root: str = '',
