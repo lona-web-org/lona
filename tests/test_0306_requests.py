@@ -45,7 +45,7 @@ async def test_post_requests(lona_app_context):
 
         # GET request
         await page.goto(context.make_url('/'))
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
 
         assert await get_method(page) == 'GET'
         assert await get_post_data(page) == {}
@@ -54,7 +54,7 @@ async def test_post_requests(lona_app_context):
         await page.locator('input[name=input-1]').fill('foo')
         await page.click('input[type=submit]')
 
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
 
         assert await get_method(page) == 'POST'
         assert await get_post_data(page) == {'input-1': 'foo'}

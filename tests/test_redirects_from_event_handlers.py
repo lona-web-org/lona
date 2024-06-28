@@ -97,11 +97,11 @@ async def test_redirects_from_event_handlers(response_format, lona_app_context):
             context.make_url('/redirect-from-handle-input-event-root/'),
         )
 
-        await page.wait_for_url('/redirect-from-handle-input-event-root/')
+        await page.wait_for_url('**/redirect-from-handle-input-event-root/')
 
         await page.click('button')
 
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
         await page.wait_for_selector('#lona:has-text("SUCCESS")')
 
         # test redirect from View.handle_input_event()
@@ -109,11 +109,11 @@ async def test_redirects_from_event_handlers(response_format, lona_app_context):
             context.make_url('/redirect-from-handle-input-event/'),
         )
 
-        await page.wait_for_url('/redirect-from-handle-input-event/')
+        await page.wait_for_url('**/redirect-from-handle-input-event/')
 
         await page.click('button')
 
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
         await page.wait_for_selector('#lona:has-text("SUCCESS")')
 
         # test redirect from button
@@ -121,11 +121,11 @@ async def test_redirects_from_event_handlers(response_format, lona_app_context):
             context.make_url('/redirect-from-button/'),
         )
 
-        await page.wait_for_url('/redirect-from-button/')
+        await page.wait_for_url('**/redirect-from-button/')
 
         await page.click('button')
 
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
         await page.wait_for_selector('#lona:has-text("SUCCESS")')
 
         # test redirect from View.on_view_event()
@@ -133,10 +133,10 @@ async def test_redirects_from_event_handlers(response_format, lona_app_context):
             context.make_url('/redirect-from-on-view-event/'),
         )
 
-        await page.wait_for_url('/redirect-from-on-view-event/')
+        await page.wait_for_url('**/redirect-from-on-view-event/')
         await page.wait_for_selector('#lona:has-text("REDIRECT FROM ON VIEW EVENT")')
 
         context.server.fire_view_event('foo')
 
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
         await page.wait_for_selector('#lona:has-text("SUCCESS")')

@@ -55,7 +55,7 @@ async def test_redirects(
             initial_url = context.make_url(raw_initial_url)
 
             await page.goto(initial_url)
-            await page.wait_for_url(initial_url)
+            await page.wait_for_url(f'**{initial_url}')
 
             # trigger redirect
             await page.fill('input#url', redirect_url)
@@ -71,7 +71,7 @@ async def test_redirects(
                 await page.click('button#http-redirect')
 
             # wait for success url
-            await page.wait_for_url(success_url)
+            await page.wait_for_url(f'**{success_url}')
 
             # close page
             await page.close()
