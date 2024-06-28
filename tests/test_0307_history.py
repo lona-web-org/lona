@@ -54,33 +54,33 @@ async def test_client_history(
 
         # /
         await page.goto(context.make_url('/'))
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
         await page.wait_for_selector('h1:has-text("index")')
 
         # /foo
         await page.click('#foo')
-        await page.wait_for_url('/foo')
+        await page.wait_for_url('**/foo')
         await page.wait_for_selector('h1:has-text("foo")')
 
         # /bar
         await page.click('#bar')
-        await page.wait_for_url('/bar')
+        await page.wait_for_url('**/bar')
         await page.wait_for_selector('h1:has-text("bar")')
 
         # back to /foo
         await page.go_back()
-        await page.wait_for_url('/foo')
+        await page.wait_for_url('**/foo')
         await page.wait_for_selector('h1:has-text("foo")')
 
         # forward to /bar
         await page.go_forward()
-        await page.wait_for_url('/bar')
+        await page.wait_for_url('**/bar')
         await page.wait_for_selector('h1:has-text("bar")')
 
         # back to /
         await page.go_back()
         await page.go_back()
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
         await page.wait_for_selector('h1:has-text("index")')
 
         # back to external site
@@ -90,5 +90,5 @@ async def test_client_history(
         # forward to /foo
         await page.go_forward()
         await page.go_forward()
-        await page.wait_for_url('/foo')
+        await page.wait_for_url('**/foo')
         await page.wait_for_selector('h1:has-text("foo")')

@@ -80,12 +80,12 @@ async def test_interactive_responses(
         url = f'/{url_prefix}responses/interactive/'
 
         await page.goto(context.make_url(url))
-        await page.wait_for_url(url)
+        await page.wait_for_url(f'**{url}')
 
         frontend_uptime = await get_frontend_uptime(page)
 
         await page.click('#lona a#redirect-response')
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
 
         assert (await get_frontend_uptime(page)) == frontend_uptime
 
@@ -93,12 +93,12 @@ async def test_interactive_responses(
         url = f'/{url_prefix}responses/interactive/'
 
         await page.goto(context.make_url(url))
-        await page.wait_for_url(url)
+        await page.wait_for_url(f'**{url}')
 
         frontend_uptime = await get_frontend_uptime(page)
 
         await page.click('#lona a#http-redirect-response')
-        await page.wait_for_url('/')
+        await page.wait_for_url('**/')
 
         for attempt in eventually():
             async with attempt:
