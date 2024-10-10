@@ -58,7 +58,7 @@ test = [
   "rlpython",
   "typing-extensions",
 
-  "coverage==7.6.1",
+  "coverage==7.6.2",
   "pytest==8.3.3",
   "pytest-aiohttp==1.0.5",
   "pytest-mock==3.14.0",
