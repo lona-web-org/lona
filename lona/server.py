@@ -990,7 +990,7 @@ class Server:
             self,
             route_name: str,
             *args: Any,
-            **kwargs: dict[str, Any],
+            **kwargs: Any,
     ) -> str:
 
         """
