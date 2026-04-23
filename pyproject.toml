@@ -58,11 +58,13 @@ test = [
   "rlpython",
   "typing-extensions",
 
+  "setuptools<82",
   "coverage==7.6.1",
   "pytest==8.3.3",
   "pytest-aiohttp==1.0.5",
   "pytest-mock==3.14.0",
   "pytest-timeout==2.3.1",
+  "pytest-asyncio<1",
   "playwright==1.45.0",
 ]
 
