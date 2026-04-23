@@ -72,6 +72,7 @@ lint = [
   "rlpython",
   "typing-extensions",
 
+  "setuptools<82",
   "coverage",
   "flake8==7.1.1",
   "flake8-2020==1.8.1",
