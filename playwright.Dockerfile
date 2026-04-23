@@ -1,28 +1,26 @@
 FROM mcr.microsoft.com/playwright:v1.45.1-jammy
 
-ARG UID=1000 GID=1000
+ARG DEBIAN_FRONTEND=noninteractive
+ARG PYTHON_VERSIONS="3.8 3.9 3.10 3.11"
+ARG PYTHON_VERSION="3.10"
 
-# install pyenv dependencies
-RUN apt update && apt upgrade -y && \
-	# tzdata (required by pyenv dependencies) \
-	DEBIAN_FRONTEND=noninteractive TZ=Gmt/UTC apt install -y tzdata && \
-	# https://github.com/pyenv/pyenv/wiki#suggested-build-environment \
-	apt install -y git build-essential libssl-dev zlib1g-dev libbz2-dev \
-		libreadline-dev libsqlite3-dev curl libncursesw5-dev xz-utils \
-		tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+ENV PYTHONUNBUFFERED=1
 
-# setup pyenv
-RUN git clone https://github.com/yyuu/pyenv.git .pyenv
-ENV PYENV_ROOT $HOME/.pyenv
-ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+RUN apt update && \
+	apt install -y software-properties-common && \
+	add-apt-repository ppa:deadsnakes/ppa && \
+	apt update && \
+	apt install -y python3-pip && \
+	for version in ${PYTHON_VERSIONS}; do \
+		apt install -y \
+			python${version} \
+			python${version}-dev \
+			python${version}-venv && \
+		python${version} -m ensurepip --upgrade \
+	; done && \
+	ln -s $(which python${PYTHON_VERSION}) /usr/local/bin/python && \
+	ln -s $(which python${PYTHON_VERSION}) /usr/local/bin/python3
 
-RUN pyenv install 3.8:latest
-RUN pyenv install 3.9:latest
-RUN pyenv install 3.10:latest
-RUN pyenv install 3.11:latest
-
-RUN pyenv global `pyenv versions --bare`
-
-# setup commandline tools
-RUN pip3.10 install --upgrade pip tox
-RUN pyenv rehash
+RUN pip3 install --upgrade \
+	pip \
+	tox
