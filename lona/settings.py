@@ -2,6 +2,7 @@ from copy import deepcopy
 import logging
 import types
 import runpy
+import sys
 
 logger = logging.getLogger('lona.settings')
 
@@ -18,7 +19,7 @@ class Settings:
                 path,
             )
 
-            return
+            sys.exit(1)
 
         self._paths.append(path)
 
@@ -35,7 +36,7 @@ class Settings:
                 path,
             )
 
-            return
+            sys.exit(1)
 
         self._values = {}
 
