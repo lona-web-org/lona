@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.45.1-jammy
+FROM mcr.microsoft.com/playwright:v1.58.0-jammy
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSIONS="3.8 3.9 3.10 3.11"
