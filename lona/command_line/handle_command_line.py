@@ -1,5 +1,6 @@
 from argparse import RawTextHelpFormatter, ArgumentParser
 import logging
+import sys
 import os
 
 from watchfiles import run_process
@@ -32,7 +33,7 @@ def parse_overrides(raw_overrides):
             logger.error(
                 "settings overrides: invalid format: '%s'", override)
 
-            continue
+            sys.exit(1)
 
         name, value = override.split('=', 1)
         value = environment.compile_expression(value)()
