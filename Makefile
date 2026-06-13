@@ -4,6 +4,14 @@ PYTHON_ENV=env
 
 .PHONY: clean doc dist build test ci-test lint isort shell freeze
 
+define DOCKER_COMPOSE_RUN
+	docker compose run \
+		-it \
+		--remove-orphans \
+		$1 $2
+endef
+
+
 # python env ##################################################################
 $(PYTHON_ENV): pyproject.toml
 	rm -rf $(PYTHON_ENV) && \
@@ -28,16 +36,16 @@ build:
 	docker-compose build $(args)
 
 test:
-	docker-compose run playwright tox $(args)
+	$(call DOCKER_COMPOSE_RUN, playwright, tox ${args})
 
 ci-test:
-	docker-compose run playwright tox -e lint,py38,py39,py310,py311 $(args)
+	$(call DOCKER_COMPOSE_RUN, playwright, tox -e lint,py38,py39,py310,py311 ${args})
 
 lint:
-	docker-compose run playwright tox -e lint $(args)
+	$(call DOCKER_COMPOSE_RUN, playwright, tox -e lint ${args})
 
 isort:
-	docker-compose run playwright tox -e isort $(args)
+	$(call DOCKER_COMPOSE_RUN, playwright, tox -e isort ${args})
 
 # packaging ###################################################################
 dist: | $(PYTHON_ENV)

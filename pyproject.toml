@@ -65,7 +65,7 @@ test = [
   "pytest-mock==3.14.0",
   "pytest-timeout==2.3.1",
   "pytest-asyncio<1",
-  "playwright==1.45.0",
+  "playwright==1.58.0",
 ]
 
 lint = [
